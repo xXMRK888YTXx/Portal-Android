@@ -53,7 +53,7 @@ kotlin {
 dependencies {
     implementation(project(":CoreCompose"))
     implementation(project(":OnboardingScreen"))
-
+    implementation(project(":PreferencesStorage"))
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)
