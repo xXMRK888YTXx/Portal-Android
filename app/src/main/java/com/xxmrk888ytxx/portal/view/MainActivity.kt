@@ -26,6 +26,7 @@ import com.xxmrk888ytxx.goals.extensions.appComponent
 import com.xxmrk888ytxx.mainscreen.MainScreen
 import com.xxmrk888ytxx.mainscreen.MainScreenViewModel
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
+import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import com.xxmrk888ytxx.onboardingscreen.OnboardingScreen
 import com.xxmrk888ytxx.onboardingscreen.OnboardingViewModel
@@ -78,6 +79,10 @@ class MainActivity : ComponentActivity() {
 
                         entry<Screen.MainScreen> {
                             ScreenContent(::MainScreen, mainScreenViewModelFactory)
+                        }
+
+                        entry<Screen.AddNewDeviceScreen> {
+                            Text("AddNewDeviceScreen")
                         }
                     },
                     modifier = Modifier.padding(innerPadding)

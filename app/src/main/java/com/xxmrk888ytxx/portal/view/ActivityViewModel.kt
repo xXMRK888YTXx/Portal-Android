@@ -58,6 +58,10 @@ class ActivityViewModel @Inject constructor(
         backStack?.remove(Screen.OnboardingScreen)
     }
 
+    override fun fromMainScreenToAddNewDeviceScreen() = runOnUiThread {
+        backStack?.add(Screen.AddNewDeviceScreen)
+    }
+
     @Suppress("UNCHECKED_CAST")
     class Factory @Inject constructor(
         private val viewModel: Provider<ActivityViewModel>

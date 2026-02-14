@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.xxmrk888ytxx.coreandroid.mvi.UiEvent
+import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.onboardingscreen.model.OnboardingScreenSideEffect
 import com.xxmrk888ytxx.onboardingscreen.model.OnboardingScreenUiEvent
@@ -22,11 +23,9 @@ fun OnboardingScreen(
 ) {
 
     val navigator = LocalNavigator.current
-    LaunchedEffect(sideEffect) {
-        sideEffect.collect { effect ->
-            when(effect) {
-                OnboardingScreenSideEffect.FinishOnboarding -> navigator.fromOnboardingScreenToMainScreen()
-            }
+    HandleSideEffect(sideEffect) { effect ->
+        when(effect) {
+            OnboardingScreenSideEffect.FinishOnboarding -> navigator.fromOnboardingScreenToMainScreen()
         }
     }
 
