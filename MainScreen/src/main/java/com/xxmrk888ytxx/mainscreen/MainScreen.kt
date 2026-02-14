@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.mainscreen
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,7 +38,8 @@ fun MainScreen(
             ) {
                 Icon(painter = painterResource(R.drawable.outline_add), contentDescription = null)
             }
-        }
+        },
+        contentWindowInsets = WindowInsets()
     ) { paddingValues ->
         LazyColumn(Modifier
             .fillMaxSize()
