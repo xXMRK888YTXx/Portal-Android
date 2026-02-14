@@ -19,8 +19,14 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.xxmrk888ytxx.coreandroid.PortalViewModel
 import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
+import com.xxmrk888ytxx.goals.extensions.ScreenContent
 import com.xxmrk888ytxx.goals.extensions.appComponent
+import com.xxmrk888ytxx.mainscreen.MainScreen
+import com.xxmrk888ytxx.mainscreen.MainScreenViewModel
+import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
+import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import com.xxmrk888ytxx.onboardingscreen.OnboardingScreen
 import com.xxmrk888ytxx.onboardingscreen.OnboardingViewModel
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
@@ -36,7 +42,10 @@ class MainActivity : ComponentActivity() {
 
     //Screen viewModels
     @Inject
-    lateinit var  onboardingViewModelFactory: Provider<OnboardingViewModel>
+    lateinit var onboardingViewModelFactory: Provider<OnboardingViewModel>
+
+    @Inject
+    lateinit var mainScreenViewModelFactory: Provider<MainScreenViewModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,13 +73,11 @@ class MainActivity : ComponentActivity() {
                     backStack = backStack,
                     entryProvider = entryProvider {
                         entry<Screen.OnboardingScreen> {
-                            val viewModel = viewModel<OnboardingViewModel> { onboardingViewModelFactory.get() }
-                            val state by viewModel.state.collectAsState()
-                            OnboardingScreen(state,viewModel::handleEvent,viewModel.effect)
+                            ScreenContent(::OnboardingScreen, onboardingViewModelFactory)
                         }
 
                         entry<Screen.MainScreen> {
-                            Text("MainScreen")
+                            ScreenContent(::MainScreen, mainScreenViewModelFactory)
                         }
                     },
                     modifier = Modifier.padding(innerPadding)

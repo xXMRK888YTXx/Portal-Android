@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":CoreCompose"))
     implementation(project(":OnboardingScreen"))
     implementation(project(":PreferencesStorage"))
+    implementation(project(":MainScreen"))
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)
