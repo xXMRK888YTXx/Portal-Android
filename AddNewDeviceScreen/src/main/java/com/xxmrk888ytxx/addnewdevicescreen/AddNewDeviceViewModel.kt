@@ -1,10 +1,12 @@
 package com.xxmrk888ytxx.addnewdevicescreen
 
+import androidx.core.text.isDigitsOnly
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class AddNewDeviceViewModel @Inject constructor() : SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent, AddNewDeviceScreenSideEffect>(ScreenState.NoSelectedType) {
@@ -15,6 +17,24 @@ class AddNewDeviceViewModel @Inject constructor() : SideEffectPortalViewModel<Sc
             is AddNewDeviceScreenUiEvent.SelectedWifi -> wifiSelected()
             is AddNewDeviceScreenUiEvent.NextPage -> nextPage(event.currentPage)
             is AddNewDeviceScreenUiEvent.PreviousPage -> previousPage(event.currentPage)
+            is AddNewDeviceScreenUiEvent.HostTextUpdated -> hostTextUpdated(event.text)
+            is AddNewDeviceScreenUiEvent.PairCodeTextUpdated -> pairCodeUpdated(event.text)
+        }
+    }
+
+    private fun pairCodeUpdated(text: String) {
+        if (text.length > 6 || !text.isDigitsOnly()) return
+        _state.update {
+            val wifiState = it as? ScreenState.Wifi ?: return@update it
+            wifiState.copy(pairCode = text)
+        }
+    }
+
+    private fun hostTextUpdated(text: String) {
+        val updatedText = text.replace(oldValue = ",", newValue = ".", ignoreCase = true)
+        _state.update {
+            val wifiState = it as? ScreenState.Wifi ?: return@update it
+            wifiState.copy(host = updatedText)
         }
     }
 

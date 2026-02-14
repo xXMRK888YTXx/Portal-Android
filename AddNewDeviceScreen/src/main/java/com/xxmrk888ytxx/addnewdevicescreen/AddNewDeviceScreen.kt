@@ -1,24 +1,34 @@
 package com.xxmrk888ytxx.addnewdevicescreen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
-import com.xxmrk888ytxx.addnewdevicescreen.model.Page
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import kotlinx.coroutines.flow.Flow
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.xxmrk888ytxx.addnewdevicescreen.model.Page
 import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
 
@@ -52,11 +62,12 @@ fun AddNewDeviceScreen(
                     Text(
                         text = when(pageType) {
                             Page.SELECT_TYPE -> stringResource(R.string.protocol_selection)
-                            Page.CONFIGURATION_WIFI -> "TODO()"
+                            Page.CONFIGURATION_WIFI -> stringResource(R.string.configuring_a_wi_fi_connection)
                         },
                         style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier,
-                        textAlign = TextAlign.Center
+                        modifier = Modifier.basicMarquee(),
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
                     )
                 },
                 onNavigateBack = { onEvent(AddNewDeviceScreenUiEvent.PreviousPage(pageType)) },
@@ -84,10 +95,112 @@ fun AddNewDeviceScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
         ) { pageId ->
             when (Page.fromInt(pageId)) {
                 Page.SELECT_TYPE -> SelectTypePage(state, onEvent)
-                Page.CONFIGURATION_WIFI -> {}
+                Page.CONFIGURATION_WIFI -> WifiConfigurationPage(state, onEvent)
+            }
+        }
+    }
+}
+
+@Composable
+fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> Unit) {
+    val state = remember(state) {
+        state as? ScreenState.Wifi ?: ScreenState.Wifi()
+    }
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Header
+            Icon(
+                painter = painterResource(R.drawable.wifi),
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.configuring_a_wi_fi_connection),
+                style = MaterialTheme.typography.headlineLarge,
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                text = stringResource(R.string.enter_the_details_specified_on_the_pc),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // IP Address Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = state.host,
+                    onValueChange = {
+                        onEvent(AddNewDeviceScreenUiEvent.HostTextUpdated(it))
+                    },
+                    label = { Text(stringResource(R.string.ip_address)) },
+                    placeholder = { Text(stringResource(R.string._192_168_x_x)) },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(com.xxmrk888ytxx.corecompose.R.drawable.arrow_back),
+                            contentDescription = null
+                        )
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Code Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = state.pairCode,
+                    onValueChange = {
+                        onEvent(AddNewDeviceScreenUiEvent.PairCodeTextUpdated(it))
+                    },
+                    label = { Text(stringResource(R.string._6_digit_code)) },
+                    placeholder = { Text(stringResource(R.string._000000)) },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(com.xxmrk888ytxx.corecompose.R.drawable.arrow_back),
+                            contentDescription = null
+                        )
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
             }
         }
     }
@@ -111,8 +224,7 @@ fun SelectTypePage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> U
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
