@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
@@ -22,11 +23,13 @@ import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
 import com.xxmrk888ytxx.goals.extensions.appComponent
 import com.xxmrk888ytxx.onboardingscreen.OnboardingScreen
 import com.xxmrk888ytxx.onboardingscreen.OnboardingViewModel
+import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.view.model.Screen
 import javax.inject.Inject
 import javax.inject.Provider
 
 class MainActivity : ComponentActivity() {
+
     @Inject
     lateinit var activityViewModelFactory: ActivityViewModel.Factory
     private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
@@ -38,11 +41,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
+        activityViewModel.prepareScreen()
         enableEdgeToEdge()
+        installSplashScreen().setKeepOnScreenCondition { !activityViewModel.isScreenReady.value }
         setContentWithThemeAndProviders(
             navigator = activityViewModel
         ) {
-            val backStack = rememberNavBackStack(Screen.OnboardingScreen)
+            val startScreen by activityViewModel.startScreen.collectAsState()
+
+            val backStack = rememberNavBackStack(startScreen)
 
             LaunchedEffect(backStack) {
                 activityViewModel.backStack = backStack
