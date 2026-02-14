@@ -6,7 +6,10 @@ import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun <EFFECT : SideEffect> HandleSideEffect(sideEffects: Flow<EFFECT>,onEffect: (EFFECT) -> Unit) {
+fun <EFFECT : SideEffect> HandleSideEffect(
+    sideEffects: Flow<EFFECT>,
+    onEffect: suspend (EFFECT) -> Unit
+) {
     LaunchedEffect(sideEffects) {
         sideEffects.collect {
             onEffect(it)

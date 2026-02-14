@@ -62,6 +62,10 @@ class ActivityViewModel @Inject constructor(
         backStack?.add(Screen.AddNewDeviceScreen)
     }
 
+    override fun navigateUp() = runOnUiThread {
+        backStack?.removeLastOrNull()
+    }
+
     @Suppress("UNCHECKED_CAST")
     class Factory @Inject constructor(
         private val viewModel: Provider<ActivityViewModel>

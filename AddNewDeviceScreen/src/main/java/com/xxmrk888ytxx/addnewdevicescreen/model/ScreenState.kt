@@ -1,3 +1,14 @@
 package com.xxmrk888ytxx.addnewdevicescreen.model
 
-data class ScreenState(val host: String = "",val pairCode: String = "")
+sealed class ScreenState() {
+    object NoSelectedType : ScreenState()
+
+    data class Wifi(
+        val host: String = "",
+        val pairCode: String = ""
+    ) : ScreenState()
+
+    data class Bluetooth(
+        val pairCode: String = ""
+    ) : ScreenState()
+}
