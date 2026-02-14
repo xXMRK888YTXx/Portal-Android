@@ -19,6 +19,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.xxmrk888ytxx.addnewdevicescreen.AddNewDeviceScreen
+import com.xxmrk888ytxx.addnewdevicescreen.AddNewDeviceViewModel
 import com.xxmrk888ytxx.coreandroid.PortalViewModel
 import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
 import com.xxmrk888ytxx.goals.extensions.ScreenContent
@@ -47,6 +49,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var mainScreenViewModelFactory: Provider<MainScreenViewModel>
+
+    @Inject
+    lateinit var addNewDeviceViewModelFactory: Provider<AddNewDeviceViewModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +87,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         entry<Screen.AddNewDeviceScreen> {
-                            Text("AddNewDeviceScreen")
+                            ScreenContent(::AddNewDeviceScreen, addNewDeviceViewModelFactory)
                         }
                     },
                     modifier = Modifier.padding(innerPadding)
