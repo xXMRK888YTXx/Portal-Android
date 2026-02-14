@@ -1,5 +1,5 @@
 plugins {
-    id("portal.android.feature")
+    alias(libs.plugins.portal.android.feature)
 }
 
 android {
