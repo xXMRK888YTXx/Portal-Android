@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.di
 
 import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.di.module.AddNewDeviceModule
 import com.xxmrk888ytxx.portal.view.MainActivity
 import com.xxmrk888ytxx.portal.di.module.CoreModule
 import com.xxmrk888ytxx.portal.di.module.DataModule
@@ -15,7 +16,8 @@ import dagger.Component
         CoreModule::class,
         DataModule::class,
         DomainModule::class,
-        OnboardingScreenModule::class
+        OnboardingScreenModule::class,
+        AddNewDeviceModule::class
     ]
 )
 @AppScope

@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.addnewdevicescreen
 
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToWifiDeviceContract
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
@@ -13,7 +14,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class AddNewDeviceViewModel @Inject constructor() :
+class AddNewDeviceViewModel @Inject constructor(
+    private val connectToWifiDeviceContract: ConnectToWifiDeviceContract
+) :
     SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent, AddNewDeviceScreenSideEffect>(
         ScreenState.NoSelectedType
     ) {
@@ -27,7 +30,7 @@ class AddNewDeviceViewModel @Inject constructor() :
             is AddNewDeviceScreenUiEvent.HostTextUpdated -> hostTextUpdated(event.text)
             is AddNewDeviceScreenUiEvent.PairCodeTextUpdated -> pairCodeUpdated(event.text)
             is AddNewDeviceScreenUiEvent.ConnectToDevice -> {
-                when(val state = state.value) {
+                when (val state = state.value) {
                     is ScreenState.Bluetooth -> TODO()
                     is ScreenState.Wifi -> connectToWifiDevice(state)
                     else -> {}
@@ -38,7 +41,9 @@ class AddNewDeviceViewModel @Inject constructor() :
 
     private fun connectToWifiDevice(value: ScreenState.Wifi) {
         updateLoadingState(true)
-        viewModelScope.launch(Dispatchers.Default) { delay(2000) }.invokeOnCompletion { updateLoadingState(false) }
+        viewModelScope.launch {
+            connectToWifiDeviceContract.connect(value.host, value.pairCode)
+        }.invokeOnCompletion { updateLoadingState(false) }
     }
 
     private fun pairCodeUpdated(text: String) {
@@ -78,7 +83,7 @@ class AddNewDeviceViewModel @Inject constructor() :
         }
     }
 
-    private fun updateWifiState(onUpdate:(ScreenState.Wifi) -> ScreenState.Wifi) {
+    private fun updateWifiState(onUpdate: (ScreenState.Wifi) -> ScreenState.Wifi) {
         fun isDataValid(screenState: ScreenState.Wifi): Boolean {
             return screenState.host.isNotEmpty() && screenState.pairCode.length == 6
         }
@@ -90,7 +95,7 @@ class AddNewDeviceViewModel @Inject constructor() :
     }
 
     private fun updateLoadingState(newState: Boolean) {
-        when(val currentState = state.value) {
+        when (val currentState = state.value) {
             is ScreenState.Bluetooth -> _state.update { currentState.copy(isLoading = newState) }
             is ScreenState.Wifi -> _state.update { currentState.copy(isLoading = newState) }
             is ScreenState.NoSelectedType -> {}
