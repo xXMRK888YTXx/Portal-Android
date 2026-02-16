@@ -52,6 +52,7 @@ dependencies {
     implementation(project(":PreferencesStorage"))
     implementation(project(":MainScreen"))
     implementation(project(":AddNewDeviceScreen"))
+    implementation(project(":Database"))
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)

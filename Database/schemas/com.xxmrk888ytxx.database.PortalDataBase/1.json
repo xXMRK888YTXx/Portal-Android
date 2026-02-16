@@ -1,0 +1,60 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e4b4ad54f6c4c2efd5c96a2924f48c85",
+    "entities": [
+      {
+        "tableName": "DeviceTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `host` TEXT NOT NULL, `serverCertificateFingerprint` TEXT NOT NULL, `keyAlias` TEXT NOT NULL, PRIMARY KEY(`deviceId`))",
+        "fields": [
+          {
+            "fieldPath": "deviceId",
+            "columnName": "deviceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "host",
+            "columnName": "host",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serverCertificateFingerprint",
+            "columnName": "serverCertificateFingerprint",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "keyAlias",
+            "columnName": "keyAlias",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "deviceId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_DeviceTable_deviceId",
+            "unique": false,
+            "columnNames": [
+              "deviceId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_DeviceTable_deviceId` ON `${TABLE_NAME}` (`deviceId`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e4b4ad54f6c4c2efd5c96a2924f48c85')"
+    ]
+  }
+}
