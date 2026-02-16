@@ -9,5 +9,5 @@ sealed interface AddNewDeviceScreenUiEvent : UiEvent {
     data class PreviousPage(val currentPage: Page): AddNewDeviceScreenUiEvent
     data class HostTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
     data class PairCodeTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
-
+    data object ConnectToDevice : AddNewDeviceScreenUiEvent
 }

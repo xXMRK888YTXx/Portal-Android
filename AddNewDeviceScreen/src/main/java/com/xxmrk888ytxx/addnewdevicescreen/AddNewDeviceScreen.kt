@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.addnewdevicescreen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
@@ -60,7 +61,7 @@ fun AddNewDeviceScreen(
             CenterAlignedTopAppBarWithBackArrow(
                 title = {
                     Text(
-                        text = when(pageType) {
+                        text = when (pageType) {
                             Page.SELECT_TYPE -> stringResource(R.string.protocol_selection)
                             Page.CONFIGURATION_WIFI -> stringResource(R.string.configuring_a_wi_fi_connection)
                         },
@@ -75,17 +76,35 @@ fun AddNewDeviceScreen(
             )
         },
         bottomBar = {
-            Button(
-                onClick = { onEvent(AddNewDeviceScreenUiEvent.NextPage(pageType)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                enabled = when(pageType) {
-                    Page.SELECT_TYPE -> state !is ScreenState.NoSelectedType
-                    Page.CONFIGURATION_WIFI -> false
+            AnimatedContent(
+                targetState = state.isLoading
+            ) { isLoading ->
+                if (!isLoading) {
+                    Button(
+                        onClick = {
+                            val event = when (pageType) {
+                                Page.CONFIGURATION_WIFI -> AddNewDeviceScreenUiEvent.ConnectToDevice
+                                else -> AddNewDeviceScreenUiEvent.NextPage(pageType)
+                            }
+                            onEvent(event)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        enabled = when (pageType) {
+                            Page.SELECT_TYPE -> state !is ScreenState.NoSelectedType
+                            Page.CONFIGURATION_WIFI -> state is ScreenState.Wifi && state.isDataValid
+                        }
+                    ) {
+                        Text("Next")
+                    }
+                } else {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
                 }
-            ) {
-                Text("Next")
             }
         }
     ) { paddingValues ->
@@ -273,7 +292,7 @@ fun SelectTypePage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> U
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             onClick = selectBluetoothAction,
 
-        ) {
+            ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -1,41 +1,54 @@
 package com.xxmrk888ytxx.addnewdevicescreen
 
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class AddNewDeviceViewModel @Inject constructor() : SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent, AddNewDeviceScreenSideEffect>(ScreenState.NoSelectedType) {
+class AddNewDeviceViewModel @Inject constructor() :
+    SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent, AddNewDeviceScreenSideEffect>(
+        ScreenState.NoSelectedType
+    ) {
 
     override fun handleEvent(event: AddNewDeviceScreenUiEvent) {
-        when(event) {
+        when (event) {
             is AddNewDeviceScreenUiEvent.SelectedBluetooth -> bluetoothSelected()
             is AddNewDeviceScreenUiEvent.SelectedWifi -> wifiSelected()
             is AddNewDeviceScreenUiEvent.NextPage -> nextPage(event.currentPage)
             is AddNewDeviceScreenUiEvent.PreviousPage -> previousPage(event.currentPage)
             is AddNewDeviceScreenUiEvent.HostTextUpdated -> hostTextUpdated(event.text)
             is AddNewDeviceScreenUiEvent.PairCodeTextUpdated -> pairCodeUpdated(event.text)
+            is AddNewDeviceScreenUiEvent.ConnectToDevice -> {
+                when(val state = state.value) {
+                    is ScreenState.Bluetooth -> TODO()
+                    is ScreenState.Wifi -> connectToWifiDevice(state)
+                    else -> {}
+                }
+            }
         }
+    }
+
+    private fun connectToWifiDevice(value: ScreenState.Wifi) {
+        updateLoadingState(true)
+        viewModelScope.launch(Dispatchers.Default) { delay(2000) }.invokeOnCompletion { updateLoadingState(false) }
     }
 
     private fun pairCodeUpdated(text: String) {
         if (text.length > 6 || !text.isDigitsOnly()) return
-        _state.update {
-            val wifiState = it as? ScreenState.Wifi ?: return@update it
-            wifiState.copy(pairCode = text)
-        }
+        updateWifiState { it.copy(pairCode = text) }
     }
 
     private fun hostTextUpdated(text: String) {
         val updatedText = text.replace(oldValue = ",", newValue = ".", ignoreCase = true)
-        _state.update {
-            val wifiState = it as? ScreenState.Wifi ?: return@update it
-            wifiState.copy(host = updatedText)
-        }
+        updateWifiState { it.copy(host = updatedText) }
     }
 
     private fun bluetoothSelected() {
@@ -47,20 +60,40 @@ class AddNewDeviceViewModel @Inject constructor() : SideEffectPortalViewModel<Sc
     }
 
     private fun nextPage(currentPage: Page) {
-        when(currentPage) {
-            Page.SELECT_TYPE -> when(state.value) {
+        when (currentPage) {
+            Page.SELECT_TYPE -> when (state.value) {
                 is ScreenState.Bluetooth -> TODO()
                 is ScreenState.Wifi -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ToWifiConfigurationPage)
                 ScreenState.NoSelectedType -> {}
             }
+
             else -> {}
         }
     }
 
     private fun previousPage(currentPage: Page) {
-        when(currentPage.id) {
+        when (currentPage.id) {
             0 -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.NavigationBack)
             else -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ScrollToPage(currentPage.id - 1))
+        }
+    }
+
+    private fun updateWifiState(onUpdate:(ScreenState.Wifi) -> ScreenState.Wifi) {
+        fun isDataValid(screenState: ScreenState.Wifi): Boolean {
+            return screenState.host.isNotEmpty() && screenState.pairCode.length == 6
+        }
+
+
+        val currentState = _state.value as? ScreenState.Wifi ?: return
+        val newState = onUpdate(currentState)
+        _state.update { newState.copy(isDataValid = isDataValid(newState)) }
+    }
+
+    private fun updateLoadingState(newState: Boolean) {
+        when(val currentState = state.value) {
+            is ScreenState.Bluetooth -> _state.update { currentState.copy(isLoading = newState) }
+            is ScreenState.Wifi -> _state.update { currentState.copy(isLoading = newState) }
+            is ScreenState.NoSelectedType -> {}
         }
     }
 }
