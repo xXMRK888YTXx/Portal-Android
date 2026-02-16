@@ -1,9 +1,12 @@
+import com.android.build.api.dsl.LibraryExtension
+import org.gradle.kotlin.dsl.configure
+
 plugins {
     id("portal.android.base")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-android {
+extensions.configure<LibraryExtension> {
     namespace = "com.xxmrk888ytxx.corecompose"
 
     buildFeatures {

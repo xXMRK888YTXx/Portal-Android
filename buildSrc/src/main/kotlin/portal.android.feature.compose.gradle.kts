@@ -1,9 +1,11 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     id("portal.android.feature")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-android {
+extensions.configure<LibraryExtension> {
     buildFeatures {
         compose = true
     }

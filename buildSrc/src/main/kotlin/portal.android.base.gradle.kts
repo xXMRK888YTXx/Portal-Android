@@ -1,10 +1,9 @@
+import com.android.build.api.dsl.LibraryExtension
 plugins {
     id("com.android.library")
-    id("kotlin-android")
-    id("org.jetbrains.kotlin.android")
 }
 val javaVersion = catalog.version("jvm-target")
-android {
+extensions.configure<LibraryExtension> {
     // Android
     compileSdk = catalog.version("compile-sdk").toInt()
     defaultConfig {
@@ -34,11 +33,5 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.valueOf("VERSION_$javaVersion")
         targetCompatibility = JavaVersion.valueOf("VERSION_$javaVersion")
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(javaVersion))
     }
 }

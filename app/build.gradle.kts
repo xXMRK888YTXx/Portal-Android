@@ -1,6 +1,8 @@
+import com.android.build.api.dsl.ApplicationExtension
+import org.gradle.kotlin.dsl.configure
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
@@ -10,7 +12,7 @@ val catalogCompileSdk = libs.versions.compile.sdk.get().toInt()
 val catalogMinSdk = libs.versions.min.sdk.get().toInt()
 
 
-android {
+extensions.configure<ApplicationExtension> {
     namespace = "com.xxmrk888ytxx.portal"
     compileSdk {
         version = release(catalogCompileSdk)
@@ -41,12 +43,6 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(catalogJavaVersion))
     }
 }
 
