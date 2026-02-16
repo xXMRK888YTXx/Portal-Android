@@ -14,7 +14,7 @@ data class DeviceEntry(
     @ColumnInfo("deviceId") @PrimaryKey val deviceId: String,
     @ColumnInfo("host") val host: String,
     @ColumnInfo("serverCertificateFingerprint") val serverCertificateFingerprint: String,
-    @ColumnInfo("keyAlias") val keyAlias: String,
+    @ColumnInfo("clientCertificateKeyAlias") val clientCertificateKeyAlias: String,
 ) {
     internal companion object {
         const val TABLE_NAME = "DeviceTable"
