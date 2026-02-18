@@ -8,8 +8,6 @@ import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,6 +41,12 @@ class AddNewDeviceViewModel @Inject constructor(
         updateLoadingState(true)
         viewModelScope.launch {
             connectToWifiDeviceContract.connect(value.host, value.pairCode)
+                .onSuccess {
+                    // TODO Handle
+                }
+                .onFailure {
+                    // TODO Handle
+                }
         }.invokeOnCompletion { updateLoadingState(false) }
     }
 
