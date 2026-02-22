@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="devices">Devices</string>
+    <string name="no_devices_added">No devices added</string>
+    <string name="add_a_new_device_to_get_started">Add a new device to get started.</string>
+    <string name="add_device">Add device</string>
+</resources>

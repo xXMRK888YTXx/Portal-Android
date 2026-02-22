@@ -1,3 +1,6 @@
 package com.xxmrk888ytxx.mainscreen.model
 
-data class ScreenState(val todo: Unit)
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
+data class ScreenState(val devices: ImmutableList<Device> = persistentListOf())
