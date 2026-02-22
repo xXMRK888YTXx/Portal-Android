@@ -15,15 +15,20 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
+import java.net.Socket
 import java.security.KeyStore
+import java.security.Principal
+import java.security.PrivateKey
 import java.security.cert.X509Certificate
 import java.util.UUID
 import javax.inject.Inject
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLEngine
 import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.TrustManager
+import javax.net.ssl.X509KeyManager
 
 class KtorFactory @Inject constructor(
     private val certificateManager: CertificateManager
@@ -92,20 +97,23 @@ class KtorFactory @Inject constructor(
     }
 
     fun createMtlsContext(certificate: Certificate, trustManager: TrustManager): SSLContext {
-        val password = UUID.randomUUID().toString().toCharArray()
-        val keyStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
-            load(null, null)
-            setKeyEntry(
-                "my-id",
-                certificate.keyPair.private,
-                password,
-                arrayOf(certificate.x509Certificate)
-            )
+        val keyManager = object : X509KeyManager {
+            private val alias = "PrivateKeyAlias"
+
+            override fun getClientAliases(keyType: String?, issuers: Array<out Principal>?): Array<String> = arrayOf(alias)
+
+            override fun chooseClientAlias(keyType: Array<out String>?, issuers: Array<out Principal>?, socket: Socket?): String = alias
+
+            override fun getServerAliases(keyType: String?, issuers: Array<out Principal>?): Array<String> = arrayOf(alias)
+
+            override fun chooseServerAlias(keyType: String?, issuers: Array<out Principal>?, socket: Socket?): String = alias
+
+            override fun getCertificateChain(requestedAlias: String?): Array<X509Certificate>? = if (requestedAlias == alias) arrayOf(certificate.x509Certificate) else null
+
+            override fun getPrivateKey(requestedAlias: String?): PrivateKey? = if (requestedAlias == alias) certificate.keyPair.private else null
         }
-        val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
-        kmf.init(keyStore, password)
         val context = SSLContext.getInstance("TLS")
-        context.init(kmf.keyManagers, arrayOf(trustManager), null)
+        context.init(arrayOf(keyManager), arrayOf(trustManager), null)
         return context
     }
 
