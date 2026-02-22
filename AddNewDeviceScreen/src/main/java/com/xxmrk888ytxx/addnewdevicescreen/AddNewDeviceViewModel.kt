@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,6 +35,8 @@ class AddNewDeviceViewModel @Inject constructor(
                     else -> {}
                 }
             }
+
+            AddNewDeviceScreenUiEvent.FinishConfiguration -> sendNavigateUpSideEffect()
         }
     }
 
@@ -42,10 +45,10 @@ class AddNewDeviceViewModel @Inject constructor(
         viewModelScope.launch {
             connectToWifiDeviceContract.connect(value.host, value.pairCode)
                 .onSuccess {
-                    // TODO Handle
+                    nextPage(Page.SUCCESS)
                 }
                 .onFailure {
-                    // TODO Handle
+                    sendToastSideEffect(uiText = uiText(R.string.unable_to_establish_connection))
                 }
         }.invokeOnCompletion { updateLoadingState(false) }
     }
@@ -76,13 +79,14 @@ class AddNewDeviceViewModel @Inject constructor(
                 ScreenState.NoSelectedType -> {}
             }
 
-            else -> {}
+            Page.CONFIGURATION_WIFI -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ToSuccessPage)
+            Page.SUCCESS -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ToSuccessPage)
         }
     }
 
     private fun previousPage(currentPage: Page) {
         when (currentPage.id) {
-            0 -> sendNavigateUpSideEffect()
+            0, Page.SUCCESS.id -> sendNavigateUpSideEffect()
             else -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ScrollToPage(currentPage.id - 1))
         }
     }

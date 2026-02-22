@@ -47,6 +47,7 @@ fun AddNewDeviceScreen(
             AddNewDeviceScreenSideEffect.ToBluetoothConfigurationPage -> TODO()
             AddNewDeviceScreenSideEffect.ToWifiConfigurationPage -> pager.animateScrollToPage(Page.CONFIGURATION_WIFI.id)
             is AddNewDeviceScreenSideEffect.ScrollToPage -> pager.animateScrollToPage(effect.pageId)
+            AddNewDeviceScreenSideEffect.ToSuccessPage -> pager.animateScrollToPage(Page.SUCCESS.id)
         }
     }
     val pageType = remember(pager.currentPage) { Page.fromInt(pager.currentPage) }
@@ -63,6 +64,7 @@ fun AddNewDeviceScreen(
                         text = when (pageType) {
                             Page.SELECT_TYPE -> stringResource(R.string.protocol_selection)
                             Page.CONFIGURATION_WIFI -> stringResource(R.string.configuring_a_wi_fi_connection)
+                            Page.SUCCESS -> stringResource(R.string.successfully_connected)
                         },
                         style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.basicMarquee(),
@@ -83,6 +85,7 @@ fun AddNewDeviceScreen(
                         onClick = {
                             val event = when (pageType) {
                                 Page.CONFIGURATION_WIFI -> AddNewDeviceScreenUiEvent.ConnectToDevice
+                                Page.SUCCESS -> AddNewDeviceScreenUiEvent.FinishConfiguration
                                 else -> AddNewDeviceScreenUiEvent.NextPage(pageType)
                             }
                             onEvent(event)
@@ -93,9 +96,15 @@ fun AddNewDeviceScreen(
                         enabled = when (pageType) {
                             Page.SELECT_TYPE -> state !is ScreenState.NoSelectedType
                             Page.CONFIGURATION_WIFI -> state is ScreenState.Wifi && state.isDataValid
+                            Page.SUCCESS -> true
                         }
                     ) {
-                        Text("Next")
+                        Text(
+                            text = when (pageType) {
+                                Page.SUCCESS -> stringResource(R.string.finish)
+                                else -> stringResource(R.string.next)
+                            }
+                        )
                     }
                 } else {
                     LinearProgressIndicator(
@@ -118,7 +127,47 @@ fun AddNewDeviceScreen(
             when (Page.fromInt(pageId)) {
                 Page.SELECT_TYPE -> SelectTypePage(state, onEvent)
                 Page.CONFIGURATION_WIFI -> WifiConfigurationPage(state, onEvent)
+                Page.SUCCESS -> SuccessPage()
             }
+        }
+    }
+}
+
+@Composable
+fun SuccessPage() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter =  painterResource(R.drawable.check),
+                contentDescription = null,
+                modifier = Modifier.size(100.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.successfully_connected),
+                style = MaterialTheme.typography.headlineLarge,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.the_device_is_configured_and_ready_for_operation),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

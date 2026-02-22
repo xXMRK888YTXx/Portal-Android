@@ -11,4 +11,9 @@
     <string name="_192_168_x_x" translatable="false">192.168.X.X</string>
     <string name="_6_digit_code">6-Digit Code</string>
     <string name="_000000" translatable="false">000000</string>
+    <string name="unable_to_establish_connection">Unable to establish connection</string>
+    <string name="successfully_connected">Successfully connected</string>
+    <string name="the_device_is_configured_and_ready_for_operation">The device is configured and ready for operation.</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
 </resources>
