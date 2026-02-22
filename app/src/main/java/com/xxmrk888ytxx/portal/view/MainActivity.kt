@@ -22,6 +22,8 @@ import com.xxmrk888ytxx.addnewdevicescreen.AddNewDeviceViewModel
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
+import com.xxmrk888ytxx.deviceconfigurationscreen.DeviceConfigurationScreen
+import com.xxmrk888ytxx.deviceconfigurationscreen.DeviceConfigurationViewModel
 import com.xxmrk888ytxx.goals.extensions.ScreenContent
 import com.xxmrk888ytxx.goals.extensions.appComponent
 import com.xxmrk888ytxx.mainscreen.MainScreen
@@ -51,6 +53,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var toastManager: ToastManager
+
+    @Inject
+    lateinit var deviceConfigurationViewModel: Provider<DeviceConfigurationViewModel>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +94,10 @@ class MainActivity : ComponentActivity() {
 
                         entry<Screen.AddNewDeviceScreen> {
                             ScreenContent(::AddNewDeviceScreen, addNewDeviceViewModelFactory)
+                        }
+
+                        entry<Screen.DeviceConfigurationScreen> {
+                            ScreenContent(::DeviceConfigurationScreen, deviceConfigurationViewModel)
                         }
                     },
                     modifier = Modifier.padding(innerPadding)

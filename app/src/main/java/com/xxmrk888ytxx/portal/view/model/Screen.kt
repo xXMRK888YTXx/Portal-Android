@@ -12,4 +12,6 @@ sealed interface Screen : NavKey {
 
     @Serializable
     data object AddNewDeviceScreen : Screen
+    @Serializable
+    data object DeviceConfigurationScreen : Screen
 }

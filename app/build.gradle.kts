@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":MainScreen"))
     implementation(project(":AddNewDeviceScreen"))
     implementation(project(":Database"))
+    implementation(project(":DeviceConfigurationScreen"))
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)
