@@ -11,6 +11,9 @@ interface DeviceDao {
     @get:Query("SELECT * FROM ${DeviceEntry.TABLE_NAME}")
     val devices: Flow<List<DeviceEntry>>
 
+    @Query("SELECT * FROM ${DeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId LIMIT 1")
+    suspend fun getDeviceById(deviceId: String): DeviceEntry?
+
     @Insert
     suspend fun insertDevice(deviceEntry: DeviceEntry)
 }

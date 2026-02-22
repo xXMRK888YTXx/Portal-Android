@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.data
 
 import com.xxmrk888ytxx.portal.BuildConfig
 import com.xxmrk888ytxx.portal.data.trustManager.AllTrustTrustManager
+import com.xxmrk888ytxx.portal.data.trustManager.TrustManagerByServerCertificateHash
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.model.Certificate
 import io.ktor.client.HttpClient
@@ -16,15 +17,11 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import java.net.Socket
-import java.security.KeyStore
 import java.security.Principal
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
-import java.util.UUID
 import javax.inject.Inject
-import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLEngine
 import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.TrustManager
@@ -68,53 +65,92 @@ class KtorFactory @Inject constructor(
                 hostnameVerifier { _, _ -> true }
             }
 
-            addNetworkInterceptor(Interceptor { chain ->
-                val connection = chain.connection()
-                    ?: throw IllegalStateException("No connection")
-
-                val sslSocket = connection.socket() as? SSLSocket
-                    ?: throw IllegalStateException("Not an SSL connection")
-
-                val session = sslSocket.session
-                val rawCerts = try {
-                    session.peerCertificates
-                } catch (e: SSLPeerUnverifiedException) {
-                    throw IllegalStateException("Certificate not available yet: ${e.message}")
-                }
-
-                val serverCert = rawCerts.firstOrNull() as? X509Certificate
-                    ?: throw IllegalStateException("No certificates found")
-
-                val hash = certificateManager.getX509CertificateFingerprint(serverCert)
-
-                val originalResponse = chain.proceed(chain.request())
-
-                return@Interceptor originalResponse.newBuilder()
-                    .header(KtorFactory.SERVER_CERTIFICATE_HASH_HEADER, hash) // <--- Добавляем в ОТВЕТ
-                    .build()
-            })
+            addNetworkInterceptor(serverHashInterrupter)
         }
     }
+
+    fun createUnlockClient(certificate: Certificate, trustedServerHashFingerprint: String): HttpClient =
+        createDefaultClient {
+            engine {
+                config {
+                    val trustManager = TrustManagerByServerCertificateHash(
+                        certificateManager = certificateManager,
+                        expectedServerHash = trustedServerHashFingerprint
+                    )
+                    sslSocketFactory(
+                        createMtlsContext(certificate, trustManager).socketFactory,
+                        trustManager
+                    )
+                    hostnameVerifier { _, _ -> true }
+                }
+
+                addNetworkInterceptor(serverHashInterrupter)
+            }
+        }
 
     fun createMtlsContext(certificate: Certificate, trustManager: TrustManager): SSLContext {
         val keyManager = object : X509KeyManager {
             private val alias = "PrivateKeyAlias"
 
-            override fun getClientAliases(keyType: String?, issuers: Array<out Principal>?): Array<String> = arrayOf(alias)
+            override fun getClientAliases(
+                keyType: String?,
+                issuers: Array<out Principal>?
+            ): Array<String> = arrayOf(alias)
 
-            override fun chooseClientAlias(keyType: Array<out String>?, issuers: Array<out Principal>?, socket: Socket?): String = alias
+            override fun chooseClientAlias(
+                keyType: Array<out String>?,
+                issuers: Array<out Principal>?,
+                socket: Socket?
+            ): String = alias
 
-            override fun getServerAliases(keyType: String?, issuers: Array<out Principal>?): Array<String> = arrayOf(alias)
+            override fun getServerAliases(
+                keyType: String?,
+                issuers: Array<out Principal>?
+            ): Array<String> = arrayOf(alias)
 
-            override fun chooseServerAlias(keyType: String?, issuers: Array<out Principal>?, socket: Socket?): String = alias
+            override fun chooseServerAlias(
+                keyType: String?,
+                issuers: Array<out Principal>?,
+                socket: Socket?
+            ): String = alias
 
-            override fun getCertificateChain(requestedAlias: String?): Array<X509Certificate>? = if (requestedAlias == alias) arrayOf(certificate.x509Certificate) else null
+            override fun getCertificateChain(requestedAlias: String?): Array<X509Certificate>? =
+                if (requestedAlias == alias) arrayOf(certificate.x509Certificate) else null
 
-            override fun getPrivateKey(requestedAlias: String?): PrivateKey? = if (requestedAlias == alias) certificate.keyPair.private else null
+            override fun getPrivateKey(requestedAlias: String?): PrivateKey? =
+                if (requestedAlias == alias) certificate.keyPair.private else null
         }
         val context = SSLContext.getInstance("TLS")
         context.init(arrayOf(keyManager), arrayOf(trustManager), null)
         return context
+    }
+
+    private val serverHashInterrupter by lazy {
+        Interceptor { chain ->
+            val connection = chain.connection()
+                ?: throw IllegalStateException("No connection")
+
+            val sslSocket = connection.socket() as? SSLSocket
+                ?: throw IllegalStateException("Not an SSL connection")
+
+            val session = sslSocket.session
+            val rawCerts = try {
+                session.peerCertificates
+            } catch (e: SSLPeerUnverifiedException) {
+                throw IllegalStateException("Certificate not available yet: ${e.message}")
+            }
+
+            val serverCert = rawCerts.firstOrNull() as? X509Certificate
+                ?: throw IllegalStateException("No certificates found")
+
+            val hash = certificateManager.getX509CertificateFingerprint(serverCert)
+
+            val originalResponse = chain.proceed(chain.request())
+
+            return@Interceptor originalResponse.newBuilder()
+                .header(SERVER_CERTIFICATE_HASH_HEADER, hash)
+                .build()
+        }
     }
 
     companion object {

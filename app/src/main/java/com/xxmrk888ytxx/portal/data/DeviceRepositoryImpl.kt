@@ -30,17 +30,25 @@ class DeviceRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun getDeviceById(deviceId: String): Device? = withContext(Dispatchers.IO) {
+        deviceDao.getDeviceById(deviceId)?.toDomainModel()
+    }
+
     override val devices: Flow<List<Device>> = deviceDao.devices.map { deviceList ->
         deviceList.map { deviceEntry ->
-            val clientCertificate = secureStorage.restoreCertificateByAlias(deviceEntry.clientCertificateKeyAlias)
-            Device(
-                deviceId = deviceEntry.deviceId,
-                deviceName = deviceEntry.deviceName,
-                host = deviceEntry.host,
-                clientCertificate = clientCertificate,
-                serverCertificateFingerprint = deviceEntry.serverCertificateFingerprint
-            )
+            deviceEntry.toDomainModel()
         }
+    }
+
+    private suspend fun DeviceEntry.toDomainModel() : Device {
+        val clientCertificate = secureStorage.restoreCertificateByAlias(clientCertificateKeyAlias)
+        return Device(
+            deviceId = deviceId,
+            deviceName = deviceName,
+            host = host,
+            clientCertificate = clientCertificate,
+            serverCertificateFingerprint = serverCertificateFingerprint
+        )
     }
 
 }

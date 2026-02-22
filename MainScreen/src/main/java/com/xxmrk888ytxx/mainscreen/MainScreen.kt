@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.mainscreen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,12 +26,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -71,18 +75,29 @@ fun MainScreen(
         },
         contentWindowInsets = WindowInsets(),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.devices),
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.basicMarquee(),
-                        textAlign = TextAlign.Center,
-                        maxLines = 1
+            Column(
+                Modifier.fillMaxWidth()
+            ) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(R.string.devices),
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.basicMarquee(),
+                            textAlign = TextAlign.Center,
+                            maxLines = 1
+                        )
+                    },
+                    windowInsets = WindowInsets()
+                )
+
+                AnimatedVisibility(screenState.isLoading) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
                     )
-                },
-                windowInsets = WindowInsets()
-            )
+                }
+
+            }
         }
     ) { paddingValues ->
         Box(
@@ -94,7 +109,7 @@ fun MainScreen(
                 targetState = screenState.devices
             ) { devices ->
                 when (devices.isNotEmpty()) {
-                    true -> DeviceList(devices, onEvent)
+                    true -> DeviceList(screenState, onEvent)
                     false -> EmptyDevicesState(onEvent)
                 }
             }
@@ -106,7 +121,7 @@ fun MainScreen(
 
 @Composable
 fun DeviceList(
-    deviceList: ImmutableList<Device>,
+    screenState: ScreenState,
     onEvent: (MainScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -116,11 +131,12 @@ fun DeviceList(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(
-            items = deviceList,
+            items = screenState.devices,
             key = { it.deviceId }
         ) { device ->
             DeviceItem(
                 device = device,
+                isUnlockButtonAvalible = !screenState.isLoading,
                 onEvent = onEvent
             )
         }
@@ -131,6 +147,7 @@ fun DeviceList(
 @Composable
 private fun DeviceItem(
     device: Device,
+    isUnlockButtonAvalible: Boolean,
     onEvent: (MainScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -185,9 +202,10 @@ private fun DeviceItem(
 
             IconButton(
                 onClick = {
-                    // Replace with your unlock event
-                    // onEvent(MainScreenEvent.UnlockDevice(device.id))
-                }
+                    onEvent(MainScreenEvent.SendUnlockRequest(device))
+                },
+                enabled = isUnlockButtonAvalible,
+                modifier = Modifier.alpha(if (isUnlockButtonAvalible) 1f else 0.5f)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.lock_open),
