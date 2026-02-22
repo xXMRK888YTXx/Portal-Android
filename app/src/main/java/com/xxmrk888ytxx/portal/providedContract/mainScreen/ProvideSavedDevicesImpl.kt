@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.portal.providedContract.mainScreen
 
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
+import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.mainscreen.model.Device as MainScreenDevice
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import kotlinx.collections.immutable.ImmutableList
@@ -15,6 +16,7 @@ class ProvideSavedDevicesImpl @Inject constructor(
     override val devices: Flow<ImmutableList<MainScreenDevice>> = deviceRepository.devices
         .map { list -> list.map { device -> MainScreenDevice(
             deviceId = device.deviceId,
-            name = device.host
+            name = device.host,
+            deviceType = DeviceType.WIFI //TODO Change from hardcode
         ) }.toImmutableList() }
 }
