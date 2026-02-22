@@ -7,6 +7,7 @@ sealed interface AddNewDeviceScreenUiEvent : UiEvent {
     data object SelectedBluetooth: AddNewDeviceScreenUiEvent
     data class NextPage(val currentPage: Page): AddNewDeviceScreenUiEvent
     data class PreviousPage(val currentPage: Page): AddNewDeviceScreenUiEvent
+    data class DeviceNameTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
     data class HostTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
     data class PairCodeTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
     data object ConnectToDevice : AddNewDeviceScreenUiEvent

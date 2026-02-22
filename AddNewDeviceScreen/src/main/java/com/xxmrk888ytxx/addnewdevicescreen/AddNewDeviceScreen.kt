@@ -2,9 +2,6 @@ package com.xxmrk888ytxx.addnewdevicescreen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -18,20 +15,25 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
+import com.xxmrk888ytxx.addnewdevicescreen.model.Validator
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
-import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,7 +148,7 @@ fun SuccessPage() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter =  painterResource(R.drawable.check),
+                painter = painterResource(R.drawable.check),
                 contentDescription = null,
                 modifier = Modifier.size(100.dp),
                 tint = MaterialTheme.colorScheme.primary
@@ -174,10 +176,12 @@ fun SuccessPage() {
 
 @Composable
 fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> Unit) {
+    val ipFocusRequester = remember { FocusRequester() }
+    val codeFocusRequester = remember { FocusRequester() }
     val state = remember(state) {
         state as? ScreenState.Wifi ?: ScreenState.Wifi()
     }
-
+    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
@@ -214,6 +218,46 @@ fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEven
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            // Device Name Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = state.deviceName,
+                    onValueChange = {
+                        onEvent(AddNewDeviceScreenUiEvent.DeviceNameTextUpdated(it))
+                    },
+                    label = { Text(stringResource(R.string.device_name)) },
+                    placeholder = {
+                        Text(
+                            text = stringResource(id = R.string.for_example_my_pc_name_pcname_username),
+                            modifier = Modifier.basicMarquee(),
+                            maxLines = 1
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.computer),
+                            contentDescription = null
+                        )
+                    },
+                    isError = state.deviceName.isNotEmpty() && !Validator.isDeviceNameValid(state.deviceName),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { ipFocusRequester.requestFocus() }
+                    ), modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
             // IP Address Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -229,15 +273,22 @@ fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEven
                     placeholder = { Text(stringResource(R.string._192_168_x_x)) },
                     leadingIcon = {
                         Icon(
-                            painter = painterResource(com.xxmrk888ytxx.corecompose.R.drawable.arrow_back),
+                            painter = painterResource(R.drawable.wifi),
                             contentDescription = null
                         )
                     },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier
+                    isError = state.host.isNotEmpty() && !Validator.isHostValid(state.host),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { codeFocusRequester.requestFocus() }
+                    ), modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
+                        .focusRequester(ipFocusRequester)
                 )
             }
 
@@ -258,15 +309,22 @@ fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEven
                     placeholder = { Text(stringResource(R.string._000000)) },
                     leadingIcon = {
                         Icon(
-                            painter = painterResource(com.xxmrk888ytxx.corecompose.R.drawable.arrow_back),
+                            painter = painterResource(R.drawable.password),
                             contentDescription = null
                         )
                     },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                    modifier = Modifier
+                    isError = state.pairCode.isNotEmpty() && !Validator.isPairCodeValid(state.pairCode),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.NumberPassword,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ), modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
+                        .focusRequester(codeFocusRequester)
                 )
             }
         }

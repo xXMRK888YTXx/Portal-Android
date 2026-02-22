@@ -7,6 +7,7 @@ import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
+import com.xxmrk888ytxx.addnewdevicescreen.model.Validator
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import kotlinx.coroutines.flow.update
@@ -37,6 +38,7 @@ class AddNewDeviceViewModel @Inject constructor(
             }
 
             AddNewDeviceScreenUiEvent.FinishConfiguration -> sendNavigateUpSideEffect()
+            is AddNewDeviceScreenUiEvent.DeviceNameTextUpdated -> updateDeviceName(event.text)
         }
     }
 
@@ -92,20 +94,23 @@ class AddNewDeviceViewModel @Inject constructor(
     }
 
     private fun updateWifiState(onUpdate: (ScreenState.Wifi) -> ScreenState.Wifi) {
-        fun isDataValid(screenState: ScreenState.Wifi): Boolean {
-            return screenState.host.isNotEmpty() && screenState.pairCode.length == 6
-        }
-
-
         val currentState = _state.value as? ScreenState.Wifi ?: return
         val newState = onUpdate(currentState)
-        _state.update { newState.copy(isDataValid = isDataValid(newState)) }
+        _state.update { newState.copy(isDataValid = Validator.isWifiStateValid(newState)) }
     }
 
     private fun updateLoadingState(newState: Boolean) {
         when (val currentState = state.value) {
             is ScreenState.Bluetooth -> _state.update { currentState.copy(isLoading = newState) }
             is ScreenState.Wifi -> _state.update { currentState.copy(isLoading = newState) }
+            is ScreenState.NoSelectedType -> {}
+        }
+    }
+
+    private fun updateDeviceName(newName: String) {
+        when (val currentState = state.value) {
+            is ScreenState.Bluetooth -> _state.update { currentState.copy(deviceName = newName) }
+            is ScreenState.Wifi -> _state.update { currentState.copy(deviceName = newName) }
             is ScreenState.NoSelectedType -> {}
         }
     }

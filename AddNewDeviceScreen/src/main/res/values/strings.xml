@@ -16,4 +16,6 @@
     <string name="the_device_is_configured_and_ready_for_operation">The device is configured and ready for operation.</string>
     <string name="next">Next</string>
     <string name="finish">Finish</string>
+    <string name="device_name">Device name</string>
+    <string name="for_example_my_pc_name_pcname_username">For example: My PC name, PCNAME/USERNAME</string>
 </resources>
