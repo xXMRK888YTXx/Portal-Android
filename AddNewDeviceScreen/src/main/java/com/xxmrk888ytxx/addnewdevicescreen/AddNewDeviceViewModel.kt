@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AddNewDeviceViewModel @Inject constructor(
     private val connectToWifiDeviceContract: ConnectToWifiDeviceContract
 ) :
-    SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent, AddNewDeviceScreenSideEffect>(
+    SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent>(
         ScreenState.NoSelectedType
     ) {
 
@@ -82,7 +82,7 @@ class AddNewDeviceViewModel @Inject constructor(
 
     private fun previousPage(currentPage: Page) {
         when (currentPage.id) {
-            0 -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.NavigationBack)
+            0 -> sendNavigateUpSideEffect()
             else -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ScrollToPage(currentPage.id - 1))
         }
     }

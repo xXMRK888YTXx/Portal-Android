@@ -1,10 +1,12 @@
 package com.xxmrk888ytxx.coreandroid
 
 import androidx.lifecycle.ViewModel
+import com.xxmrk888ytxx.coreandroid.mvi.DefaultSideEffect
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
 import com.xxmrk888ytxx.coreandroid.mvi.UiEvent
 import com.xxmrk888ytxx.coreandroid.mvi.UiModel
+import com.xxmrk888ytxx.coreandroid.uiText.UiText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +21,16 @@ abstract class PortalViewModel<STATE, EVENT : UiEvent>(initialState: STATE) : Vi
 }
 
 
-abstract class SideEffectPortalViewModel<STATE, EVENT : UiEvent, EFFECT : SideEffect>(initialState: STATE) :
-    PortalViewModel<STATE, EVENT>(initialState), SideEffectSender<EFFECT> {
-    protected open val sideEffect = MutableSharedFlow<EFFECT>(extraBufferCapacity = 1)
-    override val effect: Flow<EFFECT> = sideEffect.asSharedFlow()
+abstract class SideEffectPortalViewModel<STATE, EVENT : UiEvent>(initialState: STATE) :
+    PortalViewModel<STATE, EVENT>(initialState), SideEffectSender<SideEffect> {
+    protected open val sideEffect = MutableSharedFlow<SideEffect>(extraBufferCapacity = 1)
+    override val effect: Flow<SideEffect> = sideEffect.asSharedFlow()
+
+    protected fun sendNavigateUpSideEffect() {
+        sideEffect.tryEmit(DefaultSideEffect.NavigationBack)
+    }
+
+    protected fun sendToastSideEffect(uiText: UiText) {
+        sideEffect.tryEmit(DefaultSideEffect.ShowToast(uiText))
+    }
 }

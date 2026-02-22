@@ -7,7 +7,7 @@ import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import javax.inject.Inject
 
-class MainScreenViewModel @Inject constructor() : SideEffectPortalViewModel<ScreenState, MainScreenEvent, MainScreenSideEffect>(ScreenState(Unit)), SideEffectSender<MainScreenSideEffect> {
+class MainScreenViewModel @Inject constructor() : SideEffectPortalViewModel<ScreenState, MainScreenEvent>(ScreenState(Unit)) {
 
     override fun handleEvent(event: MainScreenEvent) {
         when(event) {

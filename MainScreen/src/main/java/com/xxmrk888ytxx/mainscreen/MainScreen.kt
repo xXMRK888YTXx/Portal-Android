@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
@@ -22,10 +23,10 @@ import kotlinx.coroutines.flow.Flow
 fun MainScreen(
     screenState: ScreenState,
     onEvent: (MainScreenEvent) -> Unit,
-    sideEffect: Flow<MainScreenSideEffect>
+    sideEffect: Flow<SideEffect>
 ) {
     val navigator = LocalNavigator.current
-    HandleSideEffect(sideEffect) { effect ->
+    HandleSideEffect<MainScreenSideEffect>(sideEffect) { effect ->
         when(effect) {
             MainScreenSideEffect.NavigateToAddNewDeviceScreen -> navigator.fromMainScreenToAddNewDeviceScreen()
         }

@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
+import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
 
@@ -38,13 +39,11 @@ import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
 fun AddNewDeviceScreen(
     state: ScreenState,
     onEvent: (AddNewDeviceScreenUiEvent) -> Unit,
-    sideEffect: Flow<AddNewDeviceScreenSideEffect>
+    sideEffect: Flow<SideEffect>
 ) {
     val pager = rememberPagerState(0) { Page.entries.size }
-    val navigator = LocalNavigator.current
-    HandleSideEffect(sideEffect) { effect ->
+    HandleSideEffect<AddNewDeviceScreenSideEffect>(sideEffect) { effect ->
         when (effect) {
-            AddNewDeviceScreenSideEffect.NavigationBack -> navigator.navigateUp()
             AddNewDeviceScreenSideEffect.ToBluetoothConfigurationPage -> TODO()
             AddNewDeviceScreenSideEffect.ToWifiConfigurationPage -> pager.animateScrollToPage(Page.CONFIGURATION_WIFI.id)
             is AddNewDeviceScreenSideEffect.ScrollToPage -> pager.animateScrollToPage(effect.pageId)

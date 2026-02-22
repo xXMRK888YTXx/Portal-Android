@@ -32,10 +32,10 @@ inline fun <STATE, EVENT : UiEvent, PVM : PortalViewModel<STATE, EVENT>> ScreenC
 }
 
 @Composable
-inline fun <STATE, EVENT : UiEvent, EFFECT : SideEffect, PVM> ScreenContent(
-    content: @Composable (state: STATE, onEvent: (EVENT) -> Unit, sideEffect: Flow<EFFECT>) -> Unit,
+inline fun <STATE, EVENT : UiEvent, PVM> ScreenContent(
+    content: @Composable (state: STATE, onEvent: (EVENT) -> Unit, sideEffect: Flow<SideEffect>) -> Unit,
     portalViewModelFactory: Provider<PVM>
-) where PVM : PortalViewModel<STATE, EVENT>, PVM : SideEffectSender<EFFECT> {
+) where PVM : PortalViewModel<STATE, EVENT>, PVM : SideEffectSender<SideEffect> {
     val viewModel: PVM = viewModel { portalViewModelFactory.get() }
     val state by viewModel.state.collectAsState()
     content(state, viewModel::handleEvent, viewModel.effect)

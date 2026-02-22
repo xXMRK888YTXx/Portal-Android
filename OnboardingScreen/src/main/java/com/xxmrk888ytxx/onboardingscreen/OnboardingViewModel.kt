@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class OnboardingViewModel @Inject constructor(
     private val onboardingFinishedContract: OnboardingFinishedContract
-) : SideEffectPortalViewModel<ScreenState, OnboardingScreenUiEvent, OnboardingScreenSideEffect>(
+) : SideEffectPortalViewModel<ScreenState, OnboardingScreenUiEvent>(
     ScreenState()
 ) {
 
