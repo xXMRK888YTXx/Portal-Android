@@ -16,7 +16,8 @@ class ProvideSavedDevicesImpl @Inject constructor(
     override val devices: Flow<ImmutableList<MainScreenDevice>> = deviceRepository.devices
         .map { list -> list.map { device -> MainScreenDevice(
             deviceId = device.deviceId,
-            name = device.host,
+            host = device.host,
+            deviceName = device.deviceName,
             deviceType = DeviceType.WIFI //TODO Change from hardcode
         ) }.toImmutableList() }
 }

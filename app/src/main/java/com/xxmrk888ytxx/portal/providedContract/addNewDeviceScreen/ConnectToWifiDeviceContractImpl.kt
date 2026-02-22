@@ -1,7 +1,6 @@
 package com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen
 
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToWifiDeviceContract
-import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
@@ -17,6 +16,7 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
 ) : ConnectToWifiDeviceContract {
 
     override suspend fun connect(
+        deviceName: String,
         host: String,
         pairCode: String
     ): Result<Unit> = runCatching(Dispatchers.IO) {
@@ -25,6 +25,7 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
         deviceRepository.saveDevice(
             Device(
                 deviceId = pairResult.clientId,
+                deviceName = deviceName,
                 host = host,
                 clientCertificate = clientCertificate,
                 serverCertificateFingerprint = pairResult.certificateFingerprint

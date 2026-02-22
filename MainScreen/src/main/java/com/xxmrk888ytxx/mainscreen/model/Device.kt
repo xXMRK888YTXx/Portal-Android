@@ -2,7 +2,8 @@ package com.xxmrk888ytxx.mainscreen.model
 
 data class Device(
     val deviceId: String,
-    val name: String,
+    val host: String,
+    val deviceName: String,
     val deviceType: DeviceType
 )
 

@@ -168,14 +168,14 @@ private fun DeviceItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = device.name,
+                    text = device.deviceName,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = device.deviceId,
+                    text = device.host,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,

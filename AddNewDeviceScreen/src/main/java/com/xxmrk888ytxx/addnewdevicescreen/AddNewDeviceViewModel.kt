@@ -45,7 +45,7 @@ class AddNewDeviceViewModel @Inject constructor(
     private fun connectToWifiDevice(value: ScreenState.Wifi) {
         updateLoadingState(true)
         viewModelScope.launch {
-            connectToWifiDeviceContract.connect(value.host, value.pairCode)
+            connectToWifiDeviceContract.connect(value.deviceName, value.host, value.pairCode)
                 .onSuccess {
                     nextPage(Page.SUCCESS)
                 }

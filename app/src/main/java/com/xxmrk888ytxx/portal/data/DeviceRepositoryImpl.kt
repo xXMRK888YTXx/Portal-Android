@@ -22,6 +22,7 @@ class DeviceRepositoryImpl @Inject constructor(
         deviceDao.insertDevice(
             DeviceEntry(
                 deviceId = device.deviceId,
+                deviceName = device.deviceName,
                 host = device.host,
                 serverCertificateFingerprint = device.serverCertificateFingerprint,
                 clientCertificateKeyAlias = keyAlias
@@ -34,6 +35,7 @@ class DeviceRepositoryImpl @Inject constructor(
             val clientCertificate = secureStorage.restoreCertificateByAlias(deviceEntry.clientCertificateKeyAlias)
             Device(
                 deviceId = deviceEntry.deviceId,
+                deviceName = deviceEntry.deviceName,
                 host = deviceEntry.host,
                 clientCertificate = clientCertificate,
                 serverCertificateFingerprint = deviceEntry.serverCertificateFingerprint
