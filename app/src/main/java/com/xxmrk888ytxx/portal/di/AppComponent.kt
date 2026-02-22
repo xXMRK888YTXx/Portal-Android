@@ -7,6 +7,7 @@ import com.xxmrk888ytxx.portal.view.MainActivity
 import com.xxmrk888ytxx.portal.di.module.CoreModule
 import com.xxmrk888ytxx.portal.di.module.DataModule
 import com.xxmrk888ytxx.portal.di.module.DomainModule
+import com.xxmrk888ytxx.portal.di.module.MainScreenModule
 import com.xxmrk888ytxx.portal.di.module.OnboardingScreenModule
 import dagger.BindsInstance
 import dagger.Component
@@ -17,7 +18,8 @@ import dagger.Component
         DataModule::class,
         DomainModule::class,
         OnboardingScreenModule::class,
-        AddNewDeviceModule::class
+        AddNewDeviceModule::class,
+        MainScreenModule::class
     ]
 )
 @AppScope
