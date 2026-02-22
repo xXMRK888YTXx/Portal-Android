@@ -14,7 +14,6 @@ class DeviceUnlockManagerImpl @Inject constructor(
 ) : DeviceUnlockManager {
     override suspend fun unlockWifiDevice(device: Device): Result<Unit> =
         runCatching(Dispatchers.IO) {
-            delay(5000)
             portalApi.unlock(
                 host = device.host,
                 clientId = device.deviceId,
