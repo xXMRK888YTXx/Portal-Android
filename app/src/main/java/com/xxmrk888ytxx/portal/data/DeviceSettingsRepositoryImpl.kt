@@ -14,7 +14,7 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
     private val deviceSettingsDao: DeviceSettingsDao
 ) : DeviceSettingsRepository {
 
-    override suspend fun getDeviceSettingsByDeviceIdOrDefaultSettings(deviceId: String): Flow<DeviceSettings?> =
+    override suspend fun getDeviceSettingsByDeviceId(deviceId: String): Flow<DeviceSettings?> =
         deviceSettingsDao.getDeviceSettingsByDeviceId(deviceId)
             .map {
                 val entry = it ?: return@map null

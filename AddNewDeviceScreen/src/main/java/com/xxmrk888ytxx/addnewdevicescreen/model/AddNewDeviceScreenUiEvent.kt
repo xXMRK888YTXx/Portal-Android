@@ -10,6 +10,7 @@ sealed interface AddNewDeviceScreenUiEvent : UiEvent {
     data class DeviceNameTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
     data class HostTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
     data class PairCodeTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
+    data class AwaitUnlockRequestsChanged(val newValue: Boolean): AddNewDeviceScreenUiEvent
     data object ConnectToDevice : AddNewDeviceScreenUiEvent
     data object FinishConfiguration : AddNewDeviceScreenUiEvent
 }

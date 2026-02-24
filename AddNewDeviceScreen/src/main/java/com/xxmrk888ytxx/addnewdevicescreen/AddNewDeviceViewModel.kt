@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.addnewdevicescreen
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToWifiDeviceContract
+import com.xxmrk888ytxx.addnewdevicescreen.contract.UpdateDeviceSettingsContract
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
@@ -10,17 +11,21 @@ import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
 import com.xxmrk888ytxx.addnewdevicescreen.model.Validator
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddNewDeviceViewModel @Inject constructor(
-    private val connectToWifiDeviceContract: ConnectToWifiDeviceContract
+    private val connectToWifiDeviceContract: ConnectToWifiDeviceContract,
+    private val updateDeviceSettingsContract: UpdateDeviceSettingsContract
 ) :
     SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent>(
         ScreenState.NoSelectedType
     ) {
-
     override fun handleEvent(event: AddNewDeviceScreenUiEvent) {
         when (event) {
             is AddNewDeviceScreenUiEvent.SelectedBluetooth -> bluetoothSelected()
@@ -39,14 +44,27 @@ class AddNewDeviceViewModel @Inject constructor(
 
             AddNewDeviceScreenUiEvent.FinishConfiguration -> sendNavigateUpSideEffect()
             is AddNewDeviceScreenUiEvent.DeviceNameTextUpdated -> updateDeviceName(event.text)
+            is AddNewDeviceScreenUiEvent.AwaitUnlockRequestsChanged -> updateAwaitUnlockRequests(event.newValue)
         }
+    }
+
+    private fun updateAwaitUnlockRequests(value: Boolean) {
+        val screenState = _state.value as? ScreenState.Success ?: return
+        viewModelScope.launch { updateDeviceSettingsContract.updateAwaitUnlockRequests(screenState.deviceSettings.deviceId, value) }
     }
 
     private fun connectToWifiDevice(value: ScreenState.Wifi) {
         updateLoadingState(true)
         viewModelScope.launch {
-            connectToWifiDeviceContract.connect(value.deviceName, value.host, value.pairCode)
-                .onSuccess {
+            connectToWifiDeviceContract.connectAndProvideSettings(value.deviceName, value.host, value.pairCode)
+                .onSuccess { settings ->
+                    viewModelScope.launch {
+                        settings
+                            .catch { sendToastSideEffect(uiText(R.string.something_went_wrong)) }
+                            .collect {
+                                _state.value = ScreenState.Success(it)
+                            }
+                    }
                     nextPage(Page.SUCCESS)
                 }
                 .onFailure {
@@ -78,7 +96,7 @@ class AddNewDeviceViewModel @Inject constructor(
             Page.SELECT_TYPE -> when (state.value) {
                 is ScreenState.Bluetooth -> TODO()
                 is ScreenState.Wifi -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ToWifiConfigurationPage)
-                ScreenState.NoSelectedType -> {}
+                else -> {}
             }
 
             Page.CONFIGURATION_WIFI -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ToSuccessPage)
@@ -103,7 +121,7 @@ class AddNewDeviceViewModel @Inject constructor(
         when (val currentState = state.value) {
             is ScreenState.Bluetooth -> _state.update { currentState.copy(isLoading = newState) }
             is ScreenState.Wifi -> _state.update { currentState.copy(isLoading = newState) }
-            is ScreenState.NoSelectedType -> {}
+            else -> {}
         }
     }
 
@@ -111,7 +129,7 @@ class AddNewDeviceViewModel @Inject constructor(
         when (val currentState = state.value) {
             is ScreenState.Bluetooth -> _state.update { currentState.copy(deviceName = newName) }
             is ScreenState.Wifi -> _state.update { currentState.copy(deviceName = newName) }
-            is ScreenState.NoSelectedType -> {}
+            else -> {}
         }
     }
 }

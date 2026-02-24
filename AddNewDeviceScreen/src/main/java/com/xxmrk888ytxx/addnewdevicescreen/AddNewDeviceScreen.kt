@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,11 +23,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -129,14 +132,15 @@ fun AddNewDeviceScreen(
             when (Page.fromInt(pageId)) {
                 Page.SELECT_TYPE -> SelectTypePage(state, onEvent)
                 Page.CONFIGURATION_WIFI -> WifiConfigurationPage(state, onEvent)
-                Page.SUCCESS -> SuccessPage()
+                Page.SUCCESS -> if (state is ScreenState.Success) SuccessPage(state, onEvent)
             }
         }
     }
 }
 
 @Composable
-fun SuccessPage() {
+fun SuccessPage(screenState: ScreenState.Success, onEvent: (AddNewDeviceScreenUiEvent) -> Unit) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -170,6 +174,33 @@ fun SuccessPage() {
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.medium)
+                    .toggleable(
+                        value = screenState.deviceSettings.isAwaitUnlockRequests,
+                        onValueChange = { onEvent(AddNewDeviceScreenUiEvent.AwaitUnlockRequestsChanged(it)) },
+                        role = Role.Switch
+                    )
+                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Await unlock requests",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Switch(
+                    checked = screenState.deviceSettings.isAwaitUnlockRequests,
+                    onCheckedChange = null
+                )
+            }
         }
     }
 }

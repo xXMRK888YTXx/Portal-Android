@@ -1,7 +1,5 @@
 package com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen
 
-import com.xxmrk888ytxx.coreandroid.fastDebugLog
-import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.exception.DeviceNotFoundException
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
@@ -9,9 +7,6 @@ import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceType
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
-import io.ktor.util.Hash.combine
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -23,7 +18,7 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
 ) : ProvideDeviceInfoContract {
     override suspend fun provideDeviceInfo(deviceId: String): Flow<Device> {
         val domainDevice = deviceRepository.getDeviceById(deviceId)
-        val deviceSetting = deviceSettingsRepository.getDeviceSettingsByDeviceIdOrDefaultSettings(deviceId)
+        val deviceSetting = deviceSettingsRepository.getDeviceSettingsByDeviceId(deviceId)
         return combine(domainDevice,deviceSetting) { device, deviceSettings ->
             val device = device ?: throw DeviceNotFoundException(deviceId)
             val deviceSettings = deviceSettings ?: throw DeviceNotFoundException(deviceId)
