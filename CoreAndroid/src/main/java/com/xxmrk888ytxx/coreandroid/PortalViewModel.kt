@@ -46,4 +46,8 @@ abstract class SideEffectPortalViewModel<STATE, EVENT : UiEvent>(initialState: S
     protected fun sendToastSideEffect(uiText: UiText) {
         sideEffect.tryEmit(DefaultSideEffect.ShowToast(uiText))
     }
+
+    protected fun sendNavigationAction(action: Navigator.() -> Unit) {
+        sideEffect.tryEmit(DefaultSideEffect.NavigationAction(action))
+    }
 }

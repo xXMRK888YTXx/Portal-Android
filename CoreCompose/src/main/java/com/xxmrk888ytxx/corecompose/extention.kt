@@ -22,6 +22,7 @@ inline fun <reified EFFECT : SideEffect> HandleSideEffect(
             when(it) {
                 is DefaultSideEffect.ShowToast -> toastManager.showToast(it.message.asString(context))
                 is DefaultSideEffect.NavigationBack -> navigator.navigateUp()
+                is DefaultSideEffect.NavigationAction -> it.action(navigator)
                 is EFFECT -> onEffect(it)
                 else -> {}
             }
