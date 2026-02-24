@@ -19,7 +19,9 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     SideEffectPortalViewModel<ScreenState, DeviceConfigurationUiEvent>(ScreenState.Loading) {
 
     override fun handleEvent(event: DeviceConfigurationUiEvent) {
-        TODO("Not yet implemented")
+        when(event) {
+            DeviceConfigurationUiEvent.NavigateBack -> sendNavigateUpSideEffect()
+        }
     }
 
     init {

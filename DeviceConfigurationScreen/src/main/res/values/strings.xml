@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="device_not_found">Device not found</string>
+    <string name="device_id">Device ID</string>
+    <string name="device_name">Device Name</string>
+    <string name="device_type">Device Type</string>
+    <string name="host">Host</string>
+    <string name="client_fingerprint">Client Fingerprint</string>
+    <string name="server_fingerprint">Server Fingerprint</string>
+    <string name="remove_device">Remove device</string>
 </resources>
