@@ -1,7 +1,9 @@
 package com.xxmrk888ytxx.portal.di.module
 
+import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
+import com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen.ChangeDeviceSettingsContractImpl
 import com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen.ProvideDeviceInfoContractImpl
 import com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen.RemoveDeviceContractImpl
 import dagger.Binds
@@ -16,4 +18,9 @@ interface DeviceConfigurationScreenModule {
     fun bindsRemoveDeviceContract(
         removeDeviceContractImpl: RemoveDeviceContractImpl
     ) : RemoveDeviceContract
+
+    @Binds
+    fun bindChangeDeviceSettingsContract(
+        changeDeviceSettingsContractImpl: ChangeDeviceSettingsContractImpl
+    ) : ChangeDeviceSettingsContract
 }

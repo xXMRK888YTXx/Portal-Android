@@ -81,7 +81,8 @@ fun DeviceConfigurationScreen(
             screenState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
+            contentKey = { it is ScreenState.DeviceInfo }
         ) { screenState ->
             when (screenState) {
                 is ScreenState.DeviceInfo -> DeviceInfoState(screenState, onEvent)
@@ -132,9 +133,9 @@ fun DeviceInfoState(
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
                 .toggleable(
-                    value = false,
+                    value = screenState.device.awaitUnlockRequests,
                     onValueChange = {
-                        // onEvent(DeviceConfigurationUiEvent.OnAwaitUnlockChanged(it))
+                        onEvent(DeviceConfigurationUiEvent.OnAwaitUnlockChanged(it))
                     },
                     role = Role.Checkbox
                 )
@@ -142,19 +143,18 @@ fun DeviceInfoState(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Switch(
-                checked = false,
+                checked = screenState.device.awaitUnlockRequests,
                 onCheckedChange = null
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "Await unlock requests",
+                text = stringResource(R.string.await_unlock_requests),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Кнопка удаления
         Button(
             onClick = {
                 onEvent(DeviceConfigurationUiEvent.RemoveDevice)

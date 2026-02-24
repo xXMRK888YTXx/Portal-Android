@@ -8,4 +8,5 @@
     <string name="client_fingerprint">Client Fingerprint</string>
     <string name="server_fingerprint">Server Fingerprint</string>
     <string name="remove_device">Remove device</string>
+    <string name="await_unlock_requests">Await unlock requests</string>
 </resources>
