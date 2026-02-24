@@ -26,6 +26,7 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
         val deviceSetting = deviceSettingsRepository.getDeviceSettingsByDeviceIdOrDefaultSettings(deviceId)
         return combine(domainDevice,deviceSetting) { device, deviceSettings ->
             val device = device ?: throw DeviceNotFoundException(deviceId)
+            val deviceSettings = deviceSettings ?: throw DeviceNotFoundException(deviceId)
             Device(
                 deviceId = device.deviceId,
                 deviceName = device.deviceName,

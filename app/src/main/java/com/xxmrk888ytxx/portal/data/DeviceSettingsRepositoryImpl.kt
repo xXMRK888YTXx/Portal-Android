@@ -14,10 +14,10 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
     private val deviceSettingsDao: DeviceSettingsDao
 ) : DeviceSettingsRepository {
 
-    override suspend fun getDeviceSettingsByDeviceIdOrDefaultSettings(deviceId: String): Flow<DeviceSettings> =
+    override suspend fun getDeviceSettingsByDeviceIdOrDefaultSettings(deviceId: String): Flow<DeviceSettings?> =
         deviceSettingsDao.getDeviceSettingsByDeviceId(deviceId)
             .map {
-                val entry = it ?: return@map getDefaultSettings(deviceId)
+                val entry = it ?: return@map null
                 DeviceSettings(
                     deviceId = entry.deviceId,
                     awaitUnlockRequests = entry.awaitUnlockRequests
@@ -33,10 +33,4 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
                 )
             )
         }
-
-    companion object {
-        private fun getDefaultSettings(deviceId: String): DeviceSettings {
-            return DeviceSettings(deviceId = deviceId, awaitUnlockRequests = false)
-        }
-    }
 }

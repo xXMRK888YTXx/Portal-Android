@@ -19,7 +19,7 @@ class DeviceRepositoryImpl @Inject constructor(
     override suspend fun saveDevice(device: Device) = withContext(Dispatchers.IO) {
         val keyAlias = UUID.randomUUID().toString()
         secureStorage.saveCertificateByAlias(keyAlias, device.clientCertificate)
-        deviceDao.insertDevice(
+        deviceDao.upsertDevice(
             DeviceEntry(
                 deviceId = device.deviceId,
                 deviceName = device.deviceName,
