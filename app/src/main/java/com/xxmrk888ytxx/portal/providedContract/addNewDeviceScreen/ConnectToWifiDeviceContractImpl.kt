@@ -32,5 +32,5 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
                 serverCertificateFingerprint = pairResult.certificateFingerprint
             )
         )
-    }.onFailure { fastDebugLog(it) }
+    }
 }

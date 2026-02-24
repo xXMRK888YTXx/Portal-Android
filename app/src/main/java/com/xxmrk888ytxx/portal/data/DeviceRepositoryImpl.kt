@@ -34,6 +34,10 @@ class DeviceRepositoryImpl @Inject constructor(
         deviceDao.getDeviceById(deviceId)?.toDomainModel()
     }
 
+    override suspend fun removeDevice(deviceId: String) {
+        deviceDao.removeDevice(deviceId)
+    }
+
     override val devices: Flow<List<Device>> = deviceDao.devices.map { deviceList ->
         deviceList.map { deviceEntry ->
             deviceEntry.toDomainModel()

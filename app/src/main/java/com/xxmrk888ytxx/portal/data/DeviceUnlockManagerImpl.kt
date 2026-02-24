@@ -20,5 +20,5 @@ class DeviceUnlockManagerImpl @Inject constructor(
                 serverCertificateHash = device.serverCertificateFingerprint,
                 clientCertificate = device.clientCertificate
             ).getOrThrow()
-        }.onFailure { fastDebugLog(it) }
+        }
 }

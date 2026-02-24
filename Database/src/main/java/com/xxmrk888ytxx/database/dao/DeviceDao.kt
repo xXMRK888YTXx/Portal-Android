@@ -16,4 +16,7 @@ interface DeviceDao {
 
     @Insert
     suspend fun insertDevice(deviceEntry: DeviceEntry)
+
+    @Query("DELETE FROM ${DeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId")
+    suspend fun removeDevice(deviceId: String)
 }

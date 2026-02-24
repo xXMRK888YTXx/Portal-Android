@@ -157,8 +157,7 @@ fun DeviceInfoState(
         // Кнопка удаления
         Button(
             onClick = {
-                // Не забудь добавить этот эвент в DeviceConfigurationUiEvent
-                // onEvent(DeviceConfigurationUiEvent.DeleteDevice)
+                onEvent(DeviceConfigurationUiEvent.RemoveDevice)
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
