@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.goals.extensions
+package com.xxmrk888ytxx.portal.utils
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -37,6 +37,16 @@ inline fun <STATE, EVENT : UiEvent, PVM> ScreenContent(
     portalViewModelFactory: Provider<PVM>
 ) where PVM : PortalViewModel<STATE, EVENT>, PVM : SideEffectSender<SideEffect> {
     val viewModel: PVM = viewModel { portalViewModelFactory.get() }
+    val state by viewModel.state.collectAsState()
+    content(state, viewModel::handleEvent, viewModel.effect)
+}
+
+@Composable
+inline fun <STATE, EVENT : UiEvent, reified PVM> ScreenContent(
+    content: @Composable (state: STATE, onEvent: (EVENT) -> Unit, sideEffect: Flow<SideEffect>) -> Unit,
+    crossinline portalViewModelFactory: () -> PVM
+) where PVM : PortalViewModel<STATE, EVENT>, PVM : SideEffectSender<SideEffect> {
+    val viewModel: PVM = viewModel { portalViewModelFactory.invoke() }
     val state by viewModel.state.collectAsState()
     content(state, viewModel::handleEvent, viewModel.effect)
 }

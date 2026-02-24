@@ -26,7 +26,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -42,13 +41,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
-import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
 import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,12 +55,7 @@ fun MainScreen(
     onEvent: (MainScreenEvent) -> Unit,
     sideEffect: Flow<SideEffect>
 ) {
-    val navigator = LocalNavigator.current
-    HandleSideEffect<MainScreenSideEffect>(sideEffect) { effect ->
-        when (effect) {
-            MainScreenSideEffect.NavigateToAddNewDeviceScreen -> navigator.fromMainScreenToAddNewDeviceScreen()
-        }
-    }
+    HandleSideEffect<MainScreenSideEffect>(sideEffect) {}
     Scaffold(
         Modifier.fillMaxSize(),
         floatingActionButton = {
@@ -136,7 +128,7 @@ fun DeviceList(
         ) { device ->
             DeviceItem(
                 device = device,
-                isUnlockButtonAvalible = !screenState.isLoading,
+                isUnlockButtonAvailable = !screenState.isLoading,
                 onEvent = onEvent
             )
         }
@@ -147,14 +139,13 @@ fun DeviceList(
 @Composable
 private fun DeviceItem(
     device: Device,
-    isUnlockButtonAvalible: Boolean,
+    isUnlockButtonAvailable: Boolean,
     onEvent: (MainScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         onClick = {
-            // Triggered when the whole card is clicked
-            // onEvent(MainScreenEvent.OnDeviceClicked(device.id))
+            onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId))
         },
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -204,8 +195,8 @@ private fun DeviceItem(
                 onClick = {
                     onEvent(MainScreenEvent.SendUnlockRequest(device))
                 },
-                enabled = isUnlockButtonAvalible,
-                modifier = Modifier.alpha(if (isUnlockButtonAvalible) 1f else 0.5f)
+                enabled = isUnlockButtonAvailable,
+                modifier = Modifier.alpha(if (isUnlockButtonAvailable) 1f else 0.5f)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.lock_open),

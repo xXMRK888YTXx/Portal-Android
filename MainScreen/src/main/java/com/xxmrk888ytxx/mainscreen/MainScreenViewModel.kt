@@ -31,8 +31,9 @@ class MainScreenViewModel @Inject constructor(
 
     override fun handleEvent(event: MainScreenEvent) {
         when (event) {
-            is MainScreenEvent.AddNewDevice -> sideEffect.tryEmit(MainScreenSideEffect.NavigateToAddNewDeviceScreen)
+            is MainScreenEvent.AddNewDevice -> sendNavigationAction { fromMainScreenToAddNewDeviceScreen() }
             is MainScreenEvent.SendUnlockRequest -> sendUnlockRequest(event.device)
+            is MainScreenEvent.ToDeviceDetailsScreen -> sendNavigationAction { fromMainScreenToDeviceConfigurationScreen(event.deviceId) }
         }
     }
 

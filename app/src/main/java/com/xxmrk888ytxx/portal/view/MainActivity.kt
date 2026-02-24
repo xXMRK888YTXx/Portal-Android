@@ -19,16 +19,14 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.xxmrk888ytxx.addnewdevicescreen.AddNewDeviceScreen
 import com.xxmrk888ytxx.addnewdevicescreen.AddNewDeviceViewModel
-import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
 import com.xxmrk888ytxx.deviceconfigurationscreen.DeviceConfigurationScreen
 import com.xxmrk888ytxx.deviceconfigurationscreen.DeviceConfigurationViewModel
-import com.xxmrk888ytxx.goals.extensions.ScreenContent
-import com.xxmrk888ytxx.goals.extensions.appComponent
+import com.xxmrk888ytxx.portal.utils.ScreenContent
+import com.xxmrk888ytxx.portal.utils.appComponent
 import com.xxmrk888ytxx.mainscreen.MainScreen
 import com.xxmrk888ytxx.mainscreen.MainScreenViewModel
-import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import com.xxmrk888ytxx.onboardingscreen.OnboardingScreen
 import com.xxmrk888ytxx.onboardingscreen.OnboardingViewModel
 import com.xxmrk888ytxx.portal.view.model.Screen
@@ -55,7 +53,7 @@ class MainActivity : ComponentActivity() {
     lateinit var toastManager: ToastManager
 
     @Inject
-    lateinit var deviceConfigurationViewModel: Provider<DeviceConfigurationViewModel>
+    lateinit var deviceConfigurationViewModelFactory: DeviceConfigurationViewModel.Factory
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,8 +94,10 @@ class MainActivity : ComponentActivity() {
                             ScreenContent(::AddNewDeviceScreen, addNewDeviceViewModelFactory)
                         }
 
-                        entry<Screen.DeviceConfigurationScreen> {
-                            ScreenContent(::DeviceConfigurationScreen, deviceConfigurationViewModel)
+                        entry<Screen.DeviceConfigurationScreen> { screen ->
+                            ScreenContent(
+                                ::DeviceConfigurationScreen,
+                                { deviceConfigurationViewModelFactory.create(screen.deviceId) })
                         }
                     },
                     modifier = Modifier.padding(innerPadding)
