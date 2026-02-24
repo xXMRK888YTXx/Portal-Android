@@ -23,5 +23,8 @@ interface DataModule {
 
         @Provides
         fun providesDeviceDao(portalDataBase: PortalDataBase) = portalDataBase.deviceDao
+
+        @Provides
+        fun providesDeviceSettingsDao(portalDataBase: PortalDataBase) = portalDataBase.deviceSettingsDao
     }
 }

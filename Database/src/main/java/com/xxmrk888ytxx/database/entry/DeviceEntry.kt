@@ -8,7 +8,7 @@ import com.xxmrk888ytxx.database.entry.DeviceEntry.Companion.TABLE_NAME
 
 @Entity(
     tableName = TABLE_NAME,
-    indices = [Index("deviceId")]
+    indices = [Index("deviceId", unique = true)]
 )
 data class DeviceEntry(
     @ColumnInfo("deviceId") @PrimaryKey val deviceId: String,

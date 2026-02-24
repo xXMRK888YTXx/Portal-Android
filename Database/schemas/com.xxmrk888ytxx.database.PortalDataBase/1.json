@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c28cc2a8e93e583e35c0be0817d16ce7",
+    "identityHash": "bb4f44fa20790f244ca2c569b1d55774",
     "entities": [
       {
         "tableName": "DeviceTable",
@@ -48,19 +48,67 @@
         "indices": [
           {
             "name": "index_DeviceTable_deviceId",
-            "unique": false,
+            "unique": true,
             "columnNames": [
               "deviceId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_DeviceTable_deviceId` ON `${TABLE_NAME}` (`deviceId`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_DeviceTable_deviceId` ON `${TABLE_NAME}` (`deviceId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "DeviceSettingsTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `awaitUnlockRequests` INTEGER NOT NULL, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "deviceId",
+            "columnName": "deviceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "awaitUnlockRequests",
+            "columnName": "awaitUnlockRequests",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "deviceId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_DeviceSettingsTable_deviceId",
+            "unique": true,
+            "columnNames": [
+              "deviceId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_DeviceSettingsTable_deviceId` ON `${TABLE_NAME}` (`deviceId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "DeviceTable",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "deviceId"
+            ],
+            "referencedColumns": [
+              "deviceId"
+            ]
           }
         ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c28cc2a8e93e583e35c0be0817d16ce7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bb4f44fa20790f244ca2c569b1d55774')"
     ]
   }
 }

@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface DeviceRepository {
     val devices: Flow<List<Device>>
     suspend fun saveDevice(device: Device)
-    suspend fun getDeviceById(deviceId: String): Device?
+    fun getDeviceById(deviceId: String): Flow<Device?>
     suspend fun removeDevice(deviceId: String)
 }

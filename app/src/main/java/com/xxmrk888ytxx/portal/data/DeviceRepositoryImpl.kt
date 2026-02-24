@@ -30,8 +30,8 @@ class DeviceRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getDeviceById(deviceId: String): Device? = withContext(Dispatchers.IO) {
-        deviceDao.getDeviceById(deviceId)?.toDomainModel()
+    override fun getDeviceById(deviceId: String): Flow<Device?> = deviceDao.getDeviceById(deviceId).map { deviceEntry ->
+        deviceEntry?.toDomainModel()
     }
 
     override suspend fun removeDevice(deviceId: String) {

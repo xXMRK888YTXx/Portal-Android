@@ -11,6 +11,8 @@ import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class DeviceConfigurationViewModel @AssistedInject internal constructor(
@@ -38,10 +40,12 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     init {
         viewModelScope.launch {
             provideDeviceInfoContract.provideDeviceInfo(deviceId)
-                .onSuccess { _state.value = ScreenState.DeviceInfo(it) }
-                .onFailure {
+                .catch {
                     sideEffect.emit(DefaultSideEffect.ShowToast(uiText(R.string.device_not_found)))
                     sideEffect.emit(DefaultSideEffect.NavigationBack)
+                }
+                .collect { device ->
+                    _state.value = ScreenState.DeviceInfo(device)
                 }
         }
     }
