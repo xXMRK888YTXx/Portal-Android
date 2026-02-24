@@ -6,6 +6,7 @@ import com.xxmrk888ytxx.portal.di.module.AddNewDeviceModule
 import com.xxmrk888ytxx.portal.view.MainActivity
 import com.xxmrk888ytxx.portal.di.module.CoreModule
 import com.xxmrk888ytxx.portal.di.module.DataModule
+import com.xxmrk888ytxx.portal.di.module.DeviceConfigurationScreenModule
 import com.xxmrk888ytxx.portal.di.module.DomainModule
 import com.xxmrk888ytxx.portal.di.module.MainScreenModule
 import com.xxmrk888ytxx.portal.di.module.OnboardingScreenModule
@@ -19,7 +20,8 @@ import dagger.Component
         DomainModule::class,
         OnboardingScreenModule::class,
         AddNewDeviceModule::class,
-        MainScreenModule::class
+        MainScreenModule::class,
+        DeviceConfigurationScreenModule::class
     ]
 )
 @AppScope

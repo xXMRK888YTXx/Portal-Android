@@ -1,5 +1,7 @@
 package com.xxmrk888ytxx.deviceconfigurationscreen.model
 
-data class ScreenState(
-    val todo: Unit = Unit
-)
+
+sealed interface ScreenState {
+    data object Loading : ScreenState
+    data class DeviceInfo(val device: Device) : ScreenState
+}

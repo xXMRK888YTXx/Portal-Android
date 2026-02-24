@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen
 
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToWifiDeviceContract
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
@@ -31,5 +32,5 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
                 serverCertificateFingerprint = pairResult.certificateFingerprint
             )
         )
-    }
+    }.onFailure { fastDebugLog(it) }
 }
