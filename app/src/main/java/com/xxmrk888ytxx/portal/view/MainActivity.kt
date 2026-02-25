@@ -33,32 +33,20 @@ import com.xxmrk888ytxx.portal.view.model.Screen
 import javax.inject.Inject
 import javax.inject.Provider
 
-class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var activityViewModelFactory: ActivityViewModel.Factory
-    private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
-
+class MainActivity @Inject constructor(
+    private val activityViewModelFactory: ActivityViewModel.Factory,
     //Screen viewModels
-    @Inject
-    lateinit var onboardingViewModelFactory: Provider<OnboardingViewModel>
-
-    @Inject
-    lateinit var mainScreenViewModelFactory: Provider<MainScreenViewModel>
-
-    @Inject
-    lateinit var addNewDeviceViewModelFactory: Provider<AddNewDeviceViewModel>
-
-    @Inject
-    lateinit var toastManager: ToastManager
-
-    @Inject
-    lateinit var deviceConfigurationViewModelFactory: DeviceConfigurationViewModel.Factory
+    private val onboardingViewModelFactory: Provider<OnboardingViewModel>,
+    private val mainScreenViewModelFactory: Provider<MainScreenViewModel>,
+    private val addNewDeviceViewModelFactory: Provider<AddNewDeviceViewModel>,
+    private val toastManager: ToastManager,
+    private val deviceConfigurationViewModelFactory: DeviceConfigurationViewModel.Factory
+) : ComponentActivity() {
+    private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appComponent.inject(this)
         activityViewModel.prepareScreen()
         enableEdgeToEdge()
         installSplashScreen().setKeepOnScreenCondition { !activityViewModel.isScreenReady.value }

@@ -1,0 +1,39 @@
+package com.xxmrk888ytxx.portal
+
+import android.app.Activity
+import android.app.Application
+import android.content.Intent
+import androidx.core.app.AppComponentFactory
+import javax.inject.Provider
+import kotlin.getValue
+
+class PortalComponentFactory : AppComponentFactory() {
+
+    private lateinit var portalApplication: PortalApp
+
+    private val activityProviders: Map<String, Provider<Activity>> by lazy {
+        portalApplication.appComponent.activityProviderMap
+            .mapKeys { (key, _) -> key.name }
+    }
+
+    override fun instantiateApplicationCompat(
+        cl: ClassLoader,
+        className: String
+    ): Application {
+        portalApplication = super.instantiateApplicationCompat(cl, className) as PortalApp
+        return portalApplication
+    }
+
+    override fun instantiateActivityCompat(
+        cl: ClassLoader,
+        className: String,
+        intent: Intent?
+    ): Activity {
+        return activityProviders[className]?.get() ?: super.instantiateActivityCompat(
+            cl,
+            className,
+            intent
+        )
+
+    }
+}

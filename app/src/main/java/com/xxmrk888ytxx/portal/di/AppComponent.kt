@@ -1,8 +1,11 @@
 package com.xxmrk888ytxx.portal.di
 
+import android.app.Activity
 import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.di.module.ActivityBindsModule
 import com.xxmrk888ytxx.portal.di.module.AddNewDeviceModule
+import com.xxmrk888ytxx.portal.di.module.ComponentProvidersModule
 import com.xxmrk888ytxx.portal.view.MainActivity
 import com.xxmrk888ytxx.portal.di.module.CoreModule
 import com.xxmrk888ytxx.portal.di.module.DataModule
@@ -12,6 +15,7 @@ import com.xxmrk888ytxx.portal.di.module.MainScreenModule
 import com.xxmrk888ytxx.portal.di.module.OnboardingScreenModule
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Provider
 
 @Component(
     modules = [
@@ -21,12 +25,14 @@ import dagger.Component
         OnboardingScreenModule::class,
         AddNewDeviceModule::class,
         MainScreenModule::class,
-        DeviceConfigurationScreenModule::class
+        DeviceConfigurationScreenModule::class,
+        ComponentProvidersModule::class,
+        ActivityBindsModule::class,
     ]
 )
 @AppScope
 interface AppComponent {
-    fun inject(mainActivity: MainActivity)
+    val activityProviderMap: Map<Class<out Activity>, @JvmSuppressWildcards Provider<Activity>>
     @Component.Factory
     interface Factory {
         fun create(@BindsInstance context:Context) : AppComponent
