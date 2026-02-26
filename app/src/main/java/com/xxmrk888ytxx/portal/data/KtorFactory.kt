@@ -59,7 +59,7 @@ class KtorFactory @Inject constructor(
             config {
                 val trustManager = AllTrustTrustManager()
                 sslSocketFactory(
-                    createMtlsContext(certificate, trustManager).socketFactory,
+                    createMtlsSSLContext(certificate, trustManager).socketFactory,
                     trustManager
                 )
                 hostnameVerifier { _, _ -> true }
@@ -72,23 +72,29 @@ class KtorFactory @Inject constructor(
     fun createUnlockClient(certificate: Certificate, trustedServerHashFingerprint: String): HttpClient =
         createDefaultClient {
             engine {
-                config {
-                    val trustManager = TrustManagerByServerCertificateHash(
-                        certificateManager = certificateManager,
-                        expectedServerHash = trustedServerHashFingerprint
-                    )
-                    sslSocketFactory(
-                        createMtlsContext(certificate, trustManager).socketFactory,
-                        trustManager
-                    )
-                    hostnameVerifier { _, _ -> true }
-                }
-
-                addNetworkInterceptor(serverHashInterrupter)
+                mtlsConfig(certificate,trustedServerHashFingerprint)
             }
         }
 
-    fun createMtlsContext(certificate: Certificate, trustManager: TrustManager): SSLContext {
+    fun createUnlockWebsocketClient(certificate: Certificate, trustedServerHashFingerprint: String): HttpClient = createDefaultClient {
+        engine { mtlsConfig(certificate,trustedServerHashFingerprint) }
+    }
+
+    private fun OkHttpConfig.mtlsConfig(certificate: Certificate, trustedServerHashFingerprint: String) {
+        config {
+            val trustManager = TrustManagerByServerCertificateHash(
+                certificateManager = certificateManager,
+                expectedServerHash = trustedServerHashFingerprint
+            )
+            sslSocketFactory(
+                createMtlsSSLContext(certificate, trustManager).socketFactory,
+                trustManager
+            )
+            hostnameVerifier { _, _ -> true }
+        }
+    }
+
+    private fun createMtlsSSLContext(certificate: Certificate, trustManager: TrustManager): SSLContext {
         val keyManager = object : X509KeyManager {
             private val alias = "PrivateKeyAlias"
 
