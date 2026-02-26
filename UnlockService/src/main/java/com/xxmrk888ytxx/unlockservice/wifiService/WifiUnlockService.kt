@@ -5,7 +5,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import com.xxmrk888ytxx.unlockservice.R
-import com.xxmrk888ytxx.unlockservice.core.HostEntry
+import com.xxmrk888ytxx.unlockservice.core.ClientEntry
 import com.xxmrk888ytxx.unlockservice.core.NotificationInfo
 import com.xxmrk888ytxx.unlockservice.core.UnlockService
 import com.xxmrk888ytxx.unlockservice.qualifier.WifiNetworkDriver
@@ -32,11 +32,11 @@ class WifiUnlockService @Inject constructor(
         connectivityManager.observeLocalWifi().first { isConnected -> isConnected }
     }
 
-    override suspend fun connect(clientId: String, hostEntry: HostEntry) {
+    override suspend fun connect(clientId: String, clientEntry: ClientEntry) {
         networkDriver.connect(
-            messagesForSendChannel = hostEntry.sendMessagesChannel,
+            messagesForSendChannel = clientEntry.sendMessagesChannel,
             onNewRequestReceived = { request ->
-                hostEntry.unlockRequests.emit(request)
+                clientEntry.unlockRequests.emit(request)
             },
             clientId = clientId
         )

@@ -29,7 +29,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
     internal abstract val notificationInfo: NotificationInfo
     protected val serviceScope = CoroutineScope(Dispatchers.IO)
 
-    protected val clientEntries = mutableMapOf<String, HostEntry>()
+    protected val clientEntries = mutableMapOf<String, ClientEntry>()
 
 
     override fun getUnlockRequestsForHost(clientId: String): Flow<UnlockRequest>? =
@@ -68,7 +68,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
     override fun startListeningUnlockRequest(clientId: String) {
         val job = getPayloadJob(clientId)
-        clientEntries[clientId] = HostEntry(
+        clientEntries[clientId] = ClientEntry(
             connectJob = job,
             sendMessagesChannel = Channel(Channel.BUFFERED),
             unlockRequests = MutableSharedFlow(
@@ -87,7 +87,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
     }
 
     abstract suspend fun waitConnection()
-    abstract suspend fun connect(clientId: String, hostEntry: HostEntry)
+    abstract suspend fun connect(clientId: String, clientEntry: ClientEntry)
 
     protected open suspend fun payload(host: String) {
         var retryDelay = 1_000L
