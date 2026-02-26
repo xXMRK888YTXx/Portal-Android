@@ -8,7 +8,6 @@ import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.unlockservice.R
-import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -30,11 +29,11 @@ abstract class UnlockService : Service(), UnlockServiceController {
     internal abstract val notificationInfo: NotificationInfo
     protected val serviceScope = CoroutineScope(Dispatchers.IO)
 
-    protected val hostEntries = mutableMapOf<String, HostEntry>()
+    protected val clientEntries = mutableMapOf<String, HostEntry>()
 
 
-    override fun getUnlockRequestsForHost(host: String): Flow<UnlockRequest>? =
-        hostEntries[host]?.unlockRequests
+    override fun getUnlockRequestsForHost(clientId: String): Flow<UnlockRequest>? =
+        clientEntries[clientId]?.unlockRequests
 
     override fun onCreate() {
         super.onCreate()
@@ -52,24 +51,24 @@ abstract class UnlockService : Service(), UnlockServiceController {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
-        hostEntries.forEach { (_, entry) ->
+        clientEntries.forEach { (_, entry) ->
             entry.sendMessagesChannel.close()
         }
-        hostEntries.clear()
+        clientEntries.clear()
     }
 
     override fun onBind(intent: Intent?): IBinder? = UnlockBinder()
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun sendMessage(host: String, message: UnlockMessage) {
-        val channel = hostEntries[host]?.sendMessagesChannel ?: return
+    override fun sendMessage(clientId: String, message: UnlockMessage) {
+        val channel = clientEntries[clientId]?.sendMessagesChannel ?: return
         if (channel.isClosedForSend) return
         channel.trySend(message)
     }
 
-    override fun startListeningUnlockRequest(host: String) {
-        val job = getPayloadJob(host)
-        hostEntries[host] = HostEntry(
+    override fun startListeningUnlockRequest(clientId: String) {
+        val job = getPayloadJob(clientId)
+        clientEntries[clientId] = HostEntry(
             connectJob = job,
             sendMessagesChannel = Channel(Channel.BUFFERED),
             unlockRequests = MutableSharedFlow(
@@ -81,14 +80,14 @@ abstract class UnlockService : Service(), UnlockServiceController {
         job.start()
     }
 
-    override fun stopListening(host: String) {
-        val hostEntry = hostEntries.remove(host) ?: return
+    override fun stopListening(clientId: String) {
+        val hostEntry = clientEntries.remove(clientId) ?: return
         hostEntry.connectJob.cancel()
         hostEntry.sendMessagesChannel.close()
     }
 
     abstract suspend fun waitConnection()
-    abstract suspend fun connect(host: String, hostEntry: HostEntry)
+    abstract suspend fun connect(clientId: String, hostEntry: HostEntry)
 
     protected open suspend fun payload(host: String) {
         var retryDelay = 1_000L
@@ -97,7 +96,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
         while (currentCoroutineContext().isActive) {
             try {
                 waitConnection()
-                val entry = hostEntries[host] ?: return
+                val entry = clientEntries[host] ?: return
                 connect(host,entry)
             } catch (e: CancellationException) {
                 throw e

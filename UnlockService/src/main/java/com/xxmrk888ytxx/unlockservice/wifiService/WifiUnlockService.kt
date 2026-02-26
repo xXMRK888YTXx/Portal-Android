@@ -32,13 +32,13 @@ class WifiUnlockService @Inject constructor(
         connectivityManager.observeLocalWifi().first { isConnected -> isConnected }
     }
 
-    override suspend fun connect(host: String, hostEntry: HostEntry) {
+    override suspend fun connect(clientId: String, hostEntry: HostEntry) {
         networkDriver.connect(
             messagesForSendChannel = hostEntry.sendMessagesChannel,
             onNewRequestReceived = { request ->
                 hostEntry.unlockRequests.emit(request)
             },
-            host = host
+            clientId = clientId
         )
     }
 

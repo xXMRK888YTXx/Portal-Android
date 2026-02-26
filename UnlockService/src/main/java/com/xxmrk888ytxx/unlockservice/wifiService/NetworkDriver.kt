@@ -6,7 +6,7 @@ import kotlinx.coroutines.channels.Channel
 
 interface NetworkDriver {
     suspend fun connect(
-        host: String,
+        clientId: String,
         messagesForSendChannel: Channel<UnlockMessage>,
         onNewRequestReceived: suspend (UnlockRequest) -> Unit
     )
