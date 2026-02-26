@@ -14,12 +14,10 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -74,7 +72,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
         return getUnlockRequestsForHost(clientId)!!
     }
 
-    override fun stopListening(clientId: String) {
+    override fun stopListeningUnlockRequest(clientId: String) {
         val clientEntry = clientEntries.remove(clientId) ?: return
         clientEntry.connectJob.cancel()
         clientEntry.unlockRequests.close()
@@ -111,7 +109,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
     }
 
     private fun getPayloadJob(host: String): Job =
-        serviceScope.launch(Dispatchers.IO, start = CoroutineStart.LAZY) { payload(host) }.also { it.invokeOnCompletion { stopListening(host) } }
+        serviceScope.launch(Dispatchers.IO, start = CoroutineStart.LAZY) { payload(host) }.also { it.invokeOnCompletion { stopListeningUnlockRequest(host) } }
 
     companion object {
         const val FOREGROUND_CHANNEL_ID = "foreground_notification"
