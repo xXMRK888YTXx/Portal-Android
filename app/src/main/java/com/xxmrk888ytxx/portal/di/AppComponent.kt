@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.portal.di
 
 import android.app.Activity
+import android.app.Service
 import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.di.module.ActivityBindsModule
@@ -13,6 +14,8 @@ import com.xxmrk888ytxx.portal.di.module.DeviceConfigurationScreenModule
 import com.xxmrk888ytxx.portal.di.module.DomainModule
 import com.xxmrk888ytxx.portal.di.module.MainScreenModule
 import com.xxmrk888ytxx.portal.di.module.OnboardingScreenModule
+import com.xxmrk888ytxx.portal.di.module.ServiceBindsModule
+import com.xxmrk888ytxx.portal.di.module.UnlockServiceModule
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Provider
@@ -28,11 +31,14 @@ import javax.inject.Provider
         DeviceConfigurationScreenModule::class,
         ComponentProvidersModule::class,
         ActivityBindsModule::class,
+        ServiceBindsModule::class,
+        UnlockServiceModule::class
     ]
 )
 @AppScope
 interface AppComponent {
     val activityProviderMap: Map<Class<out Activity>, @JvmSuppressWildcards Provider<Activity>>
+    val serviceProviderMap: Map<Class<out Service>, @JvmSuppressWildcards Provider<Service>>
     @Component.Factory
     interface Factory {
         fun create(@BindsInstance context:Context) : AppComponent

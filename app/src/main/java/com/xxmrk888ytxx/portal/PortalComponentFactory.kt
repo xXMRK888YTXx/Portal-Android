@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal
 
 import android.app.Activity
 import android.app.Application
+import android.app.Service
 import android.content.Intent
 import androidx.core.app.AppComponentFactory
 import javax.inject.Provider
@@ -13,6 +14,11 @@ class PortalComponentFactory : AppComponentFactory() {
 
     private val activityProviders: Map<String, Provider<Activity>> by lazy {
         portalApplication.appComponent.activityProviderMap
+            .mapKeys { (key, _) -> key.name }
+    }
+
+    private val serviceProviders: Map<String, Provider<Service>> by lazy {
+        portalApplication.appComponent.serviceProviderMap
             .mapKeys { (key, _) -> key.name }
     }
 
@@ -28,12 +34,16 @@ class PortalComponentFactory : AppComponentFactory() {
         cl: ClassLoader,
         className: String,
         intent: Intent?
-    ): Activity {
-        return activityProviders[className]?.get() ?: super.instantiateActivityCompat(
-            cl,
-            className,
-            intent
-        )
+    ): Activity = activityProviders[className]?.get() ?: super.instantiateActivityCompat(
+        cl,
+        className,
+        intent
+    )
 
-    }
+    override fun instantiateServiceCompat(
+        cl: ClassLoader,
+        className: String,
+        intent: Intent?
+    ): Service =
+        serviceProviders[className]?.get() ?: super.instantiateServiceCompat(cl, className, intent)
 }
