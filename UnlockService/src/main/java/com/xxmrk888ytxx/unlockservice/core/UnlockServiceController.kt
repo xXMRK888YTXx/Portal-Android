@@ -3,6 +3,8 @@ package com.xxmrk888ytxx.unlockservice.core
 import kotlinx.coroutines.flow.Flow
 
 interface UnlockServiceController {
-    val unlockRequests: Flow<UnlockRequest>
-    fun sendMessage(message: UnlockMessage)
+    fun getUnlockRequestsForHost(host: String): Flow<UnlockRequest>?
+    fun sendMessage(host: String, message: UnlockMessage)
+    fun startListeningUnlockRequest(host: String)
+    fun stopListening(host: String)
 }
