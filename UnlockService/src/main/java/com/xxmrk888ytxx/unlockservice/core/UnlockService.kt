@@ -20,6 +20,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
@@ -33,7 +34,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
 
     override fun getUnlockRequestsForHost(clientId: String): Flow<UnlockRequest>? =
-        clientEntries[clientId]?.unlockRequests
+        clientEntries[clientId]?.unlockRequests?.receiveAsFlow()
 
     override fun onCreate() {
         super.onCreate()
@@ -51,10 +52,6 @@ abstract class UnlockService : Service(), UnlockServiceController {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
-        clientEntries.forEach { (_, entry) ->
-            entry.sendMessagesChannel.close()
-        }
-        clientEntries.clear()
     }
 
     override fun onBind(intent: Intent?): IBinder? = UnlockBinder()
@@ -66,38 +63,36 @@ abstract class UnlockService : Service(), UnlockServiceController {
         channel.trySend(message)
     }
 
-    override fun startListeningUnlockRequest(clientId: String) {
+    override fun startListeningUnlockRequest(clientId: String): Flow<UnlockRequest> {
         val job = getPayloadJob(clientId)
         clientEntries[clientId] = ClientEntry(
             connectJob = job,
             sendMessagesChannel = Channel(Channel.BUFFERED),
-            unlockRequests = MutableSharedFlow(
-                replay = 0,
-                extraBufferCapacity = 1,
-                onBufferOverflow = BufferOverflow.DROP_OLDEST
-            )
+            unlockRequests = Channel(capacity = Channel.BUFFERED)
         )
         job.start()
+        return getUnlockRequestsForHost(clientId)!!
     }
 
     override fun stopListening(clientId: String) {
-        val hostEntry = clientEntries.remove(clientId) ?: return
-        hostEntry.connectJob.cancel()
-        hostEntry.sendMessagesChannel.close()
+        val clientEntry = clientEntries.remove(clientId) ?: return
+        clientEntry.connectJob.cancel()
+        clientEntry.unlockRequests.close()
+        clientEntry.sendMessagesChannel.close()
     }
 
     abstract suspend fun waitConnection()
     abstract suspend fun connect(clientId: String, clientEntry: ClientEntry)
 
-    protected open suspend fun payload(host: String) {
+    protected open suspend fun payload(clientId: String) {
         var retryDelay = 1_000L
         val maxDelay = 60_000L
 
         while (currentCoroutineContext().isActive) {
             try {
                 waitConnection()
-                val entry = clientEntries[host] ?: return
-                connect(host,entry)
+                val entry = clientEntries[clientId] ?: return
+                connect(clientId,entry)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

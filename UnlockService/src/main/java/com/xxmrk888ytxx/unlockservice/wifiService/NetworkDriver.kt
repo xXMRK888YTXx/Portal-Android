@@ -8,6 +8,6 @@ interface NetworkDriver {
     suspend fun connect(
         clientId: String,
         messagesForSendChannel: Channel<UnlockMessage>,
-        onNewRequestReceived: suspend (UnlockRequest) -> Unit
+        receivedRequestChannel: Channel<UnlockRequest>,
     )
 }

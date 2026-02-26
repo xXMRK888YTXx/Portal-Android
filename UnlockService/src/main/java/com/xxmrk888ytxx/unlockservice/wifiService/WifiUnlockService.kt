@@ -35,9 +35,7 @@ class WifiUnlockService @Inject constructor(
     override suspend fun connect(clientId: String, clientEntry: ClientEntry) {
         networkDriver.connect(
             messagesForSendChannel = clientEntry.sendMessagesChannel,
-            onNewRequestReceived = { request ->
-                clientEntry.unlockRequests.emit(request)
-            },
+            receivedRequestChannel = clientEntry.unlockRequests,
             clientId = clientId
         )
     }

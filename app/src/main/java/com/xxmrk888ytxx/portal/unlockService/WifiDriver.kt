@@ -10,12 +10,13 @@ import javax.inject.Inject
 class WifiDriver @Inject constructor(
     private val ktorFactory: KtorFactory
 ) : NetworkDriver {
-
     override suspend fun connect(
         clientId: String,
         messagesForSendChannel: Channel<UnlockMessage>,
-        onNewRequestReceived: suspend (UnlockRequest) -> Unit
+        receivedRequestChannel: Channel<UnlockRequest>
     ) {
         TODO("Not yet implemented")
     }
+
+
 }
