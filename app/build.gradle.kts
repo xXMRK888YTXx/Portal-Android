@@ -48,13 +48,14 @@ extensions.configure<ApplicationExtension> {
 }
 
 dependencies {
-    implementation(project(":CoreCompose"))
-    implementation(project(":OnboardingScreen"))
-    implementation(project(":PreferencesStorage"))
-    implementation(project(":MainScreen"))
-    implementation(project(":AddNewDeviceScreen"))
-    implementation(project(":Database"))
-    implementation(project(":DeviceConfigurationScreen"))
+    implementation(projects.coreCompose)
+    implementation(projects.onboardingScreen)
+    implementation(projects.preferencesStorage)
+    implementation(projects.mainScreen)
+    implementation(projects.addNewDeviceScreen)
+    implementation(projects.database)
+    implementation(projects.deviceConfigurationScreen)
+    implementation(projects.unlockService)
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)
