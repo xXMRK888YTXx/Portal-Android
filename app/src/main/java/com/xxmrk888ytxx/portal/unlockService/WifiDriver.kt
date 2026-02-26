@@ -7,7 +7,9 @@ import kotlinx.coroutines.channels.Channel
 import javax.inject.Inject
 
 class WifiDriver @Inject constructor() : NetworkDriver {
+
     override suspend fun connect(
+        host: String,
         messagesForSendChannel: Channel<UnlockMessage>,
         onNewRequestReceived: suspend (UnlockRequest) -> Unit
     ) {
