@@ -116,7 +116,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
     protected open suspend fun payload(clientId: String) {
         var retryDelay = 500L
-        val maxDelay = 5_000L
+        val maxDelay = 3_000L
 
         while (currentCoroutineContext().isActive) {
             try {
