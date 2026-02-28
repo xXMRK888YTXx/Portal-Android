@@ -9,4 +9,9 @@ class PortalApp : Application() {
     val appComponent: AppComponent by lazy {
         DaggerAppComponent.factory().create(this)
     }
+
+    override fun onCreate() {
+        super.onCreate()
+        appComponent.awaitUnlockRequestManager.restoreUnlockState()
+    }
 }

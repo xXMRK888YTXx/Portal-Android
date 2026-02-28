@@ -16,6 +16,7 @@ import com.xxmrk888ytxx.portal.di.module.MainScreenModule
 import com.xxmrk888ytxx.portal.di.module.OnboardingScreenModule
 import com.xxmrk888ytxx.portal.di.module.ServiceBindsModule
 import com.xxmrk888ytxx.portal.di.module.UnlockServiceModule
+import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Provider
@@ -39,6 +40,7 @@ import javax.inject.Provider
 interface AppComponent {
     val activityProviderMap: Map<Class<out Activity>, @JvmSuppressWildcards Provider<Activity>>
     val serviceProviderMap: Map<Class<out Service>, @JvmSuppressWildcards Provider<Service>>
+    val awaitUnlockRequestManager: AwaitUnlockRequestManager
     @Component.Factory
     interface Factory {
         fun create(@BindsInstance context:Context) : AppComponent

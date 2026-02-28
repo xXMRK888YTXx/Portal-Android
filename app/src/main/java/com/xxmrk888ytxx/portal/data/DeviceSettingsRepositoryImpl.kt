@@ -14,14 +14,16 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
     private val deviceSettingsDao: DeviceSettingsDao
 ) : DeviceSettingsRepository {
 
+    override val deviceSettings: Flow<List<DeviceSettings>> =
+        deviceSettingsDao.deviceSettings.map { list ->
+            list.map { entry -> entry.toDomainModel() }
+        }
+
     override suspend fun getDeviceSettingsByDeviceId(deviceId: String): Flow<DeviceSettings?> =
         deviceSettingsDao.getDeviceSettingsByDeviceId(deviceId)
             .map {
                 val entry = it ?: return@map null
-                DeviceSettings(
-                    deviceId = entry.deviceId,
-                    awaitUnlockRequests = entry.awaitUnlockRequests
-                )
+                entry.toDomainModel()
             }
 
     override suspend fun updateDeviceSettings(deviceSettings: DeviceSettings) =
@@ -33,4 +35,11 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
                 )
             )
         }
+
+    private fun DeviceSettingsEntry.toDomainModel(): DeviceSettings {
+        return DeviceSettings(
+            deviceId = deviceId,
+            awaitUnlockRequests = awaitUnlockRequests
+        )
+    }
 }

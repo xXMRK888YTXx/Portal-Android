@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
+import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
 import com.xxmrk888ytxx.portal.exception.ServiceControllerException
 import com.xxmrk888ytxx.unlockservice.core.UnlockMessage
 import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
@@ -28,9 +30,13 @@ class UnlockServiceManagerImpl @Inject constructor(
     private val _wifiServiceController = MutableStateFlow<UnlockServiceController?>(null)
     private val wifiServiceMutex = Mutex()
 
-    override suspend fun startListeningUnlockRequest(clientId: String): Result<Flow<UnlockRequest>> = wrapServiceOperation {
+    override suspend fun startListeningUnlockRequest(clientId: String): Result<Flow<UnlockServiceRequest>> = wrapServiceOperation {
         val controller = connectToWifiService()
-        controller.startListeningUnlockRequest(clientId)
+        controller.startListeningUnlockRequest(clientId).map {
+            when (it) {
+                UnlockRequest.Auth -> UnlockServiceRequest.Auth
+            }
+        }
     }
 
     override suspend fun stopListeningUnlockRequest(clientId: String): Result<Unit> = wrapServiceOperation {
