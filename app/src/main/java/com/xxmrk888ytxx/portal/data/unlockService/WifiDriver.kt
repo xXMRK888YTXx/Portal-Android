@@ -54,7 +54,6 @@ class WifiDriver @Inject constructor(
                             )
                         }
                         fastDebugLog("Try to send message: $messageForSend")
-                        fastDebugLog("${Json.encodeToString(remoteMessage)} TEST")
                         sendSerialized(remoteMessage)
                         fastDebugLog("Sent message: $messageForSend")
                     } catch (e: CancellationException) { throw e }
