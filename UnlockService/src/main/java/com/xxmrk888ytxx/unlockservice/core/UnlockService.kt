@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.unlockservice.R
+import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -84,7 +85,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
     protected open suspend fun payload(clientId: String) {
         var retryDelay = 1_000L
-        val maxDelay = 60_000L
+        val maxDelay = 10_000L
 
         while (currentCoroutineContext().isActive) {
             try {
@@ -93,14 +94,18 @@ abstract class UnlockService : Service(), UnlockServiceController {
                 connect(clientId,entry)
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: Exception) {
+            }catch (e: InvalidClientIdException) {
+                fastDebugLog(e)
+                return
+            }
+            catch (e: Exception) {
                 fastDebugLog("Exception in payload: $e")
             }
 
             delay(retryDelay)
 
 
-            retryDelay = (retryDelay * 2).coerceAtMost(maxDelay)
+            retryDelay = (retryDelay + 1000L).coerceAtMost(maxDelay)
         }
     }
 
