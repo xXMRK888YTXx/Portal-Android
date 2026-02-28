@@ -7,4 +7,5 @@ interface UnlockServiceController {
     fun stopListeningUnlockRequest(clientId: String)
     fun getUnlockRequestsForHost(clientId: String): Flow<UnlockRequest>?
     fun sendMessage(clientId: String, message: UnlockMessage)
+    fun setIdleModCallback(callback: IdleModDetectedCallback)
 }

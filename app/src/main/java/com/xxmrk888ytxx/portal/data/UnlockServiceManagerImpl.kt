@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
 import com.xxmrk888ytxx.portal.exception.ServiceControllerException
+import com.xxmrk888ytxx.unlockservice.core.IdleModDetectedCallback
 import com.xxmrk888ytxx.unlockservice.core.UnlockMessage
 import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
 import com.xxmrk888ytxx.unlockservice.core.UnlockService
@@ -25,7 +27,7 @@ import javax.inject.Inject
 
 class UnlockServiceManagerImpl @Inject constructor(
     private val context: Context,
-) : UnlockServiceManager, ServiceConnection {
+) : UnlockServiceManager, ServiceConnection, IdleModDetectedCallback {
 
     private val _wifiServiceController = MutableStateFlow<UnlockServiceController?>(null)
     private val wifiServiceMutex = Mutex()
@@ -85,15 +87,25 @@ class UnlockServiceManagerImpl @Inject constructor(
         name: ComponentName?,
         service: IBinder?
     ) {
+        fastDebugLog("$name onServiceConnected")
+
         val controller = (service as? UnlockService.UnlockBinder)?.controller
+        controller?.setIdleModCallback(this)
         when (name?.className) {
             WifiUnlockService::class.qualifiedName -> _wifiServiceController.value = controller
         }
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
-        when (name?.shortClassName) {
-            WifiUnlockService::class.simpleName -> _wifiServiceController.value = null
+        fastDebugLog("$name onServiceDisconnected")
+        when (name?.className) {
+            WifiUnlockService::class.qualifiedName -> _wifiServiceController.value = null
         }
+    }
+
+    override fun isCanStopService(): Boolean {
+        context.unbindService(this)
+        _wifiServiceController.value = null
+        return true
     }
 }

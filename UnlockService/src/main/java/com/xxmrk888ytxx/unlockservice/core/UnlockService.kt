@@ -9,17 +9,22 @@ import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.unlockservice.R
 import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
@@ -27,13 +32,30 @@ import kotlin.coroutines.cancellation.CancellationException
 abstract class UnlockService : Service(), UnlockServiceController {
 
     internal abstract val notificationInfo: NotificationInfo
-    protected val serviceScope = CoroutineScope(Dispatchers.IO)
+    protected val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    protected val clientEntries = mutableMapOf<String, ClientEntry>()
+    protected val clientEntries = MutableStateFlow(mapOf<String, ClientEntry>())
 
+    private var idleModDetectedCallback: IdleModDetectedCallback? = null
+
+    private val stopServiceIfIdleJob = serviceScope.launch {
+        while (isActive) {
+            fastDebugLog("Waiting for idle mod")
+            clientEntries.first { it.isEmpty() }
+            fastDebugLog("Detected idle mod. 5 second before stop the service")
+            delay(5000)
+            if (clientEntries.value.isEmpty()) {
+                fastDebugLog("Try stop the service because no clients")
+                if (idleModDetectedCallback?.isCanStopService() == true)
+                    stopSelf().also { fastDebugLog("Service stopped") }
+            } else {
+                fastDebugLog("Idle mod canceled.")
+            }
+        }
+    }
 
     override fun getUnlockRequestsForHost(clientId: String): Flow<UnlockRequest>? =
-        clientEntries[clientId]?.unlockRequests?.receiveAsFlow()
+        clientEntries.value[clientId]?.unlockRequests?.receiveAsFlow()
 
     override fun onCreate() {
         super.onCreate()
@@ -60,7 +82,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun sendMessage(clientId: String, message: UnlockMessage) {
-        val channel = clientEntries[clientId]?.sendMessagesChannel ?: return
+        val channel = clientEntries.value[clientId]?.sendMessagesChannel ?: return
         if (channel.isClosedForSend) return
         channel.trySend(message)
     }
@@ -68,18 +90,22 @@ abstract class UnlockService : Service(), UnlockServiceController {
     override fun startListeningUnlockRequest(clientId: String): Flow<UnlockRequest> {
         fastDebugLog("Service: $this startListeningUnlockRequest for $clientId")
         val job = getPayloadJob(clientId)
-        clientEntries[clientId] = ClientEntry(
+        val pair = clientId to ClientEntry(
             connectJob = job,
             sendMessagesChannel = Channel(Channel.BUFFERED),
             unlockRequests = Channel(capacity = Channel.BUFFERED)
         )
+        clientEntries.update {
+            it + pair
+        }
         job.start()
         return getUnlockRequestsForHost(clientId)!!
     }
 
     override fun stopListeningUnlockRequest(clientId: String) {
         fastDebugLog("Service: $this stopListeningUnlockRequest for $clientId")
-        val clientEntry = clientEntries.remove(clientId) ?: return
+        val clientEntry = clientEntries.value[clientId] ?: return
+        clientEntries.update { it.toMutableMap().apply { remove(clientId) } }
         clientEntry.connectJob.cancel()
         clientEntry.unlockRequests.close()
         clientEntry.sendMessagesChannel.close()
@@ -96,17 +122,16 @@ abstract class UnlockService : Service(), UnlockServiceController {
             try {
                 fastDebugLog("Service: $this waitConnection")
                 waitConnection()
-                val entry = clientEntries[clientId] ?: return
+                val entry = clientEntries.value[clientId] ?: return
                 fastDebugLog("Service: $this connect")
-                connect(clientId,entry)
+                connect(clientId, entry)
             } catch (e: CancellationException) {
                 fastDebugLog("CancellationException")
                 throw e
-            }catch (e: InvalidClientIdException) {
+            } catch (e: InvalidClientIdException) {
                 fastDebugLog(e)
                 return
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 fastDebugLog("Exception in payload: $e")
             }
 
@@ -117,12 +142,18 @@ abstract class UnlockService : Service(), UnlockServiceController {
         }
     }
 
+
+    override fun setIdleModCallback(callback: IdleModDetectedCallback) {
+        idleModDetectedCallback = callback
+    }
+
     inner class UnlockBinder : Binder() {
         val controller: UnlockServiceController = this@UnlockService
     }
 
     private fun getPayloadJob(host: String): Job =
-        serviceScope.launch(Dispatchers.IO, start = CoroutineStart.LAZY) { payload(host) }.also { it.invokeOnCompletion { stopListeningUnlockRequest(host) } }
+        serviceScope.launch(Dispatchers.IO, start = CoroutineStart.LAZY) { payload(host) }
+            .also { it.invokeOnCompletion { stopListeningUnlockRequest(host) } }
 
     companion object {
         const val FOREGROUND_CHANNEL_ID = "foreground_notification"

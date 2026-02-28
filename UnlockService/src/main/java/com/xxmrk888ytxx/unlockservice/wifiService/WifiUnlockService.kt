@@ -6,6 +6,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import com.xxmrk888ytxx.unlockservice.R
 import com.xxmrk888ytxx.unlockservice.core.ClientEntry
+import com.xxmrk888ytxx.unlockservice.core.IdleModDetectedCallback
 import com.xxmrk888ytxx.unlockservice.core.NotificationInfo
 import com.xxmrk888ytxx.unlockservice.core.UnlockService
 import com.xxmrk888ytxx.unlockservice.qualifier.WifiNetworkDriver
