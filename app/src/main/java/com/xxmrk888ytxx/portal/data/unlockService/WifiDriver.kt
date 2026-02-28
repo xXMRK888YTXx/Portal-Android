@@ -15,6 +15,7 @@ import io.ktor.client.plugins.websocket.sendSerialized
 import io.ktor.client.plugins.websocket.webSocket
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -42,13 +43,13 @@ class WifiDriver @Inject constructor(
         client.webSocket(urlString = host) {
             fastDebugLog("Connected to websocket server")
 
-
-            val senderJob = launch {
+            //Send coroutine
+            launch {
                 for (messageForSend in messagesForSendChannel) {
                     try {
                         val remoteMessage = when(messageForSend) {
-                            UnlockMessage.Unlock -> RemoteUnlockMessage(
-                                type = UNLOCK_MESSAGE_TYPE
+                            UnlockMessage.ApproveUnlock -> RemoteUnlockMessage.ApproveUnlock(
+                                clientId = clientId
                             )
                         }
                         fastDebugLog("Try to send message: $messageForSend")
@@ -62,11 +63,12 @@ class WifiDriver @Inject constructor(
                 }
             }
 
-            while (isActive) {
+            //Read loop
+            while (currentCoroutineContext().isActive) {
                 fastDebugLog("Waiting messages")
                 val response = receiveDeserialized<RemoteUnlockRequest>()
                 val localRequest = when(response.type) {
-                    AUTH_REQUEST_TYPE -> UnlockRequest.Auth
+                    UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth
                     else -> null
                 }
                 fastDebugLog("Received message: $response")
@@ -80,8 +82,7 @@ class WifiDriver @Inject constructor(
     }
 
     companion object {
-        const val AUTH_REQUEST_TYPE = "auth"
-        const val UNLOCK_MESSAGE_TYPE = "unlock_request"
+        const val UNLOCK_REQUEST_TYPE = "unlock_request"
     }
 
 

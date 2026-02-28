@@ -61,7 +61,7 @@ class UnlockServiceManagerImpl @Inject constructor(
     ): Result<Unit> = wrapServiceOperation {
         val controller = connectToWifiService()
         val message = when (message) {
-            UnlockServiceMessage.Unlock -> UnlockMessage.Unlock
+            UnlockServiceMessage.Unlock -> UnlockMessage.ApproveUnlock
         }
         controller.sendMessage(clientId, message)
     }

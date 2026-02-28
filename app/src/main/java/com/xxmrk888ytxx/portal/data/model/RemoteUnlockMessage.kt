@@ -3,7 +3,21 @@ package com.xxmrk888ytxx.portal.data.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class RemoteUnlockMessage(
-    @SerialName("type") val type: String,
-)
+
+sealed interface RemoteUnlockMessage{
+    val clientId: String
+    val type: String
+    val status: String
+
+    @Serializable
+    data class ApproveUnlock(
+        @SerialName("clientId") override val clientId: String,
+        @SerialName("type") override val type: String = UNLOCK_RESPONSE_TYPE,
+        @SerialName("status") override val status: String = OK_STATUS,
+    ) : RemoteUnlockMessage
+
+    private companion object {
+        const val UNLOCK_RESPONSE_TYPE = "unlock_response"
+        const val OK_STATUS = "ok"
+    }
+}
