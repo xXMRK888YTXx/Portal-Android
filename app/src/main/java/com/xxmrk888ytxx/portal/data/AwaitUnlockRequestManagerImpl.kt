@@ -29,8 +29,17 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
 
     private val settingsObserverJob =
         awaitUnlockRequestManagerScope.launch(start = CoroutineStart.LAZY) {
+            val knownDeviceIds = mutableSetOf<String>()
             deviceServiceManager.deviceSettings.collect { deviceSettings ->
-                fastDebugLog(deviceSettings)
+                val currentDeviceIds = deviceSettings.map { it.deviceId }.toSet()
+                val removedDeviceIds = knownDeviceIds - currentDeviceIds
+                removedDeviceIds.forEach { deviceId ->
+                    disableForDevice(deviceId)
+                }
+
+                knownDeviceIds.clear()
+                knownDeviceIds.addAll(currentDeviceIds)
+
                 deviceSettings.forEach {
                     when (it.awaitUnlockRequests) {
                         true -> enableForDevice(it.deviceId)
@@ -58,7 +67,6 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
     }
 
     override suspend fun disableForDevice(clientId: String) {
-        if (!_enabledListeners.value.contains(clientId)) return
         unlockServiceManager.stopListeningUnlockRequest(clientId)
     }
 
