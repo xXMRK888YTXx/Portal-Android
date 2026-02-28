@@ -48,6 +48,7 @@ class WifiUnlockService @Inject constructor(
 
         if (isConnected) {
             trySend(true)
+            awaitClose {  }
             return@callbackFlow
         }
 

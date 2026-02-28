@@ -29,6 +29,7 @@ import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509KeyManager
+import kotlin.time.Duration.Companion.seconds
 
 class KtorFactory @Inject constructor(
     private val certificateManager: CertificateManager
@@ -82,7 +83,7 @@ class KtorFactory @Inject constructor(
 
             install(WebSockets) {
                 contentConverter = KotlinxWebsocketSerializationConverter(jsonConverter)
-                pingIntervalMillis = 15_000L
+                pingInterval = 3.seconds
             }
             block()
         }

@@ -37,7 +37,9 @@ class WifiDriver @Inject constructor(
             device.clientCertificate,
             device.serverCertificateFingerprint
         )
-        client.webSocket(host = "wss://${device.host}:29170/ws") {
+        val host = "wss://${device.host}:29170/ws"
+        fastDebugLog("Try to connect to websocket server host: $host")
+        client.webSocket(urlString = host) {
             fastDebugLog("Connected to websocket server")
 
 
@@ -49,6 +51,7 @@ class WifiDriver @Inject constructor(
                                 type = UNLOCK_MESSAGE_TYPE
                             )
                         }
+                        fastDebugLog("Try to send message: $messageForSend")
                         sendSerialized(remoteMessage)
                         fastDebugLog("Sent message: $messageForSend")
                     } catch (e: CancellationException) { throw e }
@@ -60,13 +63,14 @@ class WifiDriver @Inject constructor(
             }
 
             while (isActive) {
+                fastDebugLog("Waiting messages")
                 val response = receiveDeserialized<RemoteUnlockRequest>()
                 val localRequest = when(response.type) {
                     AUTH_REQUEST_TYPE -> UnlockRequest.Auth
                     else -> null
                 }
+                fastDebugLog("Received message: $response")
                 if (localRequest != null) {
-                    fastDebugLog("Received message: $response")
                     receivedRequestChannel.send(localRequest)
                 } else {
                     fastDebugLog("Unknown message type: ${response.type}")

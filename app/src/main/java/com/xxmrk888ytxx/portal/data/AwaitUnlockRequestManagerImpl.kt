@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.portal.data
 
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
@@ -29,6 +30,7 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
     private val settingsObserverJob =
         awaitUnlockRequestManagerScope.launch(start = CoroutineStart.LAZY) {
             deviceServiceManager.deviceSettings.collect { deviceSettings ->
+                fastDebugLog(deviceSettings)
                 deviceSettings.forEach {
                     when (it.awaitUnlockRequests) {
                         true -> enableForDevice(it.deviceId)
@@ -52,6 +54,7 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
                     _enabledListeners.value.remove(clientId)
                 }
             }
+            .onFailure { fastDebugLog(it) }
     }
 
     override suspend fun disableForDevice(clientId: String) {

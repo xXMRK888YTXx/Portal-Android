@@ -65,10 +65,9 @@ class UnlockServiceManagerImpl @Inject constructor(
     }
 
     private suspend fun waitForWifiServiceController(): UnlockServiceController =
-        _wifiServiceController.filterNotNull().first()
+        _wifiServiceController.value?.let { return it } ?: _wifiServiceController.filterNotNull().first()
 
-    private suspend fun connectToWifiService(): UnlockServiceController {
-        wifiServiceMutex.lock()
+    private suspend fun connectToWifiService(): UnlockServiceController = wifiServiceMutex.withLock {
         val currentController = _wifiServiceController.value
         if (currentController != null) return currentController
 
@@ -79,7 +78,7 @@ class UnlockServiceManagerImpl @Inject constructor(
                 Context.BIND_AUTO_CREATE
             )
         }
-        return waitForWifiServiceController().also { wifiServiceMutex.unlock() }
+        return waitForWifiServiceController()
     }
 
     override fun onServiceConnected(
@@ -87,8 +86,8 @@ class UnlockServiceManagerImpl @Inject constructor(
         service: IBinder?
     ) {
         val controller = (service as? UnlockService.UnlockBinder)?.controller
-        when (name?.shortClassName) {
-            WifiUnlockService::class.simpleName -> _wifiServiceController.value = controller
+        when (name?.className) {
+            WifiUnlockService::class.qualifiedName -> _wifiServiceController.value = controller
         }
     }
 

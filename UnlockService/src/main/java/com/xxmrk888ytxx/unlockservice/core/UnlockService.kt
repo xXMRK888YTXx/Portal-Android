@@ -46,11 +46,14 @@ abstract class UnlockService : Service(), UnlockServiceController {
             setContentText(getString(notificationInfo.textResId))
         }
         startForeground(notificationInfo.id, notification)
+        fastDebugLog("Service: $this onCreate")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+        fastDebugLog("Service: $this onDestroy")
+
     }
 
     override fun onBind(intent: Intent?): IBinder? = UnlockBinder()
@@ -63,6 +66,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
     }
 
     override fun startListeningUnlockRequest(clientId: String): Flow<UnlockRequest> {
+        fastDebugLog("Service: $this startListeningUnlockRequest for $clientId")
         val job = getPayloadJob(clientId)
         clientEntries[clientId] = ClientEntry(
             connectJob = job,
@@ -74,6 +78,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
     }
 
     override fun stopListeningUnlockRequest(clientId: String) {
+        fastDebugLog("Service: $this stopListeningUnlockRequest for $clientId")
         val clientEntry = clientEntries.remove(clientId) ?: return
         clientEntry.connectJob.cancel()
         clientEntry.unlockRequests.close()
@@ -89,10 +94,13 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
         while (currentCoroutineContext().isActive) {
             try {
+                fastDebugLog("Service: $this waitConnection")
                 waitConnection()
                 val entry = clientEntries[clientId] ?: return
+                fastDebugLog("Service: $this connect")
                 connect(clientId,entry)
             } catch (e: CancellationException) {
+                fastDebugLog("CancellationException")
                 throw e
             }catch (e: InvalidClientIdException) {
                 fastDebugLog(e)
