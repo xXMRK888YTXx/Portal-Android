@@ -115,8 +115,8 @@ abstract class UnlockService : Service(), UnlockServiceController {
     abstract suspend fun connect(clientId: String, clientEntry: ClientEntry)
 
     protected open suspend fun payload(clientId: String) {
-        var retryDelay = 1_000L
-        val maxDelay = 10_000L
+        var retryDelay = 500L
+        val maxDelay = 5_000L
 
         while (currentCoroutineContext().isActive) {
             try {
@@ -138,7 +138,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
             delay(retryDelay)
 
 
-            retryDelay = (retryDelay + 1000L).coerceAtMost(maxDelay)
+            retryDelay = (retryDelay + 250L).coerceAtMost(maxDelay)
         }
     }
 
