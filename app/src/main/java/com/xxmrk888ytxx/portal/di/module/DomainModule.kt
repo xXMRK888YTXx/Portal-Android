@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
 import com.xxmrk888ytxx.portal.data.PortalApiImpl
 import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
+import com.xxmrk888ytxx.portal.data.UnlockServiceManagerImpl
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
@@ -15,6 +16,7 @@ import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import com.xxmrk888ytxx.portal.domain.PortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
+import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import dagger.Binds
 import dagger.Module
 
@@ -55,4 +57,10 @@ interface DomainModule {
     fun bindsDeviceSettingsRepository(
         deviceSettingsRepositoryImpl: DeviceSettingsRepositoryImpl
     ) : DeviceSettingsRepository
+
+    @Binds
+    @AppScope
+    fun bindsUnlockServiceManager(
+        unlockServiceManagerImpl: UnlockServiceManagerImpl
+    ) : UnlockServiceManager
 }
