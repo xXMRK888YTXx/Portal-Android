@@ -11,9 +11,9 @@ sealed interface RemoteUnlockMessage{
 
     @Serializable
     data class ApproveUnlock(
-        @SerialName("clientId") override val clientId: String,
-        @SerialName("type") override val type: String = UNLOCK_RESPONSE_TYPE,
-        @SerialName("status") override val status: String = OK_STATUS,
+        @SerialName("ClientId") override val clientId: String,
+        @SerialName("Type") override val type: String = UNLOCK_RESPONSE_TYPE,
+        @SerialName("Status") override val status: String = OK_STATUS,
     ) : RemoteUnlockMessage
 
     private companion object {

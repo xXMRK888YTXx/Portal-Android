@@ -19,6 +19,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class WifiDriver @Inject constructor(
@@ -53,6 +54,7 @@ class WifiDriver @Inject constructor(
                             )
                         }
                         fastDebugLog("Try to send message: $messageForSend")
+                        fastDebugLog("${Json.encodeToString(remoteMessage)} TEST")
                         sendSerialized(remoteMessage)
                         fastDebugLog("Sent message: $messageForSend")
                     } catch (e: CancellationException) { throw e }

@@ -38,6 +38,7 @@ class KtorFactory @Inject constructor(
     private val jsonConverter: Json by lazy {
         Json {
             ignoreUnknownKeys = true
+            encodeDefaults = true
         }
     }
 
