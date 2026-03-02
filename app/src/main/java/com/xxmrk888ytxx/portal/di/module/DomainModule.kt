@@ -6,6 +6,7 @@ import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
 import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceSettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
+import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
 import com.xxmrk888ytxx.portal.data.PortalApiImpl
 import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
@@ -16,6 +17,7 @@ import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
+import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
@@ -79,4 +81,10 @@ interface DomainModule {
     fun bindsUnlockRequestHandlerImpl(
         unlockRequestHandlerImpl: UnlockRequestHandlerImpl
     ) : UnlockRequestHandler
+
+    @Binds
+    @AppScope
+    fun bindsMdnsManager(
+        mdnsManagerImpl: MdnsManagerImpl
+    ) : MdnsManager
 }
