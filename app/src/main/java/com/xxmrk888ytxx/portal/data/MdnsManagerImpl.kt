@@ -133,10 +133,13 @@ class MdnsManagerImpl @Inject constructor(
     }
 
     private fun stopDiscovery() {
-        nsdManager.stopServiceDiscovery(discoveryListener)
-        if (multicastLock.isHeld) {
-            multicastLock.release()
-        }
+        fastDebugLog("stopDiscovery")
+        try {
+            nsdManager.stopServiceDiscovery(discoveryListener)
+            if (multicastLock.isHeld) {
+                multicastLock.release()
+            }
+        }catch (_: Exception) {}
         _foundedHosts.update { emptyMap() }
     }
 
