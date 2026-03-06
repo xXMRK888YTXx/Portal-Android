@@ -45,7 +45,7 @@ class WifiDriver @Inject constructor(
 //        val host = mdnsManager.waitHostForClient(clientId, MDSN_DISCOVERY_TIMEOUT)
 //            .also { fastDebugLog("In wifiDriver mdns found host: $it") }
 //            ?: device.host.also { fastDebugLog("In wifiDriver mdns not found host. Using default") }
-        val urlString = "wss://$host:29176/ws"
+        val urlString = "wss://$host:29170/ws"
         fastDebugLog("Try to connect to websocket server host: $urlString")
         client.webSocket(urlString = urlString) {
             fastDebugLog("Connected to websocket server")
