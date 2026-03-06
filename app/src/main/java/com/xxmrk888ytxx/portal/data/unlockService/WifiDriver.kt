@@ -41,10 +41,11 @@ class WifiDriver @Inject constructor(
             device.clientCertificate,
             device.serverCertificateFingerprint
         )
-        val host = mdnsManager.waitHostForClient(clientId, MDSN_DISCOVERY_TIMEOUT)
-            .also { fastDebugLog("In wifiDriver mdns found host: $it") }
-            ?: device.host.also { fastDebugLog("In wifiDriver mdns not found host. Using default") }
-        val urlString = "wss://$host:29170/ws"
+        val host = device.host
+//        val host = mdnsManager.waitHostForClient(clientId, MDSN_DISCOVERY_TIMEOUT)
+//            .also { fastDebugLog("In wifiDriver mdns found host: $it") }
+//            ?: device.host.also { fastDebugLog("In wifiDriver mdns not found host. Using default") }
+        val urlString = "wss://$host:29176/ws"
         fastDebugLog("Try to connect to websocket server host: $urlString")
         client.webSocket(urlString = urlString) {
             fastDebugLog("Connected to websocket server")
@@ -90,7 +91,7 @@ class WifiDriver @Inject constructor(
 
     companion object {
         const val UNLOCK_REQUEST_TYPE = "unlock_request"
-        const val MDSN_DISCOVERY_TIMEOUT = 10000L
+        const val MDSN_DISCOVERY_TIMEOUT = 3000L
     }
 
 
