@@ -34,6 +34,7 @@ class MainScreenViewModel @Inject constructor(
             is MainScreenEvent.AddNewDevice -> sendNavigationAction { fromMainScreenToAddNewDeviceScreen() }
             is MainScreenEvent.SendUnlockRequest -> sendUnlockRequest(event.device)
             is MainScreenEvent.ToDeviceDetailsScreen -> sendNavigationAction { fromMainScreenToDeviceConfigurationScreen(event.deviceId) }
+            is MainScreenEvent.CreateShortcut -> TODO()
         }
     }
 

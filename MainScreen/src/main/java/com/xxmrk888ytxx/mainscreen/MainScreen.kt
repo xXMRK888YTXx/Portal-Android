@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,8 +30,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -42,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.mainscreen.model.Device
+import com.xxmrk888ytxx.mainscreen.model.DeviceAction
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
 import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
@@ -143,6 +147,25 @@ private fun DeviceItem(
     onEvent: (MainScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Define actions in one place — easy to extend
+    val actions = remember(isUnlockButtonAvailable) {
+        listOf(
+            DeviceAction(
+                label = "Unlock",
+                icon = R.drawable.lock_open,
+                enabled = isUnlockButtonAvailable,
+                onClick = { onEvent(MainScreenEvent.SendUnlockRequest(device)) }
+            ),
+            DeviceAction(
+                label = "Create Shortcut",
+                icon = R.drawable.shortcut,
+                enabled = true,
+                onClick = { onEvent(MainScreenEvent.CreateShortcut(device)) }
+            ),
+            // Add more actions here as needed
+        )
+    }
+
     Card(
         onClick = {
             onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId))
@@ -152,57 +175,80 @@ private fun DeviceItem(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(vertical = 12.dp)
         ) {
-            Icon(
-                painter = painterResource(
-                    when(device.deviceType) {
-                        DeviceType.WIFI -> R.drawable.wifi
-                        DeviceType.BLUETOOTH -> R.drawable.bluetooth
-                    }
-                ),
-                contentDescription = null,
-                modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = device.deviceName,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = device.host,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            IconButton(
-                onClick = {
-                    onEvent(MainScreenEvent.SendUnlockRequest(device))
-                },
-                enabled = isUnlockButtonAvailable,
-                modifier = Modifier.alpha(if (isUnlockButtonAvailable) 1f else 0.5f)
+            // — Device info row —
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.lock_open),
+                    painter = painterResource(
+                        when (device.deviceType) {
+                            DeviceType.WIFI -> R.drawable.wifi
+                            DeviceType.BLUETOOTH -> R.drawable.bluetooth
+                        }
+                    ),
                     contentDescription = null,
+                    modifier = Modifier.size(40.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = device.deviceName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = device.host,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // — Action chips row —
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                items(actions) { action ->
+                    SuggestionChip(
+                        onClick = action.onClick,
+                        enabled = action.enabled,
+                        label = {
+                            Text(
+                                text = action.label,
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        },
+                        icon = {
+                            Icon(
+                                painter = painterResource(action.icon),
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        },
+                        modifier = Modifier.alpha(if (action.enabled) 1f else 0.5f)
+                    )
+                }
             }
         }
     }
