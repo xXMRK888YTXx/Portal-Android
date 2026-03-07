@@ -26,10 +26,10 @@ data class BiometricAuthOptions internal constructor(
     var onSuccess: () -> Unit = {},
     var onError: () -> Unit = {},
     var onFailed: () -> Unit = {},
-    var title: String = "",
-    var subTitle: String = "",
+    var title: String = "TODO title",
+    var subTitle: String? = null,
     var negativeButtonText: String = "",
-    var description: String = "",
+    var description: String? = null,
 )
 
 /**
