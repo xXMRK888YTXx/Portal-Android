@@ -57,6 +57,7 @@ dependencies {
     implementation(projects.deviceConfigurationScreen)
     implementation(projects.unlockService)
     implementation(projects.biometricAuthentication.compose)
+    implementation(libs.androidx.fragment.ktx)
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)

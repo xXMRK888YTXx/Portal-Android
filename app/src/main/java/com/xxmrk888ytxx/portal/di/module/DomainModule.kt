@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.di.module
 
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
+import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
 import com.xxmrk888ytxx.portal.data.BiometricRequestManager
 import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
 import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
@@ -15,6 +16,7 @@ import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockServiceManagerImpl
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
+import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.BiometricRequestController
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
@@ -98,4 +100,9 @@ interface DomainModule {
     @Binds
     @AppScope
     fun bindsBiometricActivityResultReceiver(biometricRequestManager: BiometricRequestManager) : BiometricActivityResultReceiver
+
+    @Binds
+    fun bindsBiometricDialogController(
+        biometricDialogControllerImpl: BiometricDialogControllerImpl
+    ) : BiometricDialogController
 }

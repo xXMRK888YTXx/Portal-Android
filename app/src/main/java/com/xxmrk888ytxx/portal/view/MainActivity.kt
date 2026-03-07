@@ -12,6 +12,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -29,7 +33,12 @@ import com.xxmrk888ytxx.mainscreen.MainScreen
 import com.xxmrk888ytxx.mainscreen.MainScreenViewModel
 import com.xxmrk888ytxx.onboardingscreen.OnboardingScreen
 import com.xxmrk888ytxx.onboardingscreen.OnboardingViewModel
+import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
+import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
+import com.xxmrk888ytxx.portal.utils.collectBiometricAuthResult
 import com.xxmrk888ytxx.portal.view.model.Screen
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -40,14 +49,17 @@ class MainActivity @Inject constructor(
     private val mainScreenViewModelFactory: Provider<MainScreenViewModel>,
     private val addNewDeviceViewModelFactory: Provider<AddNewDeviceViewModel>,
     private val toastManager: ToastManager,
-    private val deviceConfigurationViewModelFactory: DeviceConfigurationViewModel.Factory
-) : ComponentActivity() {
+    private val deviceConfigurationViewModelFactory: DeviceConfigurationViewModel.Factory,
+    private val biometricActivityResultReceiver: BiometricActivityResultReceiver,
+    private val biometricDialogController: BiometricDialogController
+) : FragmentActivity() {
     private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityViewModel.prepareScreen()
+        collectBiometricAuthResult(biometricActivityResultReceiver, biometricDialogController)
         enableEdgeToEdge()
         installSplashScreen().setKeepOnScreenCondition { !activityViewModel.isScreenReady.value }
         setContentWithThemeAndProviders(

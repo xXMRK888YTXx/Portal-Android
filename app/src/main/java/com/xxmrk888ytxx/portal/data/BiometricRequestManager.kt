@@ -12,10 +12,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.withTimeout
+import javax.inject.Inject
 import kotlin.jvm.Throws
 
 @AppScope
-class BiometricRequestManager : BiometricRequestController, BiometricActivityResultReceiver {
+class BiometricRequestManager @Inject constructor() : BiometricRequestController, BiometricActivityResultReceiver {
 
     private val _biometricAuthRequestForActivity = MutableSharedFlow<Unit>(
         extraBufferCapacity = 1
@@ -37,7 +38,7 @@ class BiometricRequestManager : BiometricRequestController, BiometricActivityRes
         biometricAuthResult.first()
     }
 
-    override suspend fun onNewBiometricAuthResult(result: BiometricAuthResult) {
-        _biometricAuthResult.emit(result)
+    override fun onNewBiometricAuthResult(result: BiometricAuthResult) {
+        _biometricAuthResult.tryEmit(result)
     }
 }

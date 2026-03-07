@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface BiometricActivityResultReceiver {
     val biometricAuthRequestForActivity: Flow<Unit>
-    suspend fun onNewBiometricAuthResult(result: BiometricAuthResult)
+    fun onNewBiometricAuthResult(result: BiometricAuthResult)
 }

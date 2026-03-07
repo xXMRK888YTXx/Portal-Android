@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Portal</string>
+    <string name="verify_with_biometrics">Verify with Biometrics</string>
+    <string name="confirm_your_identity">Confirm your identity</string>
 </resources>

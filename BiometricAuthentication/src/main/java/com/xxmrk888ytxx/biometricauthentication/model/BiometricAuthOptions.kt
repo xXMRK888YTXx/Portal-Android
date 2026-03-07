@@ -26,7 +26,7 @@ data class BiometricAuthOptions internal constructor(
     var onSuccess: () -> Unit = {},
     var onError: () -> Unit = {},
     var onFailed: () -> Unit = {},
-    var title: String = "TODO title",
+    var title: String = throw IllegalArgumentException("Title must be setup for BiometricAuthOptions"),
     var subTitle: String? = null,
     var negativeButtonText: String = "",
     var description: String? = null,

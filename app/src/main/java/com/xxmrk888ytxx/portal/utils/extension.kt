@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.xxmrk888ytxx.coreandroid.PortalViewModel
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
@@ -11,7 +15,11 @@ import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
 import com.xxmrk888ytxx.coreandroid.mvi.UiEvent
 import com.xxmrk888ytxx.portal.PortalApp
 import com.xxmrk888ytxx.portal.di.AppComponent
+import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
+import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Provider
 
 
@@ -50,3 +58,27 @@ inline fun <STATE, EVENT : UiEvent, reified PVM> ScreenContent(
     val state by viewModel.state.collectAsState()
     content(state, viewModel::handleEvent, viewModel.effect)
 }
+
+fun FragmentActivity.collectBiometricAuthResult(
+    biometricActivityResultReceiver: BiometricActivityResultReceiver,
+    biometricDialogController: BiometricDialogController
+) =
+    lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            biometricActivityResultReceiver.biometricAuthRequestForActivity.collect {
+                biometricDialogController.sendRequest(
+                    activity = this@collectBiometricAuthResult,
+                    onSuccess = {
+                        biometricActivityResultReceiver.onNewBiometricAuthResult(
+                            BiometricAuthResult.Success
+                        )
+                    },
+                    onFailed = {
+                        biometricActivityResultReceiver.onNewBiometricAuthResult(
+                            BiometricAuthResult.Failed
+                        )
+                    }
+                )
+            }
+        }
+    }
