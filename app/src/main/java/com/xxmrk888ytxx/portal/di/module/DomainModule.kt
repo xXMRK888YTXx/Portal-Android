@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.di.module
 
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
+import com.xxmrk888ytxx.portal.data.BiometricRequestManager
 import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
 import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceSettingsRepositoryImpl
@@ -13,6 +14,8 @@ import com.xxmrk888ytxx.portal.data.SecureStorageImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockServiceManagerImpl
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
+import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
+import com.xxmrk888ytxx.portal.domain.BiometricRequestController
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
@@ -87,4 +90,12 @@ interface DomainModule {
     fun bindsMdnsManager(
         mdnsManagerImpl: MdnsManagerImpl
     ) : MdnsManager
+
+    @Binds
+    @AppScope
+    fun bindsBiometricRequestController(biometricRequestManager: BiometricRequestManager) : BiometricRequestController
+
+    @Binds
+    @AppScope
+    fun bindsBiometricActivityResultReceiver(biometricRequestManager: BiometricRequestManager) : BiometricActivityResultReceiver
 }
