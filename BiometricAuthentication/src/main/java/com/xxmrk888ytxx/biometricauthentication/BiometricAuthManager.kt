@@ -11,4 +11,5 @@ interface BiometricAuthManager {
         activity: FragmentActivity,
         requestOptions: BiometricAuthOptions.() -> Unit
     )
+    companion object
 }
