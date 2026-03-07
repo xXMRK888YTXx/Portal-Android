@@ -1,7 +1,6 @@
-package com.xxmrk888ytxx.portal.view
+package com.xxmrk888ytxx.portal.view.mainActivity
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -28,17 +24,14 @@ import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
 import com.xxmrk888ytxx.deviceconfigurationscreen.DeviceConfigurationScreen
 import com.xxmrk888ytxx.deviceconfigurationscreen.DeviceConfigurationViewModel
 import com.xxmrk888ytxx.portal.utils.ScreenContent
-import com.xxmrk888ytxx.portal.utils.appComponent
 import com.xxmrk888ytxx.mainscreen.MainScreen
 import com.xxmrk888ytxx.mainscreen.MainScreenViewModel
 import com.xxmrk888ytxx.onboardingscreen.OnboardingScreen
 import com.xxmrk888ytxx.onboardingscreen.OnboardingViewModel
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
-import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
 import com.xxmrk888ytxx.portal.utils.collectBiometricAuthResult
 import com.xxmrk888ytxx.portal.view.model.Screen
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 

@@ -2,7 +2,8 @@ package com.xxmrk888ytxx.portal.di.module
 
 import android.app.Activity
 import com.xxmrk888ytxx.portal.di.key.ActivityKey
-import com.xxmrk888ytxx.portal.view.MainActivity
+import com.xxmrk888ytxx.portal.view.mainActivity.MainActivity
+import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -13,4 +14,9 @@ interface ActivityBindsModule {
     @IntoMap
     @ActivityKey(MainActivity::class)
     fun bindMainActivityToActivityForMultiBinding(activity: MainActivity): Activity
+
+    @Binds
+    @IntoMap
+    @ActivityKey(UnlockScreenActivity::class)
+    fun bindUnlockScreenActivityToActivityForMultiBinding(activity: UnlockScreenActivity): Activity
 }

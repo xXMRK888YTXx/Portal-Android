@@ -7,7 +7,6 @@ import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.di.module.ActivityBindsModule
 import com.xxmrk888ytxx.portal.di.module.AddNewDeviceModule
 import com.xxmrk888ytxx.portal.di.module.ComponentProvidersModule
-import com.xxmrk888ytxx.portal.view.MainActivity
 import com.xxmrk888ytxx.portal.di.module.CoreModule
 import com.xxmrk888ytxx.portal.di.module.DataModule
 import com.xxmrk888ytxx.portal.di.module.DeviceConfigurationScreenModule

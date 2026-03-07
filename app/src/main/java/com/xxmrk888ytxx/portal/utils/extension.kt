@@ -1,6 +1,8 @@
 package com.xxmrk888ytxx.portal.utils
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,6 +23,7 @@ import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Provider
+import kotlin.jvm.java
 
 
 internal val Context.appComponent: AppComponent
@@ -82,3 +85,12 @@ fun FragmentActivity.collectBiometricAuthResult(
             }
         }
     }
+
+@Suppress("DEPRECATION")
+fun <T> Intent.getParsableExtraCompat(name: String, clazz: Class<T>) : T? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getParcelableExtra(name, clazz)
+    } else {
+        getParcelableExtra(name)
+    }
+}

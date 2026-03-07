@@ -1,8 +1,8 @@
-
 plugins {
-   id("portal.android.base")
-   id("com.google.devtools.ksp")
-   id("org.jetbrains.kotlin.plugin.serialization")
+    id("portal.android.base")
+    id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("kotlin-parcelize")
 }
 
 dependencies {

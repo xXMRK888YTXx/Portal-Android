@@ -13,6 +13,7 @@ import com.xxmrk888ytxx.portal.data.PortalApiImpl
 import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
+import com.xxmrk888ytxx.portal.data.UnlockScreenManagerImpl
 import com.xxmrk888ytxx.portal.data.UnlockServiceManagerImpl
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
@@ -27,6 +28,7 @@ import com.xxmrk888ytxx.portal.domain.PortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
+import com.xxmrk888ytxx.portal.domain.UnlockScreenManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import dagger.Binds
 import dagger.Module
@@ -105,4 +107,9 @@ interface DomainModule {
     fun bindsBiometricDialogController(
         biometricDialogControllerImpl: BiometricDialogControllerImpl
     ) : BiometricDialogController
+
+    @Binds
+    fun bindsUnlockScreenManager(
+        unlockScreenManagerImpl: UnlockScreenManagerImpl
+    ) : UnlockScreenManager
 }

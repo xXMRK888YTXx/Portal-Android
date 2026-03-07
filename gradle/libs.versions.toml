@@ -99,6 +99,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose" }
 ksp = { id = "com.google.devtools.ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization" }
+kotlin-parcelize = { id = "kotlin-parcelize" }
 portal-android-feature = { id = "portal.android.feature" }
 portal-android-compose-feature = { id = "portal.android.feature.compose" }
 room = { id = "androidx.room", version.ref = "room" }
