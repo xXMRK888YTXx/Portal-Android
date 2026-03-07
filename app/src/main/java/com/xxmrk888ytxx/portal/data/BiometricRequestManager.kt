@@ -28,10 +28,7 @@ class BiometricRequestManager @Inject constructor() : BiometricRequestController
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    private val biometricAuthResult = MutableSharedFlow<BiometricAuthResult>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    ).onSubscription { _biometricAuthRequestForActivity.emit(Unit) }
+    private val biometricAuthResult = _biometricAuthResult.asSharedFlow().onSubscription { _biometricAuthRequestForActivity.emit(Unit) }
 
     @Throws(TimeoutCancellationException::class)
     override suspend fun waitBiometricAuthResult(timeout: Long): BiometricAuthResult = withTimeout(timeout) {

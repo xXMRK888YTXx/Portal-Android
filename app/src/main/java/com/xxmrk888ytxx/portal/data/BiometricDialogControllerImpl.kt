@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.data
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
 import com.xxmrk888ytxx.biometricauthentication.BiometricAuthManager
+import com.xxmrk888ytxx.biometricauthentication.model.BiometricState
 import com.xxmrk888ytxx.biometricauthentication.model.setOnRequestFailed
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
@@ -17,6 +18,10 @@ class BiometricDialogControllerImpl @Inject constructor(
         onSuccess: () -> Unit,
         onFailed: () -> Unit
     ) {
+        if (biometricAuthManager.getBiometricState != BiometricState.Available) {
+            onFailed()
+            return
+        }
         biometricAuthManager.requestBiometricAuth(activity) {
             this@requestBiometricAuth.onSuccess = onSuccess
             setOnRequestFailed(onFailed)
