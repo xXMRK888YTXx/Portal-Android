@@ -6,8 +6,9 @@ import android.content.Intent
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.data.model.Shortcut
 import com.xxmrk888ytxx.portal.utils.getParsableExtraCompat
+import javax.inject.Inject
 
-class ShortcutPinnedReceiver : BroadcastReceiver() {
+class ShortcutPinnedReceiver @Inject constructor() : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != ACTION_SHORTCUT_PINNED) return
         val shortcut = intent.getParsableExtraCompat(SHORTCUT_DATA_ID_EXTRA, Shortcut::class.java)

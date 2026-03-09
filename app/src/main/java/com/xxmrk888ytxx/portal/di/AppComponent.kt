@@ -2,10 +2,12 @@ package com.xxmrk888ytxx.portal.di
 
 import android.app.Activity
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.di.module.ActivityBindsModule
 import com.xxmrk888ytxx.portal.di.module.AddNewDeviceModule
+import com.xxmrk888ytxx.portal.di.module.BroadcastReceiverBindsModule
 import com.xxmrk888ytxx.portal.di.module.ComponentProvidersModule
 import com.xxmrk888ytxx.portal.di.module.CoreModule
 import com.xxmrk888ytxx.portal.di.module.DataModule
@@ -32,13 +34,16 @@ import javax.inject.Provider
         ComponentProvidersModule::class,
         ActivityBindsModule::class,
         ServiceBindsModule::class,
-        UnlockServiceModule::class
+        UnlockServiceModule::class,
+        BroadcastReceiverBindsModule::class
     ]
 )
 @AppScope
 interface AppComponent {
     val activityProviderMap: Map<Class<out Activity>, @JvmSuppressWildcards Provider<Activity>>
     val serviceProviderMap: Map<Class<out Service>, @JvmSuppressWildcards Provider<Service>>
+    val broadcastReceiverProviderMap: Map<Class<out BroadcastReceiver>, @JvmSuppressWildcards Provider<BroadcastReceiver>>
+
     val awaitUnlockRequestManager: AwaitUnlockRequestManager
     @Component.Factory
     interface Factory {

@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.di.module
 
 import android.app.Activity
 import android.app.Service
+import android.content.BroadcastReceiver
 import dagger.Module
 import dagger.multibindings.Multibinds
 
@@ -12,4 +13,7 @@ interface ComponentProvidersModule {
 
     @Multibinds
     fun provideServices(): Map<Class<out Service>, @JvmSuppressWildcards Service>
+
+    @Multibinds
+    fun provideBroadcastReceivers(): Map<Class<out BroadcastReceiver>, @JvmSuppressWildcards BroadcastReceiver>
 }
