@@ -2,9 +2,12 @@ package com.xxmrk888ytxx.mainscreen
 
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
+import com.xxmrk888ytxx.mainscreen.contract.CreateShortcutContract
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
+import com.xxmrk888ytxx.mainscreen.exception.LauncherNotSupportShortcutException
 import com.xxmrk888ytxx.mainscreen.model.CreateShortcutDialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
@@ -20,6 +23,7 @@ import javax.inject.Inject
 class MainScreenViewModel @Inject constructor(
     private val provideSavedDevices: ProvideSavedDevices,
     private val unlockRequestContract: SendUnlockRequestContract,
+    private val createShortcutContract: CreateShortcutContract
 ) : SideEffectPortalViewModel<ScreenState, MainScreenEvent>(ScreenState()) {
 
     private val isLoading = MutableStateFlow(false)
@@ -60,14 +64,29 @@ class MainScreenViewModel @Inject constructor(
     }
 
     private fun createShortcut() {
+        if (isLoading.value) return
         val createShortcutDialogState =
             createShortcutDialogState.value as? CreateShortcutDialogState.Showed ?: return
         val shortcutOption = ShortcutOption(
-            createShortcutDialogState.clientId,
+            createShortcutDialogState.device,
             createShortcutDialogState.isRequiredBiometricUnlock
         )
         handleEvent(MainScreenEvent.DismissCreateShortcutModelDialog)
-        // TODO
+        isLoading.update { true }
+        viewModelScope.launch {
+            createShortcutContract.createShortcutContract(shortcutOption)
+                .onSuccess {  }
+                .onFailure { error ->
+                    fastDebugLog(error)
+                    val errorMessage = when(error) {
+                        is LauncherNotSupportShortcutException -> {
+                           uiText("Your home screen launcher doesn't support shortcuts.")
+                        }
+                        else -> uiText("Failed to create shortcut. Please try again.")
+                    }
+                    sendToastSideEffect(errorMessage)
+                }
+        }.invokeOnCompletion { isLoading.update { false } }
     }
 
     private fun updateCreateShortcutDialogState(onUpdate: (CreateShortcutDialogState.Showed) -> CreateShortcutDialogState.Showed) {
@@ -78,7 +97,7 @@ class MainScreenViewModel @Inject constructor(
     }
 
     private fun showCreateShortcutDialog(device: Device) {
-        createShortcutDialogState.value = CreateShortcutDialogState.Showed(device.deviceId)
+        createShortcutDialogState.value = CreateShortcutDialogState.Showed(device)
     }
 
     private fun hideCreateShortcutDialog() {

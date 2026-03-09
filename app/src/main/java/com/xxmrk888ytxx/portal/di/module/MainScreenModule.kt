@@ -1,7 +1,9 @@
 package com.xxmrk888ytxx.portal.di.module
 
+import com.xxmrk888ytxx.mainscreen.contract.CreateShortcutContract
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
+import com.xxmrk888ytxx.portal.providedContract.mainScreen.CreateShortcutContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.ProvideSavedDevicesImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SendUnlockRequestContractImpl
 import dagger.Binds
@@ -18,4 +20,9 @@ interface MainScreenModule {
     fun bindsSendUnlockRequestContract(
         sendUnlockRequestContractImpl: SendUnlockRequestContractImpl
     ) : SendUnlockRequestContract
+
+    @Binds
+    fun bindsCreateShortcutContract(
+        createShortcutContractImpl: CreateShortcutContractImpl
+    ): CreateShortcutContract
 }

@@ -1,6 +1,6 @@
 package com.xxmrk888ytxx.mainscreen.model
 
 data class ShortcutOption(
-    val clientId: String,
+    val device: Device,
     val isRequiredBiometricUnlock: Boolean
 )

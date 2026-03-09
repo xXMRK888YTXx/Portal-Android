@@ -30,4 +30,9 @@ class FastUnlockActivity @Inject constructor(
         super.onResume()
         fastUnlockActivityViewModel.requestUnlock(this, intent)
     }
+
+    companion object {
+        const val SHORTCUT_ID_EXTRA = "shortcutId"
+
+    }
 }

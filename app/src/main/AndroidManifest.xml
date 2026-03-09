@@ -42,6 +42,14 @@
             android:name=".view.fastUnlockActivity.FastUnlockActivity"
             android:exported="true"
             android:theme="@style/Theme.Portal.Transparent" />
+
+        <receiver
+            android:name=".data.broadcastReceiver.ShortcutPinnedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.ACTION_SHORTCUT_PINNED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
