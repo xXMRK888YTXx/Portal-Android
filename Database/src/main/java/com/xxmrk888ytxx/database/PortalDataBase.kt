@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.xxmrk888ytxx.database.dao.DeviceDao
 import com.xxmrk888ytxx.database.dao.DeviceSettingsDao
+import com.xxmrk888ytxx.database.dao.ShortcutDao
 import com.xxmrk888ytxx.database.entry.DeviceEntry
 import com.xxmrk888ytxx.database.entry.DeviceSettingsEntry
 import com.xxmrk888ytxx.database.entry.ShortcutEntry
@@ -17,6 +18,7 @@ import com.xxmrk888ytxx.database.entry.ShortcutEntry
 abstract class PortalDataBase : RoomDatabase() {
     abstract val deviceDao: DeviceDao
     abstract val deviceSettingsDao: DeviceSettingsDao
+    abstract val shortcutDao: ShortcutDao
 
     companion object {
         fun createDatabase(context: Context): PortalDataBase {

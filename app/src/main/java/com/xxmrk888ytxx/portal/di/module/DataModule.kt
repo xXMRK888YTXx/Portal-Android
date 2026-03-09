@@ -32,6 +32,9 @@ interface DataModule {
             portalDataBase.deviceSettingsDao
 
         @Provides
+        fun providesShortcutDao(portalDataBase: PortalDataBase) = portalDataBase.shortcutDao
+
+        @Provides
         fun providesBiometricAuthManager(context: Context) =
             BiometricAuthManager.create(context)
     }

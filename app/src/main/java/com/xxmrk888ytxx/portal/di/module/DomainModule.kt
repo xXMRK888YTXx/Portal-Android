@@ -13,6 +13,7 @@ import com.xxmrk888ytxx.portal.data.PortalApiImpl
 import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
 import com.xxmrk888ytxx.portal.data.ShortcutManagerImpl
+import com.xxmrk888ytxx.portal.data.ShortcutRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockScreenManagerImpl
 import com.xxmrk888ytxx.portal.data.UnlockServiceManagerImpl
@@ -29,6 +30,7 @@ import com.xxmrk888ytxx.portal.domain.PortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
+import com.xxmrk888ytxx.portal.domain.ShortcutRepository
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
 import com.xxmrk888ytxx.portal.domain.UnlockScreenManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
@@ -119,4 +121,9 @@ interface DomainModule {
     fun bindsShortcutManager(
         shortcutManagerImpl: ShortcutManagerImpl
     ) : ShortcutManager
+
+    @Binds
+    fun bindsShortcutRepository(
+        shortcutRepositoryImpl: ShortcutRepositoryImpl
+    ) : ShortcutRepository
 }

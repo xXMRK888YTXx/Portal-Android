@@ -15,4 +15,7 @@ interface ShortcutDao {
 
     @Query("SELECT * FROM ${ShortcutEntry.TABLE_NAME} WHERE shortcutId = :shortcutId LIMIT 1")
     suspend fun getShortcut(shortcutId: String): ShortcutEntry?
+
+    @Query("SELECT * FROM ${ShortcutEntry.TABLE_NAME} WHERE deviceId = :deviceId")
+    suspend fun getShortcutsByDeviceId(deviceId: String): List<ShortcutEntry>
 }
