@@ -11,12 +11,14 @@ import com.xxmrk888ytxx.portal.data.broadcastReceiver.ShortcutPinnedReceiver
 import com.xxmrk888ytxx.portal.data.broadcastReceiver.ShortcutPinnedReceiver.Companion.SHORTCUT_DATA_ID_EXTRA
 import com.xxmrk888ytxx.portal.data.model.Shortcut
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
+import com.xxmrk888ytxx.portal.domain.ShortcutRepository
 import com.xxmrk888ytxx.portal.view.fastUnlockActivity.FastUnlockActivity
 import com.xxmrk888ytxx.portal.view.fastUnlockActivity.FastUnlockActivity.Companion.SHORTCUT_ID_EXTRA
 import javax.inject.Inject
 
 class ShortcutManagerImpl @Inject constructor(
     private val context: Context,
+    private val shortcutRepository: ShortcutRepository
 ) : ShortcutManager {
     override suspend fun addShortcut(shortcut: Shortcut, label: String) {
         val targetIntent = Intent(context, FastUnlockActivity::class.java).apply {
@@ -66,6 +68,7 @@ class ShortcutManagerImpl @Inject constructor(
             shortcutsToDisable,
             disabledMessage
         )
+        shortcutRepository.removeShortcut(shortcutId)
     }
 
     override suspend fun isLauncherCanToCreateShortcut(): Boolean = ShortcutManagerCompat.isRequestPinShortcutSupported(context)
