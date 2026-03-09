@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.portal.view.fastUnlockActivity
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
@@ -24,6 +25,7 @@ class FastUnlockActivity @Inject constructor(
                 }
             }
         }
+        setContent {  }
     }
 
     override fun onResume() {

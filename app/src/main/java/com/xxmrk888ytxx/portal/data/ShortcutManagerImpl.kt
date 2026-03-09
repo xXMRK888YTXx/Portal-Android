@@ -22,6 +22,7 @@ class ShortcutManagerImpl @Inject constructor(
         val targetIntent = Intent(context, FastUnlockActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             putExtra(SHORTCUT_ID_EXTRA, shortcut.shortcutId)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
         val shortcutInfo = ShortcutInfoCompat.Builder(context, shortcut.shortcutId)
