@@ -32,7 +32,10 @@ class UnlockScreenActivity @Inject constructor(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        if (unlockScreenViewModel.isValidIntent(intent))
+        if (!unlockScreenViewModel.isValidIntent(intent)) {
+            finish()
+            return
+        }
         setContent {
             setContentWithThemeAndProviders(
                 navigator = unlockScreenViewModel,

@@ -2,4 +2,10 @@
 <resources>
 
     <style name="Theme.Portal" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Portal.Transparent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
 </resources>

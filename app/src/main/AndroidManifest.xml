@@ -37,6 +37,11 @@
             android:name=".view.unlockScreenActivity.UnlockScreenActivity"
             android:exported="false"
             android:theme="@style/Theme.Portal" />
+
+        <activity
+            android:name=".view.fastUnlockActivity.FastUnlockActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Portal.Transparent" />
     </application>
 
 </manifest>
