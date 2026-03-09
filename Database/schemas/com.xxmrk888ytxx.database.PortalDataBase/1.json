@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bb4f44fa20790f244ca2c569b1d55774",
+    "identityHash": "89f0a7f2d31ad1d9d9565fff636207e7",
     "entities": [
       {
         "tableName": "DeviceTable",
@@ -104,11 +104,65 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "ShortcutEntry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shortcutId` TEXT NOT NULL, `deviceId` TEXT NOT NULL, `isRequiredBiometricUnlock` INTEGER NOT NULL, PRIMARY KEY(`shortcutId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "shortcutId",
+            "columnName": "shortcutId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceId",
+            "columnName": "deviceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isRequiredBiometricUnlock",
+            "columnName": "isRequiredBiometricUnlock",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "shortcutId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ShortcutEntry_shortcutId",
+            "unique": true,
+            "columnNames": [
+              "shortcutId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ShortcutEntry_shortcutId` ON `${TABLE_NAME}` (`shortcutId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "DeviceTable",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "deviceId"
+            ],
+            "referencedColumns": [
+              "deviceId"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bb4f44fa20790f244ca2c569b1d55774')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '89f0a7f2d31ad1d9d9565fff636207e7')"
     ]
   }
 }

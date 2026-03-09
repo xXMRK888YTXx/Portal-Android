@@ -8,10 +8,11 @@ import com.xxmrk888ytxx.database.dao.DeviceDao
 import com.xxmrk888ytxx.database.dao.DeviceSettingsDao
 import com.xxmrk888ytxx.database.entry.DeviceEntry
 import com.xxmrk888ytxx.database.entry.DeviceSettingsEntry
+import com.xxmrk888ytxx.database.entry.ShortcutEntry
 
 @Database(
     version = 1,
-    entities = [DeviceEntry::class, DeviceSettingsEntry::class]
+    entities = [DeviceEntry::class, DeviceSettingsEntry::class, ShortcutEntry::class]
 )
 abstract class PortalDataBase : RoomDatabase() {
     abstract val deviceDao: DeviceDao

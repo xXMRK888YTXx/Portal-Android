@@ -12,6 +12,7 @@ import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
 import com.xxmrk888ytxx.portal.data.PortalApiImpl
 import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
+import com.xxmrk888ytxx.portal.data.ShortcutManagerImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockScreenManagerImpl
 import com.xxmrk888ytxx.portal.data.UnlockServiceManagerImpl
@@ -27,6 +28,7 @@ import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
+import com.xxmrk888ytxx.portal.domain.ShortcutManager
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
 import com.xxmrk888ytxx.portal.domain.UnlockScreenManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
@@ -112,4 +114,9 @@ interface DomainModule {
     fun bindsUnlockScreenManager(
         unlockScreenManagerImpl: UnlockScreenManagerImpl
     ) : UnlockScreenManager
+
+    @Binds
+    fun bindsShortcutManager(
+        shortcutManagerImpl: ShortcutManagerImpl
+    ) : ShortcutManager
 }

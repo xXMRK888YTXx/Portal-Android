@@ -4,4 +4,6 @@
     <string name="confirm_your_identity">Confirm your identity</string>
     <string name="requests_for_unlocking">Requests for unlocking</string>
     <string name="is_requesting_unlocking">%1$s is requesting unlocking</string>
+    <string name="the_device_has_been_removed_the_shortcut_is_not_available">The device has been removed, the shortcut is not available.</string>
+    <string name="unlock">Unlock %1$s</string>
 </resources>
