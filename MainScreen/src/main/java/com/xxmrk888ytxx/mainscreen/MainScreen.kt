@@ -26,12 +26,14 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
+import com.xxmrk888ytxx.mainscreen.model.CreateShortcutDialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.DeviceAction
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
@@ -59,6 +62,13 @@ fun MainScreen(
     onEvent: (MainScreenEvent) -> Unit,
     sideEffect: Flow<SideEffect>
 ) {
+
+    val sheetState = rememberModalBottomSheetState()
+    val isCreateShortcutDialogVisible = remember(screenState.createShortcutDialogState) {
+        screenState.createShortcutDialogState is CreateShortcutDialogState.Showed
+    }
+
+
     HandleSideEffect<MainScreenSideEffect>(sideEffect) {}
     Scaffold(
         Modifier.fillMaxSize(),
@@ -110,9 +120,23 @@ fun MainScreen(
                 }
             }
         }
+
+        if (screenState.createShortcutDialogState is CreateShortcutDialogState.Showed) {
+            CreateShortcutBottomSheet(
+                onDismiss = {
+                    onEvent(MainScreenEvent.DismissCreateShortcutModelDialog)
+                },
+                onCreateClick = {
+                    onEvent(MainScreenEvent.CreateShortcut)
+                },
+                onIsRequiredBiometricUnlockStateChanged = {
+                    onEvent(MainScreenEvent.OnIsRequiredBiometricUnlockStateChanged(it))
+                },
+                createShortcutDialogState = screenState.createShortcutDialogState,
+            )
+        }
     }
 }
-
 
 
 @Composable
@@ -160,7 +184,7 @@ private fun DeviceItem(
                 label = "Create Shortcut",
                 icon = R.drawable.shortcut,
                 enabled = true,
-                onClick = { onEvent(MainScreenEvent.CreateShortcut(device)) }
+                onClick = { onEvent(MainScreenEvent.ShowCreateShortcutModelDialog(device)) }
             ),
             // Add more actions here as needed
         )
@@ -298,6 +322,65 @@ fun EmptyDevicesState(onEvent: (MainScreenEvent) -> Unit) {
             )
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(text = stringResource(R.string.add_device))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreateShortcutBottomSheet(
+    createShortcutDialogState: CreateShortcutDialogState.Showed,
+    onDismiss: () -> Unit,
+    onIsRequiredBiometricUnlockStateChanged: (Boolean) -> Unit,
+    onCreateClick: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.create_shortcut),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.use_biometric_authentication),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 16.dp)
+                )
+
+                Switch(
+                    checked = createShortcutDialogState.isRequiredBiometricUnlock,
+                    onCheckedChange = onIsRequiredBiometricUnlockStateChanged
+                )
+            }
+
+            Button(
+                onClick = onCreateClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.create))
+            }
         }
     }
 }

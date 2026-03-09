@@ -6,4 +6,7 @@
     <string name="add_device">Add device</string>
     <string name="device_unlocked">Device unlocked</string>
     <string name="failed_to_unlock_device">Failed to unlock device</string>
+    <string name="create_shortcut">Create Shortcut</string>
+    <string name="use_biometric_authentication">Use biometric authentication</string>
+    <string name="create">Create</string>
 </resources>

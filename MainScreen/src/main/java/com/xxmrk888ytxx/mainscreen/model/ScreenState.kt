@@ -5,5 +5,6 @@ import kotlinx.collections.immutable.persistentListOf
 
 data class ScreenState(
     val devices: ImmutableList<Device> = persistentListOf(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val createShortcutDialogState: CreateShortcutDialogState = CreateShortcutDialogState.Hidden
 )
