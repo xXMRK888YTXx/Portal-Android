@@ -9,6 +9,8 @@
     <uses-permission
         android:name="android.permission.USE_FULL_SCREEN_INTENT"
         tools:ignore="FullScreenIntentPolicy" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
+        tools:ignore="ForegroundServicesPolicy" />
 
     <application
         android:name=".PortalApp"
@@ -50,6 +52,15 @@
                 <action android:name="com.xxmrk888ytxx.portal.ACTION_SHORTCUT_PINNED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".data.service.UnlockFromShortcutService"
+            android:exported="false"
+            android:foregroundServiceType="shortService">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.SHORTCUT_UNLOCK_ACTION" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

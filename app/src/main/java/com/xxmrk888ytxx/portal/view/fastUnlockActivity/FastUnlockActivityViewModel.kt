@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
+import com.xxmrk888ytxx.portal.data.service.UnlockFromShortcutService
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -52,7 +53,7 @@ class FastUnlockActivityViewModel @Inject constructor(
                     onSuccess = {
                         startUnlockService(
                             activity.applicationContext,
-                            shortcut.shortcutId
+                            shortcut.clientId
                         )
                     },
                     onFailed = { _onFinishEvent.tryEmit(Unit) }
@@ -60,7 +61,7 @@ class FastUnlockActivityViewModel @Inject constructor(
 
                 else -> startUnlockService(
                     activity.applicationContext,
-                    shortcut.shortcutId
+                    shortcut.clientId
                 )
             }
         } catch (e: IllegalArgumentException) {
@@ -68,7 +69,12 @@ class FastUnlockActivityViewModel @Inject constructor(
         }
     }
 
-    private fun startUnlockService(context: Context, shortcutId: String) {
+    private fun startUnlockService(context: Context, clientId: String) {
+        val intent = Intent(context, UnlockFromShortcutService::class.java).apply {
+            putExtra(UnlockFromShortcutService.DEVICE_ID_EXTRA, clientId)
+            action = UnlockFromShortcutService.SHORTCUT_UNLOCK_ACTION
+        }
+        context.startForegroundService(intent)
         _onFinishEvent.tryEmit(Unit)
     }
 
