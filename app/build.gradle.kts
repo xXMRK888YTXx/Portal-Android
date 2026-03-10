@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
-    id("kotlin-parcelize")
+    alias(libs.plugins.kotlin.parcelize)
 }
 val catalogJavaVersion = libs.versions.jvm.target.get()
 val catalogCompileSdk = libs.versions.compile.sdk.get().toInt()
