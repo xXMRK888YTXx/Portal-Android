@@ -34,6 +34,7 @@ class FastUnlockActivity @Inject constructor(
     }
 
     companion object {
+        const val UNLOCK_FROM_SHORTCUT_ACTION: String = "com.xxmrk888ytxx.portal.UNLOCK_FROM_SHORTCUT_ACTION"
         const val SHORTCUT_ID_EXTRA = "shortcutId"
 
     }

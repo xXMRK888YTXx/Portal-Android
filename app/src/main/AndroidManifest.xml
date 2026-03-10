@@ -9,7 +9,8 @@
     <uses-permission
         android:name="android.permission.USE_FULL_SCREEN_INTENT"
         tools:ignore="FullScreenIntentPolicy" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
         tools:ignore="ForegroundServicesPolicy" />
 
     <application
@@ -38,11 +39,15 @@
         <activity
             android:name=".view.unlockScreenActivity.UnlockScreenActivity"
             android:exported="false"
-            android:theme="@style/Theme.Portal" />
+            android:theme="@style/Theme.Portal">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.UNLOCK_FROM_SHORTCUT_ACTION" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".view.fastUnlockActivity.FastUnlockActivity"
-            android:exported="true"
+            android:exported="false"
             android:theme="@style/Theme.Portal.Transparent" />
 
         <receiver

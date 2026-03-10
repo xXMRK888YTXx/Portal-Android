@@ -22,7 +22,7 @@ class ShortcutManagerImpl @Inject constructor(
 ) : ShortcutManager {
     override suspend fun addShortcut(shortcut: Shortcut, label: String) {
         val targetIntent = Intent(context, FastUnlockActivity::class.java).apply {
-            action = Intent.ACTION_VIEW
+            action = FastUnlockActivity.UNLOCK_FROM_SHORTCUT_ACTION
             putExtra(SHORTCUT_ID_EXTRA, shortcut.shortcutId)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
