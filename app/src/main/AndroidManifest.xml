@@ -38,7 +38,9 @@
 
         <activity
             android:name=".view.unlockScreenActivity.UnlockScreenActivity"
+            android:excludeFromRecents="true"
             android:exported="false"
+            android:noHistory="true"
             android:theme="@style/Theme.Portal">
             <intent-filter>
                 <action android:name="com.xxmrk888ytxx.portal.UNLOCK_FROM_SHORTCUT_ACTION" />
@@ -47,7 +49,9 @@
 
         <activity
             android:name=".view.fastUnlockActivity.FastUnlockActivity"
+            android:excludeFromRecents="true"
             android:exported="false"
+            android:noHistory="true"
             android:theme="@style/Theme.Portal.Transparent" />
 
         <receiver
