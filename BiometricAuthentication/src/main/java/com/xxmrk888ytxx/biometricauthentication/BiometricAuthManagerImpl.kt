@@ -5,9 +5,14 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.ERROR_CANCELED
+import androidx.biometric.BiometricPrompt.ERROR_NEGATIVE_BUTTON
+import androidx.biometric.BiometricPrompt.ERROR_TIMEOUT
+import androidx.biometric.BiometricPrompt.ERROR_USER_CANCELED
 import androidx.fragment.app.FragmentActivity
 import com.xxmrk888ytxx.biometricauthentication.model.BiometricAuthOptions
 import com.xxmrk888ytxx.biometricauthentication.model.BiometricState
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 
@@ -47,16 +52,24 @@ internal class BiometricAuthManagerImpl(
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
                     options.onSuccess()
+                    fastDebugLog("onAuthenticationSucceeded")
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    options.onError()
+
+                    when (errorCode) {
+                        ERROR_NEGATIVE_BUTTON, ERROR_TIMEOUT, ERROR_CANCELED, ERROR_USER_CANCELED -> options.onCanceled()
+                        else -> options.onError()
+                    }
+                    fastDebugLog("onAuthenticationError")
+
                 }
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
                     options.onFailed()
+                    fastDebugLog("onAuthenticationFailed")
                 }
             }
         )

@@ -23,33 +23,14 @@ import java.util.concurrent.Executor
 @ConsistentCopyVisibility
 data class BiometricAuthOptions internal constructor(
     var executor: Executor? = null,
-    var onSuccess: () -> Unit = {},
-    var onError: () -> Unit = {},
-    var onFailed: () -> Unit = {},
     var title: String = "Title",
     var subTitle: String? = null,
     var negativeButtonText: String = "Cancel",
     var description: String? = null,
+    var onSuccess: () -> Unit = {},
+    var onError: () -> Unit = {},
+    var onFailed: () -> Unit = {},
+    var onCanceled: () -> Unit = {}
 )
-
-/**
- * Sets a single callback for all types of authentication failure.
- *
- * A convenience alternative to setting [BiometricAuthOptions.onError] and
- * [BiometricAuthOptions.onFailed] separately, when the reason for failure
- * does not need to be distinguished.
- *
- * @param onRequestFailed Callback invoked on both unrecoverable errors
- * ([BiometricAuthOptions.onError]) and rejected attempts ([BiometricAuthOptions.onFailed]).
- *
- * @see BiometricAuthOptions.onError
- * @see BiometricAuthOptions.onFailed
- */
-fun BiometricAuthOptions.setOnRequestFailed(
-    onRequestFailed: () -> Unit
-) {
-    onError = onRequestFailed
-    onFailed = onRequestFailed
-}
 
 

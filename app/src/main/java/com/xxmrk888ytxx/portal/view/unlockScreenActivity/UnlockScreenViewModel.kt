@@ -9,6 +9,7 @@ import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
+import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.utils.getParsableExtraCompat
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
@@ -35,22 +36,29 @@ class UnlockScreenViewModel @Inject constructor(
     fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
         biometricDialogController.sendRequest(
             activity = activity,
-            onSuccess = {
-                viewModelScope.launch {
-                    unlockScreenData?.let {
-                        unlockServiceManager.sendMessageToHost(
-                            it.clientId,
-                            UnlockServiceMessage.Unlock
-                        )
-                    }
-                    _effect.tryEmit(UnlockScreenSideEffect.Dismiss)
+            onEvent = {
+                when (it) {
+                    BiometricDialogEvent.Success -> unlockScreenData?.let { unlockData -> unlockHost(unlockData) }
+
+                    BiometricDialogEvent.Canceled, BiometricDialogEvent.Error -> dismissScreen()
+
+                    BiometricDialogEvent.Failed -> Unit
                 }
             },
-            onFailed = {
-                _effect.tryEmit(UnlockScreenSideEffect.Dismiss)
-            }
         )
     }
+
+    private fun unlockHost(unlockScreenData: UnlockScreenData) = viewModelScope.launch {
+        unlockServiceManager.sendMessageToHost(
+            unlockScreenData.clientId,
+            UnlockServiceMessage.Unlock
+        )
+    }.invokeOnCompletion { dismissScreen() }
+
+    private fun dismissScreen() {
+        _effect.tryEmit(UnlockScreenSideEffect.Dismiss)
+    }
+
 
     override fun fromOnboardingScreenToMainScreen() {
 

@@ -20,6 +20,7 @@ import com.xxmrk888ytxx.portal.di.AppComponent
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
+import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Provider
@@ -71,15 +72,18 @@ fun FragmentActivity.collectBiometricAuthResult(
             biometricActivityResultReceiver.biometricAuthRequestForActivity.collect {
                 biometricDialogController.sendRequest(
                     activity = this@collectBiometricAuthResult,
-                    onSuccess = {
-                        biometricActivityResultReceiver.onNewBiometricAuthResult(
-                            BiometricAuthResult.Success
-                        )
-                    },
-                    onFailed = {
-                        biometricActivityResultReceiver.onNewBiometricAuthResult(
-                            BiometricAuthResult.Failed
-                        )
+                    onEvent = {
+                        when (it) {
+                            BiometricDialogEvent.Success -> biometricActivityResultReceiver.onNewBiometricAuthResult(
+                                BiometricAuthResult.Success
+                            )
+
+                            BiometricDialogEvent.Error, BiometricDialogEvent.Canceled -> biometricActivityResultReceiver.onNewBiometricAuthResult(
+                                BiometricAuthResult.Failed
+                            )
+
+                            BiometricDialogEvent.Failed -> {}
+                        }
                     }
                 )
             }
@@ -87,7 +91,7 @@ fun FragmentActivity.collectBiometricAuthResult(
     }
 
 @Suppress("DEPRECATION")
-fun <T> Intent.getParsableExtraCompat(name: String, clazz: Class<T>) : T? {
+fun <T> Intent.getParsableExtraCompat(name: String, clazz: Class<T>): T? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getParcelableExtra(name, clazz)
     } else {

@@ -9,6 +9,7 @@ import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.portal.data.service.UnlockFromShortcutService
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
+import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -51,13 +52,20 @@ class FastUnlockActivityViewModel @Inject constructor(
             when {
                 shortcut.isRequiredBiometricUnlock -> biometricDialogController.sendRequest(
                     activity,
-                    onSuccess = {
-                        startUnlockService(
-                            activity.applicationContext,
-                            shortcut.clientId
-                        )
-                    },
-                    onFailed = { _onFinishEvent.tryEmit(Unit) }
+                    onEvent = {
+                        when (it) {
+                            BiometricDialogEvent.Success -> startUnlockService(
+                                activity.applicationContext,
+                                shortcut.clientId
+                            )
+
+                            BiometricDialogEvent.Canceled, BiometricDialogEvent.Error -> {
+                                _onFinishEvent.tryEmit(Unit)
+                            }
+
+                            BiometricDialogEvent.Failed -> {}
+                        }
+                    }
                 )
 
                 else -> startUnlockService(
@@ -65,7 +73,7 @@ class FastUnlockActivityViewModel @Inject constructor(
                     shortcut.clientId
                 )
             }
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             _onFinishEvent.emit(Unit)
         }
     }

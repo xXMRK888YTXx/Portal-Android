@@ -3,10 +3,9 @@ package com.xxmrk888ytxx.portal.data
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
 import com.xxmrk888ytxx.biometricauthentication.BiometricAuthManager
-import com.xxmrk888ytxx.biometricauthentication.model.BiometricState
-import com.xxmrk888ytxx.biometricauthentication.model.setOnRequestFailed
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import javax.inject.Inject
 
 class BiometricDialogControllerImpl @Inject constructor(
@@ -15,16 +14,13 @@ class BiometricDialogControllerImpl @Inject constructor(
 ) : BiometricDialogController {
     override suspend fun sendRequest(
         activity: FragmentActivity,
-        onSuccess: () -> Unit,
-        onFailed: () -> Unit
+        onEvent: (BiometricDialogEvent) -> Unit
     ) {
-        if (biometricAuthManager.getBiometricState != BiometricState.Available) {
-            onFailed()
-            return
-        }
         biometricAuthManager.requestBiometricAuth(activity) {
-            this@requestBiometricAuth.onSuccess = onSuccess
-            setOnRequestFailed(onFailed)
+            onSuccess = { onEvent(BiometricDialogEvent.Success) }
+            onError = { onEvent(BiometricDialogEvent.Error) }
+            onFailed = { onEvent(BiometricDialogEvent.Failed) }
+            onCanceled = { onEvent(BiometricDialogEvent.Canceled) }
 
             title = context.getString(R.string.verify_with_biometrics)
             subTitle = context.getString(R.string.confirm_your_identity)
