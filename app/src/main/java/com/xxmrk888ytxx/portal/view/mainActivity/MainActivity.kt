@@ -25,6 +25,8 @@ import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
 import com.xxmrk888ytxx.deviceconfigurationscreen.DeviceConfigurationScreen
 import com.xxmrk888ytxx.deviceconfigurationscreen.DeviceConfigurationViewModel
+import com.xxmrk888ytxx.logsscreen.LogsScreen
+import com.xxmrk888ytxx.logsscreen.LogsViewModel
 import com.xxmrk888ytxx.portal.utils.ScreenContent
 import com.xxmrk888ytxx.mainscreen.MainScreen
 import com.xxmrk888ytxx.mainscreen.MainScreenViewModel
@@ -49,7 +51,8 @@ class MainActivity @Inject constructor(
     private val toastManager: ToastManager,
     private val deviceConfigurationViewModelFactory: DeviceConfigurationViewModel.Factory,
     private val biometricActivityResultReceiver: BiometricActivityResultReceiver,
-    private val biometricDialogController: BiometricDialogController
+    private val biometricDialogController: BiometricDialogController,
+    private val logsViewModelFactory: Provider<LogsViewModel>
 ) : FragmentActivity() {
     private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
 
@@ -82,8 +85,12 @@ class MainActivity @Inject constructor(
                         (backStack.lastOrNull() as? ScreenWithBottomBar)?.bottomBarItemId
                     }
                     AnimatedVisibility(bottomBarItemOfCurrentScreen != null) {
-                        PortalBottomBar(items,bottomBarItemOfCurrentScreen ?: -1) {
-
+                        PortalBottomBar(items, bottomBarItemOfCurrentScreen ?: -1) {
+                            if (it.id == bottomBarItemOfCurrentScreen) return@PortalBottomBar
+                            when(it) {
+                                PortalBottomBarItem.Devices -> activityViewModel.BottomBarNavigation().toMainScreen()
+                                PortalBottomBarItem.Settings -> activityViewModel.BottomBarNavigation().toSettingsScreen()
+                            }
                         }
                     }
                 }
@@ -99,7 +106,7 @@ class MainActivity @Inject constructor(
                             ScreenContent(::OnboardingScreen, onboardingViewModelFactory)
                         }
 
-                        entry<Screen.MainScreenWithBottomBar> {
+                        entry<Screen.MainScreen> {
                             ScreenContent(::MainScreen, mainScreenViewModelFactory)
                         }
 
@@ -111,6 +118,10 @@ class MainActivity @Inject constructor(
                             ScreenContent(
                                 ::DeviceConfigurationScreen,
                                 { deviceConfigurationViewModelFactory.create(screen.deviceId) })
+                        }
+
+                        entry<Screen.LogsScreen> {
+                            ScreenContent(::LogsScreen, logsViewModelFactory)
                         }
                     },
                     modifier = Modifier.padding(innerPadding)

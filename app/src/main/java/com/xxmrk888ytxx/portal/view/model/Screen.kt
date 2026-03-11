@@ -10,7 +10,7 @@ sealed interface Screen : NavKey {
     data object OnboardingScreen : Screen
 
     @Serializable
-    data object MainScreenWithBottomBar : Screen, ScreenWithBottomBar {
+    data object MainScreen : Screen, ScreenWithBottomBar {
         override val bottomBarItemId: Int
             get() = PortalBottomBarItem.Devices.id
     }
@@ -20,4 +20,10 @@ sealed interface Screen : NavKey {
 
     @Serializable
     data class DeviceConfigurationScreen(val deviceId: String) : Screen
+
+    @Serializable
+    data object LogsScreen : Screen, ScreenWithBottomBar {
+        override val bottomBarItemId: Int
+            get() = PortalBottomBarItem.Settings.id
+    }
 }

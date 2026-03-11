@@ -39,7 +39,7 @@ class ActivityViewModel @Inject constructor(
         prepareScreenScope.launch {
             preferenceManager.isOnboardingPassed.collect { isPassed ->
                 if (isPassed) {
-                    _startScreen.value = Screen.MainScreenWithBottomBar
+                    _startScreen.value = Screen.MainScreen
                 }
                 _isScreenReady.value = true
                 prepareScreenScope.cancel()
@@ -49,7 +49,7 @@ class ActivityViewModel @Inject constructor(
 
 
     override fun fromOnboardingScreenToMainScreen() = runOnUiThread {
-        backStack?.add(Screen.MainScreenWithBottomBar)
+        backStack?.add(Screen.MainScreen)
         backStack?.remove(Screen.OnboardingScreen)
     }
 
@@ -63,6 +63,22 @@ class ActivityViewModel @Inject constructor(
 
     override fun navigateUp() = runOnUiThread {
         backStack?.removeLastOrNull()
+    }
+
+    internal inner class BottomBarNavigation {
+        fun toSettingsScreen() {
+            navigate(Screen.LogsScreen)
+        }
+
+        fun toMainScreen() {
+            navigate(Screen.MainScreen)
+        }
+
+        private fun navigate(screen: Screen) = runOnUiThread {
+            backStack?.add(screen)
+            backStack?.lastIndex?.minus(1)?.let { backStack?.removeAt(it) }
+        }
+
     }
 
     @Suppress("UNCHECKED_CAST")

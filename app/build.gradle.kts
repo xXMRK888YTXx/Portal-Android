@@ -58,7 +58,7 @@ dependencies {
     implementation(projects.deviceConfigurationScreen)
     implementation(projects.unlockService)
     implementation(projects.biometricAuthentication.compose)
-    implementation(libs.androidx.fragment.ktx)
+    implementation(projects.logsScreen)
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)
@@ -73,4 +73,5 @@ dependencies {
     implementation(libs.slf4j.android)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.androidx.fragment.ktx)
 }
