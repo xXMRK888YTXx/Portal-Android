@@ -3,12 +3,14 @@ package com.xxmrk888ytxx.portal.view.mainActivity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
@@ -31,6 +33,9 @@ import com.xxmrk888ytxx.onboardingscreen.OnboardingViewModel
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.utils.collectBiometricAuthResult
+import com.xxmrk888ytxx.portal.view.mainActivity.model.PortalBottomBarItem
+import com.xxmrk888ytxx.portal.view.mainActivity.view.PortalBottomBar
+import com.xxmrk888ytxx.portal.view.model.ScreenWithBottomBar
 import com.xxmrk888ytxx.portal.view.model.Screen
 import javax.inject.Inject
 import javax.inject.Provider
@@ -67,7 +72,22 @@ class MainActivity @Inject constructor(
                 activityViewModel.backStack = backStack
             }
 
-            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                bottomBar = {
+                    val items = remember {
+                        PortalBottomBarItem.itemList
+                    }
+                    val bottomBarItemOfCurrentScreen = remember(backStack.lastOrNull()) {
+                        (backStack.lastOrNull() as? ScreenWithBottomBar)?.bottomBarItemId
+                    }
+                    AnimatedVisibility(bottomBarItemOfCurrentScreen != null) {
+                        PortalBottomBar(items,bottomBarItemOfCurrentScreen ?: -1) {
+
+                        }
+                    }
+                }
+            ) { innerPadding ->
                 NavDisplay(
                     entryDecorators = listOf(
                         rememberSaveableStateHolderNavEntryDecorator(),
@@ -79,7 +99,7 @@ class MainActivity @Inject constructor(
                             ScreenContent(::OnboardingScreen, onboardingViewModelFactory)
                         }
 
-                        entry<Screen.MainScreen> {
+                        entry<Screen.MainScreenWithBottomBar> {
                             ScreenContent(::MainScreen, mainScreenViewModelFactory)
                         }
 

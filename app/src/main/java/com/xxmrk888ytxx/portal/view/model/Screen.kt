@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.portal.view.model
 
 import androidx.navigation3.runtime.NavKey
+import com.xxmrk888ytxx.portal.view.mainActivity.model.PortalBottomBarItem
 import kotlinx.serialization.Serializable
 
 
@@ -9,7 +10,10 @@ sealed interface Screen : NavKey {
     data object OnboardingScreen : Screen
 
     @Serializable
-    data object MainScreen : Screen
+    data object MainScreenWithBottomBar : Screen, ScreenWithBottomBar {
+        override val bottomBarItemId: Int
+            get() = PortalBottomBarItem.Devices.id
+    }
 
     @Serializable
     data object AddNewDeviceScreen : Screen

@@ -9,4 +9,6 @@
     <string name="unlocking_the_device">Unlocking the device</string>
     <string name="please_wait_a_moment">Please wait a moment.</string>
     <string name="notification_during_unlocking_via_shortcut">Notification during unlocking via shortcut</string>
+    <string name="devices">Devices</string>
+    <string name="settings">Settings</string>
 </resources>

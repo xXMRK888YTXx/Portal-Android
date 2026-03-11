@@ -39,7 +39,7 @@ class ActivityViewModel @Inject constructor(
         prepareScreenScope.launch {
             preferenceManager.isOnboardingPassed.collect { isPassed ->
                 if (isPassed) {
-                    _startScreen.value = Screen.MainScreen
+                    _startScreen.value = Screen.MainScreenWithBottomBar
                 }
                 _isScreenReady.value = true
                 prepareScreenScope.cancel()
@@ -49,7 +49,7 @@ class ActivityViewModel @Inject constructor(
 
 
     override fun fromOnboardingScreenToMainScreen() = runOnUiThread {
-        backStack?.add(Screen.MainScreen)
+        backStack?.add(Screen.MainScreenWithBottomBar)
         backStack?.remove(Screen.OnboardingScreen)
     }
 
