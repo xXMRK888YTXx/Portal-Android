@@ -13,6 +13,7 @@ import com.xxmrk888ytxx.portal.di.module.CoreModule
 import com.xxmrk888ytxx.portal.di.module.DataModule
 import com.xxmrk888ytxx.portal.di.module.DeviceConfigurationScreenModule
 import com.xxmrk888ytxx.portal.di.module.DomainModule
+import com.xxmrk888ytxx.portal.di.module.LogsModule
 import com.xxmrk888ytxx.portal.di.module.MainScreenModule
 import com.xxmrk888ytxx.portal.di.module.OnboardingScreenModule
 import com.xxmrk888ytxx.portal.di.module.ServiceBindsModule
@@ -35,7 +36,8 @@ import javax.inject.Provider
         ActivityBindsModule::class,
         ServiceBindsModule::class,
         UnlockServiceModule::class,
-        BroadcastReceiverBindsModule::class
+        BroadcastReceiverBindsModule::class,
+        LogsModule::class
     ]
 )
 @AppScope

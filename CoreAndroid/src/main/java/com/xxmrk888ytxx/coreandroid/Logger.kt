@@ -1,6 +1,13 @@
 package com.xxmrk888ytxx.coreandroid
 
+import androidx.compose.runtime.State
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+
 interface Logger {
+    val isActive: Boolean
+    val logs: StateFlow<List<String>>
+
     //String
     fun error(m: String, tag: String? = null)
 
@@ -34,8 +41,6 @@ interface Logger {
     fun verbose(m: Throwable, tag: String? = null)
 
     fun warm(m: Throwable, tag: String? = null)
-
-    val isActive: Boolean
 
     fun activate()
 
