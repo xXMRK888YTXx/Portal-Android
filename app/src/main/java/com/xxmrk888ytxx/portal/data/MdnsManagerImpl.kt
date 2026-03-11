@@ -151,7 +151,7 @@ class MdnsManagerImpl @Inject constructor(
                     Build.VERSION_CODES.TIRAMISU
                 ) >= 7
             ) {
-                serviceInfo.hostAddresses.firstOrNull { it.isAnyLocalAddress }?.hostAddress
+                serviceInfo.hostAddresses.firstOrNull()?.hostAddress
             } else {
                 serviceInfo.host.hostAddress
             } ?: return
