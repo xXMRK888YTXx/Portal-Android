@@ -17,9 +17,10 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -27,10 +28,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +51,6 @@ fun DeviceConfigurationScreen(
     sideEffect: Flow<SideEffect>
 ) {
     HandleSideEffect<SideEffect>(sideEffect) {}
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -83,9 +79,9 @@ fun DeviceConfigurationScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             contentKey = { it is ScreenState.DeviceInfo }
-        ) { screenState ->
-            when (screenState) {
-                is ScreenState.DeviceInfo -> DeviceInfoState(screenState, onEvent)
+        ) { state ->
+            when (state) {
+                is ScreenState.DeviceInfo -> DeviceInfoState(state, onEvent)
                 ScreenState.Loading -> LoadingState()
             }
         }
@@ -128,30 +124,29 @@ fun DeviceInfoState(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.small)
-                .toggleable(
-                    value = screenState.device.awaitUnlockRequests,
-                    onValueChange = {
-                        onEvent(DeviceConfigurationUiEvent.OnAwaitUnlockChanged(it))
-                    },
-                    role = Role.Checkbox
-                )
-                .padding(vertical = 8.dp, horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Switch(
-                checked = screenState.device.awaitUnlockRequests,
-                onCheckedChange = null
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = stringResource(R.string.await_unlock_requests),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
+
+        SwitchSettingCard(
+            title = stringResource(R.string.await_unlock_requests),
+            description = stringResource(R.string.await_unlock_requests_description),
+            isChecked = screenState.device.awaitUnlockRequests,
+            onCheckedChange = {
+                onEvent(DeviceConfigurationUiEvent.OnAwaitUnlockChanged(it))
+            }
+        )
+
+        SwitchSettingCard(
+            title = stringResource(R.string.search_ip_dynamically),
+            description = stringResource(R.string.search_ip_dynamically_description),
+            isChecked = screenState.device.searchIpDynamically,
+            onCheckedChange = {
+                onEvent(DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged(it)) // Добавь это событие в DeviceConfigurationUiEvent
+            }
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -171,6 +166,53 @@ fun DeviceInfoState(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = stringResource(R.string.remove_device))
+        }
+    }
+}
+
+@Composable
+private fun SwitchSettingCard(
+    title: String,
+    description: String,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    OutlinedCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .toggleable(
+                    value = isChecked,
+                    onValueChange = onCheckedChange,
+                    role = Role.Switch
+                )
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 16.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Switch(
+                checked = isChecked,
+                onCheckedChange = null // Обрабатывается на уровне Row через toggleable
+            )
         }
     }
 }

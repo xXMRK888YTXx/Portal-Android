@@ -39,18 +39,32 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     }
 
     override fun handleEvent(event: DeviceConfigurationUiEvent) {
-        when(event) {
+        when (event) {
             DeviceConfigurationUiEvent.NavigateBack -> sendNavigateUpSideEffect()
             DeviceConfigurationUiEvent.RemoveDevice -> removeDevice()
-            is DeviceConfigurationUiEvent.OnAwaitUnlockChanged -> changeAwaitUnlockRequestsState(event.newValue)
+            is DeviceConfigurationUiEvent.OnAwaitUnlockChanged -> changeAwaitUnlockRequestsState(
+                event.newValue
+            )
+
+            is DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged -> changeSearchIpDynamicallyState(
+                event.newValue
+            )
         }
     }
 
-    private fun changeAwaitUnlockRequestsState(newValue: Boolean) {
+    private fun changeSearchIpDynamicallyState(newValue: Boolean) = withLoading {
+        changeDeviceSettingsContract.updateSearchIpDynamicallyState(deviceId, newValue)
+    }
+
+    private fun changeAwaitUnlockRequestsState(newValue: Boolean) = withLoading {
+        changeDeviceSettingsContract.updateAwaitUnlockRequestsState(deviceId, newValue)
+    }
+
+    private fun withLoading(block: suspend () -> Unit) {
         if (isSettingsUpdateInProgress) return
         isSettingsUpdateInProgress = true
         viewModelScope.launch {
-            changeDeviceSettingsContract.updateAwaitUnlockRequestsState(deviceId,newValue)
+            block()
         }.invokeOnCompletion { isSettingsUpdateInProgress = false }
     }
 

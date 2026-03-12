@@ -29,7 +29,8 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                 host = device.host,
                 clientCertificateFingerprint = certificateRepository.getX509CertificateFingerprint(device.clientCertificate.x509Certificate),
                 serverCertificateFingerprint = device.serverCertificateFingerprint,
-                awaitUnlockRequests = deviceSettings.awaitUnlockRequests
+                awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
+                searchIpDynamically = false // TODO Remove hardcoded value
             )
         }
     }

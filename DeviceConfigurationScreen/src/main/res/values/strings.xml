@@ -9,4 +9,7 @@
     <string name="server_fingerprint">Server Fingerprint</string>
     <string name="remove_device">Remove device</string>
     <string name="await_unlock_requests">Await unlock requests</string>
+    <string name="await_unlock_requests_description">Waits for unlock requests from the PC in the background (unlock type 2)</string>
+    <string name="search_ip_dynamically">Search IP dynamically</string>
+    <string name="search_ip_dynamically_description">Before sending a request, it attempts to find the computer\'s IP address. This slows down the unlocking process slightly. This is useful if your IP address may change within your local network. May not work or may not work correctly on some networks, depending on your router settings.</string>
 </resources>

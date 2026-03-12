@@ -7,7 +7,8 @@ data class Device(
     val host: String,
     val clientCertificateFingerprint: String,
     val serverCertificateFingerprint: String,
-    val awaitUnlockRequests: Boolean
+    val awaitUnlockRequests: Boolean,
+    val searchIpDynamically: Boolean,
 )
 
 enum class DeviceType {
