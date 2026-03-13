@@ -18,12 +18,10 @@ abstract class DeviceDao {
     abstract fun getDeviceById(deviceId: String): Flow<DeviceEntry?>
 
     @Upsert
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     protected abstract suspend fun upsertDeviceInternal(deviceEntry: DeviceEntry)
 
     @Upsert
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    abstract suspend fun upsertDeviceSettingsInternal(deviceEntry: DeviceSettingsEntry)
+    protected abstract suspend fun upsertDeviceSettingsInternal(deviceEntry: DeviceSettingsEntry)
 
     @Transaction
     open suspend fun upsertDevice(deviceEntry: DeviceEntry) {
@@ -31,7 +29,6 @@ abstract class DeviceDao {
         //Add default device settings
         upsertDeviceSettingsInternal(DeviceSettingsEntry(
             deviceId = deviceEntry.deviceId,
-            awaitUnlockRequests = true
         ))
     }
 

@@ -30,7 +30,7 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                 clientCertificateFingerprint = certificateRepository.getX509CertificateFingerprint(device.clientCertificate.x509Certificate),
                 serverCertificateFingerprint = device.serverCertificateFingerprint,
                 awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
-                searchIpDynamically = false // TODO Remove hardcoded value
+                searchIpDynamically = deviceSettings.searchIpDynamically
             )
         }
     }

@@ -26,20 +26,28 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
                 entry.toDomainModel()
             }
 
-    override suspend fun updateDeviceSettings(deviceSettings: DeviceSettings) =
-        withContext(Dispatchers.IO) {
-            deviceSettingsDao.upsertDeviceSettings(
-                DeviceSettingsEntry(
-                    deviceId = deviceSettings.deviceId,
-                    awaitUnlockRequests = deviceSettings.awaitUnlockRequests
-                )
-            )
-        }
+    override suspend fun updateAwaitUnlockRequests(
+        deviceId: String,
+        newValue: Boolean
+    ) = withContext(Dispatchers.IO) {
+        deviceSettingsDao.updateAwaitUnlockRequests(
+            deviceId = deviceId,
+            awaitUnlockRequests = newValue
+        )
+    }
+
+    override suspend fun updateSearchIpDynamically(
+        deviceId: String,
+        newValue: Boolean
+    ) = withContext(Dispatchers.IO) {
+        deviceSettingsDao.updateSearchIpDynamically(deviceId, newValue)
+    }
 
     private fun DeviceSettingsEntry.toDomainModel(): DeviceSettings {
         return DeviceSettings(
             deviceId = deviceId,
-            awaitUnlockRequests = awaitUnlockRequests
+            awaitUnlockRequests = awaitUnlockRequests,
+            searchIpDynamically = searchIpDynamically,
         )
     }
 }

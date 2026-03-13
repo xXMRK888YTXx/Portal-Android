@@ -9,6 +9,10 @@ class UpdateDeviceSettingsContractImpl @Inject constructor(
     private val deviceSettingsRepository: DeviceSettingsRepository
 ) : UpdateDeviceSettingsContract {
     override suspend fun updateAwaitUnlockRequests(deviceId: String, value: Boolean) {
-        deviceSettingsRepository.updateDeviceSettings(DeviceSettings(deviceId, value))
+        deviceSettingsRepository.updateAwaitUnlockRequests(deviceId, value)
+    }
+
+    override suspend fun updateSearchIpDynamically(deviceId: String, value: Boolean) {
+        deviceSettingsRepository.updateSearchIpDynamically(deviceId, value)
     }
 }

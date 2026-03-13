@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "89f0a7f2d31ad1d9d9565fff636207e7",
+    "identityHash": "aa4e49b1e8429355c6801ad229e9033e",
     "entities": [
       {
         "tableName": "DeviceTable",
@@ -59,7 +59,7 @@
       },
       {
         "tableName": "DeviceSettingsTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `awaitUnlockRequests` INTEGER NOT NULL, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `awaitUnlockRequests` INTEGER NOT NULL, `searchIpDynamically` INTEGER NOT NULL, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "deviceId",
@@ -70,6 +70,12 @@
           {
             "fieldPath": "awaitUnlockRequests",
             "columnName": "awaitUnlockRequests",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchIpDynamically",
+            "columnName": "searchIpDynamically",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -162,7 +168,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '89f0a7f2d31ad1d9d9565fff636207e7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'aa4e49b1e8429355c6801ad229e9033e')"
     ]
   }
 }

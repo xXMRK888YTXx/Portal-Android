@@ -22,7 +22,8 @@ import com.xxmrk888ytxx.database.entry.DeviceSettingsEntry.Companion.TABLE_NAME
 )
 data class DeviceSettingsEntry(
     @PrimaryKey val deviceId: String,
-    val awaitUnlockRequests: Boolean = false
+    val awaitUnlockRequests: Boolean = true,
+    val searchIpDynamically: Boolean = false
 ) {
     internal companion object {
         const val TABLE_NAME = "DeviceSettingsTable"

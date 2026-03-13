@@ -6,8 +6,8 @@ import com.xxmrk888ytxx.portal.data.KtorFactory
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
+import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.MdnsManager
-import com.xxmrk888ytxx.portal.domain.waitHostForClient
 import com.xxmrk888ytxx.unlockservice.core.UnlockMessage
 import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
 import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
@@ -21,12 +21,14 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 class WifiDriver @Inject constructor(
     private val ktorFactory: KtorFactory,
     private val deviceRepository: DeviceRepository,
-    private val mdnsManager: MdnsManager
+    private val mdnsManager: MdnsManager,
+    private val deviceSettingsRepository: DeviceSettingsRepository,
 ) : NetworkDriver {
     override suspend fun connect(
         clientId: String,
@@ -37,14 +39,18 @@ class WifiDriver @Inject constructor(
             deviceRepository.getDeviceById(clientId).first() ?: throw InvalidClientIdException(
                 clientId
             )
+        val deviceSettings = deviceSettingsRepository.getDeviceSettingsByDeviceId(deviceId = clientId).first() ?: throw InvalidClientIdException(clientId)
+
         val client = ktorFactory.createUnlockClient(
             device.clientCertificate,
             device.serverCertificateFingerprint
         )
-        //val host = device.host
-        val host = mdnsManager.waitHostForClient(clientId, MDSN_DISCOVERY_TIMEOUT)
-            .also { fastDebugLog("In wifiDriver mdns found host: $it") }
-            ?: device.host.also { fastDebugLog("In wifiDriver mdns not found host. Using default") }
+        val host = when {
+            deviceSettings.searchIpDynamically -> mdnsManager.waitHostForClient(clientId, MDSN_DISCOVERY_TIMEOUT)
+                .also { fastDebugLog("In wifiDriver mdns found host: $it") }
+                ?: device.host.also { fastDebugLog("In wifiDriver mdns not found host. Using default") }
+            else -> device.host
+        }
         val urlString = "wss://$host:29170/ws"
         fastDebugLog("Try to connect to websocket server host: $urlString")
         client.webSocket(urlString = urlString) {
@@ -86,6 +92,16 @@ class WifiDriver @Inject constructor(
                     fastDebugLog("Unknown message type: ${response.type}")
                 }
             }
+        }
+    }
+
+    suspend fun MdnsManager.waitHostForClient(
+        clientId: String,
+        timeout: Long?,
+    ): String? {
+        val timeout = timeout ?: Long.MAX_VALUE
+        return withTimeoutOrNull(timeout) {
+            foundedHosts.first { it.containsKey(clientId) }[clientId]?.hostIp
         }
     }
 

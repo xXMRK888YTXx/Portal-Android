@@ -12,13 +12,13 @@ class ChangeDeviceSettingsContractImpl @Inject constructor(
         deviceId: String,
         newState: Boolean
     ) {
-        deviceSettingsRepository.updateDeviceSettings(DeviceSettings(deviceId, newState))
+        deviceSettingsRepository.updateAwaitUnlockRequests(deviceId, newState)
     }
 
     override suspend fun updateSearchIpDynamicallyState(
         deviceId: String,
         newState: Boolean
     ) {
-        TODO("Not yet implemented")
+        deviceSettingsRepository.updateSearchIpDynamically(deviceId, newState)
     }
 }

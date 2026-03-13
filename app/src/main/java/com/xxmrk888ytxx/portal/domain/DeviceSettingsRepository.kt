@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface DeviceSettingsRepository {
     val deviceSettings: Flow<List<DeviceSettings>>
     suspend fun getDeviceSettingsByDeviceId(deviceId: String): Flow<DeviceSettings?>
-    suspend fun updateDeviceSettings(deviceSettings: DeviceSettings)
+    suspend fun updateAwaitUnlockRequests(deviceId: String,newValue: Boolean)
+    suspend fun updateSearchIpDynamically(deviceId: String,newValue: Boolean)
 }
