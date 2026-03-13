@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.coreandroid
 
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 
 /**
  * [Ru]
@@ -29,5 +30,5 @@ interface ToastManager {
      * [En]
      * Shows Toast message with passed text which is in resources
      */
-    fun showToast(@IdRes resId:Int)
+    fun showToast(@StringRes resId:Int)
 }

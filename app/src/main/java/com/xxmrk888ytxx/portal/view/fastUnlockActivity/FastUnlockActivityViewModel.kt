@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
+import com.xxmrk888ytxx.coreandroid.ToastManager
+import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.data.service.UnlockFromShortcutService
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
@@ -18,7 +20,8 @@ import javax.inject.Provider
 
 class FastUnlockActivityViewModel @Inject constructor(
     private val shortcutRepository: ShortcutRepository,
-    private val biometricDialogController: BiometricDialogController
+    private val biometricDialogController: BiometricDialogController,
+    private val toastManager: ToastManager
 ) : ViewModel(), Navigator {
 
     private val _onFinishEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
@@ -51,7 +54,10 @@ class FastUnlockActivityViewModel @Inject constructor(
                 intent.getStringExtra(FastUnlockActivity.SHORTCUT_ID_EXTRA)
                     ?: throw IllegalArgumentException("Shortcut can't be null")
             val shortcut = shortcutRepository.getShortcutById(shortcutId)
-                ?: throw IllegalArgumentException("Shortcut didn't registered")
+                ?: let {
+                    toastManager.showToast(R.string.the_device_associated_with_the_shortcut_cannot_be_found)
+                    throw IllegalArgumentException("Shortcut didn't registered")
+                }
 
             when {
                 shortcut.isRequiredBiometricUnlock -> biometricDialogController.sendRequest(
