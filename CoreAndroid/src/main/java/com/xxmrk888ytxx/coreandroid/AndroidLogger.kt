@@ -4,6 +4,7 @@ import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 object AndroidLogger : Logger {
 
@@ -128,6 +129,10 @@ object AndroidLogger : Logger {
 
     override fun deactivate() {
         _isActive = false
+    }
+
+    override fun clearLogs() {
+        _logs.update { emptyList() }
     }
 
     private fun writeInRamLog(m: Any?) {

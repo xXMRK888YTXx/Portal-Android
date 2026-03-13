@@ -45,4 +45,5 @@ interface Logger {
     fun activate()
 
     fun deactivate()
+    fun clearLogs()
 }
