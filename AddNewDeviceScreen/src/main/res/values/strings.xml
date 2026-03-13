@@ -19,4 +19,8 @@
     <string name="device_name">Device name</string>
     <string name="for_example_my_pc_name_pcname_username">For example: My PC name, PCNAME/USERNAME</string>
     <string name="something_went_wrong">Something went wrong.</string>
+    <string name="scan_qr_code">Scan QR code</string>
+    <string name="cancelled_by_the_user">Cancelled by the user</string>
+    <string name="the_qr_code_scanner_has_not_been_loaded">The QR code scanner has not been loaded</string>
+    <string name="an_error_occurred_during_scanning">An error occurred during scanning</string>
 </resources>

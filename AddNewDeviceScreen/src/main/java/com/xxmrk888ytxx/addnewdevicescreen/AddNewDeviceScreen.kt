@@ -52,6 +52,7 @@ fun AddNewDeviceScreen(
             AddNewDeviceScreenSideEffect.ToBluetoothConfigurationPage -> TODO()
             AddNewDeviceScreenSideEffect.ToWifiConfigurationPage -> pager.animateScrollToPage(Page.CONFIGURATION_WIFI.id)
             is AddNewDeviceScreenSideEffect.ScrollToPage -> pager.animateScrollToPage(effect.pageId)
+            is AddNewDeviceScreenSideEffect.OpenQRCodeScanner -> TODO()
         }
     }
     val pageType = remember(pager.currentPage) { Page.fromInt(pager.currentPage) }
@@ -131,6 +132,7 @@ fun AddNewDeviceScreen(
         }
     }
 }
+
 @Composable
 fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> Unit) {
     val ipFocusRequester = remember { FocusRequester() }
@@ -215,6 +217,7 @@ fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEven
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
             // IP Address Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -284,9 +287,36 @@ fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEven
                         .focusRequester(codeFocusRequester)
                 )
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = {
+                    onEvent(AddNewDeviceScreenUiEvent.OnScanQrCodeClicked)
+                },
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.qr_code_scanner),
+                    contentDescription = "Scan QR Code",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = stringResource(R.string.scan_qr_code),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
         }
     }
 }
+
 
 @Composable
 fun SelectTypePage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> Unit) {

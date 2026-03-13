@@ -74,4 +74,5 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.play.services.code.scanner)
 }

@@ -11,6 +11,7 @@ import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
 import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
 import com.xxmrk888ytxx.portal.data.PortalApiImpl
 import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
+import com.xxmrk888ytxx.portal.data.QRScannerManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
 import com.xxmrk888ytxx.portal.data.ShortcutManagerImpl
 import com.xxmrk888ytxx.portal.data.ShortcutRepositoryImpl
@@ -28,6 +29,7 @@ import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
+import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
@@ -126,4 +128,9 @@ interface DomainModule {
     fun bindsShortcutRepository(
         shortcutRepositoryImpl: ShortcutRepositoryImpl
     ) : ShortcutRepository
+
+    @Binds
+    fun bindsQRScannerManager(
+        qrScannerManagerImpl: QRScannerManagerImpl
+    ) : QRScannerManager
 }

@@ -12,4 +12,5 @@ sealed interface AddNewDeviceScreenUiEvent : UiEvent {
     data class PairCodeTextUpdated(val text: String) : AddNewDeviceScreenUiEvent
     data object ConnectToDevice : AddNewDeviceScreenUiEvent
     data object FinishConfiguration : AddNewDeviceScreenUiEvent
+    data object OnScanQrCodeClicked : AddNewDeviceScreenUiEvent
 }

@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
 import dagger.Module
 import dagger.Provides
+import kotlinx.serialization.json.Json
 
 @Module
 interface DataModule {
@@ -37,5 +38,12 @@ interface DataModule {
         @Provides
         fun providesBiometricAuthManager(context: Context) =
             BiometricAuthManager.create(context)
+
+        @Provides
+        @AppScope
+        fun provideJson() = Json {
+            encodeDefaults = true
+            ignoreUnknownKeys = true
+        }
     }
 }

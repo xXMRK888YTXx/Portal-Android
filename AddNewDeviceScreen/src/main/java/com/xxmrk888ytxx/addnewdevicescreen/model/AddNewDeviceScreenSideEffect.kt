@@ -4,6 +4,7 @@ import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 
 sealed interface AddNewDeviceScreenSideEffect : SideEffect {
     data class ScrollToPage(internal val pageId: Int) : AddNewDeviceScreenSideEffect
-    object ToWifiConfigurationPage : AddNewDeviceScreenSideEffect
-    object ToBluetoothConfigurationPage : AddNewDeviceScreenSideEffect
+    data object ToWifiConfigurationPage : AddNewDeviceScreenSideEffect
+    data object ToBluetoothConfigurationPage : AddNewDeviceScreenSideEffect
+    data object OpenQRCodeScanner : AddNewDeviceScreenSideEffect
 }

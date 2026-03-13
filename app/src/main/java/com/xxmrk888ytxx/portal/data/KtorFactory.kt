@@ -16,6 +16,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.pingInterval
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
+import io.ktor.serialization.kotlinx.json.ExperimentalJsonConverter
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -32,15 +33,9 @@ import javax.net.ssl.X509KeyManager
 import kotlin.time.Duration.Companion.seconds
 
 class KtorFactory @Inject constructor(
-    private val certificateManager: CertificateManager
+    private val certificateManager: CertificateManager,
+    private val jsonConverter: Json
 ) {
-
-    private val jsonConverter: Json by lazy {
-        Json {
-            ignoreUnknownKeys = true
-            encodeDefaults = true
-        }
-    }
 
     fun createPairClient(certificate: Certificate): HttpClient = createDefaultClient {
         engine {

@@ -3,6 +3,9 @@ package com.xxmrk888ytxx.addnewdevicescreen
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToWifiDeviceContract
+import com.xxmrk888ytxx.addnewdevicescreen.contract.ScanQrCodeContract
+import com.xxmrk888ytxx.addnewdevicescreen.exception.QRScanCanceledException
+import com.xxmrk888ytxx.addnewdevicescreen.exception.QRScannerNotDownloadedException
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
@@ -17,6 +20,7 @@ import javax.inject.Inject
 
 class AddNewDeviceViewModel @Inject constructor(
     private val connectToWifiDeviceContract: ConnectToWifiDeviceContract,
+    private val scanQrCodeContract: ScanQrCodeContract
 ) :
     SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent>(
         ScreenState.NoSelectedType
@@ -37,9 +41,27 @@ class AddNewDeviceViewModel @Inject constructor(
                 }
             }
 
-            AddNewDeviceScreenUiEvent.FinishConfiguration -> sendNavigateUpSideEffect()
+            is AddNewDeviceScreenUiEvent.FinishConfiguration -> sendNavigateUpSideEffect()
             is AddNewDeviceScreenUiEvent.DeviceNameTextUpdated -> updateDeviceName(event.text)
+            is AddNewDeviceScreenUiEvent.OnScanQrCodeClicked -> requestQRScan()
         }
+    }
+
+    private fun requestQRScan() = viewModelScope.launch {
+        scanQrCodeContract.requestScan()
+            .onSuccess {
+                updateDeviceName(it.deviceName)
+                hostTextUpdated(it.host)
+                pairCodeUpdated(it.pairCode.toString())
+            }
+            .onFailure {
+                val uiText = when(it) {
+                    is QRScanCanceledException -> uiText(R.string.cancelled_by_the_user)
+                    is QRScannerNotDownloadedException -> uiText(R.string.the_qr_code_scanner_has_not_been_loaded)
+                    else -> uiText(R.string.an_error_occurred_during_scanning)
+                }
+                sendToastSideEffect(uiText)
+            }
     }
 
     private fun connectToWifiDevice(value: ScreenState.Wifi) {

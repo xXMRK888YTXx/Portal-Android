@@ -11,6 +11,7 @@ ktorClient = "3.4.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.4"
 composeBom = "2026.02.00"
+playServicesCodeScanner = "16.1.0"
 slf4jAndroid = "1.7.36"
 uiTextGoogleFonts = "1.10.3"
 compile-sdk = "36"
@@ -85,6 +86,7 @@ androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "playServicesCodeScanner" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
