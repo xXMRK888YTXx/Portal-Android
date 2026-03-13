@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.MdnsManager
+import com.xxmrk888ytxx.portal.utils.waitHostForClient
 import com.xxmrk888ytxx.unlockservice.core.UnlockMessage
 import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
 import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
@@ -46,7 +47,7 @@ class WifiDriver @Inject constructor(
             device.serverCertificateFingerprint
         )
         val host = when {
-            deviceSettings.searchIpDynamically -> mdnsManager.waitHostForClient(clientId, MDSN_DISCOVERY_TIMEOUT)
+            deviceSettings.searchIpDynamically -> mdnsManager.waitHostForClient(clientId)
                 .also { fastDebugLog("In wifiDriver mdns found host: $it") }
                 ?: device.host.also { fastDebugLog("In wifiDriver mdns not found host. Using default") }
             else -> device.host
@@ -95,19 +96,8 @@ class WifiDriver @Inject constructor(
         }
     }
 
-    suspend fun MdnsManager.waitHostForClient(
-        clientId: String,
-        timeout: Long?,
-    ): String? {
-        val timeout = timeout ?: Long.MAX_VALUE
-        return withTimeoutOrNull(timeout) {
-            foundedHosts.first { it.containsKey(clientId) }[clientId]?.hostIp
-        }
-    }
-
     companion object {
         const val UNLOCK_REQUEST_TYPE = "unlock_request"
-        const val MDSN_DISCOVERY_TIMEOUT = 3000L
     }
 
 

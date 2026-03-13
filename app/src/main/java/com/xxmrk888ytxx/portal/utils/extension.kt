@@ -19,12 +19,14 @@ import com.xxmrk888ytxx.portal.PortalApp
 import com.xxmrk888ytxx.portal.di.AppComponent
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Provider
-import kotlin.jvm.java
 
 
 internal val Context.appComponent: AppComponent
@@ -98,3 +100,11 @@ fun <T> Intent.getParsableExtraCompat(name: String, clazz: Class<T>): T? {
         getParcelableExtra(name)
     }
 }
+
+suspend fun MdnsManager.waitHostForClient(
+    clientId: String,
+): String? = withTimeoutOrNull(MDSN_DISCOVERY_TIMEOUT) {
+    foundedHosts.first { it.containsKey(clientId) }[clientId]?.hostIp
+}
+
+private const val MDSN_DISCOVERY_TIMEOUT = 3000L
