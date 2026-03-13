@@ -16,6 +16,4 @@ sealed class ScreenState(open val isLoading: Boolean, open val deviceName: Strin
         override val isLoading: Boolean = false,
         override val deviceName: String = ""
     ) : ScreenState(isLoading, deviceName)
-
-    data class Success(val deviceSettings: DeviceSettings) : ScreenState(false, "")
 }

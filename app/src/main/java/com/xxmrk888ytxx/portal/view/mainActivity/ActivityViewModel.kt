@@ -61,6 +61,11 @@ class ActivityViewModel @Inject constructor(
         backStack?.add(Screen.DeviceConfigurationScreen(deviceId))
     }
 
+    override fun fromAddNewDeviceScreenToDeviceConfigurationScreen(deviceId: String) = runOnUiThread {
+        backStack?.add(Screen.DeviceConfigurationScreen(deviceId))
+        backStack?.remove(Screen.AddNewDeviceScreen)
+    }
+
     override fun navigateUp() = runOnUiThread {
         backStack?.removeLastOrNull()
     }

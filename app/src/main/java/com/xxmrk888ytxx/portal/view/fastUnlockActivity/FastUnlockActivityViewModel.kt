@@ -36,6 +36,10 @@ class FastUnlockActivityViewModel @Inject constructor(
 
     }
 
+    override fun fromAddNewDeviceScreenToDeviceConfigurationScreen(deviceId: String) {
+
+    }
+
     override fun navigateUp() {
 
     }

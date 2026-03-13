@@ -36,7 +36,7 @@ abstract class PortalViewModel<STATE, EVENT : UiEvent>(private val initialState:
 
 abstract class SideEffectPortalViewModel<STATE, EVENT : UiEvent>(initialState: STATE) :
     PortalViewModel<STATE, EVENT>(initialState), SideEffectSender<SideEffect> {
-    protected open val sideEffect = MutableSharedFlow<SideEffect>(extraBufferCapacity = 1)
+    protected open val sideEffect = MutableSharedFlow<SideEffect>(extraBufferCapacity = Int.MAX_VALUE)
     override val effect: Flow<SideEffect> = sideEffect.asSharedFlow()
 
     protected fun sendNavigateUpSideEffect() {

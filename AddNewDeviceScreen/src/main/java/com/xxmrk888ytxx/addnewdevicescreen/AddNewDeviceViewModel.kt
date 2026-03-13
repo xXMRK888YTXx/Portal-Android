@@ -3,7 +3,6 @@ package com.xxmrk888ytxx.addnewdevicescreen
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToWifiDeviceContract
-import com.xxmrk888ytxx.addnewdevicescreen.contract.UpdateDeviceSettingsContract
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
@@ -11,17 +10,13 @@ import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
 import com.xxmrk888ytxx.addnewdevicescreen.model.Validator
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddNewDeviceViewModel @Inject constructor(
     private val connectToWifiDeviceContract: ConnectToWifiDeviceContract,
-    private val updateDeviceSettingsContract: UpdateDeviceSettingsContract
 ) :
     SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent>(
         ScreenState.NoSelectedType
@@ -44,28 +39,16 @@ class AddNewDeviceViewModel @Inject constructor(
 
             AddNewDeviceScreenUiEvent.FinishConfiguration -> sendNavigateUpSideEffect()
             is AddNewDeviceScreenUiEvent.DeviceNameTextUpdated -> updateDeviceName(event.text)
-            is AddNewDeviceScreenUiEvent.AwaitUnlockRequestsChanged -> updateAwaitUnlockRequests(event.newValue)
         }
-    }
-
-    private fun updateAwaitUnlockRequests(value: Boolean) {
-        val screenState = _state.value as? ScreenState.Success ?: return
-        viewModelScope.launch { updateDeviceSettingsContract.updateAwaitUnlockRequests(screenState.deviceSettings.deviceId, value) }
     }
 
     private fun connectToWifiDevice(value: ScreenState.Wifi) {
         updateLoadingState(true)
         viewModelScope.launch {
-            connectToWifiDeviceContract.connectAndProvideSettings(value.deviceName, value.host, value.pairCode)
-                .onSuccess { settings ->
-                    viewModelScope.launch {
-                        settings
-                            .catch { sendToastSideEffect(uiText(R.string.something_went_wrong)) }
-                            .collect {
-                                _state.value = ScreenState.Success(it)
-                            }
-                    }
-                    nextPage(Page.SUCCESS)
+            connectToWifiDeviceContract.connectAndDeviceId(value.deviceName, value.host, value.pairCode)
+                .onSuccess { deviceId ->
+                    sendToastSideEffect(uiText(R.string.successfully_connected))
+                    sendNavigationAction { fromAddNewDeviceScreenToDeviceConfigurationScreen(deviceId) }
                 }
                 .onFailure {
                     sendToastSideEffect(uiText = uiText(R.string.unable_to_establish_connection))
@@ -99,14 +82,12 @@ class AddNewDeviceViewModel @Inject constructor(
                 else -> {}
             }
 
-            Page.CONFIGURATION_WIFI -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ToSuccessPage)
-            Page.SUCCESS -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ToSuccessPage)
+            else -> {}
         }
     }
 
     private fun previousPage(currentPage: Page) {
         when (currentPage.id) {
-            0, Page.SUCCESS.id -> sendNavigateUpSideEffect()
             else -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ScrollToPage(currentPage.id - 1))
         }
     }

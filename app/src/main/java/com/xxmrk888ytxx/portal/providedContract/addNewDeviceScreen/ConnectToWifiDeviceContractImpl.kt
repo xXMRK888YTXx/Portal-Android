@@ -17,14 +17,13 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
     private val certificateManager: CertificateManager,
     private val deviceRepository: DeviceRepository,
     private val portalApi: PortalApi,
-    private val deviceSettingsRepository: DeviceSettingsRepository
 ) : ConnectToWifiDeviceContract {
 
-    override suspend fun connectAndProvideSettings(
+    override suspend fun connectAndDeviceId(
         deviceName: String,
         host: String,
         pairCode: String
-    ): Result<Flow<AddNewDeviceScreenDeviceSettings>> = runCatching(Dispatchers.IO) {
+    ): Result<String> = runCatching(Dispatchers.IO) {
         val clientCertificate = certificateManager.createNewCertificate()
         val pairResult = portalApi.pair(host, pairCode, clientCertificate).getOrThrow()
         deviceRepository.saveDevice(
@@ -36,9 +35,6 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
                 serverCertificateFingerprint = pairResult.certificateFingerprint
             )
         )
-        deviceSettingsRepository.getDeviceSettingsByDeviceId(pairResult.clientId).map {
-            requireNotNull(it) { "Device settings cannot be null" }
-            AddNewDeviceScreenDeviceSettings(pairResult.clientId, it.awaitUnlockRequests)
-        }
+        return@runCatching pairResult.clientId
     }
 }

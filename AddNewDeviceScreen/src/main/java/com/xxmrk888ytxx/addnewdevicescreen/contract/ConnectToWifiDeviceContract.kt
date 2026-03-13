@@ -4,5 +4,5 @@ import com.xxmrk888ytxx.addnewdevicescreen.model.DeviceSettings
 import kotlinx.coroutines.flow.Flow
 
 interface ConnectToWifiDeviceContract {
-    suspend fun connectAndProvideSettings(deviceName: String, host: String, pairCode: String): Result<Flow<DeviceSettings>>
+    suspend fun connectAndDeviceId(deviceName: String, host: String, pairCode: String): Result<String>
 }

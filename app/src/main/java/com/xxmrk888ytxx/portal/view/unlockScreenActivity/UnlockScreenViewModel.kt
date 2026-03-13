@@ -70,6 +70,10 @@ class UnlockScreenViewModel @Inject constructor(
     override fun fromMainScreenToDeviceConfigurationScreen(deviceId: String) {
     }
 
+    override fun fromAddNewDeviceScreenToDeviceConfigurationScreen(deviceId: String) {
+
+    }
+
     override fun navigateUp() {
     }
 
