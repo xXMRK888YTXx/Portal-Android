@@ -1,7 +1,12 @@
 package com.xxmrk888ytxx.deviceconfigurationscreen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,28 +19,38 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.xxmrk888ytxx.coreandroid.DefaultValidator
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
@@ -89,88 +104,6 @@ fun DeviceConfigurationScreen(
 }
 
 @Composable
-fun DeviceInfoState(
-    screenState: ScreenState.DeviceInfo,
-    onEvent: (DeviceConfigurationUiEvent) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        OutlinedCard(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                InfoItem(title = stringResource(R.string.device_id), value = screenState.device.deviceId)
-                InfoItem(title = stringResource(R.string.device_name), value = screenState.device.deviceName)
-                InfoItem(title = stringResource(R.string.device_type), value = screenState.device.deviceType.name)
-                InfoItem(title = stringResource(R.string.host), value = screenState.device.host)
-                InfoItem(
-                    title = stringResource(R.string.client_fingerprint),
-                    value = screenState.device.clientCertificateFingerprint
-                )
-                InfoItem(
-                    title = stringResource(R.string.server_fingerprint),
-                    value = screenState.device.serverCertificateFingerprint
-                )
-            }
-        }
-
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-
-        SwitchSettingCard(
-            title = stringResource(R.string.await_unlock_requests),
-            description = stringResource(R.string.await_unlock_requests_description),
-            isChecked = screenState.device.awaitUnlockRequests,
-            onCheckedChange = {
-                onEvent(DeviceConfigurationUiEvent.OnAwaitUnlockChanged(it))
-            }
-        )
-
-        SwitchSettingCard(
-            title = stringResource(R.string.search_ip_dynamically),
-            description = stringResource(R.string.search_ip_dynamically_description),
-            isChecked = screenState.device.searchIpDynamically,
-            onCheckedChange = {
-                onEvent(DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged(it)) // Добавь это событие в DeviceConfigurationUiEvent
-            }
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = {
-                onEvent(DeviceConfigurationUiEvent.RemoveDevice)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.delete),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.remove_device))
-        }
-    }
-}
-
-@Composable
 private fun SwitchSettingCard(
     title: String,
     description: String,
@@ -211,8 +144,214 @@ private fun SwitchSettingCard(
             }
             Switch(
                 checked = isChecked,
-                onCheckedChange = null // Обрабатывается на уровне Row через toggleable
+                onCheckedChange = null
             )
+        }
+    }
+}
+
+@Composable
+fun DeviceInfoState(
+    screenState: ScreenState.DeviceInfo,
+    onEvent: (DeviceConfigurationUiEvent) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        OutlinedCard(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                InfoItem(
+                    title = stringResource(R.string.device_id),
+                    value = screenState.device.deviceId
+                )
+                InfoItem(
+                    title = stringResource(R.string.device_name),
+                    value = screenState.device.deviceName
+                )
+                InfoItem(
+                    title = stringResource(R.string.device_type),
+                    value = screenState.device.deviceType.name
+                )
+                InfoItem(
+                    title = stringResource(R.string.client_fingerprint),
+                    value = screenState.device.clientCertificateFingerprint
+                )
+                InfoItem(
+                    title = stringResource(R.string.server_fingerprint),
+                    value = screenState.device.serverCertificateFingerprint
+                )
+            }
+        }
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 4.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
+
+        EditableIpCard(
+            currentIp = screenState.device.host,
+            onIpSaved = { newIp ->
+                onEvent(DeviceConfigurationUiEvent.OnHostChanged(newIp))
+            }
+        )
+
+        SwitchSettingCard(
+            title = stringResource(R.string.await_unlock_requests),
+            description = stringResource(R.string.await_unlock_requests_description),
+            isChecked = screenState.device.awaitUnlockRequests,
+            onCheckedChange = {
+                onEvent(DeviceConfigurationUiEvent.OnAwaitUnlockChanged(it))
+            }
+        )
+
+        SwitchSettingCard(
+            title = stringResource(R.string.search_ip_dynamically),
+            description = stringResource(R.string.search_ip_dynamically_description),
+            isChecked = screenState.device.searchIpDynamically,
+            onCheckedChange = {
+                onEvent(DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged(it))
+            }
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            onClick = {
+                onEvent(DeviceConfigurationUiEvent.RemoveDevice)
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer
+            )
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.delete),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = stringResource(R.string.remove_device))
+        }
+    }
+}
+
+@Composable
+private fun EditableIpCard(
+    currentIp: String,
+    onIpSaved: (String) -> Unit
+) {
+    var isEditing by rememberSaveable { mutableStateOf(false) }
+    var ipValue by rememberSaveable(currentIp) { mutableStateOf(currentIp) }
+    val isValidIp = remember(ipValue) {
+        DefaultValidator.isHostValid(ipValue)
+    }
+
+    OutlinedCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        AnimatedContent(
+            targetState = isEditing,
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut() using SizeTransform(clip = false)
+            },
+            label = "EditIpAnimation"
+        ) { editing ->
+            if (editing) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.host),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    OutlinedTextField(
+                        value = ipValue,
+                        onValueChange = { ipValue = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                        textStyle = MaterialTheme.typography.bodyLarge,
+                        shape = MaterialTheme.shapes.medium,
+                        isError = !isValidIp
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton(
+                            onClick = {
+                                ipValue = currentIp
+                                isEditing = false
+                            }
+                        ) {
+                            Text(text = stringResource(android.R.string.cancel))
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Button(
+                            onClick = {
+                                onIpSaved(ipValue)
+                                isEditing = false
+                            },
+                            enabled = ipValue.isNotBlank() && ipValue.isNotEmpty() && ipValue != currentIp && isValidIp
+                        ) {
+                            Text(text = stringResource(R.string.save))
+                        }
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable { isEditing = true }
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.host),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = currentIp,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Icon(
+                        painterResource(R.drawable.edit),
+                        contentDescription = stringResource(R.string.edit_host),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
     }
 }

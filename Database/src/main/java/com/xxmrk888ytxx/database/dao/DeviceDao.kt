@@ -32,6 +32,9 @@ abstract class DeviceDao {
         ))
     }
 
+    @Query("UPDATE ${DeviceEntry.TABLE_NAME} SET host = :newHost WHERE deviceId = :deviceId")
+    abstract suspend fun updateHost(deviceId: String, newHost: String)
+
     @Query("DELETE FROM ${DeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId")
     abstract suspend fun removeDevice(deviceId: String)
 }

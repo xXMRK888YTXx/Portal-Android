@@ -7,6 +7,7 @@ import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
+import com.xxmrk888ytxx.deviceconfigurationscreen.contract.UpdateHostContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
 import dagger.assisted.Assisted
@@ -21,7 +22,8 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     @Assisted private val deviceId: String,
     private val provideDeviceInfoContract: ProvideDeviceInfoContract,
     private val removeDeviceContract: RemoveDeviceContract,
-    private val changeDeviceSettingsContract: ChangeDeviceSettingsContract
+    private val changeDeviceSettingsContract: ChangeDeviceSettingsContract,
+    private val updateHostContract: UpdateHostContract
 ) :
     SideEffectPortalViewModel<ScreenState, DeviceConfigurationUiEvent>(ScreenState.Loading) {
 
@@ -49,7 +51,13 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             is DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged -> changeSearchIpDynamicallyState(
                 event.newValue
             )
+
+            is DeviceConfigurationUiEvent.OnHostChanged -> changeHostState(event.newIp)
         }
+    }
+
+    private fun changeHostState(newIp: String) = viewModelScope.launch {
+        updateHostContract.update(newIp, deviceId)
     }
 
     private fun changeSearchIpDynamicallyState(newValue: Boolean) = withLoading {

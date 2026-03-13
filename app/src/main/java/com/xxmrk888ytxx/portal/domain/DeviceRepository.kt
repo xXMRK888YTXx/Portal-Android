@@ -8,4 +8,5 @@ interface DeviceRepository {
     suspend fun saveDevice(device: Device)
     fun getDeviceById(deviceId: String): Flow<Device?>
     suspend fun removeDevice(deviceId: String)
+    suspend fun updateHost(deviceId: String, newHost: String)
 }

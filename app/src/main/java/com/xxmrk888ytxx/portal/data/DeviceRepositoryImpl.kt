@@ -36,9 +36,10 @@ class DeviceRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getDeviceById(deviceId: String): Flow<Device?> = deviceDao.getDeviceById(deviceId).map { deviceEntry ->
-        deviceEntry?.toDomainModel()
-    }
+    override fun getDeviceById(deviceId: String): Flow<Device?> =
+        deviceDao.getDeviceById(deviceId).map { deviceEntry ->
+            deviceEntry?.toDomainModel()
+        }
 
     override suspend fun removeDevice(deviceId: String) = withContext<Unit>(Dispatchers.IO) {
         val deviceShortcuts = shortcutRepository.getShortcutsByDeviceId(deviceId)
@@ -48,13 +49,18 @@ class DeviceRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateHost(deviceId: String, newHost: String) =
+        withContext(Dispatchers.IO) {
+            deviceDao.updateHost(deviceId, newHost)
+        }
+
     override val devices: Flow<List<Device>> = deviceDao.devices.map { deviceList ->
         deviceList.map { deviceEntry ->
             deviceEntry.toDomainModel()
         }
     }
 
-    private suspend fun DeviceEntry.toDomainModel() : Device {
+    private suspend fun DeviceEntry.toDomainModel(): Device {
         val clientCertificate = secureStorage.restoreCertificateByAlias(clientCertificateKeyAlias)
         return Device(
             deviceId = deviceId,
