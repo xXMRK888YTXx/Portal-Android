@@ -12,6 +12,8 @@ sealed class ScreenState(open val isLoading: Boolean, open val deviceName: Strin
     ) : ScreenState(isLoading, deviceName)
 
     data class Bluetooth(
+        val pairedDevices: BluetoothState = BluetoothState.Success(emptyList()),
+        val selectedDevice: BluetoothDevice? = null,
         val pairCode: String = "",
         override val isLoading: Boolean = false,
         override val deviceName: String = ""

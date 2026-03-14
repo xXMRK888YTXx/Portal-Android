@@ -4,6 +4,7 @@ import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
 import com.xxmrk888ytxx.portal.data.BiometricRequestManager
+import com.xxmrk888ytxx.portal.data.BluetoothManagerImpl
 import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
 import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceSettingsRepositoryImpl
@@ -23,6 +24,7 @@ import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.BiometricRequestController
+import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
@@ -140,4 +142,9 @@ interface DomainModule {
     fun bindsPermissionManager(
         permissionManagerImpl: PermissionManagerImpl
     ) : PermissionManager
+
+    @Binds
+    fun bindsBluetoothManager(
+        bluetoothManagerImpl: BluetoothManagerImpl
+    ) : BluetoothManager
 }

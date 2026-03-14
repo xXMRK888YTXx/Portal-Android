@@ -17,6 +17,12 @@ import androidx.core.net.toUri
 class PermissionManagerImpl @Inject constructor(
     private val context: Context
 ) : PermissionManager {
+    override val isBluetoothPermissionGranted: Boolean
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED
+        } else {
+            true
+        }
 
     override val isNotificationPermissionGranted: Boolean
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
