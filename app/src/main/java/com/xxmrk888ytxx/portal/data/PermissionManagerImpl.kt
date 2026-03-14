@@ -18,11 +18,7 @@ class PermissionManagerImpl @Inject constructor(
     private val context: Context
 ) : PermissionManager {
     override val isBluetoothPermissionGranted: Boolean
-        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED
-        } else {
-            true
-        }
+        get() = isNearbyDevicesPermissionGranted
 
     override val isNotificationPermissionGranted: Boolean
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -31,8 +27,8 @@ class PermissionManagerImpl @Inject constructor(
             true
         }
     override val isNearbyDevicesPermissionGranted: Boolean
-        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.checkSelfPermission(Manifest.permission.NEARBY_WIFI_DEVICES) == PERMISSION_GRANTED
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED
         } else {
             true
         }

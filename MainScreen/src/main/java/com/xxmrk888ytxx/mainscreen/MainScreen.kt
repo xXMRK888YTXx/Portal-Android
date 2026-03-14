@@ -75,7 +75,7 @@ fun MainScreen(
         when (it) {
             MainScreenSideEffect.RequestNearbyDevicesPermission -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requestNearbyDevicesPermissionContract.launch(
-                    Manifest.permission.NEARBY_WIFI_DEVICES)
+                    Manifest.permission.BLUETOOTH_CONNECT)
             }
 
             MainScreenSideEffect.RequestNotificationPermission -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
