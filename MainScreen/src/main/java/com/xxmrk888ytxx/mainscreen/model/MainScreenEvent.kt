@@ -9,5 +9,10 @@ sealed interface MainScreenEvent : UiEvent {
     data class ShowCreateShortcutModelDialog(val device: Device) : MainScreenEvent
     data object DismissCreateShortcutModelDialog : MainScreenEvent
     data object CreateShortcut : MainScreenEvent
+    data object RequestNearbyDevicesPermission : MainScreenEvent
+    data object RequestNotificationPermission : MainScreenEvent
+    data object RequestFullScreenIntentPermission : MainScreenEvent
+    data class PermissionGranted(val permission: Permission) : MainScreenEvent
     data class OnIsRequiredBiometricUnlockStateChanged(val isRequiredBiometricUnlock: Boolean) : MainScreenEvent
+    data object ActivityInOnResumeState : MainScreenEvent
 }

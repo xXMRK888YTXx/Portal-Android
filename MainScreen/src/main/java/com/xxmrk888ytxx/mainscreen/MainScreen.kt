@@ -1,57 +1,47 @@
 package com.xxmrk888ytxx.mainscreen
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
+import com.xxmrk888ytxx.corecompose.uiText.asString
 import com.xxmrk888ytxx.mainscreen.model.CreateShortcutDialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.DeviceAction
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
 import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
+import com.xxmrk888ytxx.mainscreen.model.Permission
+import com.xxmrk888ytxx.mainscreen.model.PermissionBannerItem
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import kotlinx.coroutines.flow.Flow
 
@@ -63,13 +53,38 @@ fun MainScreen(
     sideEffect: Flow<SideEffect>
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
-    val isCreateShortcutDialogVisible = remember(screenState.createShortcutDialogState) {
-        screenState.createShortcutDialogState is CreateShortcutDialogState.Showed
+    val grantedPermissionHandler: (Permission) -> Unit = remember {
+        {
+            onEvent(MainScreenEvent.PermissionGranted(it))
+        }
     }
 
+    val requestNotificationPermissionContract = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) grantedPermissionHandler(Permission.Notification)
+    }
 
-    HandleSideEffect<MainScreenSideEffect>(sideEffect) {}
+    val requestNearbyDevicesPermissionContract = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) grantedPermissionHandler(Permission.NearbyDevices)
+    }
+
+    HandleSideEffect<MainScreenSideEffect>(sideEffect) {
+        when (it) {
+            MainScreenSideEffect.RequestNearbyDevicesPermission -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestNearbyDevicesPermissionContract.launch(
+                    Manifest.permission.NEARBY_WIFI_DEVICES)
+            }
+
+            MainScreenSideEffect.RequestNotificationPermission -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestNotificationPermissionContract.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            }
+        }
+    }
     Scaffold(
         Modifier.fillMaxSize(),
         floatingActionButton = {
@@ -106,17 +121,28 @@ fun MainScreen(
             }
         }
     ) { paddingValues ->
-        Box(
+        Column(
             Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            AnimatedContent(
-                targetState = screenState.devices
-            ) { devices ->
-                when (devices.isNotEmpty()) {
-                    true -> DeviceList(screenState, onEvent)
-                    false -> EmptyDevicesState(onEvent)
+            AnimatedVisibility(visible = screenState.permissionBannerItemList.isNotEmpty()) {
+                PermissionBannersPager(
+                    banners = screenState.permissionBannerItemList,
+                    onEvent = onEvent,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+            }
+
+            Box(Modifier.weight(1f)) {
+                AnimatedContent(
+                    targetState = screenState.devices,
+                    label = "DevicesContent"
+                ) { devices ->
+                    when (devices.isNotEmpty()) {
+                        true -> DeviceList(screenState, onEvent)
+                        false -> EmptyDevicesState(onEvent)
+                    }
                 }
             }
         }
@@ -135,6 +161,17 @@ fun MainScreen(
                 createShortcutDialogState = screenState.createShortcutDialogState,
             )
         }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                onEvent(MainScreenEvent.ActivityInOnResumeState)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 }
 
@@ -247,7 +284,6 @@ private fun DeviceItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // — Action chips row —
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -380,6 +416,117 @@ fun CreateShortcutBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(R.string.create))
+            }
+        }
+    }
+}
+
+@Composable
+fun PermissionBannersPager(
+    banners: List<PermissionBannerItem>,
+    onEvent: (MainScreenEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val pagerState = rememberPagerState(pageCount = { banners.size })
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        HorizontalPager(
+            state = pagerState,
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            pageSpacing = 12.dp,
+            modifier = Modifier.fillMaxWidth(),
+            key = { banners[it].hashCode() }
+        ) { page ->
+            PermissionBannerCard(
+                banner = banners[page],
+                onEvent = onEvent
+            )
+        }
+
+        if (banners.size > 1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 4.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(banners.size) { iteration ->
+                    val color = if (pagerState.currentPage == iteration) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(6.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PermissionBannerCard(
+    banner: PermissionBannerItem,
+    onEvent: (MainScreenEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = banner.iconRes),
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = banner.title.asString(),
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = banner.description.asString(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = { onEvent(banner.eventForRequestPermission) }
+                ) {
+                    Text(stringResource(R.string.grant))
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceSettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
 import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
+import com.xxmrk888ytxx.portal.data.PermissionManagerImpl
 import com.xxmrk888ytxx.portal.data.PortalApiImpl
 import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
 import com.xxmrk888ytxx.portal.data.QRScannerManagerImpl
@@ -27,6 +28,7 @@ import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import com.xxmrk888ytxx.portal.domain.MdnsManager
+import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.PortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.QRScannerManager
@@ -133,4 +135,9 @@ interface DomainModule {
     fun bindsQRScannerManager(
         qrScannerManagerImpl: QRScannerManagerImpl
     ) : QRScannerManager
+
+    @Binds
+    fun bindsPermissionManager(
+        permissionManagerImpl: PermissionManagerImpl
+    ) : PermissionManager
 }

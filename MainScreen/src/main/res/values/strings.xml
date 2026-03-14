@@ -9,4 +9,11 @@
     <string name="create_shortcut">Create Shortcut</string>
     <string name="use_biometric_authentication">Use biometric authentication</string>
     <string name="create">Create</string>
+    <string name="grant">Grant</string>
+    <string name="grant_nearby_devices_permission">Grant \"Nearby Devices\" permission</string>
+    <string name="this_permission_is_required_by_the_app_if_you_use_bluetooth_to_unlock_your_device">This permission is required by the app if you use Bluetooth to unlock your device</string>
+    <string name="grant_notification_permission">Grant \"Notification\" permission</string>
+    <string name="the_app_requires_this_permission_to_send_notifications_regarding_unlock_requests_as_well_as_to_function_correctly_in_the_background_and_to_indicate_that_it_is_running">The app requires this permission to send notifications regarding unlock requests, as well as to function correctly in the background and to indicate that it is running.</string>
+    <string name="grant_full_screen_notification_permission">Grant \"Full Screen Notification\" permission</string>
+    <string name="this_permission_is_required_to_display_device_unlock_requests_on_top_of_the_lock_screen_this_allows_you_to_instantly_approve_or_deny_access_without_having_to_unlock_your_current_smartphone_first">This permission is required to display device unlock requests on top of the lock screen. This allows you to instantly approve or deny access without having to unlock your current smartphone first.</string>
 </resources>

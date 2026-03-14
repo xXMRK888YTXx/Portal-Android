@@ -5,12 +5,16 @@ import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.mainscreen.contract.CreateShortcutContract
+import com.xxmrk888ytxx.mainscreen.contract.PermissionContract
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
 import com.xxmrk888ytxx.mainscreen.exception.LauncherNotSupportShortcutException
 import com.xxmrk888ytxx.mainscreen.model.CreateShortcutDialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
+import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
+import com.xxmrk888ytxx.mainscreen.model.Permission
+import com.xxmrk888ytxx.mainscreen.model.PermissionBannerItem
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import com.xxmrk888ytxx.mainscreen.model.ShortcutOption
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,21 +27,26 @@ import javax.inject.Inject
 class MainScreenViewModel @Inject constructor(
     private val provideSavedDevices: ProvideSavedDevices,
     private val unlockRequestContract: SendUnlockRequestContract,
-    private val createShortcutContract: CreateShortcutContract
+    private val createShortcutContract: CreateShortcutContract,
+    private val permissionContract: PermissionContract
 ) : SideEffectPortalViewModel<ScreenState, MainScreenEvent>(ScreenState()) {
 
     private val isLoading = MutableStateFlow(false)
     private val createShortcutDialogState =
         MutableStateFlow<CreateShortcutDialogState>(CreateShortcutDialogState.Hidden)
 
+    private val permissionBannerItemListState =
+        MutableStateFlow<List<PermissionBannerItem>>(emptyList())
+
 
     override val state: StateFlow<ScreenState> =
         combine(
             provideSavedDevices.devices,
             isLoading,
-            createShortcutDialogState
-        ) { deviceList, isLoading, createShortcutDialogState ->
-            ScreenState(deviceList, isLoading, createShortcutDialogState)
+            createShortcutDialogState,
+            permissionBannerItemListState
+        ) { deviceList, isLoading, createShortcutDialogState, permissionBannerItemList ->
+            ScreenState(deviceList, isLoading, createShortcutDialogState, permissionBannerItemList)
         }.stateWhileSubscribed()
 
 
@@ -60,7 +69,19 @@ class MainScreenViewModel @Inject constructor(
             }
 
             MainScreenEvent.CreateShortcut -> createShortcut()
+            MainScreenEvent.RequestFullScreenIntentPermission -> requestFullScreenIntentPermission()
+            MainScreenEvent.RequestNearbyDevicesPermission -> sideEffect.tryEmit(
+                MainScreenSideEffect.RequestNearbyDevicesPermission
+            )
+
+            MainScreenEvent.RequestNotificationPermission -> sideEffect.tryEmit(MainScreenSideEffect.RequestNotificationPermission)
+            is MainScreenEvent.PermissionGranted -> checkPermission()
+            MainScreenEvent.ActivityInOnResumeState -> checkPermission()
         }
+    }
+
+    private fun requestFullScreenIntentPermission() = viewModelScope.launch {
+        permissionContract.requestShowFullScreenIntentPermission()
     }
 
     private fun createShortcut() {
@@ -75,13 +96,14 @@ class MainScreenViewModel @Inject constructor(
         isLoading.update { true }
         viewModelScope.launch {
             createShortcutContract.createShortcutContract(shortcutOption)
-                .onSuccess {  }
+                .onSuccess { }
                 .onFailure { error ->
                     fastDebugLog(error)
-                    val errorMessage = when(error) {
+                    val errorMessage = when (error) {
                         is LauncherNotSupportShortcutException -> {
-                           uiText("Your home screen launcher doesn't support shortcuts.")
+                            uiText("Your home screen launcher doesn't support shortcuts.")
                         }
+
                         else -> uiText("Failed to create shortcut. Please try again.")
                     }
                     sendToastSideEffect(errorMessage)
@@ -112,5 +134,37 @@ class MainScreenViewModel @Inject constructor(
                 .onSuccess { sendToastSideEffect(uiText(R.string.device_unlocked)) }
                 .onFailure { sendToastSideEffect(uiText(R.string.failed_to_unlock_device)) }
         }.invokeOnCompletion { isLoading.value = false }
+    }
+
+    private fun checkPermission() = viewModelScope.launch {
+        val permissionBannerItems = permissionContract.getDeniedPermissions().map {
+            when (it) {
+                Permission.NearbyDevices -> PermissionBannerItem(
+                    title = R.string.grant_nearby_devices_permission.uiText(),
+                    description = R.string.this_permission_is_required_by_the_app_if_you_use_bluetooth_to_unlock_your_device.uiText(),
+                    iconRes = R.drawable.nearby,
+                    eventForRequestPermission = MainScreenEvent.RequestNearbyDevicesPermission
+                )
+
+                Permission.Notification -> PermissionBannerItem(
+                    title = R.string.grant_notification_permission.uiText(),
+                    description = R.string.the_app_requires_this_permission_to_send_notifications_regarding_unlock_requests_as_well_as_to_function_correctly_in_the_background_and_to_indicate_that_it_is_running.uiText(),
+                    iconRes = R.drawable.notifications,
+                    eventForRequestPermission = MainScreenEvent.RequestNotificationPermission
+                )
+
+                Permission.ShowFullIntent -> PermissionBannerItem(
+                    title = R.string.grant_full_screen_notification_permission.uiText(),
+                    description = R.string.this_permission_is_required_to_display_device_unlock_requests_on_top_of_the_lock_screen_this_allows_you_to_instantly_approve_or_deny_access_without_having_to_unlock_your_current_smartphone_first.uiText(),
+                    iconRes = R.drawable.open_in_full,
+                    eventForRequestPermission = MainScreenEvent.RequestFullScreenIntentPermission
+                )
+            }
+        }
+        permissionBannerItemListState.value = permissionBannerItems
+    }
+
+    init {
+        checkPermission()
     }
 }
