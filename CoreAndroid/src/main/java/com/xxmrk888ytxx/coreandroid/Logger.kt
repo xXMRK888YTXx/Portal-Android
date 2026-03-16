@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface Logger {
     val isActive: Boolean
-    val logs: StateFlow<List<String>>
+    val logs: StateFlow<List<Pair<Long,String>>>
 
     //String
     fun error(m: String, tag: String? = null)

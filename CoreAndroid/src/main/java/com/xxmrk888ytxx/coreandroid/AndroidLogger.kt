@@ -14,8 +14,10 @@ object AndroidLogger : Logger {
 
     private const val defTag = "def"
 
-    private val _logs = MutableStateFlow<List<String>>(emptyList())
-    override val logs: StateFlow<List<String>> = _logs.asStateFlow()
+    private val _lastLogId = MutableStateFlow(0L)
+
+    private val _logs = MutableStateFlow<List<Pair<Long,String>>>(emptyList())
+    override val logs: StateFlow<List<Pair<Long,String>>> = _logs.asStateFlow()
 
     override fun error(m: String, tag: String?) {
         if(!_isActive) return
@@ -147,8 +149,8 @@ object AndroidLogger : Logger {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss")
         val timeString = current.format(formatter)
 
-        val newEntry = "[ $timeString ] $message\n"
-
+        val newEntry = _lastLogId.value to "[ $timeString ] $message\n"
+        _lastLogId.value += 1
         _logs.value = listOf(newEntry) + (_logs.value ?: emptyList())
     }
 

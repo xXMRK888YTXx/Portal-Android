@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ProvideLogsContractImpl @Inject constructor() : ProvideLogsContract {
-    override val logs: Flow<List<String>> = AndroidLogger.logs
+    override val logs: Flow<List<Pair<Long,String>>> = AndroidLogger.logs
 }
