@@ -1,6 +1,6 @@
 package com.xxmrk888ytxx.portal.domain.model
 
-data class PairResult(
+data class WifiPairResult(
     val clientId: String,
     val certificateFingerprint: String
 )

@@ -11,6 +11,9 @@ import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
 import com.xxmrk888ytxx.portal.exception.BluetoothDisabledException
 import com.xxmrk888ytxx.portal.exception.BluetoothNotSupportedException
 import com.xxmrk888ytxx.portal.exception.BluetoothPermissionNotGrantedException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.UUID
 import javax.inject.Inject
 
 class BluetoothManagerImpl @Inject constructor(
@@ -32,10 +35,33 @@ class BluetoothManagerImpl @Inject constructor(
     @SuppressLint("MissingPermission")
     override suspend fun getPairedDevices(): List<BluetoothDevice> {
         fastDebugLog("getPairedDevices")
-        if (!permissionManager.isBluetoothPermissionGranted) throw BluetoothPermissionNotGrantedException()
-        if (!isBluetoothEnabled) throw BluetoothDisabledException()
+        checkBluetoothStateAndPermission()
         return bluetoothAdapter.bondedDevices.map {
-            BluetoothDevice(it.name,it.address)
+            BluetoothDevice(it.name, it.address)
         }.also { fastDebugLog("Paired devices: $it") }
     }
+
+    override suspend fun connectAndSendData(device: BluetoothDevice, data: ByteArray) =
+        withContext(Dispatchers.IO) {
+            checkBluetoothStateAndPermission()
+            val androidBluetoothDevice =
+                bluetoothAdapter.bondedDevices.firstOrNull { it.address == device.macAddress }
+                    ?: throw IllegalArgumentException("Device $device not paired")
+            val socket = androidBluetoothDevice.createRfcommSocketToServiceRecord(
+                UUID.fromString(PORTAL_BLUETOOTH_SERVICE_UUID)
+            )
+            socket.connect()
+            socket.outputStream.write(data)
+            socket.close()
+        }
+
+    private fun checkBluetoothStateAndPermission() {
+        if (!permissionManager.isBluetoothPermissionGranted) throw BluetoothPermissionNotGrantedException()
+        if (!isBluetoothEnabled) throw BluetoothDisabledException()
+    }
+
+    companion object {
+        const val PORTAL_BLUETOOTH_SERVICE_UUID = "E0CBF06C-CD8B-4647-BB8A-263B43F0F974"
+    }
+
 }

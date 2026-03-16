@@ -5,13 +5,14 @@ import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
 import com.xxmrk888ytxx.portal.data.BiometricRequestManager
 import com.xxmrk888ytxx.portal.data.BluetoothManagerImpl
+import com.xxmrk888ytxx.portal.data.BluetoothPortalApiImpl
 import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
 import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceSettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
 import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
 import com.xxmrk888ytxx.portal.data.PermissionManagerImpl
-import com.xxmrk888ytxx.portal.data.PortalApiImpl
+import com.xxmrk888ytxx.portal.data.WifiPortalApiImpl
 import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
 import com.xxmrk888ytxx.portal.data.QRScannerManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
@@ -25,13 +26,14 @@ import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.BiometricRequestController
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
+import com.xxmrk888ytxx.portal.domain.BluetoothPortalApi
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
-import com.xxmrk888ytxx.portal.domain.PortalApi
+import com.xxmrk888ytxx.portal.domain.WifiPortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
@@ -68,8 +70,8 @@ interface DomainModule {
 
     @Binds
     fun bindsPortalApi(
-        portalApiImpl: PortalApiImpl
-    ) : PortalApi
+        portalApiImpl: WifiPortalApiImpl
+    ) : WifiPortalApi
 
     @Binds
     fun bindsDeviceUnlockManager(
@@ -147,4 +149,9 @@ interface DomainModule {
     fun bindsBluetoothManager(
         bluetoothManagerImpl: BluetoothManagerImpl
     ) : BluetoothManager
+
+    @Binds
+    fun bindsBluetoothPortalApi(
+        bluetoothPortalApi: BluetoothPortalApiImpl
+    ) : BluetoothPortalApi
 }

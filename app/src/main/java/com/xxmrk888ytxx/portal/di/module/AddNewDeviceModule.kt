@@ -1,8 +1,10 @@
 package com.xxmrk888ytxx.portal.di.module
 
+import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToBluetoothDeviceContract
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToWifiDeviceContract
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ProvideBluetoothPairedDevices
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ScanQrCodeContract
+import com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen.ConnectToBluetoothDeviceContractImpl
 import com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen.ConnectToWifiDeviceContractImpl
 import com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen.ProvideBluetoothPairedDevicesImpl
 import com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen.ScanQrCodeContractImpl
@@ -23,4 +25,9 @@ interface AddNewDeviceModule {
     fun bindsProvideBluetoothPairedDevices(
         provideBluetoothPairedDevicesImpl: ProvideBluetoothPairedDevicesImpl
     ) : ProvideBluetoothPairedDevices
+
+    @Binds
+    fun bindsConnectToBluetoothDeviceContract(
+        connectToBluetoothDeviceContractImpl: ConnectToBluetoothDeviceContractImpl
+    ) : ConnectToBluetoothDeviceContract
 }

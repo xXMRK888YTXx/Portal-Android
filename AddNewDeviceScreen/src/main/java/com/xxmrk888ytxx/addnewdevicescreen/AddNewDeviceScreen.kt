@@ -143,7 +143,7 @@ fun AddNewDeviceScreen(
                     Button(
                         onClick = {
                             val event = when (pageType) {
-                                Page.CONFIGURATION_WIFI -> AddNewDeviceScreenUiEvent.ConnectToDevice
+                                Page.CONFIGURATION_WIFI, Page.CONFIGURATION_BLUETOOTH -> AddNewDeviceScreenUiEvent.ConnectToDevice
                                 else -> AddNewDeviceScreenUiEvent.NextPage(pageType)
                             }
                             onEvent(event)

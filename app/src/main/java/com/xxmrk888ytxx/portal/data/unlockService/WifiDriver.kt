@@ -53,7 +53,7 @@ class WifiDriver @Inject constructor(
             else -> device.host
         }
         val urlString = "wss://$host:29170/ws"
-        fastDebugLog("Try to connect to websocket server host: $urlString")
+        fastDebugLog("Try to connectAndSendData to websocket server host: $urlString")
         client.webSocket(urlString = urlString) {
             fastDebugLog("Connected to websocket server")
 

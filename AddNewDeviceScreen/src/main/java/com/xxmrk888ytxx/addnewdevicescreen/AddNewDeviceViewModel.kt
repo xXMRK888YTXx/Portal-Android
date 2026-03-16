@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.addnewdevicescreen
 
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToBluetoothDeviceContract
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ConnectToWifiDeviceContract
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ProvideBluetoothPairedDevices
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ScanQrCodeContract
@@ -18,7 +19,9 @@ import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
 import com.xxmrk888ytxx.addnewdevicescreen.model.Validator
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.coreandroid.uiText.buildUiText
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +29,8 @@ import javax.inject.Inject
 class AddNewDeviceViewModel @Inject constructor(
     private val connectToWifiDeviceContract: ConnectToWifiDeviceContract,
     private val scanQrCodeContract: ScanQrCodeContract,
-    private val provideBluetoothPairedDevices: ProvideBluetoothPairedDevices
+    private val provideBluetoothPairedDevices: ProvideBluetoothPairedDevices,
+    private val connectToBluetoothDeviceContract: ConnectToBluetoothDeviceContract
 ) :
     SideEffectPortalViewModel<ScreenState, AddNewDeviceScreenUiEvent>(
         ScreenState.NoSelectedType
@@ -41,7 +45,7 @@ class AddNewDeviceViewModel @Inject constructor(
             is AddNewDeviceScreenUiEvent.PairCodeTextUpdated -> pairCodeUpdated(event.text)
             is AddNewDeviceScreenUiEvent.ConnectToDevice -> {
                 when (val state = state.value) {
-                    is ScreenState.Bluetooth -> TODO()
+                    is ScreenState.Bluetooth -> connectToBluetoothDevice(state)
                     is ScreenState.Wifi -> connectToWifiDevice(state)
                     else -> {}
                 }
@@ -59,6 +63,18 @@ class AddNewDeviceViewModel @Inject constructor(
                 AddNewDeviceScreenSideEffect.OpenBluetoothSettings)
             is AddNewDeviceScreenUiEvent.OnBluetoothDeviceSelected -> updateSelectedBluetoothDevice(event.device)
         }
+    }
+
+    private fun connectToBluetoothDevice(state: ScreenState.Bluetooth) {
+        if (_state.value.isLoading) return
+        val selectedDevice = state.selectedDevice ?: return
+        updateLoadingState(true)
+        viewModelScope.launch {
+            connectToBluetoothDeviceContract.connect(state.deviceName,state.pairCode,state.selectedDevice)
+                .onFailure {
+                    buildUiText { provider -> provider.provide(uiText(R.string.unable_to_connect_to_the)) + " " + selectedDevice.name }
+                }
+        }.invokeOnCompletion { updateLoadingState(false) }
     }
 
     private fun updateSelectedBluetoothDevice(bluetoothDevice: BluetoothDevice) {

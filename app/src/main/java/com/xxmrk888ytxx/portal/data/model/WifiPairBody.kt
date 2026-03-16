@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class PairBody(
+data class WifiPairBody(
     @SerialName("code") val pairCode: String
 )
