@@ -38,7 +38,7 @@ fun LogsScreen(
         LazyColumn(Modifier
             .fillMaxSize()
             .padding(paddingValues)) {
-            items(screenState.logsStrings) {
+            items(screenState.logsStrings, key = { it.hashCode() }) {
                 Text(text = it)
             }
         }
