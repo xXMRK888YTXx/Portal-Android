@@ -154,7 +154,7 @@ fun AddNewDeviceScreen(
                         enabled = when (pageType) {
                             Page.SELECT_TYPE -> state !is ScreenState.NoSelectedType
                             Page.CONFIGURATION_WIFI -> state is ScreenState.Wifi && state.isDataValid
-                            Page.CONFIGURATION_BLUETOOTH -> false
+                            Page.CONFIGURATION_BLUETOOTH -> state is ScreenState.Bluetooth && state.isDataValid
                         }
                     ) {
                         Text(
@@ -200,6 +200,7 @@ fun BluetoothConfigurationPage(
     }
 
     val codeFocusRequester = remember { FocusRequester() }
+    val deviceNameFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -231,6 +232,48 @@ fun BluetoothConfigurationPage(
         )
 
         Spacer(modifier = Modifier.height(32.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            OutlinedTextField(
+                value = state.deviceName,
+                onValueChange = {
+                    onEvent(AddNewDeviceScreenUiEvent.DeviceNameTextUpdated(it))
+                },
+                label = { Text(stringResource(R.string.device_name)) },
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.for_example_my_pc_name_pcname_username),
+                        modifier = Modifier.basicMarquee(),
+                        maxLines = 1
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.computer),
+                        contentDescription = null
+                    )
+                },
+                isError = state.deviceName.isNotEmpty() && !Validator.isDeviceNameValid(state.deviceName),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { codeFocusRequester.requestFocus() }
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .focusRequester(deviceNameFocusRequester)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),

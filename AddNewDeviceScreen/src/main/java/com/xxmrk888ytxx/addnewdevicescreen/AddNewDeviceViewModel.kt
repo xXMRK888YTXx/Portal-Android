@@ -53,7 +53,7 @@ class AddNewDeviceViewModel @Inject constructor(
             is AddNewDeviceScreenUiEvent.RequestBluetoothPermission -> sideEffect.tryEmit(
                 AddNewDeviceScreenSideEffect.RequestBluetoothPermission
             )
-            is AddNewDeviceScreenUiEvent.UpdateBluetoothState -> updateBluetoothState()
+            is AddNewDeviceScreenUiEvent.UpdateBluetoothState -> updateBluetoothData()
             is AddNewDeviceScreenUiEvent.EnableBluetooth -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.EnableBluetooth)
             is AddNewDeviceScreenUiEvent.OpenBluetoothSettings -> sideEffect.tryEmit(
                 AddNewDeviceScreenSideEffect.OpenBluetoothSettings)
@@ -106,7 +106,11 @@ class AddNewDeviceViewModel @Inject constructor(
 
     private fun pairCodeUpdated(text: String) {
         if (text.length > 6 || !text.isDigitsOnly()) return
-        updateWifiState { it.copy(pairCode = text) }
+        when(_state.value) {
+            is ScreenState.Bluetooth -> updateBluetoothState { it.copy(pairCode = text) }
+            is ScreenState.Wifi -> updateWifiState { it.copy(pairCode = text) }
+            else -> {}
+        }
     }
 
     private fun hostTextUpdated(text: String) {
@@ -119,7 +123,7 @@ class AddNewDeviceViewModel @Inject constructor(
         handleEvent(AddNewDeviceScreenUiEvent.UpdateBluetoothState)
     }
 
-    private fun updateBluetoothState() = withLoading {
+    private fun updateBluetoothData() = withLoading {
         updateBluetoothState { state -> state.copy(selectedDevice = null) }
         provideBluetoothPairedDevices.getPairedDevices()
             .onSuccess { devices ->
@@ -158,7 +162,7 @@ class AddNewDeviceViewModel @Inject constructor(
     private fun updateBluetoothState(onUpdate: (ScreenState.Bluetooth) -> ScreenState.Bluetooth) {
         val currentState = _state.value as? ScreenState.Bluetooth ?: return
         val newState = onUpdate(currentState)
-        _state.update { newState }
+        _state.update { newState.copy(isDataValid = Validator.isBluetoothStateValid(newState)) }
     }
 
     private fun nextPage(currentPage: Page) {
