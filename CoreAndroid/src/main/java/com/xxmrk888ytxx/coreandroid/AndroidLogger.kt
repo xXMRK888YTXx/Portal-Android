@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 object AndroidLogger : Logger {
 
@@ -140,7 +142,14 @@ object AndroidLogger : Logger {
             is Throwable -> m.stackTraceToString()
             else -> m.toString()
         }
-        _logs.value += message
+
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss")
+        val timeString = current.format(formatter)
+
+        val newEntry = "[ $timeString ] $message\n"
+
+        _logs.value = listOf(newEntry) + (_logs.value ?: emptyList())
     }
 
 }
