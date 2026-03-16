@@ -11,6 +11,7 @@ import com.xxmrk888ytxx.addnewdevicescreen.exception.QRScanCanceledException
 import com.xxmrk888ytxx.addnewdevicescreen.exception.QRScannerNotDownloadedException
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenSideEffect
 import com.xxmrk888ytxx.addnewdevicescreen.model.AddNewDeviceScreenUiEvent
+import com.xxmrk888ytxx.addnewdevicescreen.model.BluetoothDevice
 import com.xxmrk888ytxx.addnewdevicescreen.model.BluetoothState
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScreenState
@@ -18,8 +19,6 @@ import com.xxmrk888ytxx.addnewdevicescreen.model.Validator
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,7 +50,19 @@ class AddNewDeviceViewModel @Inject constructor(
             is AddNewDeviceScreenUiEvent.FinishConfiguration -> sendNavigateUpSideEffect()
             is AddNewDeviceScreenUiEvent.DeviceNameTextUpdated -> updateDeviceName(event.text)
             is AddNewDeviceScreenUiEvent.OnScanQrCodeClicked -> requestQRScan()
+            is AddNewDeviceScreenUiEvent.RequestBluetoothPermission -> sideEffect.tryEmit(
+                AddNewDeviceScreenSideEffect.RequestBluetoothPermission
+            )
+            is AddNewDeviceScreenUiEvent.UpdateBluetoothState -> updateBluetoothState()
+            is AddNewDeviceScreenUiEvent.EnableBluetooth -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.EnableBluetooth)
+            is AddNewDeviceScreenUiEvent.OpenBluetoothSettings -> sideEffect.tryEmit(
+                AddNewDeviceScreenSideEffect.OpenBluetoothSettings)
+            is AddNewDeviceScreenUiEvent.OnBluetoothDeviceSelected -> updateSelectedBluetoothDevice(event.device)
         }
+    }
+
+    private fun updateSelectedBluetoothDevice(bluetoothDevice: BluetoothDevice) {
+        updateBluetoothState { it.copy(selectedDevice = bluetoothDevice) }
     }
 
     private fun requestQRScan() = viewModelScope.launch {
@@ -105,10 +116,11 @@ class AddNewDeviceViewModel @Inject constructor(
 
     private fun bluetoothSelected() {
         _state.value = ScreenState.Bluetooth()
-        updatePairedDevices()
+        handleEvent(AddNewDeviceScreenUiEvent.UpdateBluetoothState)
     }
 
-    private fun updatePairedDevices() = withLoading {
+    private fun updateBluetoothState() = withLoading {
+        updateBluetoothState { state -> state.copy(selectedDevice = null) }
         provideBluetoothPairedDevices.getPairedDevices()
             .onSuccess { devices ->
                 updateBluetoothState { state ->

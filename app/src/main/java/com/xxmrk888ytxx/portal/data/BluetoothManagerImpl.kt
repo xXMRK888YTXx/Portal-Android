@@ -32,8 +32,8 @@ class BluetoothManagerImpl @Inject constructor(
     @SuppressLint("MissingPermission")
     override suspend fun getPairedDevices(): List<BluetoothDevice> {
         fastDebugLog("getPairedDevices")
-        if (!isBluetoothEnabled) throw BluetoothDisabledException()
         if (!permissionManager.isBluetoothPermissionGranted) throw BluetoothPermissionNotGrantedException()
+        if (!isBluetoothEnabled) throw BluetoothDisabledException()
         return bluetoothAdapter.bondedDevices.map {
             BluetoothDevice(it.name,it.address)
         }.also { fastDebugLog("Paired devices: $it") }

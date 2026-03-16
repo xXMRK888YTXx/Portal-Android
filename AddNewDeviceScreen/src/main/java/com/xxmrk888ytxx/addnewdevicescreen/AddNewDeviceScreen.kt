@@ -1,6 +1,13 @@
 package com.xxmrk888ytxx.addnewdevicescreen
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -14,10 +21,7 @@ import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import kotlinx.coroutines.flow.Flow
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,16 +34,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.xxmrk888ytxx.addnewdevicescreen.model.BluetoothDevice
 import com.xxmrk888ytxx.addnewdevicescreen.model.BluetoothState
 import com.xxmrk888ytxx.addnewdevicescreen.model.Page
@@ -54,7 +60,29 @@ fun AddNewDeviceScreen(
     onEvent: (AddNewDeviceScreenUiEvent) -> Unit,
     sideEffect: Flow<SideEffect>
 ) {
+    val context = LocalContext.current
     val pager = rememberPagerState(0) { Page.entries.size }
+    val requestBluetoothPermissionContract = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) onEvent(AddNewDeviceScreenUiEvent.UpdateBluetoothState)
+    }
+    val enableBluetoothLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { _ ->
+        onEvent(AddNewDeviceScreenUiEvent.UpdateBluetoothState)
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                onEvent(AddNewDeviceScreenUiEvent.UpdateBluetoothState)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
     HandleSideEffect<AddNewDeviceScreenSideEffect>(sideEffect) { effect ->
         when (effect) {
             AddNewDeviceScreenSideEffect.ToBluetoothConfigurationPage -> pager.animateScrollToPage(
@@ -63,6 +91,22 @@ fun AddNewDeviceScreen(
 
             AddNewDeviceScreenSideEffect.ToWifiConfigurationPage -> pager.animateScrollToPage(Page.CONFIGURATION_WIFI.id)
             is AddNewDeviceScreenSideEffect.ScrollToPage -> pager.animateScrollToPage(effect.pageId)
+            AddNewDeviceScreenSideEffect.RequestBluetoothPermission -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                requestBluetoothPermissionContract.launch(
+                    Manifest.permission.BLUETOOTH_CONNECT
+                )
+            }
+
+            AddNewDeviceScreenSideEffect.EnableBluetooth -> enableBluetoothLauncher.launch(
+                Intent(
+                    BluetoothAdapter.ACTION_REQUEST_ENABLE
+                )
+            )
+
+            AddNewDeviceScreenSideEffect.OpenBluetoothSettings -> {
+                val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+                context.startActivity(intent)
+            }
         }
     }
     val pageType = remember(pager.currentPage) { Page.fromInt(pager.currentPage) }
@@ -256,7 +300,7 @@ fun BluetoothConfigurationPage(
                     message = stringResource(R.string.bluetooth_is_disabled_please_enable_it_to_scan_for_devices),
                     iconTint = MaterialTheme.colorScheme.error,
                     buttonText = stringResource(R.string.enable),
-                    onButtonClick = {}
+                    onButtonClick = { onEvent(AddNewDeviceScreenUiEvent.EnableBluetooth) }
                 )
             }
 
@@ -266,7 +310,7 @@ fun BluetoothConfigurationPage(
                     message = stringResource(R.string.permission_denied_please_grant_bluetooth_access_in_app_settings),
                     iconTint = MaterialTheme.colorScheme.error,
                     buttonText = stringResource(R.string.grant),
-                    onButtonClick = {}
+                    onButtonClick = { onEvent(AddNewDeviceScreenUiEvent.RequestBluetoothPermission) }
                 )
             }
 
@@ -283,7 +327,8 @@ fun BluetoothConfigurationPage(
                     ErrorStateView(
                         painter = painterResource(R.drawable.bluetooth_searching),
                         message = stringResource(R.string.no_paired_devices_found_please_pair_a_device_in_system_settings),
-                        iconTint = MaterialTheme.colorScheme.onSurfaceVariant
+                        iconTint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        onButtonClick = { onEvent(AddNewDeviceScreenUiEvent.OpenBluetoothSettings) }
                     )
                 } else {
                     Column(
@@ -307,7 +352,7 @@ fun BluetoothConfigurationPage(
 
                 OutlinedButton(
                     onClick = {
-                        // Вызов Intent настроек
+                        onEvent(AddNewDeviceScreenUiEvent.OpenBluetoothSettings)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -379,9 +424,7 @@ private fun DeviceList(
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.medium)
                     .clickable {
-                        // Убедись, что OnBluetoothDeviceSelected принимает объект device
-                        // в твоем sealed interface AddNewDeviceScreenUiEvent
-                        //onEvent(AddNewDeviceScreenUiEvent.OnBluetoothDeviceSelected(device))
+                        onEvent(AddNewDeviceScreenUiEvent.OnBluetoothDeviceSelected(device))
                     }
             )
         }

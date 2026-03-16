@@ -6,4 +6,7 @@ sealed interface AddNewDeviceScreenSideEffect : SideEffect {
     data class ScrollToPage(internal val pageId: Int) : AddNewDeviceScreenSideEffect
     data object ToWifiConfigurationPage : AddNewDeviceScreenSideEffect
     data object ToBluetoothConfigurationPage : AddNewDeviceScreenSideEffect
+    data object RequestBluetoothPermission : AddNewDeviceScreenSideEffect
+    data object EnableBluetooth : AddNewDeviceScreenSideEffect
+    data object OpenBluetoothSettings : AddNewDeviceScreenSideEffect
 }

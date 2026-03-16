@@ -62,7 +62,7 @@ internal class BiometricAuthManagerImpl(
                         ERROR_NEGATIVE_BUTTON, ERROR_TIMEOUT, ERROR_CANCELED, ERROR_USER_CANCELED -> options.onCanceled()
                         else -> options.onError()
                     }
-                    fastDebugLog("onAuthenticationError")
+                    fastDebugLog("onAuthenticationError $errorCode, $errString")
 
                 }
 
