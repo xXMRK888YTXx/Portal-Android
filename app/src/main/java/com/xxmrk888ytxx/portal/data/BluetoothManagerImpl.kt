@@ -13,6 +13,8 @@ import com.xxmrk888ytxx.portal.exception.BluetoothNotSupportedException
 import com.xxmrk888ytxx.portal.exception.BluetoothPermissionNotGrantedException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.UUID
 import javax.inject.Inject
 
@@ -51,7 +53,11 @@ class BluetoothManagerImpl @Inject constructor(
                 UUID.fromString(PORTAL_BLUETOOTH_SERVICE_UUID)
             )
             socket.connect()
-            socket.outputStream.write(data)
+            val header = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(data.size).array()
+            val out = socket.outputStream
+            out.write(header)
+            out.write(data)
+            out.flush()
             socket.close()
         }
 
