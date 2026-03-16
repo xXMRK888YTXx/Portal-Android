@@ -4,6 +4,6 @@ interface PermissionManager {
     val isBluetoothPermissionGranted: Boolean
     val isNotificationPermissionGranted: Boolean
     val isNearbyDevicesPermissionGranted: Boolean
-    val isShowFullIntentPermissionGranted: Boolean
-    fun requestShowFullScreenIntent()
+    val isShowSystemAlertPermissionGranted: Boolean
+    fun requestShowSystemAlertPermission()
 }

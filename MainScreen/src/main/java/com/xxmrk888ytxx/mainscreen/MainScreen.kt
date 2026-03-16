@@ -504,7 +504,8 @@ fun PermissionBannerCard(
                         text = banner.title.asString(),
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee()
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(

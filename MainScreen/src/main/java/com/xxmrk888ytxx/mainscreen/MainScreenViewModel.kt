@@ -153,9 +153,9 @@ class MainScreenViewModel @Inject constructor(
                     eventForRequestPermission = MainScreenEvent.RequestNotificationPermission
                 )
 
-                Permission.ShowFullIntent -> PermissionBannerItem(
-                    title = R.string.grant_full_screen_notification_permission.uiText(),
-                    description = R.string.this_permission_is_required_to_display_device_unlock_requests_on_top_of_the_lock_screen_this_allows_you_to_instantly_approve_or_deny_access_without_having_to_unlock_your_current_smartphone_first.uiText(),
+                Permission.ShowSystemAlertPermission -> PermissionBannerItem(
+                    title = R.string.grant_grant_display_over_other_apps_permission.uiText(),
+                    description = R.string.this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app.uiText(),
                     iconRes = R.drawable.open_in_full,
                     eventForRequestPermission = MainScreenEvent.RequestFullScreenIntentPermission
                 )

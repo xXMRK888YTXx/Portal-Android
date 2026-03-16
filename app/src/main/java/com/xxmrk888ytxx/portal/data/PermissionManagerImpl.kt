@@ -1,15 +1,14 @@
 package com.xxmrk888ytxx.portal.data
 
 import android.Manifest
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT
-import androidx.core.content.getSystemService
+import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import javax.inject.Inject
 import androidx.core.net.toUri
@@ -33,20 +32,14 @@ class PermissionManagerImpl @Inject constructor(
             true
         }
 
-    override val isShowFullIntentPermissionGranted: Boolean
-        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            context.getSystemService<NotificationManager>()?.canUseFullScreenIntent() ?: false
-        } else {
-            true
-        }
+    override val isShowSystemAlertPermissionGranted: Boolean
+        get() = Settings.canDrawOverlays(context)
 
-    override fun requestShowFullScreenIntent() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val intent = Intent(ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT).apply {
-                data = "package:${context.packageName}".toUri()
-                flags = FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(intent)
+    override fun requestShowSystemAlertPermission() {
+        val intent = Intent(ACTION_MANAGE_OVERLAY_PERMISSION).apply {
+            data = "package:${context.packageName}".toUri()
+            flags = FLAG_ACTIVITY_NEW_TASK
         }
+        context.startActivity(intent)
     }
 }

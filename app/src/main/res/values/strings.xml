@@ -12,4 +12,5 @@
     <string name="devices">Devices</string>
     <string name="settings">Settings</string>
     <string name="the_device_associated_with_the_shortcut_cannot_be_found">The device associated with the shortcut cannot be found</string>
+    <string name="click_to_allow">Click to allow</string>
 </resources>

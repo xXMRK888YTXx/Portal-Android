@@ -19,15 +19,15 @@ class PermissionContractImpl @Inject constructor(
             permissionList.add(Permission.NearbyDevices)
         }
 
-        if (!permissionManager.isShowFullIntentPermissionGranted) {
-            permissionList.add(Permission.ShowFullIntent)
+        if (!permissionManager.isShowSystemAlertPermissionGranted) {
+            permissionList.add(Permission.ShowSystemAlertPermission)
         }
 
         return permissionList
     }
 
     override suspend fun requestShowFullScreenIntentPermission() {
-        permissionManager.requestShowFullScreenIntent()
+        permissionManager.requestShowSystemAlertPermission()
     }
 
 }
