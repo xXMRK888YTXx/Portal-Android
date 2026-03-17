@@ -17,7 +17,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.io.IOException
+import java.io.IOException
+import java.io.InputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 class RfcommBluetoothConnection(
     private val socket: BluetoothSocket
@@ -43,17 +46,27 @@ class RfcommBluetoothConnection(
         saveCall { socket.close() }
         scope.cancel()
         _incomingData.close()
+        sendChannel.close()
         fastDebugLog("BluetoothConnection closed")
     }
 
     private fun startSendingData() = scope.launch {
         try {
             val outputStream = socket.outputStream
+
             for (data in sendChannel) {
                 if (!isActive || _isClosed.value) break
 
+                val lengthBytes = ByteBuffer.allocate(4)
+                    .order(ByteOrder.BIG_ENDIAN)
+                    .putInt(data.size)
+                    .array()
+
+
+                outputStream.write(lengthBytes)
                 outputStream.write(data)
                 outputStream.flush()
+                fastDebugLog("Bluetooth sent data: ${data.size} bytes")
             }
         } catch (e: IOException) {
             fastDebugLog("Bluetooth write error: ${e.message}")
@@ -63,25 +76,39 @@ class RfcommBluetoothConnection(
     }
 
     private fun startListeningData() = scope.launch {
-        val buffer = ByteArray(1024)
         try {
             val inputStream = socket.inputStream
+
             while (isActive && !_isClosed.value) {
-                val bytesRead = inputStream.read(buffer)
+                val lengthBytes = readExact(inputStream, 4)
+                val length = ByteBuffer.wrap(lengthBytes).order(ByteOrder.BIG_ENDIAN).int
 
-                if (bytesRead == -1) {
-                    break
+                if (length !in 1..65536) {
+                    fastDebugLog("Protocol desynchronization. Invalid length: $length")
+                    throw IOException("Protocol desynchronization. Invalid length: $length")
                 }
 
-                if (bytesRead > 0) {
-                    _incomingData.send(buffer.copyOf(bytesRead))
-                }
+                val payload = readExact(inputStream, length)
+                fastDebugLog("Bluetooth received data: ${payload.size} bytes")
+                _incomingData.send(payload)
             }
         } catch (e: IOException) {
+            // Сюда же прилетит исключение из readExact, если соединение прервется
             fastDebugLog("Bluetooth read error or socket closed: ${e.message}")
         } finally {
             withContext(NonCancellable) { close() }
         }
+    }
+
+    private fun readExact(input: InputStream, count: Int): ByteArray {
+        val buf = ByteArray(count)
+        var offset = 0
+        while (offset < count) {
+            val read = input.read(buf, offset, count - offset)
+            if (read == -1) throw IOException("Connection closed")
+            offset += read
+        }
+        return buf
     }
 
     init {
