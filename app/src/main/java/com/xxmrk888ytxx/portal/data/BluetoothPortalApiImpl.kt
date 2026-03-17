@@ -2,7 +2,6 @@ package com.xxmrk888ytxx.portal.data
 
 import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.data.model.BluetoothPairBody
-import com.xxmrk888ytxx.portal.data.model.WifiPairBody
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.BluetoothPortalApi
 import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
@@ -21,7 +20,9 @@ class BluetoothPortalApiImpl @Inject constructor(
     ): Result<BluetoothPairResult> = runCatching(Dispatchers.IO) {
         val pairBody = BluetoothPairBody(pairCode)
         val jsonString = json.encodeToString(pairBody)
-        bluetoothManager.connectAndSendData(bluetoothDevice, jsonString.toByteArray())
+        bluetoothManager.openConnection(bluetoothDevice)
+        val bluetoothConnection = bluetoothManager.openConnection(bluetoothDevice)
+        bluetoothConnection.sendData(jsonString.toByteArray())
         return@runCatching BluetoothPairResult("")
     }
 }

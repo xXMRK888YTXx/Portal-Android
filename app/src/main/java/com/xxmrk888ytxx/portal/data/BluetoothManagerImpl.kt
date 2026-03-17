@@ -5,8 +5,10 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import androidx.core.content.getSystemService
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.portal.data.model.RfcommBluetoothConnection
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
+import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
 import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
 import com.xxmrk888ytxx.portal.exception.BluetoothDisabledException
 import com.xxmrk888ytxx.portal.exception.BluetoothNotSupportedException
@@ -43,23 +45,17 @@ class BluetoothManagerImpl @Inject constructor(
         }.also { fastDebugLog("Paired devices: $it") }
     }
 
-    override suspend fun connectAndSendData(device: BluetoothDevice, data: ByteArray) =
-        withContext(Dispatchers.IO) {
-            checkBluetoothStateAndPermission()
-            val androidBluetoothDevice =
-                bluetoothAdapter.bondedDevices.firstOrNull { it.address == device.macAddress }
-                    ?: throw IllegalArgumentException("Device $device not paired")
-            val socket = androidBluetoothDevice.createRfcommSocketToServiceRecord(
-                UUID.fromString(PORTAL_BLUETOOTH_SERVICE_UUID)
-            )
-            socket.connect()
-            val header = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(data.size).array()
-            val out = socket.outputStream
-            out.write(header)
-            out.write(data)
-            out.flush()
-            socket.close()
-        }
+    override suspend fun openConnection(device: BluetoothDevice): BluetoothConnection = withContext(Dispatchers.IO) {
+        checkBluetoothStateAndPermission()
+        val androidBluetoothDevice =
+            bluetoothAdapter.bondedDevices.firstOrNull { it.address == device.macAddress }
+                ?: throw IllegalArgumentException("Device $device not paired")
+        val socket = androidBluetoothDevice.createRfcommSocketToServiceRecord(
+            UUID.fromString(PORTAL_BLUETOOTH_SERVICE_UUID)
+        )
+        socket.connect()
+        return@withContext RfcommBluetoothConnection(socket)
+    }
 
     private fun checkBluetoothStateAndPermission() {
         if (!permissionManager.isBluetoothPermissionGranted) throw BluetoothPermissionNotGrantedException()
