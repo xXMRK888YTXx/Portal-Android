@@ -1,12 +1,17 @@
 package com.xxmrk888ytxx.portal.data
 
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.data.model.BluetoothPairBody
+import com.xxmrk888ytxx.portal.data.model.PairResponse
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.BluetoothPortalApi
 import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
 import com.xxmrk888ytxx.portal.domain.model.BluetoothPairResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -17,12 +22,23 @@ class BluetoothPortalApiImpl @Inject constructor(
     override suspend fun pair(
         bluetoothDevice: BluetoothDevice,
         pairCode: String
-    ): Result<BluetoothPairResult> = runCatching(Dispatchers.IO) {
+    ): BluetoothPairResult = withContext(Dispatchers.IO) {
         val pairBody = BluetoothPairBody(pairCode)
         val jsonString = json.encodeToString(pairBody)
-        bluetoothManager.openConnection(bluetoothDevice)
         val bluetoothConnection = bluetoothManager.openConnection(bluetoothDevice)
         bluetoothConnection.sendData(jsonString.toByteArray())
-        return@runCatching BluetoothPairResult("")
+        fastDebugLog("bluetoothConnection.sendData")
+        val pairResponse: PairResponse = bluetoothConnection.incomingData
+            .mapNotNull { data ->
+                try {
+                    json.decodeFromString<PairResponse>(data.toString(Charsets.UTF_8))
+                } catch (e: Exception) {
+                    fastDebugLog(e)
+                    null
+                }
+            }
+            .first()
+        fastDebugLog("$pairResponse PAIRED")
+        return@withContext BluetoothPairResult(pairResponse.clientId)
     }
 }
