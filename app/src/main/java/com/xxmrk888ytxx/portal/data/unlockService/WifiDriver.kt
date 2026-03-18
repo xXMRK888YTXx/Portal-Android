@@ -3,7 +3,8 @@ package com.xxmrk888ytxx.portal.data.unlockService
 import android.R.id.message
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.data.KtorFactory
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
@@ -22,7 +23,6 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 class WifiDriver @Inject constructor(
@@ -40,7 +40,9 @@ class WifiDriver @Inject constructor(
             deviceRepository.getDeviceById(clientId).first() ?: throw InvalidClientIdException(
                 clientId
             )
-        val deviceSettings = deviceSettingsRepository.getDeviceSettingsByDeviceId(deviceId = clientId).first() ?: throw InvalidClientIdException(clientId)
+        val deviceSettings =
+            deviceSettingsRepository.getDeviceSettingsByDeviceId(deviceId = clientId).first()
+                ?: throw InvalidClientIdException(clientId)
 
         val client = ktorFactory.createUnlockClient(
             device.clientCertificate,
@@ -50,6 +52,7 @@ class WifiDriver @Inject constructor(
             deviceSettings.searchIpDynamically -> mdnsManager.waitHostForClient(clientId)
                 .also { fastDebugLog("In wifiDriver mdns found host: $it") }
                 ?: device.host.also { fastDebugLog("In wifiDriver mdns not found host. Using default") }
+
             else -> device.host
         }
         val urlString = "wss://$host:29170/ws"
@@ -62,9 +65,8 @@ class WifiDriver @Inject constructor(
                 for (messageForSend in messagesForSendChannel) {
                     try {
                         val remoteMessage = when (messageForSend) {
-                            UnlockMessage.ApproveUnlock -> RemoteUnlockMessage.ApproveUnlock(
-                                clientId = clientId
-                            )
+                            UnlockMessage.ApproveUnlock -> ApproveUnlock(clientId = clientId)
+                            UnlockMessage.Canceled -> RejectUnlock(clientId = clientId)
                         }
                         fastDebugLog("Try to send message: $messageForSend")
                         sendSerialized(remoteMessage)

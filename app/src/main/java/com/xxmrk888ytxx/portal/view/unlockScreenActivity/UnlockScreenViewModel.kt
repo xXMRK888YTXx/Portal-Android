@@ -14,6 +14,7 @@ import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.utils.getParsableExtraCompat
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -40,7 +41,7 @@ class UnlockScreenViewModel @Inject constructor(
                 when (it) {
                     BiometricDialogEvent.Success -> unlockScreenData?.let { unlockData -> unlockHost(unlockData) }
 
-                    BiometricDialogEvent.Canceled, BiometricDialogEvent.Error -> dismissScreen()
+                    BiometricDialogEvent.Canceled, BiometricDialogEvent.Error -> sendCancelEventAndDismissScreen()
 
                     BiometricDialogEvent.Failed -> Unit
                 }
@@ -84,6 +85,15 @@ class UnlockScreenViewModel @Inject constructor(
         ) ?: return false
         return true
     }
+
+    @Suppress("CoroutineContextWithJob")
+    private fun sendCancelEventAndDismissScreen() {
+        viewModelScope.launch(NonCancellable) {
+            unlockScreenData?.let { unlockData -> unlockServiceManager.sendMessageToHost(unlockData.clientId, UnlockServiceMessage.Canceled) }
+        }.invokeOnCompletion { dismissScreen() }
+    }
+
+    fun onStop() = sendCancelEventAndDismissScreen()
 
     @Suppress("UNCHECKED_CAST")
     class Factory @Inject constructor(
