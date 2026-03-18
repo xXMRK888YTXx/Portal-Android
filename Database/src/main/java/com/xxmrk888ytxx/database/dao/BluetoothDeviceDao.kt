@@ -10,4 +10,7 @@ import kotlinx.coroutines.flow.Flow
 abstract class BluetoothDeviceDao {
     @get:Query("SELECT * FROM ${BluetoothDeviceEntry.TABLE_NAME}")
     abstract val devices: Flow<List<BluetoothDeviceEntry>>
+
+    @Query("SELECT * FROM ${BluetoothDeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId LIMIT 1")
+    abstract fun getWifiDeviceById(deviceId: String): Flow<BluetoothDeviceEntry?>
 }

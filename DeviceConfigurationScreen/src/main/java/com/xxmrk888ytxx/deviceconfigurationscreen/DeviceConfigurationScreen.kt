@@ -54,6 +54,7 @@ import com.xxmrk888ytxx.coreandroid.DefaultValidator
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
 import kotlinx.coroutines.flow.Flow
@@ -181,16 +182,28 @@ fun DeviceInfoState(
                 )
                 InfoItem(
                     title = stringResource(R.string.device_type),
-                    value = screenState.device.deviceType.name
+                    value = when(screenState.device) {
+                        is Device.WifiDevice -> stringResource(R.string.wifi)
+                        is Device.BluetoothDevice -> stringResource(R.string.bluetooth)
+                    }
                 )
-                InfoItem(
-                    title = stringResource(R.string.client_fingerprint),
-                    value = screenState.device.clientCertificateFingerprint
-                )
-                InfoItem(
-                    title = stringResource(R.string.server_fingerprint),
-                    value = screenState.device.serverCertificateFingerprint
-                )
+                if (screenState.device is Device.BluetoothDevice) {
+                    InfoItem(
+                        title = stringResource(R.string.mac_address),
+                        value = screenState.device.macAddress
+                    )
+                }
+
+                if (screenState.device is Device.WifiDevice) {
+                    InfoItem(
+                        title = stringResource(R.string.client_fingerprint),
+                        value = screenState.device.clientCertificateFingerprint
+                    )
+                    InfoItem(
+                        title = stringResource(R.string.server_fingerprint),
+                        value = screenState.device.serverCertificateFingerprint
+                    )
+                }
             }
         }
 
@@ -200,12 +213,14 @@ fun DeviceInfoState(
             color = MaterialTheme.colorScheme.outlineVariant
         )
 
-        EditableIpCard(
-            currentIp = screenState.device.host,
-            onIpSaved = { newIp ->
-                onEvent(DeviceConfigurationUiEvent.OnHostChanged(newIp))
-            }
-        )
+        if (screenState.device is Device.WifiDevice) {
+            EditableIpCard(
+                currentIp = screenState.device.host,
+                onIpSaved = { newIp ->
+                    onEvent(DeviceConfigurationUiEvent.OnHostChanged(newIp))
+                }
+            )
+        }
 
         SwitchSettingCard(
             title = stringResource(R.string.await_unlock_requests),
@@ -216,14 +231,16 @@ fun DeviceInfoState(
             }
         )
 
-        SwitchSettingCard(
-            title = stringResource(R.string.search_ip_dynamically),
-            description = stringResource(R.string.search_ip_dynamically_description),
-            isChecked = screenState.device.searchIpDynamically,
-            onCheckedChange = {
-                onEvent(DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged(it))
-            }
-        )
+        if (screenState.device is Device.WifiDevice) {
+            SwitchSettingCard(
+                title = stringResource(R.string.search_ip_dynamically),
+                description = stringResource(R.string.search_ip_dynamically_description),
+                isChecked = screenState.device.searchIpDynamically,
+                onCheckedChange = {
+                    onEvent(DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged(it))
+                }
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 

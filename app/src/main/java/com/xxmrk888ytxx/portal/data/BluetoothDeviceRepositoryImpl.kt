@@ -5,6 +5,7 @@ import com.xxmrk888ytxx.database.dao.DeviceDao
 import com.xxmrk888ytxx.database.entry.BluetoothDeviceEntry
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
+import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -28,6 +29,8 @@ class BluetoothDeviceRepositoryImpl @Inject constructor(
             )
         )
     }
+
+    override fun getDeviceById(deviceId: String): Flow<BluetoothDevice?> = bluetoothDeviceDao.getWifiDeviceById(deviceId).map { it?.toDomainModel() }
 
     private fun BluetoothDeviceEntry.toDomainModel() : BluetoothDevice {
         return BluetoothDevice(
