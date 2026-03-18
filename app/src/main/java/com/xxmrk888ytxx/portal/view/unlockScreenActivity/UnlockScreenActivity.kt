@@ -31,6 +31,8 @@ class UnlockScreenActivity @Inject constructor(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setShowWhenLocked(true)
+        setTurnScreenOn(true)
         enableEdgeToEdge()
         if (!unlockScreenViewModel.isValidIntent(intent)) {
             finish()

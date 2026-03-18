@@ -41,6 +41,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:noHistory="true"
+            android:showForAllUsers="true"
             android:theme="@style/Theme.Portal">
             <intent-filter>
                 <action android:name="com.xxmrk888ytxx.portal.UNLOCK_FROM_SHORTCUT_ACTION" />
