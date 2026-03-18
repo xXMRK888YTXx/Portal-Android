@@ -191,7 +191,7 @@ class AddNewDeviceViewModel @Inject constructor(
     private fun previousPage(currentPage: Page) {
         when (currentPage.id) {
             0 -> sendNavigationAction { navigateUp() }
-            else -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ScrollToPage(currentPage.id - 1))
+            else -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.ScrollToPage(Page.SELECT_TYPE.id))
         }
     }
 
