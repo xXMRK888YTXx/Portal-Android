@@ -5,19 +5,19 @@ import com.xxmrk888ytxx.deviceconfigurationscreen.exception.DeviceNotFoundExcept
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceType
 import com.xxmrk888ytxx.portal.domain.CertificateManager
-import com.xxmrk888ytxx.portal.domain.DeviceRepository
+import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 class ProvideDeviceInfoContractImpl @Inject constructor(
-    private val deviceRepository: DeviceRepository,
+    private val wifiDeviceRepository: WifiDeviceRepository,
     private val certificateRepository: CertificateManager,
     private val deviceSettingsRepository: DeviceSettingsRepository
 ) : ProvideDeviceInfoContract {
     override suspend fun provideDeviceInfo(deviceId: String): Flow<Device> {
-        val domainDevice = deviceRepository.getDeviceById(deviceId)
+        val domainDevice = wifiDeviceRepository.getDeviceById(deviceId)
         val deviceSetting = deviceSettingsRepository.getDeviceSettingsByDeviceId(deviceId)
         return combine(domainDevice,deviceSetting) { device, deviceSettings ->
             val device = device ?: throw DeviceNotFoundException(deviceId)

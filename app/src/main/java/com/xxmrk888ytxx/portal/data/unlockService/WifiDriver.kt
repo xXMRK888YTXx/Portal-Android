@@ -6,7 +6,7 @@ import com.xxmrk888ytxx.portal.data.KtorFactory
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
-import com.xxmrk888ytxx.portal.domain.DeviceRepository
+import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.utils.waitHostForClient
@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 class WifiDriver @Inject constructor(
     private val ktorFactory: KtorFactory,
-    private val deviceRepository: DeviceRepository,
+    private val wifiDeviceRepository: WifiDeviceRepository,
     private val mdnsManager: MdnsManager,
     private val deviceSettingsRepository: DeviceSettingsRepository,
 ) : NetworkDriver {
@@ -37,7 +37,7 @@ class WifiDriver @Inject constructor(
         receivedRequestChannel: Channel<UnlockRequest>
     ) {
         val device =
-            deviceRepository.getDeviceById(clientId).first() ?: throw InvalidClientIdException(
+            wifiDeviceRepository.getDeviceById(clientId).first() ?: throw InvalidClientIdException(
                 clientId
             )
         val deviceSettings =

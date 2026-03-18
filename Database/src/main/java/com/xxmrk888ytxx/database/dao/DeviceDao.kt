@@ -1,6 +1,5 @@
 package com.xxmrk888ytxx.database.dao
 
-import androidx.annotation.RestrictTo
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
@@ -13,11 +12,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class DeviceDao {
-    @get:Query("SELECT * FROM ${DeviceEntry.TABLE_NAME}")
-    abstract val devices: Flow<List<DeviceEntry>>
-
-    @Query("SELECT * FROM ${DeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId LIMIT 1")
-    abstract fun getDeviceById(deviceId: String): Flow<DeviceEntry?>
 
     @Upsert
     protected abstract suspend fun upsertDeviceInternal(deviceEntry: DeviceEntry)

@@ -7,7 +7,7 @@ import com.xxmrk888ytxx.portal.data.BiometricRequestManager
 import com.xxmrk888ytxx.portal.data.BluetoothManagerImpl
 import com.xxmrk888ytxx.portal.data.BluetoothPortalApiImpl
 import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
-import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
+import com.xxmrk888ytxx.portal.data.WifiDeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceSettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
 import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
@@ -28,7 +28,7 @@ import com.xxmrk888ytxx.portal.domain.BiometricRequestController
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.BluetoothPortalApi
 import com.xxmrk888ytxx.portal.domain.CertificateManager
-import com.xxmrk888ytxx.portal.domain.DeviceRepository
+import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import com.xxmrk888ytxx.portal.domain.MdnsManager
@@ -65,8 +65,8 @@ interface DomainModule {
 
     @Binds
     fun bindsDeviceRepository(
-        deviceRepositoryImpl: DeviceRepositoryImpl
-    ) : DeviceRepository
+        deviceRepositoryImpl: WifiDeviceRepositoryImpl
+    ) : WifiDeviceRepository
 
     @Binds
     fun bindsPortalApi(

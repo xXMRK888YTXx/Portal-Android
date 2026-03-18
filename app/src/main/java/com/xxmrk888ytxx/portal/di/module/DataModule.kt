@@ -4,6 +4,8 @@ import android.content.Context
 import com.xxmrk888ytxx.biometricauthentication.BiometricAuthManager
 import com.xxmrk888ytxx.biometricauthentication.create
 import com.xxmrk888ytxx.database.PortalDataBase
+import com.xxmrk888ytxx.database.dao.BluetoothDeviceDao
+import com.xxmrk888ytxx.database.dao.WifiDeviceDao
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
 import dagger.Module
@@ -45,5 +47,11 @@ interface DataModule {
             encodeDefaults = true
             ignoreUnknownKeys = true
         }
+
+        @Provides
+        fun providesWifiDeviceDao(portalDataBase: PortalDataBase): WifiDeviceDao = portalDataBase.wifiDeviceDao
+
+        @Provides
+        fun providesBluetoothDeviceDao(portalDataBase: PortalDataBase): BluetoothDeviceDao = portalDataBase.bluetoothDeviceDao
     }
 }

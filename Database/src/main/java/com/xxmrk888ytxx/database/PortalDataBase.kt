@@ -23,7 +23,7 @@ abstract class PortalDataBase : RoomDatabase() {
     abstract val deviceDao: DeviceDao
     abstract val deviceSettingsDao: DeviceSettingsDao
     abstract val shortcutDao: ShortcutDao
-    abstract val wifiDeviceEntry: WifiDeviceDao
+    abstract val wifiDeviceDao: WifiDeviceDao
     abstract val bluetoothDeviceDao: BluetoothDeviceDao
 
     companion object {
