@@ -35,5 +35,5 @@
     <string name="bluetooth_is_disabled_please_enable_it_to_scan_for_devices">Bluetooth is disabled. Please enable it to scan for devices.</string>
     <string name="grant">Grant</string>
     <string name="enable">Enable</string>
-    <string name="unable_to_connect_to_the">Unable to connect to the %1$s</string>
+    <string name="unable_to_connect_to_the">Unable to connect to the </string>
 </resources>

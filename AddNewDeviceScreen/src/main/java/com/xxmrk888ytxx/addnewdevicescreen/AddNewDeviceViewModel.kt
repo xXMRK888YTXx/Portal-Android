@@ -71,8 +71,10 @@ class AddNewDeviceViewModel @Inject constructor(
         updateLoadingState(true)
         viewModelScope.launch {
             connectToBluetoothDeviceContract.connect(state.deviceName,state.pairCode,state.selectedDevice)
+                .onSuccessConnectHandler()
                 .onFailure {
-                    buildUiText { provider -> provider.provide(uiText(R.string.unable_to_connect_to_the)) + " " + selectedDevice.name }
+                    val uiText = buildUiText { provider -> provider.provide(uiText(R.string.unable_to_connect_to_the)) + " " + selectedDevice.name }
+                    sendToastSideEffect(uiText)
                 }
         }.invokeOnCompletion { updateLoadingState(false) }
     }
@@ -106,14 +108,7 @@ class AddNewDeviceViewModel @Inject constructor(
                 value.host,
                 value.pairCode
             )
-                .onSuccess { deviceId ->
-                    sendToastSideEffect(uiText(R.string.successfully_connected))
-                    sendNavigationAction {
-                        fromAddNewDeviceScreenToDeviceConfigurationScreen(
-                            deviceId
-                        )
-                    }
-                }
+                .onSuccessConnectHandler()
                 .onFailure {
                     sendToastSideEffect(uiText = uiText(R.string.unable_to_establish_connection))
                 }
@@ -227,5 +222,17 @@ class AddNewDeviceViewModel @Inject constructor(
         viewModelScope.launch {
             block()
         }.invokeOnCompletion { updateLoadingState(false) }
+    }
+
+    private fun Result<String>.onSuccessConnectHandler(): Result<String> {
+        onSuccess { deviceId ->
+            sendToastSideEffect(uiText(R.string.successfully_connected))
+            sendNavigationAction {
+                fromAddNewDeviceScreenToDeviceConfigurationScreen(
+                    deviceId
+                )
+            }
+        }
+        return this
     }
 }

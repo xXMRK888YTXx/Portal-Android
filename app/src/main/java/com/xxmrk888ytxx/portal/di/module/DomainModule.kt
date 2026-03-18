@@ -4,6 +4,7 @@ import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
 import com.xxmrk888ytxx.portal.data.BiometricRequestManager
+import com.xxmrk888ytxx.portal.data.BluetoothDeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.BluetoothManagerImpl
 import com.xxmrk888ytxx.portal.data.BluetoothPortalApiImpl
 import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
@@ -25,6 +26,7 @@ import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.BiometricRequestController
+import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.BluetoothPortalApi
 import com.xxmrk888ytxx.portal.domain.CertificateManager
@@ -154,4 +156,9 @@ interface DomainModule {
     fun bindsBluetoothPortalApi(
         bluetoothPortalApi: BluetoothPortalApiImpl
     ) : BluetoothPortalApi
+
+    @Binds
+    fun bindsBluetoothDeviceRepository(
+        bluetoothDeviceRepositoryImpl: BluetoothDeviceRepositoryImpl
+    ) : BluetoothDeviceRepository
 }
