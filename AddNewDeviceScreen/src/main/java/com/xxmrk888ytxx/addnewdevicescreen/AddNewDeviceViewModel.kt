@@ -57,11 +57,19 @@ class AddNewDeviceViewModel @Inject constructor(
             is AddNewDeviceScreenUiEvent.RequestBluetoothPermission -> sideEffect.tryEmit(
                 AddNewDeviceScreenSideEffect.RequestBluetoothPermission
             )
+
             is AddNewDeviceScreenUiEvent.UpdateBluetoothState -> updateBluetoothData()
-            is AddNewDeviceScreenUiEvent.EnableBluetooth -> sideEffect.tryEmit(AddNewDeviceScreenSideEffect.EnableBluetooth)
+            is AddNewDeviceScreenUiEvent.EnableBluetooth -> sideEffect.tryEmit(
+                AddNewDeviceScreenSideEffect.EnableBluetooth
+            )
+
             is AddNewDeviceScreenUiEvent.OpenBluetoothSettings -> sideEffect.tryEmit(
-                AddNewDeviceScreenSideEffect.OpenBluetoothSettings)
-            is AddNewDeviceScreenUiEvent.OnBluetoothDeviceSelected -> updateSelectedBluetoothDevice(event.device)
+                AddNewDeviceScreenSideEffect.OpenBluetoothSettings
+            )
+
+            is AddNewDeviceScreenUiEvent.OnBluetoothDeviceSelected -> updateSelectedBluetoothDevice(
+                event.device
+            )
         }
     }
 
@@ -70,10 +78,15 @@ class AddNewDeviceViewModel @Inject constructor(
         val selectedDevice = state.selectedDevice ?: return
         updateLoadingState(true)
         viewModelScope.launch {
-            connectToBluetoothDeviceContract.connect(state.deviceName,state.pairCode,state.selectedDevice)
+            connectToBluetoothDeviceContract.connect(
+                state.deviceName,
+                state.pairCode,
+                state.selectedDevice
+            )
                 .onSuccessConnectHandler()
                 .onFailure {
-                    val uiText = buildUiText { provider -> provider.provide(uiText(R.string.unable_to_connect_to_the)) + " " + selectedDevice.name }
+                    val uiText =
+                        buildUiText { provider -> provider.provide(uiText(R.string.unable_to_connect_to_the)) + " " + selectedDevice.name }
                     sendToastSideEffect(uiText)
                 }
         }.invokeOnCompletion { updateLoadingState(false) }
@@ -85,10 +98,29 @@ class AddNewDeviceViewModel @Inject constructor(
 
     private fun requestQRScan() = viewModelScope.launch {
         scanQrCodeContract.requestScan()
-            .onSuccess {
-                updateDeviceName(it.deviceName)
-                hostTextUpdated(it.host)
-                pairCodeUpdated(it.pairCode.toString())
+            .onSuccess { scanResult ->
+                when (state.value) {
+                    is ScreenState.Bluetooth -> {
+                        
+                        val bluetoothState = (state.value as? ScreenState.Bluetooth)?.pairedDevices
+
+                        if (bluetoothState is BluetoothState.Success) {
+                            bluetoothState.pairedDevices
+                                .firstOrNull { it.macAddress == scanResult.macAddress }
+                                ?.let { device ->
+                                    updateSelectedBluetoothDevice(device)
+                                }
+                        }
+                    }
+
+                    is ScreenState.Wifi -> {
+                        updateDeviceName(scanResult.deviceName)
+                        hostTextUpdated(scanResult.host ?: "")
+                        pairCodeUpdated(scanResult.pairCode.toString())
+                    }
+
+                    else -> Unit
+                }
             }
             .onFailure {
                 val uiText = when (it) {
@@ -117,7 +149,7 @@ class AddNewDeviceViewModel @Inject constructor(
 
     private fun pairCodeUpdated(text: String) {
         if (text.length > 6 || !text.isDigitsOnly()) return
-        when(_state.value) {
+        when (_state.value) {
             is ScreenState.Bluetooth -> updateBluetoothState { it.copy(pairCode = text) }
             is ScreenState.Wifi -> updateWifiState { it.copy(pairCode = text) }
             else -> {}

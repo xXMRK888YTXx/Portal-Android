@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen
 
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ScanQrCodeContract
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScanQrCodeResult
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -11,6 +12,7 @@ import com.xxmrk888ytxx.portal.exception.QRScannerNotDownloadedException
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import okhttp3.Address
 
 class ScanQrCodeContractImpl @Inject constructor(
     private val qrScannerManager: QRScannerManager,
@@ -20,8 +22,9 @@ class ScanQrCodeContractImpl @Inject constructor(
     @Serializable
     private data class ScanResult(
         @SerialName("name") val deviceName: String,
-        @SerialName("ip") val host: String,
-        @SerialName("code") val pairCode: Int
+        @SerialName("ip") val host: String? = null,
+        @SerialName("code") val pairCode: Int,
+        @SerialName("address") val macAddress: String? = null,
     )
 
     override suspend fun requestScan(): Result<ScanQrCodeResult> = runCatching(
@@ -35,11 +38,14 @@ class ScanQrCodeContractImpl @Inject constructor(
         }
     ) {
         val scanResult = qrScannerManager.scan()
+        fastDebugLog(scanResult)
         val parsedResult = json.decodeFromString<ScanResult>(scanResult)
+        fastDebugLog(parsedResult)
         return@runCatching ScanQrCodeResult(
             deviceName = parsedResult.deviceName,
             host = parsedResult.host,
-            pairCode = parsedResult.pairCode
+            pairCode = parsedResult.pairCode,
+            macAddress = parsedResult.macAddress
         )
     }
 }
