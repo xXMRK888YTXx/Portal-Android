@@ -19,6 +19,6 @@ class ConnectToBluetoothDeviceContractImpl @Inject constructor(
         return@runCatching "xyi"
     }
 
-    private fun BluetoothDevice.toDomainModel(): com.xxmrk888ytxx.portal.domain.model.BluetoothDevice =
-        com.xxmrk888ytxx.portal.domain.model.BluetoothDevice(name, macAddress)
+    private fun BluetoothDevice.toDomainModel(): com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice =
+        com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice(name, macAddress)
 }

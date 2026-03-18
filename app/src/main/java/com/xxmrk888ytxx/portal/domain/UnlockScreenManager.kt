@@ -1,7 +1,7 @@
 package com.xxmrk888ytxx.portal.domain
 
-import com.xxmrk888ytxx.portal.domain.model.Device
+import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 
 interface UnlockScreenManager {
-    fun showUnlockScreen(device: Device)
+    fun showUnlockScreen(wifiDevice: WifiDevice)
 }

@@ -9,14 +9,12 @@ import com.xxmrk888ytxx.portal.data.model.RfcommBluetoothConnection
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
-import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
+import com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice
 import com.xxmrk888ytxx.portal.exception.BluetoothDisabledException
 import com.xxmrk888ytxx.portal.exception.BluetoothNotSupportedException
 import com.xxmrk888ytxx.portal.exception.BluetoothPermissionNotGrantedException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.util.UUID
 import javax.inject.Inject
 
@@ -37,15 +35,15 @@ class BluetoothManagerImpl @Inject constructor(
         get() = bluetoothAdapter.isEnabled
 
     @SuppressLint("MissingPermission")
-    override suspend fun getPairedDevices(): List<BluetoothDevice> {
+    override suspend fun getPairedDevices(): List<PairedBluetoothDevice> {
         fastDebugLog("getPairedDevices")
         checkBluetoothStateAndPermission()
         return bluetoothAdapter.bondedDevices.map {
-            BluetoothDevice(it.name, it.address)
+            PairedBluetoothDevice(it.name, it.address)
         }.also { fastDebugLog("Paired devices: $it") }
     }
 
-    override suspend fun openConnection(device: BluetoothDevice): BluetoothConnection = withContext(Dispatchers.IO) {
+    override suspend fun openConnection(device: PairedBluetoothDevice): BluetoothConnection = withContext(Dispatchers.IO) {
         checkBluetoothStateAndPermission()
         val androidBluetoothDevice =
             bluetoothAdapter.bondedDevices.firstOrNull { it.address == device.macAddress }

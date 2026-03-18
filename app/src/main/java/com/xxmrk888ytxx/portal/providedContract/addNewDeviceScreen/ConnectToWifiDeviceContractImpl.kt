@@ -5,7 +5,7 @@ import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
-import com.xxmrk888ytxx.portal.domain.model.Device
+import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
         val clientCertificate = certificateManager.createNewCertificate()
         val pairResult = wifiPortalApi.pair(host, pairCode, clientCertificate).getOrThrow()
         wifiDeviceRepository.saveDevice(
-            Device(
+            WifiDevice(
                 deviceId = pairResult.clientId,
                 deviceName = deviceName,
                 host = host,

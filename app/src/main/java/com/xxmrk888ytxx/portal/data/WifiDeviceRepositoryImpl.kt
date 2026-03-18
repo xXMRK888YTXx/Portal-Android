@@ -7,7 +7,7 @@ import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.SecureStorage
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
-import com.xxmrk888ytxx.portal.domain.model.Device
+import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,21 +22,21 @@ class WifiDeviceRepositoryImpl @Inject constructor(
     private val shortcutRepository: ShortcutRepository,
     private val wifiDeviceDao: WifiDeviceDao
 ) : WifiDeviceRepository {
-    override suspend fun saveDevice(device: Device) = withContext(Dispatchers.IO) {
+    override suspend fun saveDevice(wifiDevice: WifiDevice) = withContext(Dispatchers.IO) {
         val keyAlias = UUID.randomUUID().toString()
-        secureStorage.saveCertificateByAlias(keyAlias, device.clientCertificate)
+        secureStorage.saveCertificateByAlias(keyAlias, wifiDevice.clientCertificate)
         deviceDao.upsertWifiDevice(
             WifiDeviceEntry(
-                deviceId = device.deviceId,
-                deviceName = device.deviceName,
-                host = device.host,
-                serverCertificateFingerprint = device.serverCertificateFingerprint,
+                deviceId = wifiDevice.deviceId,
+                deviceName = wifiDevice.deviceName,
+                host = wifiDevice.host,
+                serverCertificateFingerprint = wifiDevice.serverCertificateFingerprint,
                 clientCertificateKeyAlias = keyAlias
             )
         )
     }
 
-    override fun getDeviceById(deviceId: String): Flow<Device?> =
+    override fun getDeviceById(deviceId: String): Flow<WifiDevice?> =
         wifiDeviceDao.getWifiDeviceById(deviceId).map { deviceEntry ->
             deviceEntry?.toDomainModel()
         }
@@ -54,15 +54,15 @@ class WifiDeviceRepositoryImpl @Inject constructor(
             wifiDeviceDao.updateHost(deviceId, newHost)
         }
 
-    override val devices: Flow<List<Device>> = wifiDeviceDao.devices.map { deviceList ->
+    override val devices: Flow<List<WifiDevice>> = wifiDeviceDao.devices.map { deviceList ->
         deviceList.map { deviceEntry ->
             deviceEntry.toDomainModel()
         }
     }
 
-    private suspend fun WifiDeviceEntry.toDomainModel(): Device {
+    private suspend fun WifiDeviceEntry.toDomainModel(): WifiDevice {
         val clientCertificate = secureStorage.restoreCertificateByAlias(clientCertificateKeyAlias)
-        return Device(
+        return WifiDevice(
             deviceId = deviceId,
             deviceName = deviceName,
             host = host,

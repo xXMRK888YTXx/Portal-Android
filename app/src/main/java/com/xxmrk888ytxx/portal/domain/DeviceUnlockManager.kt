@@ -1,7 +1,7 @@
 package com.xxmrk888ytxx.portal.domain
 
-import com.xxmrk888ytxx.portal.domain.model.Device
+import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 
 interface DeviceUnlockManager {
-    suspend fun unlockWifiDevice(device: Device): Result<Unit>
+    suspend fun unlockWifiDevice(wifiDevice: WifiDevice): Result<Unit>
 }
