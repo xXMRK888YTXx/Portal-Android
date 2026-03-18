@@ -101,7 +101,7 @@ class AddNewDeviceViewModel @Inject constructor(
             .onSuccess { scanResult ->
                 when (state.value) {
                     is ScreenState.Bluetooth -> {
-                        
+
                         val bluetoothState = (state.value as? ScreenState.Bluetooth)?.pairedDevices
 
                         if (bluetoothState is BluetoothState.Success) {
@@ -111,6 +111,8 @@ class AddNewDeviceViewModel @Inject constructor(
                                     updateSelectedBluetoothDevice(device)
                                 }
                         }
+                        updateDeviceName(scanResult.deviceName)
+                        pairCodeUpdated(scanResult.pairCode.toString())
                     }
 
                     is ScreenState.Wifi -> {
@@ -167,9 +169,12 @@ class AddNewDeviceViewModel @Inject constructor(
     }
 
     private fun updateBluetoothData() = withLoading {
-        updateBluetoothState { state -> state.copy(selectedDevice = null) }
         provideBluetoothPairedDevices.getPairedDevices()
             .onSuccess { devices ->
+                val currentSelectedDevice = (state.value as? ScreenState.Bluetooth)?.selectedDevice
+                if (!devices.contains(currentSelectedDevice)) {
+                    updateBluetoothState { state -> state.copy(selectedDevice = null) }
+                }
                 updateBluetoothState { state ->
                     state.copy(
                         pairedDevices = BluetoothState.Success(
@@ -179,6 +184,7 @@ class AddNewDeviceViewModel @Inject constructor(
                 }
             }
             .onFailure {
+                updateBluetoothState { state -> state.copy(selectedDevice = null) }
                 fastDebugLog(it)
                 when (it) {
                     is BluetoothDisabledException -> updateBluetoothState { state ->
