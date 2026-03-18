@@ -12,10 +12,6 @@ import com.xxmrk888ytxx.database.entry.DeviceEntry.Companion.TABLE_NAME
 )
 data class DeviceEntry(
     @ColumnInfo("deviceId") @PrimaryKey val deviceId: String,
-    @ColumnInfo("deviceName") val deviceName: String,
-    @ColumnInfo("host") val host: String,
-    @ColumnInfo("serverCertificateFingerprint") val serverCertificateFingerprint: String,
-    @ColumnInfo("clientCertificateKeyAlias") val clientCertificateKeyAlias: String,
 ) {
     internal companion object {
         const val TABLE_NAME = "DeviceTable"
