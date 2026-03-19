@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import kotlinx.coroutines.CoroutineScope
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class UnlockFromShortcutService @Inject constructor(
     private val wifiDeviceRepository: WifiDeviceRepository,
     private val deviceUnlockManager: DeviceUnlockManager,
+    private val bluetoothDeviceRepository: BluetoothDeviceRepository
 ) : Service() {
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -61,8 +63,14 @@ class UnlockFromShortcutService @Inject constructor(
     private fun doUnlock(deviceId: String, startId: Int) = serviceScope.launch {
         try {
             fastDebugLog("doUnlock: $deviceId")
-            val device = wifiDeviceRepository.getDeviceById(deviceId).first().also { fastDebugLog("Device where id = $deviceId doesn't exits") } ?: return@launch
-            deviceUnlockManager.unlockWifiDevice(device).getOrThrow()
+            val wifiDevice = wifiDeviceRepository.getDeviceById(deviceId).first()
+            val bluetoothDevice = bluetoothDeviceRepository.getDeviceById(deviceId).first()
+
+            when {
+                wifiDevice != null -> deviceUnlockManager.unlockWifiDevice(wifiDevice).getOrThrow()
+                bluetoothDevice != null -> deviceUnlockManager.unlockBluetoothDevice(bluetoothDevice).getOrThrow()
+                else -> fastDebugLog("Device where id = $deviceId doesn't exits")
+            }
         }catch (e: Exception) {
             fastDebugLog("Exception in UnlockFromShortcutService: $e")
         }
