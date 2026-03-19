@@ -1,10 +1,14 @@
 package com.xxmrk888ytxx.coreandroid
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -15,6 +19,8 @@ object AndroidLogger : Logger {
     private const val defTag = "def"
 
     private val _lastLogId = MutableStateFlow(0L)
+
+    private val scope = CoroutineScope(Dispatchers.Default.limitedParallelism(1) + SupervisorJob())
 
     private val _logs = MutableStateFlow<List<Pair<Long,String>>>(emptyList())
     override val logs: StateFlow<List<Pair<Long,String>>> = _logs.asStateFlow()
@@ -139,7 +145,7 @@ object AndroidLogger : Logger {
         _logs.update { emptyList() }
     }
 
-    private fun writeInRamLog(m: Any?) {
+    private fun writeInRamLog(m: Any?) = scope.launch {
         val message = when(m) {
             is Throwable -> m.stackTraceToString()
             else -> m.toString()
