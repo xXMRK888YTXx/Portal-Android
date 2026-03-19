@@ -20,10 +20,12 @@ import io.ktor.serialization.kotlinx.json.ExperimentalJsonConverter
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import java.net.Socket
 import java.security.Principal
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLPeerUnverifiedException
@@ -56,6 +58,10 @@ class KtorFactory @Inject constructor(
         createDefaultClient {
             engine {
                 mtlsConfig(certificate,trustedServerHashFingerprint)
+                preconfigured = OkHttpClient.Builder()
+                    .pingInterval(3, TimeUnit.SECONDS)
+                    .build()
+
             }
         }
 
