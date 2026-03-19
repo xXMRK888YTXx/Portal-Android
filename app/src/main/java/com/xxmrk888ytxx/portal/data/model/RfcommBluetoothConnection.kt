@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothSocket
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
 import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
@@ -34,10 +35,22 @@ class RfcommBluetoothConnection(
     private val _incomingData = Channel<ByteArray>(Channel.BUFFERED)
     override val incomingData = _incomingData.receiveAsFlow()
 
-    private val sendChannel = Channel<ByteArray>(Channel.BUFFERED)
+    private val sendChannel = Channel<SendRequest>(Channel.BUFFERED)
+
+    private class SendRequest(
+        val data: ByteArray,
+        val deferred: CompletableDeferred<Unit> = CompletableDeferred()
+    )
 
     override suspend fun sendData(data: ByteArray) {
-        sendChannel.send(data)
+        val request = SendRequest(data)
+        sendChannel.send(request)
+        request.deferred.join()
+    }
+
+    override fun trySendData(data: ByteArray) {
+        val request = SendRequest(data)
+        sendChannel.trySend(request)
     }
 
     override fun close() {
@@ -54,19 +67,24 @@ class RfcommBluetoothConnection(
         try {
             val outputStream = socket.outputStream
 
-            for (data in sendChannel) {
+            for (sendRequest in sendChannel) {
                 if (!isActive || _isClosed.value) break
+                try {
+                    val lengthBytes = ByteBuffer.allocate(4)
+                        .order(ByteOrder.BIG_ENDIAN)
+                        .putInt(sendRequest.data.size)
+                        .array()
 
-                val lengthBytes = ByteBuffer.allocate(4)
-                    .order(ByteOrder.BIG_ENDIAN)
-                    .putInt(data.size)
-                    .array()
 
-
-                outputStream.write(lengthBytes)
-                outputStream.write(data)
-                outputStream.flush()
-                fastDebugLog("Bluetooth sent data: ${data.size} bytes")
+                    outputStream.write(lengthBytes)
+                    outputStream.write(sendRequest.data)
+                    outputStream.flush()
+                    sendRequest.deferred.complete(Unit)
+                    fastDebugLog("Bluetooth sent data: ${sendRequest.data.size} bytes")
+                } catch (e: Exception) {
+                    sendRequest.deferred.completeExceptionally(e)
+                    throw e
+                }
             }
         } catch (e: IOException) {
             fastDebugLog("Bluetooth write error: ${e.message}")

@@ -3,7 +3,7 @@ package com.xxmrk888ytxx.portal.data
 import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.data.model.WifiPairBody
 import com.xxmrk888ytxx.portal.data.model.PairResponse
-import com.xxmrk888ytxx.portal.data.model.UnlockBody
+import com.xxmrk888ytxx.portal.data.model.WifiUnlockBody
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
 import com.xxmrk888ytxx.portal.domain.model.Certificate
 import com.xxmrk888ytxx.portal.domain.model.WifiPairResult
@@ -45,7 +45,7 @@ class WifiPortalApiImpl @Inject constructor(
         val client = ktorFactory.createUnlockClient(clientCertificate, serverCertificateHash)
         client.post("https://$host:29170/api/unlock") {
             contentType(ContentType.Application.Json)
-            setBody(UnlockBody(clientId))
+            setBody(WifiUnlockBody(clientId))
         }
     }
 

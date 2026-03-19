@@ -43,11 +43,11 @@ class BluetoothManagerImpl @Inject constructor(
         }.also { fastDebugLog("Paired devices: $it") }
     }
 
-    override suspend fun openConnection(device: PairedBluetoothDevice): BluetoothConnection = withContext(Dispatchers.IO) {
+    override suspend fun openConnection(macAddress: String): BluetoothConnection = withContext(Dispatchers.IO) {
         checkBluetoothStateAndPermission()
         val androidBluetoothDevice =
-            bluetoothAdapter.bondedDevices.firstOrNull { it.address == device.macAddress }
-                ?: throw IllegalArgumentException("Device $device not paired")
+            bluetoothAdapter.bondedDevices.firstOrNull { it.address == macAddress }
+                ?: throw IllegalArgumentException("Device $macAddress not paired")
         val socket = androidBluetoothDevice.createRfcommSocketToServiceRecord(
             UUID.fromString(PORTAL_BLUETOOTH_SERVICE_UUID)
         )
