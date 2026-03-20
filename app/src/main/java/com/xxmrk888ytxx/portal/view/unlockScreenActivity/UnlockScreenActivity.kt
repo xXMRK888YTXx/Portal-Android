@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import com.xxmrk888ytxx.coreandroid.ToastManager
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
 import javax.inject.Inject
@@ -56,9 +57,15 @@ class UnlockScreenActivity @Inject constructor(
         unlockScreenViewModel.requestBiometricAuth(this@UnlockScreenActivity)
     }
 
+    override fun onPause() {
+        super.onPause()
+        fastDebugLog("onPause")
+    }
+
     override fun onStop() {
         super.onStop()
         unlockScreenViewModel.onStop()
+        fastDebugLog("onStop")
     }
 
     companion object {

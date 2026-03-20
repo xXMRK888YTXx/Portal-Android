@@ -17,6 +17,7 @@ import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideE
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,6 +33,8 @@ class UnlockScreenViewModel @Inject constructor(
     override val effect: Flow<UnlockScreenSideEffect> = _effect.asSharedFlow()
 
     private var unlockScreenData: UnlockScreenData? = null
+
+    private val isEventSent = MutableStateFlow(false)
 
 
     fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
@@ -49,12 +52,16 @@ class UnlockScreenViewModel @Inject constructor(
         )
     }
 
-    private fun unlockHost(unlockScreenData: UnlockScreenData) = viewModelScope.launch {
-        unlockServiceManager.sendMessageToHost(
-            unlockScreenData.clientId,
-            UnlockServiceMessage.Unlock
-        )
-    }.invokeOnCompletion { dismissScreen() }
+    private fun unlockHost(unlockScreenData: UnlockScreenData) {
+        if (isEventSent.value) return
+        isEventSent.value = true
+        viewModelScope.launch {
+            unlockServiceManager.sendMessageToHost(
+                unlockScreenData.clientId,
+                UnlockServiceMessage.Unlock
+            )
+        }.invokeOnCompletion { dismissScreen() }
+    }
 
     private fun dismissScreen() {
         _effect.tryEmit(UnlockScreenSideEffect.Dismiss)
@@ -88,6 +95,8 @@ class UnlockScreenViewModel @Inject constructor(
 
     @Suppress("CoroutineContextWithJob")
     private fun sendCancelEventAndDismissScreen() {
+        if (isEventSent.value) return
+        isEventSent.value = true
         viewModelScope.launch(NonCancellable) {
             unlockScreenData?.let { unlockData -> unlockServiceManager.sendMessageToHost(unlockData.clientId, UnlockServiceMessage.Canceled) }
         }.invokeOnCompletion { dismissScreen() }
