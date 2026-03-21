@@ -2,11 +2,10 @@ package com.xxmrk888ytxx.portal.data.unlockService
 
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
+import com.xxmrk888ytxx.portal.data.model.BluetoothRemoteUnlockRequest
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
-import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest
-import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest.Companion.UNLOCK_REQUEST_TYPE
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
@@ -83,7 +82,7 @@ class BluetoothDriver @Inject constructor(
                     val remoteMessage = when (messageForSend) {
                         is UnlockMessage.ApproveUnlock -> ApproveUnlock(
                             clientId = bluetoothDevice.clientId,
-                            requestId = messageForSend.requestId
+                            requestId = messageForSend.requestId,
                         )
 
                         is UnlockMessage.Canceled -> RejectUnlock(
@@ -108,9 +107,9 @@ class BluetoothDriver @Inject constructor(
         bluetoothConnection.incomingData.collect { data ->
             val jsonString = data.toString(UTF_8)
             fastDebugLog("Received message: $jsonString")
-            val request = jsonString.wifiRemoteUnlockRequest
+            val request = jsonString.remoteUnlockRequest
             val domainRequest = when (request?.type) {
-                UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
+                BluetoothRemoteUnlockRequest.UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
                 else -> null
             }
             if (domainRequest != null) {
@@ -122,9 +121,9 @@ class BluetoothDriver @Inject constructor(
         sendJob.cancel()
     }
 
-    private val String.wifiRemoteUnlockRequest: WifiRemoteUnlockRequest?
+    private val String.remoteUnlockRequest: BluetoothRemoteUnlockRequest?
         get() = try {
-            json.decodeFromString<WifiRemoteUnlockRequest>(this)
+            json.decodeFromString<BluetoothRemoteUnlockRequest>(this)
         } catch (e: Exception) {
             fastDebugLog("Error while parsing to RemoteUnlockRequest: exception: $e, string: $this")
             null
