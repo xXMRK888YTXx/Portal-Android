@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.core.content.getSystemService
 import kotlinx.coroutines.CancellationException
 
@@ -30,12 +29,13 @@ inline fun Context.buildNotification(
     return notificationBuilder.apply(configuration).build()
 }
 
-inline fun saveCall(block: () -> Unit) {
+inline fun saveCall(isPrintToDebug: Boolean = true, block: () -> Unit) {
     try {
         block()
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
-        fastDebugLog(e)
+        if (isPrintToDebug)
+            fastDebugLog(e)
     }
 }

@@ -111,7 +111,6 @@ class RfcommBluetoothConnection(
                 _incomingData.send(payload)
             }
         } catch (e: IOException) {
-            // Сюда же прилетит исключение из readExact, если соединение прервется
             fastDebugLog("Bluetooth read error or socket closed: ${e.message}")
         } finally {
             withContext(NonCancellable) { close() }
