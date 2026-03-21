@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.portal.di.module
 
+import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
@@ -21,7 +22,9 @@ import com.xxmrk888ytxx.portal.data.ShortcutManagerImpl
 import com.xxmrk888ytxx.portal.data.ShortcutRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockScreenManagerImpl
-import com.xxmrk888ytxx.portal.data.UnlockServiceManagerImpl
+import com.xxmrk888ytxx.portal.data.BluetoothUnlockServiceManager
+import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
+import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
@@ -41,11 +44,13 @@ import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
+import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
 import com.xxmrk888ytxx.portal.domain.UnlockScreenManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 
 @Module
 interface DomainModule {
@@ -84,12 +89,6 @@ interface DomainModule {
     fun bindsDeviceSettingsRepository(
         deviceSettingsRepositoryImpl: DeviceSettingsRepositoryImpl
     ) : DeviceSettingsRepository
-
-    @Binds
-    @AppScope
-    fun bindsUnlockServiceManager(
-        unlockServiceManagerImpl: UnlockServiceManagerImpl
-    ) : UnlockServiceManager
 
     @Binds
     @AppScope
@@ -161,4 +160,25 @@ interface DomainModule {
     fun bindsBluetoothDeviceRepository(
         bluetoothDeviceRepositoryImpl: BluetoothDeviceRepositoryImpl
     ) : BluetoothDeviceRepository
+
+    @Binds
+    fun bindsUnlockMessageSender(
+        unlockMessageSenderImpl: UnlockMessageSenderImpl
+    ) : UnlockMessageSender
+
+    companion object {
+        @Provides
+        @AppScope
+        @com.xxmrk888ytxx.portal.di.qualifier.WifiUnlockServiceManagerQualifier
+        fun providesWifiUnlockServiceManager(
+            context: Context
+        ) : UnlockServiceManager = WifiUnlockServiceManager(context)
+
+        @Provides
+        @AppScope
+        @com.xxmrk888ytxx.portal.di.qualifier.BluetoothUnlockServiceManagerQualifier
+        fun providesBluetoothUnlockServiceManager(
+            context: Context
+        ) : UnlockServiceManager = BluetoothUnlockServiceManager(context)
+    }
 }

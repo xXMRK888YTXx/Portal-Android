@@ -10,6 +10,7 @@ import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
 import com.xxmrk888ytxx.portal.exception.ServiceControllerException
+import com.xxmrk888ytxx.unlockservice.bluetoothService.BluetoothUnlockService
 import com.xxmrk888ytxx.unlockservice.core.IdleModDetectedCallback
 import com.xxmrk888ytxx.unlockservice.core.UnlockMessage
 import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
@@ -23,28 +24,42 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import javax.inject.Inject
+import kotlin.reflect.KClass
 
-class UnlockServiceManagerImpl @Inject constructor(
+
+class WifiUnlockServiceManager(context: Context) : BaseUnlockServiceManager<WifiUnlockService>(
+    context = context,
+    serviceKClass = WifiUnlockService::class
+)
+
+class BluetoothUnlockServiceManager(context: Context) : BaseUnlockServiceManager<BluetoothUnlockService>(
+    context = context,
+    serviceKClass = BluetoothUnlockService::class
+)
+
+abstract class BaseUnlockServiceManager<SERVICE : UnlockService>(
     private val context: Context,
+    private val serviceKClass: KClass<SERVICE>
 ) : UnlockServiceManager, ServiceConnection, IdleModDetectedCallback {
 
-    private val _wifiServiceController = MutableStateFlow<UnlockServiceController?>(null)
-    private val wifiServiceMutex = Mutex()
+    private val _serviceController = MutableStateFlow<UnlockServiceController?>(null)
+    private val serviceMutex = Mutex()
 
-    override suspend fun startListeningUnlockRequest(clientId: String): Result<Flow<UnlockServiceRequest>> = wrapServiceOperation {
-        val controller = connectToWifiService()
-        controller.startListeningUnlockRequest(clientId).map {
-            when (it) {
-                is UnlockRequest.Auth -> UnlockServiceRequest.Auth(it.requestId)
+    override suspend fun startListeningUnlockRequest(clientId: String): Result<Flow<UnlockServiceRequest>> =
+        wrapServiceOperation {
+            val controller = connectToUnlockService()
+            controller.startListeningUnlockRequest(clientId).map {
+                when (it) {
+                    is UnlockRequest.Auth -> UnlockServiceRequest.Auth(it.requestId)
+                }
             }
         }
-    }
 
-    override suspend fun stopListeningUnlockRequest(clientId: String): Result<Unit> = wrapServiceOperation {
-        val controller = connectToWifiService()
-        controller.stopListeningUnlockRequest(clientId)
-    }
+    override suspend fun stopListeningUnlockRequest(clientId: String): Result<Unit> =
+        wrapServiceOperation {
+            val controller = connectToUnlockService()
+            controller.stopListeningUnlockRequest(clientId)
+        }
 
     private suspend fun <T> wrapServiceOperation(block: suspend () -> T): Result<T> = runCatching {
         try {
@@ -59,7 +74,7 @@ class UnlockServiceManagerImpl @Inject constructor(
         clientId: String,
         message: UnlockServiceMessage
     ): Result<Unit> = wrapServiceOperation {
-        val controller = connectToWifiService()
+        val controller = connectToUnlockService()
         val message = when (message) {
             is UnlockServiceMessage.Unlock -> UnlockMessage.ApproveUnlock(requestId = message.requestId)
             is UnlockServiceMessage.Canceled -> UnlockMessage.Canceled(requestId = message.requestId)
@@ -67,21 +82,21 @@ class UnlockServiceManagerImpl @Inject constructor(
         controller.sendMessage(clientId, message)
     }
 
-    private suspend fun waitForWifiServiceController(): UnlockServiceController =
-        _wifiServiceController.value?.let { return it } ?: _wifiServiceController.filterNotNull().first()
+    private suspend fun waitForUnlockServiceController(): UnlockServiceController =
+        _serviceController.value?.let { return it } ?: _serviceController.filterNotNull().first()
 
-    private suspend fun connectToWifiService(): UnlockServiceController = wifiServiceMutex.withLock {
-        val currentController = _wifiServiceController.value
+    private suspend fun connectToUnlockService(): UnlockServiceController = serviceMutex.withLock {
+        val currentController = _serviceController.value
         if (currentController != null) return currentController
 
-        Intent(context, WifiUnlockService::class.java).apply {
+        Intent(context, serviceKClass.java).apply {
             context.bindService(
                 this,
-                this@UnlockServiceManagerImpl,
+                this@BaseUnlockServiceManager,
                 Context.BIND_AUTO_CREATE
             )
         }
-        return waitForWifiServiceController()
+        return waitForUnlockServiceController()
     }
 
     override fun onServiceConnected(
@@ -92,21 +107,17 @@ class UnlockServiceManagerImpl @Inject constructor(
 
         val controller = (service as? UnlockService.UnlockBinder)?.controller
         controller?.setIdleModCallback(this)
-        when (name?.className) {
-            WifiUnlockService::class.qualifiedName -> _wifiServiceController.value = controller
-        }
+        _serviceController.value = controller
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
         fastDebugLog("$name onServiceDisconnected")
-        when (name?.className) {
-            WifiUnlockService::class.qualifiedName -> _wifiServiceController.value = null
-        }
+        _serviceController.value = null
     }
 
     override fun isCanStopService(): Boolean {
         context.unbindService(this)
-        _wifiServiceController.value = null
+        _serviceController.value = null
         return true
     }
 }

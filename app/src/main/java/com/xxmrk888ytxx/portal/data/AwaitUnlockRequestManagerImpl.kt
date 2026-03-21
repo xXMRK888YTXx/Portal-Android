@@ -1,23 +1,31 @@
 package com.xxmrk888ytxx.portal.data
 
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.portal.di.qualifier.BluetoothUnlockServiceManagerQualifier
+import com.xxmrk888ytxx.portal.di.qualifier.WifiUnlockServiceManagerQualifier
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
+import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
+import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.collections.mutableSetOf
 
 class AwaitUnlockRequestManagerImpl @Inject constructor(
-    private val unlockServiceManager: UnlockServiceManager,
+    @param:WifiUnlockServiceManagerQualifier private val wifiUnlockServiceManagerQualifier: UnlockServiceManager,
+    @param:BluetoothUnlockServiceManagerQualifier private val bluetoothUnlockServiceManager: UnlockServiceManager,
     private val unlockRequestHandler: UnlockRequestHandler,
-    private val deviceServiceManager: DeviceSettingsRepository
+    private val deviceServiceManager: DeviceSettingsRepository,
+    private val wifiDeviceRepository: WifiDeviceRepository,
+    private val bluetoothDeviceRepository: BluetoothDeviceRepository
 ) : AwaitUnlockRequestManager {
 
     private val _enabledListeners = MutableStateFlow(mutableSetOf<String>())
@@ -50,6 +58,12 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
 
     private suspend fun enableForDevice(clientId: String) {
         if (_enabledListeners.value.contains(clientId)) return
+        val unlockServiceManager = when {
+            wifiDeviceRepository.getDeviceById(clientId).first() != null -> wifiUnlockServiceManagerQualifier
+            bluetoothDeviceRepository.getDeviceById(clientId).first() != null -> bluetoothUnlockServiceManager
+            else -> return
+        }
+
         unlockServiceManager.startListeningUnlockRequest(clientId)
             .onSuccess { flow ->
                 _enabledListeners.value.add(clientId)
@@ -65,6 +79,12 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
     }
 
     private suspend fun disableForDevice(clientId: String) {
+        val unlockServiceManager = when {
+            wifiDeviceRepository.getDeviceById(clientId).first() != null -> wifiUnlockServiceManagerQualifier
+            bluetoothDeviceRepository.getDeviceById(clientId).first() != null -> bluetoothUnlockServiceManager
+            else -> return
+        }
+
         unlockServiceManager.stopListeningUnlockRequest(clientId)
     }
 

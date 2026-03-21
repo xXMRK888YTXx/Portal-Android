@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
@@ -25,7 +26,7 @@ import javax.inject.Provider
 
 class UnlockScreenViewModel @Inject constructor(
     private val biometricDialogController: BiometricDialogController,
-    private val unlockServiceManager: UnlockServiceManager
+    private val unlockMessageSender: UnlockMessageSender
 ) : ViewModel(), Navigator, SideEffectSender<UnlockScreenSideEffect> {
 
     private val _effect = MutableSharedFlow<UnlockScreenSideEffect>(extraBufferCapacity = 1)
@@ -56,7 +57,7 @@ class UnlockScreenViewModel @Inject constructor(
         if (isEventSent.value) return
         isEventSent.value = true
         viewModelScope.launch {
-            unlockServiceManager.sendMessageToHost(
+            unlockMessageSender.sendMessage(
                 unlockScreenData.clientId,
                 UnlockServiceMessage.Unlock(requestId = unlockScreenData.requestId)
             )
@@ -98,7 +99,7 @@ class UnlockScreenViewModel @Inject constructor(
         if (isEventSent.value) return
         isEventSent.value = true
         viewModelScope.launch(NonCancellable) {
-            unlockScreenData?.let { unlockData -> unlockServiceManager.sendMessageToHost(unlockData.clientId, UnlockServiceMessage.Canceled(unlockData.requestId)) }
+            unlockScreenData?.let { unlockData -> unlockMessageSender.sendMessage(unlockData.clientId, UnlockServiceMessage.Canceled(unlockData.requestId)) }
         }.invokeOnCompletion { dismissScreen() }
     }
 
