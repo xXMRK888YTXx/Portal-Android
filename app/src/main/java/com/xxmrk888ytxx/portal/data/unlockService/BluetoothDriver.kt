@@ -2,10 +2,11 @@ package com.xxmrk888ytxx.portal.data.unlockService
 
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
+import com.xxmrk888ytxx.portal.data.model.BluetoothRemoteUnlockMessage
 import com.xxmrk888ytxx.portal.data.model.BluetoothRemoteUnlockRequest
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage.ApproveUnlockWifi
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage.RejectUnlockWifi
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
@@ -79,19 +80,22 @@ class BluetoothDriver @Inject constructor(
             // Send
             for (messageForSend in messagesForSendChannel) {
                 try {
-                    val remoteMessage = when (messageForSend) {
-                        is UnlockMessage.ApproveUnlock -> ApproveUnlock(
-                            clientId = bluetoothDevice.clientId,
-                            requestId = messageForSend.requestId,
+                    val jsonString = when (messageForSend) {
+                        is UnlockMessage.ApproveUnlock -> json.encodeToString(
+                            BluetoothRemoteUnlockMessage.ApproveUnlockBluetooth(
+                                clientId = bluetoothDevice.clientId,
+                                requestId = messageForSend.requestId,
+                            )
                         )
 
-                        is UnlockMessage.Canceled -> RejectUnlock(
-                            clientId = bluetoothDevice.clientId,
-                            requestId = messageForSend.requestId
+                        is UnlockMessage.Canceled -> json.encodeToString(
+                            BluetoothRemoteUnlockMessage.RejectUnlockBluetooth(
+                                clientId = bluetoothDevice.clientId,
+                                requestId = messageForSend.requestId
+                            )
                         )
                     }
                     fastDebugLog("Try to send message: $messageForSend")
-                    val jsonString = json.encodeToString<RemoteUnlockMessage>(remoteMessage)
                     bluetoothConnection.sendData(jsonString.toByteArray(UTF_8))
                     fastDebugLog("Sent message: $messageForSend")
                 } catch (e: CancellationException) {
