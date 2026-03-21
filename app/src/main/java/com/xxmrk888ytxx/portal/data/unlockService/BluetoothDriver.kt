@@ -20,9 +20,12 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import kotlin.text.Charsets.UTF_8
@@ -32,6 +35,13 @@ class BluetoothDriver @Inject constructor(
     private val bluetoothDeviceRepository: BluetoothDeviceRepository,
     private val json: Json
 ) : NetworkDriver {
+
+    @Serializable
+    private data class RegisterModel(
+        val type: String = "register"
+    )
+
+
     override suspend fun connect(
         clientId: String,
         messagesForSendChannel: Channel<UnlockMessage>,
@@ -42,6 +52,10 @@ class BluetoothDriver @Inject constructor(
         lateinit var bluetoothConnection: BluetoothConnection
         try {
             bluetoothConnection = bluetoothManager.openConnection(device.macAddress)
+            val registerModel = RegisterModel()
+            val registerJsonString = Json.encodeToString(registerModel)
+            bluetoothConnection.sendData(registerJsonString.toByteArray(UTF_8))
+            fastDebugLog("Sent register message")
             observeMessages(
                 bluetoothConnection = bluetoothConnection,
                 bluetoothDevice = device,
@@ -62,50 +76,52 @@ class BluetoothDriver @Inject constructor(
         bluetoothDevice: BluetoothDevice,
         messagesForSendChannel: Channel<UnlockMessage>,
         receivedRequestChannel: Channel<UnlockRequest>,
-    ) = withContext(Dispatchers.IO) {
+    ) = coroutineScope {
+        val sendJob = launch {
+
+            // Send
+            for (messageForSend in messagesForSendChannel) {
+                try {
+                    val remoteMessage = when (messageForSend) {
+                        is UnlockMessage.ApproveUnlock -> ApproveUnlock(
+                            clientId = bluetoothDevice.clientId,
+                            requestId = messageForSend.requestId
+                        )
+
+                        is UnlockMessage.Canceled -> RejectUnlock(
+                            clientId = bluetoothDevice.clientId,
+                            requestId = messageForSend.requestId
+                        )
+                    }
+                    fastDebugLog("Try to send message: $messageForSend")
+                    val jsonString = json.encodeToString(remoteMessage)
+                    bluetoothConnection.sendData(jsonString.toByteArray(UTF_8))
+                    fastDebugLog("Sent message: $messageForSend")
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    fastDebugLog("Error while sending message: $messageForSend. Exception ${e.message}")
+                    break
+                }
+            }
+        }
+
         // Read
-        launch {
-            bluetoothConnection.incomingData.collect { data ->
-                val jsonString = data.toString(UTF_8)
-                fastDebugLog("Received message: $jsonString")
-                val request = jsonString.remoteUnlockRequest
-                val domainRequest = when (request?.type) {
-                    UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
-                    else -> null
-                }
-                if (domainRequest != null) {
-                    receivedRequestChannel.send(domainRequest)
-                } else {
-                    fastDebugLog("Unknown message type: ${request?.type}")
-                }
+        bluetoothConnection.incomingData.collect { data ->
+            val jsonString = data.toString(UTF_8)
+            fastDebugLog("Received message: $jsonString")
+            val request = jsonString.remoteUnlockRequest
+            val domainRequest = when (request?.type) {
+                UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
+                else -> null
+            }
+            if (domainRequest != null) {
+                receivedRequestChannel.send(domainRequest)
+            } else {
+                fastDebugLog("Unknown message type: ${request?.type}")
             }
         }
-
-        // Send
-        for (messageForSend in messagesForSendChannel) {
-            try {
-                val remoteMessage = when (messageForSend) {
-                    is UnlockMessage.ApproveUnlock -> ApproveUnlock(
-                        clientId = bluetoothDevice.clientId,
-                        requestId = messageForSend.requestId
-                    )
-
-                    is UnlockMessage.Canceled -> RejectUnlock(
-                        clientId = bluetoothDevice.clientId,
-                        requestId = messageForSend.requestId
-                    )
-                }
-                fastDebugLog("Try to send message: $messageForSend")
-                val jsonString = json.encodeToString(remoteMessage)
-                bluetoothConnection.sendData(jsonString.toByteArray(UTF_8))
-                fastDebugLog("Sent message: $messageForSend")
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                fastDebugLog("Error while sending message: $message. Exception ${e.message}")
-                break
-            }
-        }
+        sendJob.cancel()
     }
 
     private val String.remoteUnlockRequest: RemoteUnlockRequest?
