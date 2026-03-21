@@ -9,6 +9,8 @@ import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.unlockservice.R
 import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
+import com.xxmrk888ytxx.unlockservice.exception.PermissionDeniedException
+import com.xxmrk888ytxx.unlockservice.exception.UnlockServiceException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -70,13 +72,6 @@ abstract class UnlockService : Service(), UnlockServiceController {
         fastDebugLog("Service: $this onCreate")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        serviceScope.cancel()
-        fastDebugLog("Service: $this onDestroy")
-
-    }
-
     override fun onBind(intent: Intent?): IBinder? = UnlockBinder()
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -110,6 +105,8 @@ abstract class UnlockService : Service(), UnlockServiceController {
         clientEntry.sendMessagesChannel.close()
     }
 
+    @Throws(PermissionDeniedException::class)
+    open suspend fun checkPermission() = Unit
     abstract suspend fun waitConnectionToNetwork()
     abstract suspend fun connect(clientId: String, clientEntry: ClientEntry)
 
@@ -119,19 +116,21 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
         while (currentCoroutineContext().isActive) {
             try {
-                fastDebugLog("Service: $this waitConnectionToNetwork")
+                fastDebugLog("Service: $this, clientId: $clientId checkPermission")
+                checkPermission()
+                fastDebugLog("Service: $this, clientId: $clientId  waitConnectionToNetwork")
                 waitConnectionToNetwork()
                 val entry = clientEntries.value[clientId] ?: return
-                fastDebugLog("Service: $this connect")
+                fastDebugLog("Service: $this, clientId: $clientId  connect")
                 connect(clientId, entry)
             } catch (e: CancellationException) {
                 fastDebugLog("CancellationException")
                 throw e
-            } catch (e: InvalidClientIdException) {
+            } catch (e: UnlockServiceException) {
                 fastDebugLog(e)
                 return
             } catch (e: Exception) {
-                fastDebugLog("Exception in payload: $e")
+                fastDebugLog("Exception in payload, clientId: $clientId : $e")
             }
 
             delay(retryDelay)
@@ -153,6 +152,12 @@ abstract class UnlockService : Service(), UnlockServiceController {
     private fun getPayloadJob(host: String): Job =
         serviceScope.launch(Dispatchers.IO, start = CoroutineStart.LAZY) { payload(host) }
             .also { it.invokeOnCompletion { stopListeningUnlockRequest(host) } }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceScope.cancel()
+        fastDebugLog("Service: $this onDestroy")
+    }
 
     companion object {
         const val FOREGROUND_CHANNEL_ID = "foreground_notification"

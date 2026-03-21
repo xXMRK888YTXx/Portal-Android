@@ -1,0 +1,118 @@
+package com.xxmrk888ytxx.portal.data.unlockService
+
+import android.R.id.message
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.coreandroid.saveCall
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest.Companion.UNLOCK_REQUEST_TYPE
+import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
+import com.xxmrk888ytxx.portal.domain.BluetoothManager
+import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
+import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
+import com.xxmrk888ytxx.unlockservice.core.NetworkDriver
+import com.xxmrk888ytxx.unlockservice.core.UnlockMessage
+import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
+import com.xxmrk888ytxx.unlockservice.exception.DeviceNotPairedException
+import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
+import kotlin.text.Charsets.UTF_8
+
+class BluetoothDriver @Inject constructor(
+    private val bluetoothManager: BluetoothManager,
+    private val bluetoothDeviceRepository: BluetoothDeviceRepository,
+    private val json: Json
+) : NetworkDriver {
+    override suspend fun connect(
+        clientId: String,
+        messagesForSendChannel: Channel<UnlockMessage>,
+        receivedRequestChannel: Channel<UnlockRequest>
+    ) {
+        val device = bluetoothDeviceRepository.getDeviceById(clientId).first()
+            ?: throw InvalidClientIdException(clientId)
+        lateinit var bluetoothConnection: BluetoothConnection
+        try {
+            bluetoothConnection = bluetoothManager.openConnection(device.macAddress)
+            observeMessages(
+                bluetoothConnection = bluetoothConnection,
+                bluetoothDevice = device,
+                messagesForSendChannel = messagesForSendChannel,
+                receivedRequestChannel = receivedRequestChannel
+            )
+        } catch (_: IllegalArgumentException) {
+            throw DeviceNotPairedException(device.macAddress)
+        } finally {
+            withContext(NonCancellable) {
+                saveCall { bluetoothConnection.close() }
+            }
+        }
+    }
+
+    private suspend fun observeMessages(
+        bluetoothConnection: BluetoothConnection,
+        bluetoothDevice: BluetoothDevice,
+        messagesForSendChannel: Channel<UnlockMessage>,
+        receivedRequestChannel: Channel<UnlockRequest>,
+    ) = withContext(Dispatchers.IO) {
+        // Read
+        launch {
+            bluetoothConnection.incomingData.collect { data ->
+                val jsonString = data.toString(UTF_8)
+                fastDebugLog("Received message: $jsonString")
+                val request = jsonString.remoteUnlockRequest
+                val domainRequest = when (request?.type) {
+                    UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
+                    else -> null
+                }
+                if (domainRequest != null) {
+                    receivedRequestChannel.send(domainRequest)
+                } else {
+                    fastDebugLog("Unknown message type: ${request?.type}")
+                }
+            }
+        }
+
+        // Send
+        for (messageForSend in messagesForSendChannel) {
+            try {
+                val remoteMessage = when (messageForSend) {
+                    is UnlockMessage.ApproveUnlock -> ApproveUnlock(
+                        clientId = bluetoothDevice.clientId,
+                        requestId = messageForSend.requestId
+                    )
+
+                    is UnlockMessage.Canceled -> RejectUnlock(
+                        clientId = bluetoothDevice.clientId,
+                        requestId = messageForSend.requestId
+                    )
+                }
+                fastDebugLog("Try to send message: $messageForSend")
+                val jsonString = json.encodeToString(remoteMessage)
+                bluetoothConnection.sendData(jsonString.toByteArray(UTF_8))
+                fastDebugLog("Sent message: $messageForSend")
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                fastDebugLog("Error while sending message: $message. Exception ${e.message}")
+                break
+            }
+        }
+    }
+
+    private val String.remoteUnlockRequest: RemoteUnlockRequest?
+        get() = try {
+            json.decodeFromString<RemoteUnlockRequest>(this)
+        } catch (e: Exception) {
+            fastDebugLog("Error while parsing to RemoteUnlockRequest: exception: $e, string: $this")
+            null
+        }
+}

@@ -28,7 +28,6 @@ class WifiUnlockService @Inject constructor(
     override val notificationInfo: NotificationInfo
         get() = NotificationInfo(111, R.string.background_service_running_wifi)
 
-
     override suspend fun waitConnectionToNetwork() {
         connectivityManager.observeLocalWifi().first { isConnected -> isConnected }
     }

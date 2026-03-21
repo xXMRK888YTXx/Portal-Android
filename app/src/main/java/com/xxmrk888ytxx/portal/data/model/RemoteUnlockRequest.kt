@@ -7,4 +7,8 @@ import kotlinx.serialization.Serializable
 data class RemoteUnlockRequest(
     @SerialName("Type") val type: String,
     @SerialName("RequestId") val requestId: String?,
-)
+) {
+    companion object {
+        const val UNLOCK_REQUEST_TYPE = "unlock_request"
+    }
+}

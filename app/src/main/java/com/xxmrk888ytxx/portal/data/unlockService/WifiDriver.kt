@@ -6,6 +6,7 @@ import com.xxmrk888ytxx.portal.data.KtorFactory
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest.Companion.UNLOCK_REQUEST_TYPE
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.MdnsManager
@@ -104,10 +105,4 @@ class WifiDriver @Inject constructor(
             }
         }
     }
-
-    companion object {
-        const val UNLOCK_REQUEST_TYPE = "unlock_request"
-    }
-
-
 }
