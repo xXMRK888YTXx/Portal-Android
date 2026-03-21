@@ -21,6 +21,6 @@ class UnlockRequestHandlerImpl @Inject constructor(
         fastDebugLog("onNewRequest: $request")
         //unlockServiceManager.sendMessageToHost(clientId, UnlockServiceMessage.Unlock)
         val device = wifiDeviceRepository.getDeviceById(clientId).first() ?: return
-        unlockScreenManager.showUnlockScreen(device)
+        unlockScreenManager.showUnlockScreen(device, request)
     }
 }

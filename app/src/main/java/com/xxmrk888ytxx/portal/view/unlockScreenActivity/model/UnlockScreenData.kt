@@ -5,5 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class UnlockScreenData(
-    val clientId: String
+    val clientId: String,
+    val requestId: String?,
 ) : Parcelable

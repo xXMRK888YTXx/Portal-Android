@@ -58,7 +58,7 @@ class UnlockScreenViewModel @Inject constructor(
         viewModelScope.launch {
             unlockServiceManager.sendMessageToHost(
                 unlockScreenData.clientId,
-                UnlockServiceMessage.Unlock
+                UnlockServiceMessage.Unlock(requestId = unlockScreenData.requestId)
             )
         }.invokeOnCompletion { dismissScreen() }
     }
@@ -98,7 +98,7 @@ class UnlockScreenViewModel @Inject constructor(
         if (isEventSent.value) return
         isEventSent.value = true
         viewModelScope.launch(NonCancellable) {
-            unlockScreenData?.let { unlockData -> unlockServiceManager.sendMessageToHost(unlockData.clientId, UnlockServiceMessage.Canceled) }
+            unlockScreenData?.let { unlockData -> unlockServiceManager.sendMessageToHost(unlockData.clientId, UnlockServiceMessage.Canceled(unlockData.requestId)) }
         }.invokeOnCompletion { dismissScreen() }
     }
 

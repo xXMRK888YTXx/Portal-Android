@@ -36,7 +36,7 @@ class UnlockServiceManagerImpl @Inject constructor(
         val controller = connectToWifiService()
         controller.startListeningUnlockRequest(clientId).map {
             when (it) {
-                UnlockRequest.Auth -> UnlockServiceRequest.Auth
+                is UnlockRequest.Auth -> UnlockServiceRequest.Auth(it.requestId)
             }
         }
     }
@@ -61,8 +61,8 @@ class UnlockServiceManagerImpl @Inject constructor(
     ): Result<Unit> = wrapServiceOperation {
         val controller = connectToWifiService()
         val message = when (message) {
-            UnlockServiceMessage.Unlock -> UnlockMessage.ApproveUnlock
-            UnlockServiceMessage.Canceled -> UnlockMessage.Canceled
+            is UnlockServiceMessage.Unlock -> UnlockMessage.ApproveUnlock(requestId = message.requestId)
+            is UnlockServiceMessage.Canceled -> UnlockMessage.Canceled(requestId = message.requestId)
         }
         controller.sendMessage(clientId, message)
     }

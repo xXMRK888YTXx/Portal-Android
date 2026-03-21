@@ -1,5 +1,5 @@
 package com.xxmrk888ytxx.unlockservice.core
 
-sealed interface UnlockRequest {
-    data object Auth: UnlockRequest
+sealed class UnlockRequest(open val requestId: String?) {
+    data class Auth(override val requestId: String?): UnlockRequest(requestId)
 }

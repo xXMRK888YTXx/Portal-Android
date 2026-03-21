@@ -65,8 +65,15 @@ class WifiDriver @Inject constructor(
                 for (messageForSend in messagesForSendChannel) {
                     try {
                         val remoteMessage = when (messageForSend) {
-                            UnlockMessage.ApproveUnlock -> ApproveUnlock(clientId = clientId)
-                            UnlockMessage.Canceled -> RejectUnlock(clientId = clientId)
+                            is UnlockMessage.ApproveUnlock -> ApproveUnlock(
+                                clientId = clientId,
+                                requestId = messageForSend.requestId
+                            )
+
+                            is UnlockMessage.Canceled -> RejectUnlock(
+                                clientId = clientId,
+                                requestId =  messageForSend.requestId
+                            )
                         }
                         fastDebugLog("Try to send message: $messageForSend")
                         sendSerialized(remoteMessage)
@@ -85,7 +92,7 @@ class WifiDriver @Inject constructor(
                 fastDebugLog("Waiting messages")
                 val response = receiveDeserialized<RemoteUnlockRequest>()
                 val localRequest = when (response.type) {
-                    UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth
+                    UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(response.requestId)
                     else -> null
                 }
                 fastDebugLog("Received message: $response")
