@@ -48,7 +48,7 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
 
         }
 
-    override suspend fun enableForDevice(clientId: String) {
+    private suspend fun enableForDevice(clientId: String) {
         if (_enabledListeners.value.contains(clientId)) return
         unlockServiceManager.startListeningUnlockRequest(clientId)
             .onSuccess { flow ->
@@ -64,7 +64,7 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
             .onFailure { fastDebugLog(it) }
     }
 
-    override suspend fun disableForDevice(clientId: String) {
+    private suspend fun disableForDevice(clientId: String) {
         unlockServiceManager.stopListeningUnlockRequest(clientId)
     }
 
