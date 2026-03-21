@@ -13,15 +13,29 @@ import com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice
 import com.xxmrk888ytxx.portal.exception.BluetoothDisabledException
 import com.xxmrk888ytxx.portal.exception.BluetoothNotSupportedException
 import com.xxmrk888ytxx.portal.exception.BluetoothPermissionNotGrantedException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
+
+private typealias MacAddress = String
 
 class BluetoothManagerImpl @Inject constructor(
     private val context: Context,
     private val permissionManager: PermissionManager
 ) : BluetoothManager {
+
+    private val cashedConnectionMap: MutableStateFlow<Map<MacAddress, BluetoothConnection>> = MutableStateFlow(emptyMap())
+    private val observeCloseCashedConnectionScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val cashedConnectionOperationMutex = Mutex()
 
     val bluetoothManager: android.bluetooth.BluetoothManager by lazy {
         context.getSystemService<android.bluetooth.BluetoothManager>()
@@ -45,6 +59,10 @@ class BluetoothManagerImpl @Inject constructor(
 
     override suspend fun openConnection(macAddress: String): BluetoothConnection = withContext(Dispatchers.IO) {
         checkBluetoothStateAndPermission()
+        val cashedConnection = getCashedConnection(macAddress)
+        if (cashedConnection != null) {
+            return@withContext cashedConnection
+        }
         val androidBluetoothDevice =
             bluetoothAdapter.bondedDevices.firstOrNull { it.address == macAddress }
                 ?: throw IllegalArgumentException("Device $macAddress not paired")
@@ -52,7 +70,24 @@ class BluetoothManagerImpl @Inject constructor(
             UUID.fromString(PORTAL_BLUETOOTH_SERVICE_UUID)
         )
         socket.connect()
-        return@withContext RfcommBluetoothConnection(socket)
+        return@withContext RfcommBluetoothConnection(socket).also { addCashedConnection(macAddress, it) }
+    }
+
+    private suspend fun getCashedConnection(macAddress: MacAddress): BluetoothConnection? = cashedConnectionOperationMutex.withLock {
+        return cashedConnectionMap.value[macAddress]
+    }
+
+    private suspend fun addCashedConnection(
+        macAddress: MacAddress,
+        connection: BluetoothConnection
+    ) = cashedConnectionOperationMutex.withLock {
+        cashedConnectionMap.update { it.toMutableMap().apply { put(macAddress, connection)  } }
+        observeCloseCashedConnectionScope.launch {
+            connection.isClosed.first { isClosed -> isClosed }
+            cashedConnectionOperationMutex.withLock {
+                cashedConnectionMap.update { it.toMutableMap().apply { remove(macAddress) } }
+            }
+        }
     }
 
     private fun checkBluetoothStateAndPermission() {
