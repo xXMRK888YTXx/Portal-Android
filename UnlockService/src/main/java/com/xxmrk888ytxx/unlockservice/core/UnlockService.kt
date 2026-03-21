@@ -9,7 +9,6 @@ import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.unlockservice.R
 import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
-import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -111,7 +110,7 @@ abstract class UnlockService : Service(), UnlockServiceController {
         clientEntry.sendMessagesChannel.close()
     }
 
-    abstract suspend fun waitConnection()
+    abstract suspend fun waitConnectionToNetwork()
     abstract suspend fun connect(clientId: String, clientEntry: ClientEntry)
 
     protected open suspend fun payload(clientId: String) {
@@ -120,8 +119,8 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
         while (currentCoroutineContext().isActive) {
             try {
-                fastDebugLog("Service: $this waitConnection")
-                waitConnection()
+                fastDebugLog("Service: $this waitConnectionToNetwork")
+                waitConnectionToNetwork()
                 val entry = clientEntries.value[clientId] ?: return
                 fastDebugLog("Service: $this connect")
                 connect(clientId, entry)

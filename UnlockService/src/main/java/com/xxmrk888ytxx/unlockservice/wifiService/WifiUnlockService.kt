@@ -6,7 +6,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import com.xxmrk888ytxx.unlockservice.R
 import com.xxmrk888ytxx.unlockservice.core.ClientEntry
-import com.xxmrk888ytxx.unlockservice.core.IdleModDetectedCallback
+import com.xxmrk888ytxx.unlockservice.core.NetworkDriver
 import com.xxmrk888ytxx.unlockservice.core.NotificationInfo
 import com.xxmrk888ytxx.unlockservice.core.UnlockService
 import com.xxmrk888ytxx.unlockservice.qualifier.WifiNetworkDriver
@@ -29,7 +29,7 @@ class WifiUnlockService @Inject constructor(
         get() = NotificationInfo(111, R.string.background_service_running_wifi)
 
 
-    override suspend fun waitConnection() {
+    override suspend fun waitConnectionToNetwork() {
         connectivityManager.observeLocalWifi().first { isConnected -> isConnected }
     }
 

@@ -13,7 +13,7 @@ import com.xxmrk888ytxx.portal.utils.waitHostForClient
 import com.xxmrk888ytxx.unlockservice.core.UnlockMessage
 import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
 import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
-import com.xxmrk888ytxx.unlockservice.wifiService.NetworkDriver
+import com.xxmrk888ytxx.unlockservice.core.NetworkDriver
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
 import io.ktor.client.plugins.websocket.webSocket
