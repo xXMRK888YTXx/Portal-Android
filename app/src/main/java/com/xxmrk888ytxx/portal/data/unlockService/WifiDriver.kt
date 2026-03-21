@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.text.Charsets.UTF_8
 
 class WifiDriver @Inject constructor(
     private val ktorFactory: KtorFactory,
@@ -73,7 +74,7 @@ class WifiDriver @Inject constructor(
 
                             is UnlockMessage.Canceled -> RejectUnlock(
                                 clientId = clientId,
-                                requestId =  messageForSend.requestId
+                                requestId = messageForSend.requestId
                             )
                         }
                         fastDebugLog("Try to send message: $messageForSend")
@@ -91,6 +92,9 @@ class WifiDriver @Inject constructor(
             //Read loop
             while (currentCoroutineContext().isActive) {
                 fastDebugLog("Waiting messages")
+//                For debug
+//                val frame = incoming.receive().data.toString(UTF_8)
+//                fastDebugLog("Received message: $frame")
                 val response = receiveDeserialized<RemoteUnlockRequest>()
                 val localRequest = when (response.type) {
                     UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(response.requestId)
