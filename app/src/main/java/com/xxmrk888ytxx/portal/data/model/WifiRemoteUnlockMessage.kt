@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
-sealed interface RemoteUnlockMessage{
+sealed interface WifiRemoteUnlockMessage{
     val clientId: String
     val type: String
     val status: String
@@ -12,20 +12,20 @@ sealed interface RemoteUnlockMessage{
     val requestId: String?
 
     @Serializable
-    data class ApproveUnlock(
+    data class ApproveUnlockWifi(
         @SerialName("ClientId") override val clientId: String,
         @SerialName("Type") override val type: String = UNLOCK_RESPONSE_TYPE,
         @SerialName("Status") override val status: String = OK_STATUS,
         @SerialName("RequestId") override val requestId: String?,
-    ) : RemoteUnlockMessage
+    ) : WifiRemoteUnlockMessage
 
     @Serializable
-    data class RejectUnlock(
+    data class RejectUnlockWifi(
         @SerialName("ClientId") override val clientId: String,
         @SerialName("Type") override val type: String = UNLOCK_RESPONSE_TYPE,
         @SerialName("Status") override val status: String = REJECT_STATUS,
         @SerialName("RequestId") override val requestId: String?,
-    ) : RemoteUnlockMessage
+    ) : WifiRemoteUnlockMessage
 
     private companion object {
         const val UNLOCK_RESPONSE_TYPE = "unlock_response"

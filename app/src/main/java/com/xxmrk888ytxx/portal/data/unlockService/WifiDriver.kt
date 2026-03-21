@@ -3,8 +3,8 @@ package com.xxmrk888ytxx.portal.data.unlockService
 import android.R.id.message
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.data.KtorFactory
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage.ApproveUnlockWifi
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage.RejectUnlockWifi
 import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest
 import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest.Companion.UNLOCK_REQUEST_TYPE
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
@@ -66,12 +66,12 @@ class WifiDriver @Inject constructor(
                 for (messageForSend in messagesForSendChannel) {
                     try {
                         val remoteMessage = when (messageForSend) {
-                            is UnlockMessage.ApproveUnlock -> ApproveUnlock(
+                            is UnlockMessage.ApproveUnlock -> ApproveUnlockWifi(
                                 clientId = clientId,
                                 requestId = messageForSend.requestId
                             )
 
-                            is UnlockMessage.Canceled -> RejectUnlock(
+                            is UnlockMessage.Canceled -> RejectUnlockWifi(
                                 clientId = clientId,
                                 requestId = messageForSend.requestId
                             )
