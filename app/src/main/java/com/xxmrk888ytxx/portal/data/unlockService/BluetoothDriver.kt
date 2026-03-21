@@ -1,13 +1,12 @@
 package com.xxmrk888ytxx.portal.data.unlockService
 
-import android.R.id.message
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest.Companion.UNLOCK_REQUEST_TYPE
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest.Companion.UNLOCK_REQUEST_TYPE
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
@@ -18,16 +17,13 @@ import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
 import com.xxmrk888ytxx.unlockservice.exception.DeviceNotPairedException
 import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import kotlin.text.Charsets.UTF_8
@@ -112,7 +108,7 @@ class BluetoothDriver @Inject constructor(
         bluetoothConnection.incomingData.collect { data ->
             val jsonString = data.toString(UTF_8)
             fastDebugLog("Received message: $jsonString")
-            val request = jsonString.remoteUnlockRequest
+            val request = jsonString.wifiRemoteUnlockRequest
             val domainRequest = when (request?.type) {
                 UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
                 else -> null
@@ -126,9 +122,9 @@ class BluetoothDriver @Inject constructor(
         sendJob.cancel()
     }
 
-    private val String.remoteUnlockRequest: RemoteUnlockRequest?
+    private val String.wifiRemoteUnlockRequest: WifiRemoteUnlockRequest?
         get() = try {
-            json.decodeFromString<RemoteUnlockRequest>(this)
+            json.decodeFromString<WifiRemoteUnlockRequest>(this)
         } catch (e: Exception) {
             fastDebugLog("Error while parsing to RemoteUnlockRequest: exception: $e, string: $this")
             null

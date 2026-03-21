@@ -5,8 +5,8 @@ import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.data.KtorFactory
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
-import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest.Companion.UNLOCK_REQUEST_TYPE
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest
+import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest.Companion.UNLOCK_REQUEST_TYPE
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.MdnsManager
@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.text.Charsets.UTF_8
 
 class WifiDriver @Inject constructor(
     private val ktorFactory: KtorFactory,
@@ -95,7 +94,7 @@ class WifiDriver @Inject constructor(
 //                For debug
 //                val frame = incoming.receive().data.toString(UTF_8)
 //                fastDebugLog("Received message: $frame")
-                val response = receiveDeserialized<RemoteUnlockRequest>()
+                val response = receiveDeserialized<WifiRemoteUnlockRequest>()
                 val localRequest = when (response.type) {
                     UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(response.requestId)
                     else -> null

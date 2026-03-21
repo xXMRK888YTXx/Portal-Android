@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RemoteUnlockRequest(
+data class WifiRemoteUnlockRequest(
     @SerialName("Type") val type: String,
     @SerialName("RequestId") val requestId: String?,
 ) {
