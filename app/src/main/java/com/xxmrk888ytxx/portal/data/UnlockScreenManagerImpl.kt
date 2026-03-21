@@ -12,6 +12,7 @@ import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.UnlockScreenManager
+import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
 import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity
@@ -31,15 +32,33 @@ class UnlockScreenManagerImpl @Inject constructor(
 
 
     override fun showUnlockScreen(wifiDevice: WifiDevice, request: UnlockServiceRequest) {
-        fastDebugLog("showUnlockScreen")
+        fastDebugLog("showUnlockScreen wifiDevice")
+        showScreenImpl(wifiDevice.deviceId, wifiDevice.deviceName, request)
+    }
+
+    override fun showUnlockScreen(
+        bluetoothDevice: BluetoothDevice,
+        request: UnlockServiceRequest
+    ) {
+        fastDebugLog("showUnlockScreen bluetoothDevice")
+        showScreenImpl(bluetoothDevice.clientId, bluetoothDevice.clientId, request)
+    }
+
+    private fun showScreenImpl(
+        deviceId: String,
+        deviceName: String,
+        request: UnlockServiceRequest
+    ) {
+        fastDebugLog("showScreenImpl")
         when {
             permissionManager.isShowSystemAlertPermissionGranted -> showActivity(
-                wifiDevice,
+                deviceId,
                 request
             ).also { fastDebugLog("showActivity") }
 
             permissionManager.isNotificationPermissionGranted -> sendNotification(
-                wifiDevice,
+                deviceId,
+                deviceName,
                 request
             ).also { fastDebugLog("sendNotification") }
 
@@ -47,15 +66,19 @@ class UnlockScreenManagerImpl @Inject constructor(
         }
     }
 
-    private fun showActivity(wifiDevice: WifiDevice, request: UnlockServiceRequest) {
-        val intent = createIntentForStartUnlockScreen(wifiDevice, request.requestId).apply {
+    private fun showActivity(deviceId: String, request: UnlockServiceRequest) {
+        val intent = createIntentForStartUnlockScreen(deviceId, request.requestId).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         context.startActivity(intent)
     }
 
-    private fun sendNotification(wifiDevice: WifiDevice, request: UnlockServiceRequest) {
-        val intent = createIntentForStartUnlockScreen(wifiDevice, request.requestId)
+    private fun sendNotification(
+        deviceId: String,
+        deviceName: String,
+        request: UnlockServiceRequest
+    ) {
+        val intent = createIntentForStartUnlockScreen(deviceId, request.requestId)
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,
@@ -68,7 +91,7 @@ class UnlockScreenManagerImpl @Inject constructor(
             setContentTitle(
                 context.getString(
                     R.string.is_requesting_unlocking,
-                    wifiDevice.deviceName
+                    deviceName
                 )
             )
             setContentText(context.getString(R.string.click_to_allow))
@@ -83,13 +106,13 @@ class UnlockScreenManagerImpl @Inject constructor(
     }
 
     private fun createIntentForStartUnlockScreen(
-        wifiDevice: WifiDevice,
+        deviceId: String,
         requestId: String?
     ): Intent {
         return Intent(context, UnlockScreenActivity::class.java).apply {
             putExtra(
                 EXTRA_UNLOCK_SCREEN_DATA, UnlockScreenData(
-                    wifiDevice.deviceId,
+                    clientId = deviceId,
                     requestId = requestId
                 )
             )

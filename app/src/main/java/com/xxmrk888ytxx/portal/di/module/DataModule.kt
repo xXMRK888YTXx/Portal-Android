@@ -7,10 +7,14 @@ import com.xxmrk888ytxx.database.PortalDataBase
 import com.xxmrk888ytxx.database.dao.BluetoothDeviceDao
 import com.xxmrk888ytxx.database.dao.WifiDeviceDao
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
 import dagger.Module
 import dagger.Provides
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 
 @Module
 interface DataModule {
@@ -46,6 +50,12 @@ interface DataModule {
         fun provideJson() = Json {
             encodeDefaults = true
             ignoreUnknownKeys = true
+            serializersModule = SerializersModule {
+                polymorphic(RemoteUnlockMessage::class) {
+                    subclass(RemoteUnlockMessage.ApproveUnlock::class)
+                    subclass(RemoteUnlockMessage.RejectUnlock::class)
+                }
+            }
         }
 
         @Provides

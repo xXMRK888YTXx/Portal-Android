@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.portal.data
 
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
@@ -13,7 +14,8 @@ import javax.inject.Inject
 class UnlockRequestHandlerImpl @Inject constructor(
     private val unlockMessageSender: UnlockMessageSender,
     private val unlockScreenManager: UnlockScreenManager,
-    private val wifiDeviceRepository: WifiDeviceRepository
+    private val wifiDeviceRepository: WifiDeviceRepository,
+    private val bluetoothDeviceRepository: BluetoothDeviceRepository,
 ) : UnlockRequestHandler {
     override suspend fun onNewRequest(
         clientId: String,
@@ -21,7 +23,12 @@ class UnlockRequestHandlerImpl @Inject constructor(
     ) {
         fastDebugLog("onNewRequest: $request")
         //unlockServiceManager.sendMessageToHost(clientId, UnlockServiceMessage.Unlock)
-        val device = wifiDeviceRepository.getDeviceById(clientId).first() ?: return
-        unlockScreenManager.showUnlockScreen(device, request)
+        val wifiDevice = wifiDeviceRepository.getDeviceById(clientId).first()
+        val bluetoothDevice = bluetoothDeviceRepository.getDeviceById(clientId).first()
+
+        when {
+            wifiDevice != null -> unlockScreenManager.showUnlockScreen(wifiDevice, request)
+            bluetoothDevice != null -> unlockScreenManager.showUnlockScreen(bluetoothDevice, request)
+        }
     }
 }

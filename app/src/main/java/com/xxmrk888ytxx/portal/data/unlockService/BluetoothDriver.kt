@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.data.unlockService
 import android.R.id.message
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
+import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.ApproveUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockMessage.RejectUnlock
 import com.xxmrk888ytxx.portal.data.model.RemoteUnlockRequest
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import kotlin.text.Charsets.UTF_8
@@ -94,7 +96,7 @@ class BluetoothDriver @Inject constructor(
                         )
                     }
                     fastDebugLog("Try to send message: $messageForSend")
-                    val jsonString = json.encodeToString(remoteMessage)
+                    val jsonString = json.encodeToString<RemoteUnlockMessage>(remoteMessage)
                     bluetoothConnection.sendData(jsonString.toByteArray(UTF_8))
                     fastDebugLog("Sent message: $messageForSend")
                 } catch (e: CancellationException) {
