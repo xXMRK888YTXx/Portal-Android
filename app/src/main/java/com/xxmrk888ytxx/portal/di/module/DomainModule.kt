@@ -147,6 +147,7 @@ interface DomainModule {
     ) : PermissionManager
 
     @Binds
+    @AppScope
     fun bindsBluetoothManager(
         bluetoothManagerImpl: BluetoothManagerImpl
     ) : BluetoothManager
