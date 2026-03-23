@@ -35,7 +35,7 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509KeyManager
 import kotlin.time.Duration.Companion.seconds
 
-class KtorFactory @Inject constructor(
+class NetworkFactory @Inject constructor(
     private val certificateManager: CertificateManager,
     private val jsonConverter: Json
 ) {

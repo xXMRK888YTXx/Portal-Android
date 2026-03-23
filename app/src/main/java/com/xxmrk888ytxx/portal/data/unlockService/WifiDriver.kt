@@ -1,8 +1,7 @@
 package com.xxmrk888ytxx.portal.data.unlockService
 
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
-import com.xxmrk888ytxx.portal.data.KtorFactory
-import com.xxmrk888ytxx.portal.data.model.BluetoothRemoteUnlockRequest
+import com.xxmrk888ytxx.portal.data.NetworkFactory
 import com.xxmrk888ytxx.portal.data.model.WebSocketEvent
 import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage
 import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockRequest
@@ -15,28 +14,18 @@ import com.xxmrk888ytxx.unlockservice.core.UnlockRequest
 import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
 import com.xxmrk888ytxx.unlockservice.core.NetworkDriver
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.Json
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
-import okio.ByteString
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.text.Charsets.UTF_8
 
 class WifiDriver @Inject constructor(
-    private val ktorFactory: KtorFactory,
+    private val networkFactory: NetworkFactory,
     private val wifiDeviceRepository: WifiDeviceRepository,
     private val mdnsManager: MdnsManager,
     private val deviceSettingsRepository: DeviceSettingsRepository,
@@ -63,7 +52,7 @@ class WifiDriver @Inject constructor(
         }
         val urlString = "wss://$host:29170/ws"
         fastDebugLog("Try to openConnection to websocket server host: $urlString")
-        val connection = ktorFactory.openWebSocketConnection(
+        val connection = networkFactory.openWebSocketConnection(
             url = urlString,
             certificate = device.clientCertificate,
             trustedServerHashFingerprint = device.serverCertificateFingerprint
@@ -129,6 +118,7 @@ class WifiDriver @Inject constructor(
             sendJob.cancel()
             readJob.cancel()
         }
+        // TODO Remove
 //        client.webSocket(urlString = urlString) {
 //            fastDebugLog("Connected to websocket server")
 //

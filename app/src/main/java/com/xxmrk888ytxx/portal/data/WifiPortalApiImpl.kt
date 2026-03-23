@@ -16,20 +16,20 @@ import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class WifiPortalApiImpl @Inject constructor(
-    private val ktorFactory: KtorFactory
+    private val networkFactory: NetworkFactory
 ) : WifiPortalApi {
     override suspend fun pair(
         host: String,
         pairCode: String,
         certificate: Certificate
     ): Result<WifiPairResult> = runCatching(Dispatchers.IO) {
-        val client = ktorFactory.createPairClient(certificate)
+        val client = networkFactory.createPairClient(certificate)
         val response = client.post("https://$host:29170/api/pair") {
             contentType(ContentType.Application.Json)
             setBody(WifiPairBody(pairCode))
         }
         val body: PairResponse = response.body()
-        val serverHash = response.headers[KtorFactory.SERVER_CERTIFICATE_HASH_HEADER]
+        val serverHash = response.headers[NetworkFactory.SERVER_CERTIFICATE_HASH_HEADER]
             ?: throw IllegalStateException("Server certificate hash not found")
 
 
@@ -42,7 +42,7 @@ class WifiPortalApiImpl @Inject constructor(
         serverCertificateHash: String,
         clientCertificate: Certificate
     ): Result<Unit> = runCatching(Dispatchers.IO) {
-        val client = ktorFactory.createUnlockClient(clientCertificate, serverCertificateHash)
+        val client = networkFactory.createUnlockClient(clientCertificate, serverCertificateHash)
         client.post("https://$host:29170/api/unlock") {
             contentType(ContentType.Application.Json)
             setBody(WifiUnlockBody(clientId))
