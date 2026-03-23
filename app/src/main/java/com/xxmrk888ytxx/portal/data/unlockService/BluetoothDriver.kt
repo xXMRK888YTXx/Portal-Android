@@ -108,21 +108,25 @@ class BluetoothDriver @Inject constructor(
         }
 
         // Read
-        bluetoothConnection.incomingData.collect { data ->
-            val jsonString = data.toString(UTF_8)
-            fastDebugLog("Received message: $jsonString")
-            val request = jsonString.remoteUnlockRequest
-            val domainRequest = when (request?.type) {
-                BluetoothRemoteUnlockRequest.UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
-                else -> null
-            }
-            if (domainRequest != null) {
-                receivedRequestChannel.send(domainRequest)
-            } else {
-                fastDebugLog("Unknown message type: ${request?.type}")
+        val readJob = launch {
+            bluetoothConnection.incomingData.collect { data ->
+                val jsonString = data.toString(UTF_8)
+                fastDebugLog("Received message: $jsonString")
+                val request = jsonString.remoteUnlockRequest
+                val domainRequest = when (request?.type) {
+                    BluetoothRemoteUnlockRequest.UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
+                    else -> null
+                }
+                if (domainRequest != null) {
+                    receivedRequestChannel.send(domainRequest)
+                } else {
+                    fastDebugLog("Unknown message type: ${request?.type}")
+                }
             }
         }
+        bluetoothConnection.isClosed.first { it }
         sendJob.cancel()
+        readJob.cancel()
     }
 
     private val String.remoteUnlockRequest: BluetoothRemoteUnlockRequest?

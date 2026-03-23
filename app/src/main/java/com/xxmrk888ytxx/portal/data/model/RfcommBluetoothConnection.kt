@@ -11,8 +11,10 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
@@ -32,8 +34,10 @@ class RfcommBluetoothConnection(
     private val _isClosed = MutableStateFlow(false)
     override val isClosed: StateFlow<Boolean> = _isClosed.asStateFlow()
 
-    private val _incomingData = Channel<ByteArray>(Channel.BUFFERED)
-    override val incomingData = _incomingData.receiveAsFlow()
+    private val _incomingData = MutableSharedFlow<ByteArray>(
+        extraBufferCapacity = 64
+    )
+    override val incomingData = _incomingData.asSharedFlow()
 
     private val sendChannel = Channel<SendRequest>(Channel.BUFFERED)
 
@@ -58,7 +62,6 @@ class RfcommBluetoothConnection(
         _isClosed.value = true
         saveCall { socket.close() }
         scope.cancel()
-        _incomingData.close()
         sendChannel.close()
         fastDebugLog("BluetoothConnection closed")
     }
@@ -108,7 +111,7 @@ class RfcommBluetoothConnection(
 
                 val payload = readExact(inputStream, length)
                 fastDebugLog("Bluetooth received data: ${payload.size} bytes")
-                _incomingData.send(payload)
+                _incomingData.emit(payload)
             }
         } catch (e: IOException) {
             fastDebugLog("Bluetooth read error or socket closed: ${e.message}")
