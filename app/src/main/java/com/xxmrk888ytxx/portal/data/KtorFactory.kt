@@ -1,8 +1,10 @@
 package com.xxmrk888ytxx.portal.data
 
 import com.xxmrk888ytxx.portal.BuildConfig
+import com.xxmrk888ytxx.portal.data.model.WebSocketConnectionImpl
 import com.xxmrk888ytxx.portal.data.trustManager.AllTrustTrustManager
 import com.xxmrk888ytxx.portal.data.trustManager.TrustManagerByServerCertificateHash
+import com.xxmrk888ytxx.portal.di.module.WebSocketConnection
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.model.Certificate
 import io.ktor.client.HttpClient
@@ -16,7 +18,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.pingInterval
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
-import io.ktor.serialization.kotlinx.json.ExperimentalJsonConverter
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -54,16 +55,32 @@ class KtorFactory @Inject constructor(
         }
     }
 
-    fun createUnlockClient(certificate: Certificate, trustedServerHashFingerprint: String): HttpClient =
+    fun createUnlockClient(
+        certificate: Certificate,
+        trustedServerHashFingerprint: String
+    ): HttpClient =
         createDefaultClient {
             engine {
-                mtlsConfig(certificate,trustedServerHashFingerprint)
+                mtlsConfig(certificate, trustedServerHashFingerprint)
                 preconfigured = OkHttpClient.Builder()
                     .pingInterval(3, TimeUnit.SECONDS)
                     .build()
 
             }
         }
+
+    //Experimental
+    fun openWebSocketConnection(
+        url: String,
+        certificate: Certificate,
+        trustedServerHashFingerprint: String
+    ): WebSocketConnection {
+        val client = OkHttpClient.Builder()
+            .pingInterval(3, TimeUnit.SECONDS)
+            .configure(certificate, trustedServerHashFingerprint)
+            .build()
+        return WebSocketConnectionImpl(client, url)
+    }
 
     private fun createDefaultClient(
         block: HttpClientConfig<OkHttpConfig>.() -> Unit = {}
@@ -91,21 +108,19 @@ class KtorFactory @Inject constructor(
         }
     }
 
-    private fun OkHttpConfig.mtlsConfig(certificate: Certificate, trustedServerHashFingerprint: String) {
+    private fun OkHttpConfig.mtlsConfig(
+        certificate: Certificate,
+        trustedServerHashFingerprint: String
+    ) {
         config {
-            val trustManager = TrustManagerByServerCertificateHash(
-                certificateManager = certificateManager,
-                expectedServerHash = trustedServerHashFingerprint
-            )
-            sslSocketFactory(
-                createMtlsSSLContext(certificate, trustManager).socketFactory,
-                trustManager
-            )
-            hostnameVerifier { _, _ -> true }
+            configure(certificate, trustedServerHashFingerprint)
         }
     }
 
-    private fun createMtlsSSLContext(certificate: Certificate, trustManager: TrustManager): SSLContext {
+    private fun createMtlsSSLContext(
+        certificate: Certificate,
+        trustManager: TrustManager
+    ): SSLContext {
         val keyManager = object : X509KeyManager {
             private val alias = "PrivateKeyAlias"
 
@@ -169,6 +184,24 @@ class KtorFactory @Inject constructor(
                 .build()
         }
     }
+
+
+    fun OkHttpClient.Builder.configure(
+        certificate: Certificate,
+        trustedServerHashFingerprint: String
+    ): OkHttpClient.Builder {
+        val trustManager = TrustManagerByServerCertificateHash(
+            certificateManager = certificateManager,
+            expectedServerHash = trustedServerHashFingerprint
+        )
+        sslSocketFactory(
+            createMtlsSSLContext(certificate, trustManager).socketFactory,
+            trustManager
+        )
+        hostnameVerifier { _, _ -> true }
+        return this
+    }
+
 
     companion object {
         const val SERVER_CERTIFICATE_HASH_HEADER = "X-Server-Certificate-Hash"

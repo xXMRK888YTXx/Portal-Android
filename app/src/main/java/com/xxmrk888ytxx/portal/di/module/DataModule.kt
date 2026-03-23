@@ -50,12 +50,6 @@ interface DataModule {
         fun provideJson() = Json {
             encodeDefaults = true
             ignoreUnknownKeys = true
-            serializersModule = SerializersModule {
-                polymorphic(WifiRemoteUnlockMessage::class) {
-                    subclass(WifiRemoteUnlockMessage.ApproveUnlockWifi::class)
-                    subclass(WifiRemoteUnlockMessage.RejectUnlockWifi::class)
-                }
-            }
         }
 
         @Provides
