@@ -1,6 +1,6 @@
 package com.xxmrk888ytxx.portal.domain
 
-import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
+import com.xxmrk888ytxx.portal.domain.connection.BluetoothConnection
 import com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice
 
 interface BluetoothManager {

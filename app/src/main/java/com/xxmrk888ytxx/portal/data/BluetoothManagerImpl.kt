@@ -5,10 +5,10 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import androidx.core.content.getSystemService
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
-import com.xxmrk888ytxx.portal.data.model.RfcommBluetoothConnection
+import com.xxmrk888ytxx.portal.data.connection.RfcommBluetoothConnection
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
-import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
+import com.xxmrk888ytxx.portal.domain.connection.BluetoothConnection
 import com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice
 import com.xxmrk888ytxx.portal.exception.BluetoothDisabledException
 import com.xxmrk888ytxx.portal.exception.BluetoothNotSupportedException

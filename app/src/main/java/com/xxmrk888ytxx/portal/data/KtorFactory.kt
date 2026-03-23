@@ -1,10 +1,10 @@
 package com.xxmrk888ytxx.portal.data
 
 import com.xxmrk888ytxx.portal.BuildConfig
-import com.xxmrk888ytxx.portal.data.model.WebSocketConnectionImpl
+import com.xxmrk888ytxx.portal.data.connection.WebSocketConnectionImpl
 import com.xxmrk888ytxx.portal.data.trustManager.AllTrustTrustManager
 import com.xxmrk888ytxx.portal.data.trustManager.TrustManagerByServerCertificateHash
-import com.xxmrk888ytxx.portal.di.module.WebSocketConnection
+import com.xxmrk888ytxx.portal.domain.connection.WebSocketConnection
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.model.Certificate
 import io.ktor.client.HttpClient

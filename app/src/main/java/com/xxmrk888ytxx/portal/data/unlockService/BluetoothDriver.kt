@@ -9,7 +9,7 @@ import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage.ApproveUnlockW
 import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage.RejectUnlockWifi
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
-import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
+import com.xxmrk888ytxx.portal.domain.connection.BluetoothConnection
 import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
 import com.xxmrk888ytxx.unlockservice.core.NetworkDriver
 import com.xxmrk888ytxx.unlockservice.core.UnlockMessage

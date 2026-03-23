@@ -1,9 +1,9 @@
-package com.xxmrk888ytxx.portal.data.model
+package com.xxmrk888ytxx.portal.data.connection
 
 import android.bluetooth.BluetoothSocket
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
-import com.xxmrk888ytxx.portal.domain.model.BluetoothConnection
+import com.xxmrk888ytxx.portal.domain.connection.BluetoothConnection
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

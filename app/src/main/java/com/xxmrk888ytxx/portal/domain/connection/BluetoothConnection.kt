@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.portal.domain.model
+package com.xxmrk888ytxx.portal.domain.connection
 
 import androidx.datastore.core.Closeable
 import kotlinx.coroutines.flow.Flow

@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.portal.di.module
+package com.xxmrk888ytxx.portal.domain.connection
 
 import com.xxmrk888ytxx.portal.data.model.WebSocketEvent
 import kotlinx.coroutines.flow.Flow

@@ -1,8 +1,9 @@
-package com.xxmrk888ytxx.portal.data.model
+package com.xxmrk888ytxx.portal.data.connection
 
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
-import com.xxmrk888ytxx.portal.di.module.WebSocketConnection
+import com.xxmrk888ytxx.portal.data.model.WebSocketEvent
+import com.xxmrk888ytxx.portal.domain.connection.WebSocketConnection
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,7 +26,6 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
 import java.io.IOException
-import kotlin.text.Charsets.UTF_8
 
 class WebSocketConnectionImpl(
     private val okHttpClient: OkHttpClient,
