@@ -64,7 +64,7 @@ class BluetoothDriver @Inject constructor(
             throw DeviceNotPairedException(device.macAddress)
         } finally {
             withContext(NonCancellable) {
-                saveCall(isPrintToDebug = false) { bluetoothConnection.close() }
+                saveCall(isPrintToDebug = false) { bluetoothConnection.release() }
             }
         }
     }

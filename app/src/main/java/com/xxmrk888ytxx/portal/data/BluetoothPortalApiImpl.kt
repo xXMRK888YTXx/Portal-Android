@@ -40,7 +40,7 @@ class BluetoothPortalApiImpl @Inject constructor(
                 }
             }
             .first()
-        bluetoothConnection.close()
+        bluetoothConnection.release()
         fastDebugLog("$pairResponse PAIRED")
         return@withContext BluetoothPairResult(pairResponse.clientId)
     }
@@ -57,6 +57,6 @@ class BluetoothPortalApiImpl @Inject constructor(
                 null
             }
         }.first().isSuccessful
-        isSuccessful.also { bluetoothConnection.close() }
+        isSuccessful.also { bluetoothConnection.release() }
     }
 }

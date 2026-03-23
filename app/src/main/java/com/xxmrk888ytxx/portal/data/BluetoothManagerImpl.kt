@@ -61,6 +61,7 @@ class BluetoothManagerImpl @Inject constructor(
         checkBluetoothStateAndPermission()
         val cashedConnection = getCashedConnection(macAddress)
         if (cashedConnection != null) {
+            cashedConnection.acquire()
             return@withContext cashedConnection
         }
         val androidBluetoothDevice =

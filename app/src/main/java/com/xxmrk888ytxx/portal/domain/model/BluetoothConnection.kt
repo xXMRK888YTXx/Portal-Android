@@ -9,4 +9,6 @@ interface BluetoothConnection : Closeable {
     val incomingData: Flow<ByteArray>
     suspend fun sendData(data: ByteArray)
     fun trySendData(data: ByteArray)
+    fun acquire()
+    fun release()
 }

@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,6 +33,8 @@ class RfcommBluetoothConnection(
 
     private val _isClosed = MutableStateFlow(false)
     override val isClosed: StateFlow<Boolean> = _isClosed.asStateFlow()
+
+    private val _refCount = MutableStateFlow(1)
 
     private val _incomingData = MutableSharedFlow<ByteArray>(
         extraBufferCapacity = 64
@@ -55,6 +57,16 @@ class RfcommBluetoothConnection(
     override fun trySendData(data: ByteArray) {
         val request = SendRequest(data)
         sendChannel.trySend(request)
+    }
+
+    override fun acquire() {
+        if (isClosed.value) return
+        _refCount.update { current -> current + 1 }
+    }
+
+    override fun release() {
+        if (isClosed.value) return
+        _refCount.update { current -> (current - 1).coerceAtLeast(0) }
     }
 
     override fun close() {
@@ -120,6 +132,15 @@ class RfcommBluetoothConnection(
         }
     }
 
+
+    private fun startObserveReferenceCount() = scope.launch {
+        _refCount.collect { refCount ->
+            if (refCount == 0) {
+                close()
+            }
+        }
+    }
+
     private fun readExact(input: InputStream, count: Int): ByteArray {
         val buf = ByteArray(count)
         var offset = 0
@@ -138,5 +159,6 @@ class RfcommBluetoothConnection(
         }
         startListeningData()
         startSendingData()
+        startObserveReferenceCount()
     }
 }
