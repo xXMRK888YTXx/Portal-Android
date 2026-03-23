@@ -8,7 +8,9 @@ import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
 import com.xxmrk888ytxx.portal.domain.UnlockScreenManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class UnlockRequestHandlerImpl @Inject constructor(
@@ -17,10 +19,18 @@ class UnlockRequestHandlerImpl @Inject constructor(
     private val wifiDeviceRepository: WifiDeviceRepository,
     private val bluetoothDeviceRepository: BluetoothDeviceRepository,
 ) : UnlockRequestHandler {
+
+    private val _handledRequestsId = MutableStateFlow(emptySet<String>())
+
+
     override suspend fun onNewRequest(
         clientId: String,
         request: UnlockServiceRequest
     ) {
+        if (request.requestId != null && _handledRequestsId.value.contains(request.requestId)) return
+        request.requestId?.let { requestId ->
+            _handledRequestsId.update { it + requestId }
+        }
         fastDebugLog("onNewRequest: $request")
         //unlockServiceManager.sendMessageToHost(clientId, UnlockServiceMessage.Unlock)
         val wifiDevice = wifiDeviceRepository.getDeviceById(clientId).first()
