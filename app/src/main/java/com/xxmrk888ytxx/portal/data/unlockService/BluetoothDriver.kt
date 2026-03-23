@@ -58,7 +58,8 @@ class BluetoothDriver @Inject constructor(
                 bluetoothConnection = bluetoothConnection,
                 bluetoothDevice = device,
                 messagesForSendChannel = messagesForSendChannel,
-                receivedRequestChannel = receivedRequestChannel
+                receivedRequestChannel = receivedRequestChannel,
+                clientId = clientId
             )
         } catch (_: IllegalArgumentException) {
             throw DeviceNotPairedException(device.macAddress)
@@ -74,6 +75,7 @@ class BluetoothDriver @Inject constructor(
         bluetoothDevice: BluetoothDevice,
         messagesForSendChannel: Channel<UnlockMessage>,
         receivedRequestChannel: Channel<UnlockRequest>,
+        clientId: String
     ) = coroutineScope {
         val sendJob = launch {
 
@@ -113,7 +115,8 @@ class BluetoothDriver @Inject constructor(
                 val jsonString = data.toString(UTF_8)
                 fastDebugLog("Received message: $jsonString")
                 val request = jsonString.remoteUnlockRequest
-                val domainRequest = when (request?.type) {
+                if (request?.clientId != clientId) return@collect
+                val domainRequest = when (request.type) {
                     BluetoothRemoteUnlockRequest.UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
                     else -> null
                 }

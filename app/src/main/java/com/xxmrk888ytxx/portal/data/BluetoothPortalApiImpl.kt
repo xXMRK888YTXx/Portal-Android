@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -25,38 +26,46 @@ class BluetoothPortalApiImpl @Inject constructor(
         pairedBluetoothDevice: PairedBluetoothDevice,
         pairCode: String
     ): BluetoothPairResult = withContext(Dispatchers.IO) {
-        val pairBody = BluetoothPairBody(pairCode)
-        val jsonString = json.encodeToString(pairBody)
-        val bluetoothConnection = bluetoothManager.openConnection(pairedBluetoothDevice.macAddress)
-        bluetoothConnection.sendData(jsonString.toByteArray())
-        fastDebugLog("bluetoothConnection.sendData")
-        val pairResponse: PairResponse = bluetoothConnection.incomingData
-            .mapNotNull { data ->
+        withTimeout(OPERATION_TIMEOUT) {
+            val pairBody = BluetoothPairBody(pairCode)
+            val jsonString = json.encodeToString(pairBody)
+            val bluetoothConnection = bluetoothManager.openConnection(pairedBluetoothDevice.macAddress)
+            bluetoothConnection.sendData(jsonString.toByteArray())
+            fastDebugLog("bluetoothConnection.sendData")
+            val pairResponse: PairResponse = bluetoothConnection.incomingData
+                .mapNotNull { data ->
+                    try {
+                        json.decodeFromString<PairResponse>(data.toString(Charsets.UTF_8))
+                    } catch (e: Exception) {
+                        fastDebugLog(e)
+                        null
+                    }
+                }
+                .first()
+            bluetoothConnection.release()
+            fastDebugLog("$pairResponse PAIRED")
+            return@withTimeout BluetoothPairResult(pairResponse.clientId)
+        }
+    }
+
+    override suspend fun unlock(bluetoothDevice: BluetoothDevice): Boolean = withContext(Dispatchers.IO) {
+        withTimeout(OPERATION_TIMEOUT) {
+            val bluetoothConnection = bluetoothManager.openConnection(bluetoothDevice.macAddress)
+            val jsonString = json.encodeToString(BluetoothUnlockRequest(bluetoothDevice.clientId))
+            bluetoothConnection.sendData(jsonString.toByteArray())
+            val isSuccessful = bluetoothConnection.incomingData.mapNotNull { data ->
                 try {
-                    json.decodeFromString<PairResponse>(data.toString(Charsets.UTF_8))
+                    json.decodeFromString<BluetoothUnlockResponse>(data.toString(Charsets.UTF_8))
                 } catch (e: Exception) {
                     fastDebugLog(e)
                     null
                 }
-            }
-            .first()
-        bluetoothConnection.release()
-        fastDebugLog("$pairResponse PAIRED")
-        return@withContext BluetoothPairResult(pairResponse.clientId)
+            }.first().isSuccessful
+            isSuccessful.also { bluetoothConnection.release() }
+        }
     }
 
-    override suspend fun unlock(bluetoothDevice: BluetoothDevice): Boolean = withContext(Dispatchers.IO) {
-        val bluetoothConnection = bluetoothManager.openConnection(bluetoothDevice.macAddress)
-        val jsonString = json.encodeToString(BluetoothUnlockRequest(bluetoothDevice.clientId))
-        bluetoothConnection.sendData(jsonString.toByteArray())
-        val isSuccessful = bluetoothConnection.incomingData.mapNotNull { data ->
-            try {
-                json.decodeFromString<BluetoothUnlockResponse>(data.toString(Charsets.UTF_8))
-            } catch (e: Exception) {
-                fastDebugLog(e)
-                null
-            }
-        }.first().isSuccessful
-        isSuccessful.also { bluetoothConnection.release() }
+    companion object {
+        const val OPERATION_TIMEOUT = 10000L
     }
 }

@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class BluetoothRemoteUnlockRequest(
     @SerialName("type") val type: String,
     @SerialName("requestId") val requestId: String?,
+    @SerialName("clientId") val clientId: String
 ) {
     companion object {
         const val UNLOCK_REQUEST_TYPE = "host_unlock_request"
