@@ -4,45 +4,33 @@ import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
 import com.xxmrk888ytxx.portal.data.model.WebSocketEvent
 import com.xxmrk888ytxx.portal.domain.connection.WebSocketConnection
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
-import java.io.IOException
 
 class WebSocketConnectionImpl(
-    private val okHttpClient: OkHttpClient,
+    okHttpClient: OkHttpClient,
     private val url: String,
 ) : WebSocketListener(), WebSocketConnection {
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-
-    private val webSocket: WebSocket by lazy {
-        val request = Request.Builder().url(url).build()
-        okHttpClient.newWebSocket(request,this)
-    }
-
-    private class SendRequest(
-        val data: String,
-        val deferred: CompletableDeferred<Unit> = CompletableDeferred()
+    private val webSocket: WebSocket = okHttpClient.newWebSocket(
+        Request.Builder().url(url).build(),
+        this
     )
 
     private val _isConnected = MutableStateFlow(false)
@@ -50,92 +38,71 @@ class WebSocketConnectionImpl(
 
     private val _isClosed: MutableStateFlow<Boolean> = MutableStateFlow(false)
     override val isClosed: StateFlow<Boolean> = _isClosed.asStateFlow()
-    private val _eventFlow = MutableSharedFlow<WebSocketEvent>(
-        extraBufferCapacity = 64
+    private val _eventFlow = Channel<WebSocketEvent>(
+        Channel.BUFFERED
     )
     override val eventFlow = _eventFlow
-        .asSharedFlow()
+        .receiveAsFlow()
 
     override suspend fun send(data: String) {
-        val request = SendRequest(data)
-        sendChannel.send(request)
-        request.deferred.join()
-    }
+        if (_isClosed.value) {
+            fastDebugLog("Websocket write error: socket is closed")
+            return
+        }
 
-    private val sendChannel = Channel<SendRequest>(Channel.BUFFERED)
-
-    private fun startSendingData() = scope.launch {
         try {
-            for (sendRequest in sendChannel) {
-                if (!isActive || _isClosed.value) break
-                try {
-                    webSocket.send(sendRequest.data)
-                    sendRequest.deferred.complete(Unit)
-                } catch (e: Exception) {
-                    sendRequest.deferred.completeExceptionally(e)
-                    throw e
-                }
+            val enqueued = webSocket.send(data)
+            if (!enqueued) {
+                fastDebugLog("Websocket write error: queue is full or socket closing")
             }
-        } catch (e: IOException) {
-            fastDebugLog("Bluetooth write error: ${e.message}")
-        } finally {
-            withContext(NonCancellable) { close() }
+        } catch (e: Exception) {
+            fastDebugLog("Websocket write exception: ${e.message}")
         }
     }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         fastDebugLog("WebSocket opened")
+        _isConnected.value = true
         scope.launch {
-            _isConnected.emit(true)
-            _eventFlow.emit(WebSocketEvent.Opened(response))
+            _eventFlow.send(WebSocketEvent.Opened(response))
         }
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         fastDebugLog("WebSocket message received: $text")
-        scope.launch { _eventFlow.emit(WebSocketEvent.TextMessage(text)) }
+        scope.launch { _eventFlow.send(WebSocketEvent.TextMessage(text)) }
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
         fastDebugLog("WebSocket message received: ${bytes.size} bytes")
-        scope.launch { _eventFlow.emit(WebSocketEvent.BinaryMessage(bytes)) }
+        scope.launch { _eventFlow.send(WebSocketEvent.BinaryMessage(bytes)) }
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         fastDebugLog("WebSocket closing: $code $reason")
         scope.launch {
-            _eventFlow.emit(WebSocketEvent.Closing(code, reason))
+            _eventFlow.send(WebSocketEvent.Closing(code, reason))
         }
     }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
         fastDebugLog("WebSocket closed: $code $reason")
-        scope.launch {
-            _eventFlow.emit(WebSocketEvent.Closed(code, reason))
-        }
+        _eventFlow.trySend(WebSocketEvent.Closed(code, reason))
         close()
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         fastDebugLog("WebSocket failure: ${t.message}")
-        scope.launch {
-            _eventFlow.emit(WebSocketEvent.Failure(t, response))
-        }
+        _eventFlow.trySend(WebSocketEvent.Failure(t, response))
         close()
     }
 
     override fun close() {
         if (_isClosed.value) return
-        _isConnected.tryEmit(false)
-        _isClosed.tryEmit(true)
-        sendChannel.close()
+        _isConnected.value = false
+        _isClosed.value = true
+        _eventFlow.close()
         saveCall { webSocket.close(1000, "Canceled") }
         scope.cancel()
     }
-
-    init {
-        startSendingData()
-        webSocket
-    }
-
 }
