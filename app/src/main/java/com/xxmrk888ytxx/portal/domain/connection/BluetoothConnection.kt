@@ -1,8 +1,8 @@
 package com.xxmrk888ytxx.portal.domain.connection
 
-import androidx.datastore.core.Closeable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.Closeable
 
 interface BluetoothConnection : Closeable {
     val isClosed: StateFlow<Boolean>
