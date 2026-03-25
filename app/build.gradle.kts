@@ -59,6 +59,7 @@ dependencies {
     implementation(projects.unlockService)
     implementation(projects.biometricAuthentication.compose)
     implementation(projects.logsScreen)
+    implementation(projects.settingsScreen)
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)

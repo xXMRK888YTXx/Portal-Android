@@ -39,6 +39,8 @@ import com.xxmrk888ytxx.portal.view.mainActivity.model.PortalBottomBarItem
 import com.xxmrk888ytxx.portal.view.mainActivity.view.PortalBottomBar
 import com.xxmrk888ytxx.portal.view.model.ScreenWithBottomBar
 import com.xxmrk888ytxx.portal.view.model.Screen
+import com.xxmrk888ytxx.settingsscreen.SettingsScreen
+import com.xxmrk888ytxx.settingsscreen.SettingsViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -52,7 +54,8 @@ class MainActivity @Inject constructor(
     private val deviceConfigurationViewModelFactory: DeviceConfigurationViewModel.Factory,
     private val biometricActivityResultReceiver: BiometricActivityResultReceiver,
     private val biometricDialogController: BiometricDialogController,
-    private val logsViewModelFactory: Provider<LogsViewModel>
+    private val logsViewModelFactory: Provider<LogsViewModel>,
+    private val settingsViewModel: Provider<SettingsViewModel>
 ) : FragmentActivity() {
     private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
 
@@ -87,9 +90,12 @@ class MainActivity @Inject constructor(
                     AnimatedVisibility(bottomBarItemOfCurrentScreen != null) {
                         PortalBottomBar(items, bottomBarItemOfCurrentScreen ?: -1) {
                             if (it.id == bottomBarItemOfCurrentScreen) return@PortalBottomBar
-                            when(it) {
-                                PortalBottomBarItem.Devices -> activityViewModel.BottomBarNavigation().toMainScreen()
-                                PortalBottomBarItem.Settings -> activityViewModel.BottomBarNavigation().toSettingsScreen()
+                            when (it) {
+                                PortalBottomBarItem.Devices -> activityViewModel.BottomBarNavigation()
+                                    .toMainScreen()
+
+                                PortalBottomBarItem.Settings -> activityViewModel.BottomBarNavigation()
+                                    .toSettingsScreen()
                             }
                         }
                     }
@@ -118,6 +124,13 @@ class MainActivity @Inject constructor(
                             ScreenContent(
                                 ::DeviceConfigurationScreen,
                                 { deviceConfigurationViewModelFactory.create(screen.deviceId) })
+                        }
+
+                        entry<Screen.SettingsScreen> {
+                            ScreenContent(
+                                content = ::SettingsScreen,
+                                portalViewModelFactory = settingsViewModel
+                            )
                         }
 
                         entry<Screen.LogsScreen> {

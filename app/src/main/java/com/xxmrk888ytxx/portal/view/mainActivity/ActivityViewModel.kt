@@ -72,7 +72,7 @@ class ActivityViewModel @Inject constructor(
 
     internal inner class BottomBarNavigation {
         fun toSettingsScreen() {
-            navigate(Screen.LogsScreen)
+            navigate(Screen.SettingsScreen)
         }
 
         fun toMainScreen() {

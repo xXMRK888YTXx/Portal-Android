@@ -22,8 +22,11 @@ sealed interface Screen : NavKey {
     data class DeviceConfigurationScreen(val deviceId: String) : Screen
 
     @Serializable
-    data object LogsScreen : Screen, ScreenWithBottomBar {
+    data object SettingsScreen: Screen, ScreenWithBottomBar {
         override val bottomBarItemId: Int
             get() = PortalBottomBarItem.Settings.id
     }
+
+    @Serializable
+    data object LogsScreen : Screen
 }
