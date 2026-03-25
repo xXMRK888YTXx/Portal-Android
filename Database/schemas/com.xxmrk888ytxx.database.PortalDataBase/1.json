@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9abf69e02607369d160ab82b3e628f64",
+    "identityHash": "e4d166cd2bca0e56e083c9fe8d5344e0",
     "entities": [
       {
         "tableName": "DeviceTable",
@@ -155,7 +155,7 @@
       },
       {
         "tableName": "DeviceSettingsTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `awaitUnlockRequests` INTEGER NOT NULL, `searchIpDynamically` INTEGER NOT NULL, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `awaitUnlockRequests` INTEGER NOT NULL, `searchIpDynamically` INTEGER NOT NULL, `unlockMethod` INTEGER NOT NULL, `unlockOnlyWhenScreenUnlocked` INTEGER NOT NULL, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "deviceId",
@@ -172,6 +172,18 @@
           {
             "fieldPath": "searchIpDynamically",
             "columnName": "searchIpDynamically",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unlockMethod",
+            "columnName": "unlockMethod",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unlockOnlyWhenScreenUnlocked",
+            "columnName": "unlockOnlyWhenScreenUnlocked",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -264,7 +276,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9abf69e02607369d160ab82b3e628f64')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e4d166cd2bca0e56e083c9fe8d5344e0')"
     ]
   }
 }

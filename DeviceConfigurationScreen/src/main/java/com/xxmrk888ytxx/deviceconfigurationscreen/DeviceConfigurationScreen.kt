@@ -231,20 +231,20 @@ fun DeviceInfoState(
         }
 
         UnlockMethodSelector(
-            currentMethod = UnlockMethod.Automatic(false),
+            currentMethod = screenState.device.unlockMethod,
             onMethodChanged = { newMethod ->
                 //onEvent(DeviceConfigurationUiEvent.OnUnlockMethodChanged(newMethod))
             },
         )
 
-//        AnimatedVisibility(visible = currentMethod == UnlockMethod.AUTOMATIC) {
-//            SwitchSettingCard(
-//                title = stringResource(R.string.unlock_only_when_the_screen_is_on),
-//                description = stringResource(R.string.if_your_phone_screen_is_locked_your_pc_will_only_be_unlocked_once_your_phone_has_been_unlocked),
-//                isChecked = unlockOnlyWhenScreenUnlocked,
-//                onCheckedChange = onUnlockOnlyWhenScreenUnlockedChanged
-//            )
-//        }
+        AnimatedVisibility(visible = screenState.device.unlockMethod is UnlockMethod.Automatic) {
+            SwitchSettingCard(
+                title = stringResource(R.string.unlock_only_when_the_screen_is_on),
+                description = stringResource(R.string.if_your_phone_screen_is_locked_your_pc_will_only_be_unlocked_once_your_phone_has_been_unlocked),
+                isChecked = (screenState.device.unlockMethod as? UnlockMethod.Automatic)?.unlockOnlyWhenScreenUnlocked ?: false,
+                onCheckedChange = {}
+            )
+        }
 
         SwitchSettingCard(
             title = stringResource(R.string.await_unlock_requests),

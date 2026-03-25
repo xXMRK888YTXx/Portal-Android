@@ -5,6 +5,7 @@ sealed class Device(
     open val deviceId: String,
     open val deviceName: String,
     open val awaitUnlockRequests: Boolean,
+    open val unlockMethod: UnlockMethod
 ) {
     data class WifiDevice(
         override val deviceId: String,
@@ -14,12 +15,14 @@ sealed class Device(
         val serverCertificateFingerprint: String,
         override val awaitUnlockRequests: Boolean,
         val searchIpDynamically: Boolean,
-    ) : Device(deviceId, deviceName, awaitUnlockRequests)
+        override val unlockMethod: UnlockMethod
+    ) : Device(deviceId, deviceName, awaitUnlockRequests, unlockMethod)
 
     data class BluetoothDevice(
         override val deviceId: String,
         override val deviceName: String,
         val macAddress: String,
         override val awaitUnlockRequests: Boolean,
-    ) : Device(deviceId, deviceName, awaitUnlockRequests)
+        override val unlockMethod: UnlockMethod
+    ) : Device(deviceId, deviceName, awaitUnlockRequests, unlockMethod)
 }
