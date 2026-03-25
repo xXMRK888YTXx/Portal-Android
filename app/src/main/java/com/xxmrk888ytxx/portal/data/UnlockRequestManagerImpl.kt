@@ -1,11 +1,13 @@
 package com.xxmrk888ytxx.portal.data
 
+import android.app.KeyguardManager
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.getSystemService
+import com.xxmrk888ytxx.coreandroid.AndroidLogger
 import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
@@ -23,7 +25,10 @@ import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -39,12 +44,26 @@ class UnlockRequestManagerImpl @Inject constructor(
         context.getSystemService<NotificationManager>()!!
     }
 
+    private val keyguardManager by lazy {
+        context.getSystemService<KeyguardManager>()!!
+    }
+
     override fun automaticUnlock(
         deviceId: String,
         unlockOnlyWhenScreenUnlocked: Boolean,
         request: UnlockServiceRequest
     ) {
         automaticUnlockScope.launch {
+
+            if (unlockOnlyWhenScreenUnlocked) {
+                withTimeoutOrNull(AWAIT_SCREEN_UNLOCK_TIMEOUT) {
+                    while (isActive) {
+                        if (!keyguardManager.isKeyguardLocked) break
+                        delay(1500)
+                    }
+                } ?: return@launch
+            }
+
             unlockMessageSender.sendMessage(
                 clientId = deviceId,
                 message = UnlockServiceMessage.Unlock(request.requestId)
@@ -137,5 +156,6 @@ class UnlockRequestManagerImpl @Inject constructor(
 
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "UnlockNotificationChannel"
+        const val AWAIT_SCREEN_UNLOCK_TIMEOUT = 300_000L
     }
 }
