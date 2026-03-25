@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="security">Security</string>
+    <string name="about_app">About app</string>
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="source_code">Source Code</string>
+    <string name="github_repository">GitHub Repository</string>
+    <string name="android_app_developer">Android app developer</string>
+    <string name="pc_client_developer">PC client developer</string>
+    <string name="app_version">App Version</string>
+    <string name="app_logs">App Logs</string>
+</resources>
