@@ -21,7 +21,7 @@ import com.xxmrk888ytxx.portal.data.SecureStorageImpl
 import com.xxmrk888ytxx.portal.data.ShortcutManagerImpl
 import com.xxmrk888ytxx.portal.data.ShortcutRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
-import com.xxmrk888ytxx.portal.data.UnlockScreenManagerImpl
+import com.xxmrk888ytxx.portal.data.UnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BluetoothUnlockServiceManager
 import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
@@ -46,7 +46,7 @@ import com.xxmrk888ytxx.portal.domain.ShortcutManager
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
-import com.xxmrk888ytxx.portal.domain.UnlockScreenManager
+import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import dagger.Binds
 import dagger.Module
@@ -123,8 +123,8 @@ interface DomainModule {
 
     @Binds
     fun bindsUnlockScreenManager(
-        unlockScreenManagerImpl: UnlockScreenManagerImpl
-    ) : UnlockScreenManager
+        unlockScreenManagerImpl: UnlockRequestManagerImpl
+    ) : UnlockRequestManager
 
     @Binds
     fun bindsShortcutManager(

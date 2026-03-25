@@ -11,40 +11,48 @@ import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.PermissionManager
-import com.xxmrk888ytxx.portal.domain.UnlockScreenManager
+import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
+import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
+import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
 import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity.Companion.EXTRA_UNLOCK_SCREEN_DATA
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 
-class UnlockScreenManagerImpl @Inject constructor(
+class UnlockRequestManagerImpl @Inject constructor(
     private val context: Context,
-    private val permissionManager: PermissionManager
-) : UnlockScreenManager {
+    private val permissionManager: PermissionManager,
+    private val unlockMessageSender: UnlockMessageSender,
+) : UnlockRequestManager {
+
+    private val automaticUnlockScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     private val notificationManager: NotificationManager by lazy {
         context.getSystemService<NotificationManager>()!!
     }
 
-
-    override fun showUnlockScreen(wifiDevice: WifiDevice, request: UnlockServiceRequest) {
-        fastDebugLog("showUnlockScreen wifiDevice")
-        showScreenImpl(wifiDevice.deviceId, wifiDevice.deviceName, request)
+    override fun automaticUnlock(
+        deviceId: String,
+        unlockOnlyWhenScreenUnlocked: Boolean,
+        request: UnlockServiceRequest
+    ) {
+        automaticUnlockScope.launch {
+            unlockMessageSender.sendMessage(
+                clientId = deviceId,
+                message = UnlockServiceMessage.Unlock(request.requestId)
+            )
+        }
     }
 
     override fun showUnlockScreen(
-        bluetoothDevice: BluetoothDevice,
-        request: UnlockServiceRequest
-    ) {
-        fastDebugLog("showUnlockScreen bluetoothDevice")
-        showScreenImpl(bluetoothDevice.clientId, bluetoothDevice.clientId, request)
-    }
-
-    private fun showScreenImpl(
         deviceId: String,
         deviceName: String,
         request: UnlockServiceRequest
@@ -73,7 +81,7 @@ class UnlockScreenManagerImpl @Inject constructor(
         context.startActivity(intent)
     }
 
-    private fun sendNotification(
+    override fun sendNotification(
         deviceId: String,
         deviceName: String,
         request: UnlockServiceRequest
@@ -86,8 +94,7 @@ class UnlockScreenManagerImpl @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val notification = context.buildNotification(NOTIFICATION_CHANNEL_ID) {
-            // TODO change icon
-            setSmallIcon(com.xxmrk888ytxx.mainscreen.R.drawable.lock_open)
+            setSmallIcon(R.drawable.ic_launcher_foreground)
             setContentTitle(
                 context.getString(
                     R.string.is_requesting_unlocking,
