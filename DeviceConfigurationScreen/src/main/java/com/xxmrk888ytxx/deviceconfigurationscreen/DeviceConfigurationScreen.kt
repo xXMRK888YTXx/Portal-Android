@@ -1,15 +1,19 @@
 package com.xxmrk888ytxx.deviceconfigurationscreen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -18,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -25,12 +30,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -57,6 +64,7 @@ import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -222,6 +230,22 @@ fun DeviceInfoState(
             )
         }
 
+        UnlockMethodSelector(
+            currentMethod = UnlockMethod.Automatic(false),
+            onMethodChanged = { newMethod ->
+                //onEvent(DeviceConfigurationUiEvent.OnUnlockMethodChanged(newMethod))
+            },
+        )
+
+//        AnimatedVisibility(visible = currentMethod == UnlockMethod.AUTOMATIC) {
+//            SwitchSettingCard(
+//                title = stringResource(R.string.unlock_only_when_the_screen_is_on),
+//                description = stringResource(R.string.if_your_phone_screen_is_locked_your_pc_will_only_be_unlocked_once_your_phone_has_been_unlocked),
+//                isChecked = unlockOnlyWhenScreenUnlocked,
+//                onCheckedChange = onUnlockOnlyWhenScreenUnlockedChanged
+//            )
+//        }
+
         SwitchSettingCard(
             title = stringResource(R.string.await_unlock_requests),
             description = stringResource(R.string.await_unlock_requests_description),
@@ -386,6 +410,59 @@ private fun InfoItem(title: String, value: String) {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun UnlockMethodSelector(
+    currentMethod: UnlockMethod,
+    onMethodChanged: (UnlockMethod) -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "Unlock method",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            UnlockMethod.entries.forEach { method ->
+
+                // Сравниваем именно классы, чтобы игнорировать внутренние параметры data class
+                val isSelected = currentMethod::class == method::class
+
+                FilterChip(
+                    selected = isSelected,
+                    onClick = {
+                        if (!isSelected) {
+                            onMethodChanged(method)
+                        }
+                    },
+                    label = {
+                        Text(
+                            text = getUnlockMethodName(method),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun getUnlockMethodName(method: UnlockMethod): String {
+    return when (method) {
+        is UnlockMethod.Automatic -> stringResource(R.string.automatically)
+        is  UnlockMethod.ConfirmationScreen -> stringResource(R.string.notification)
+        is UnlockMethod.Notification -> stringResource(R.string.confirmation_screen)
     }
 }
 
