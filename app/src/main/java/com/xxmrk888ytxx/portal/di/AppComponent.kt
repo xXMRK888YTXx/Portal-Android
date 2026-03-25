@@ -17,6 +17,7 @@ import com.xxmrk888ytxx.portal.di.module.LogsModule
 import com.xxmrk888ytxx.portal.di.module.MainScreenModule
 import com.xxmrk888ytxx.portal.di.module.OnboardingScreenModule
 import com.xxmrk888ytxx.portal.di.module.ServiceBindsModule
+import com.xxmrk888ytxx.portal.di.module.SettingsScreenModule
 import com.xxmrk888ytxx.portal.di.module.UnlockServiceModule
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import dagger.BindsInstance
@@ -37,7 +38,8 @@ import javax.inject.Provider
         ServiceBindsModule::class,
         UnlockServiceModule::class,
         BroadcastReceiverBindsModule::class,
-        LogsModule::class
+        LogsModule::class,
+        SettingsScreenModule::class
     ]
 )
 @AppScope
