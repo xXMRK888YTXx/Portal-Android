@@ -10,4 +10,5 @@ interface DeviceSettingsRepository {
     suspend fun updateAwaitUnlockRequests(deviceId: String,newValue: Boolean)
     suspend fun updateSearchIpDynamically(deviceId: String,newValue: Boolean)
     suspend fun updateUnlockMethod(deviceId: String, newMethod: UnlockMethod)
+    suspend fun updateUnlockOnlyWhenScreenUnlockedState(deviceId: String, newValue: Boolean)
 }

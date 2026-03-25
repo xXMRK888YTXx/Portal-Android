@@ -58,7 +58,14 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
 
             is DeviceConfigurationUiEvent.OnHostChanged -> changeHostState(event.newIp)
             is DeviceConfigurationUiEvent.OnUnlockMethodChanged -> changeUnlockMethodState(event.newMethod)
+            is DeviceConfigurationUiEvent.OnUnlockOnlyWhenScreenUnlockedChanged -> changeUnlockOnlyWhenScreenUnlockedState(
+                event.newValue
+            )
         }
+    }
+
+    private fun changeUnlockOnlyWhenScreenUnlockedState(newValue: Boolean) = viewModelScope.launch {
+        changeDeviceSettingsContract.updateUnlockOnlyWhenScreenUnlockedState(deviceId, newValue)
     }
 
     private fun changeUnlockMethodState(newMethod: UnlockMethod) = viewModelScope.launch {

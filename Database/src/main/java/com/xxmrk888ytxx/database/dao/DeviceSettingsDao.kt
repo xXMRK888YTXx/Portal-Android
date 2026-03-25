@@ -24,4 +24,7 @@ interface DeviceSettingsDao {
 
     @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockMethod = :methodId WHERE deviceId = :deviceId")
     suspend fun updateUnlockMethod(deviceId: String, methodId: Int)
+
+    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockOnlyWhenScreenUnlocked = :newValue WHERE deviceId = :deviceId")
+    suspend fun updateUnlockOnlyWhenScreenUnlockedState(deviceId: String, newValue: Boolean)
 }

@@ -52,6 +52,13 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
         deviceSettingsDao.updateUnlockMethod(deviceId, newMethod.toDatabaseModel().id)
     }
 
+    override suspend fun updateUnlockOnlyWhenScreenUnlockedState(
+        deviceId: String,
+        newValue: Boolean
+    ) = withContext(Dispatchers.IO) {
+        deviceSettingsDao.updateUnlockOnlyWhenScreenUnlockedState(deviceId, newValue)
+    }
+
     private fun DeviceSettingsEntry.toDomainModel(): DeviceSettings {
         return DeviceSettings(
             deviceId = deviceId,

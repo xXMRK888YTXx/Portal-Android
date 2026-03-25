@@ -30,4 +30,11 @@ class ChangeDeviceSettingsContractImpl @Inject constructor(
     ) {
         deviceSettingsRepository.updateUnlockMethod(deviceId, newMethod.toDomainModel())
     }
+
+    override suspend fun updateUnlockOnlyWhenScreenUnlockedState(
+        deviceId: String,
+        newValue: Boolean
+    ) {
+        deviceSettingsRepository.updateUnlockOnlyWhenScreenUnlockedState(deviceId, newValue)
+    }
 }
