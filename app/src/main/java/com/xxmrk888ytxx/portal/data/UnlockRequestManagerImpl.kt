@@ -126,7 +126,7 @@ class UnlockRequestManagerImpl @Inject constructor(
             build()
         }
         notificationManager.notify(
-            Random(System.currentTimeMillis()).nextInt(1, Int.MAX_VALUE),
+            UNLOCK_NOTIFICATION_ID,
             notification
         )
     }
@@ -157,5 +157,6 @@ class UnlockRequestManagerImpl @Inject constructor(
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "UnlockNotificationChannel"
         const val AWAIT_SCREEN_UNLOCK_TIMEOUT = 300_000L
+        const val UNLOCK_NOTIFICATION_ID = 8192
     }
 }
