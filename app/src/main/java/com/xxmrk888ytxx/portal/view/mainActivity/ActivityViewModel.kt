@@ -66,6 +66,10 @@ class ActivityViewModel @Inject constructor(
         backStack?.remove(Screen.AddNewDeviceScreen)
     }
 
+    override fun fromSettingsScreenToLogsScreen() = runOnUiThread {
+        backStack?.add(Screen.LogsScreen)
+    }
+
     override fun navigateUp() = runOnUiThread {
         backStack?.removeLastOrNull()
     }

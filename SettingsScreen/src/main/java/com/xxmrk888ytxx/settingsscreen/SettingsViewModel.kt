@@ -27,7 +27,9 @@ class SettingsViewModel @Inject constructor(
     }.stateWhileSubscribed()
 
     override fun handleEvent(event: SettingsScreenEvent) {
-
+        when(event) {
+            SettingsScreenEvent.OnLogsClick -> sendNavigationAction { fromSettingsScreenToLogsScreen() }
+        }
     }
 
 }

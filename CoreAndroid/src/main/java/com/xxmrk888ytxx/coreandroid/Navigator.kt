@@ -5,5 +5,6 @@ interface Navigator {
     fun fromMainScreenToAddNewDeviceScreen()
     fun fromMainScreenToDeviceConfigurationScreen(deviceId: String)
     fun fromAddNewDeviceScreenToDeviceConfigurationScreen(deviceId: String)
+    fun fromSettingsScreenToLogsScreen()
     fun navigateUp()
 }

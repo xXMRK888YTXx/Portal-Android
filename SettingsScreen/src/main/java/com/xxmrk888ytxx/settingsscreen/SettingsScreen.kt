@@ -18,8 +18,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
+import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.settingsscreen.model.ScreenState
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent
+import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenSideEffect
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,10 +31,11 @@ fun SettingsScreen(
     onEvent: (SettingsScreenEvent) -> Unit,
     sideEffect: Flow<SideEffect>
 ) {
+    HandleSideEffect<SettingsScreenSideEffect>(sideEffect) {}
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 )
@@ -86,13 +89,13 @@ fun SettingsScreen(
                 )
                 SettingsItem(
                     title = stringResource(R.string.android_app_developer),
-                    subtitle = "xXMRK888YTXx",
+                    subtitle = stringResource(R.string.xxmrk888ytxx),
                     iconRes = R.drawable.ic_developer,
                     onClick = { /* onEvent(SettingsScreenEvent.OnDeveloperClick) */ }
                 )
                 SettingsItem(
                     title = stringResource(R.string.pc_client_developer),
-                    subtitle = "xXKoksMenXx",
+                    subtitle = stringResource(R.string.xxkoksmenxx),
                     iconRes = R.drawable.ic_developer,
                     onClick = { /* onEvent(SettingsScreenEvent.OnDeveloperClick) */ }
                 )
@@ -105,7 +108,7 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(R.string.app_logs),
                     iconRes = R.drawable.ic_version,
-                    onClick = { /* onEvent(SettingsScreenEvent.OnLogsClick) */ }
+                    onClick = { onEvent(SettingsScreenEvent.OnLogsClick) }
                 )
             }
 

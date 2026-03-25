@@ -83,6 +83,10 @@ class UnlockScreenViewModel @Inject constructor(
 
     }
 
+    override fun fromSettingsScreenToLogsScreen() {
+        
+    }
+
     override fun navigateUp() {
     }
 

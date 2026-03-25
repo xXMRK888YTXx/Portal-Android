@@ -43,6 +43,10 @@ class FastUnlockActivityViewModel @Inject constructor(
 
     }
 
+    override fun fromSettingsScreenToLogsScreen() {
+
+    }
+
     override fun navigateUp() {
 
     }
