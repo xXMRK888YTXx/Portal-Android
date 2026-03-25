@@ -45,6 +45,13 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
         deviceSettingsDao.updateSearchIpDynamically(deviceId, newValue)
     }
 
+    override suspend fun updateUnlockMethod(
+        deviceId: String,
+        newMethod: UnlockMethod
+    ) = withContext(Dispatchers.IO) {
+        deviceSettingsDao.updateUnlockMethod(deviceId, newMethod.toDatabaseModel().id)
+    }
+
     private fun DeviceSettingsEntry.toDomainModel(): DeviceSettings {
         return DeviceSettings(
             deviceId = deviceId,
@@ -59,5 +66,11 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
         DatabaseUnlockMethod.AUTOMATIC -> UnlockMethod.Automatic
         DatabaseUnlockMethod.CONFIRMATION_SCREEN -> UnlockMethod.ConfirmationScreen
         DatabaseUnlockMethod.NOTIFICATION -> UnlockMethod.Notification
+    }
+
+    private fun UnlockMethod.toDatabaseModel(): DatabaseUnlockMethod = when (this) {
+        is UnlockMethod.Automatic -> DatabaseUnlockMethod.AUTOMATIC
+        UnlockMethod.Notification -> DatabaseUnlockMethod.NOTIFICATION
+        UnlockMethod.ConfirmationScreen -> DatabaseUnlockMethod.CONFIRMATION_SCREEN
     }
 }

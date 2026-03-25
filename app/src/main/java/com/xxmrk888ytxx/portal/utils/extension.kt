@@ -22,11 +22,13 @@ import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
+import com.xxmrk888ytxx.portal.domain.model.UnlockMethod
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Provider
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod as ConfigurationScreenUnlockMethod
 
 
 internal val Context.appComponent: AppComponent
@@ -108,3 +110,9 @@ suspend fun MdnsManager.waitHostForClient(
 }
 
 private const val MDSN_DISCOVERY_TIMEOUT = 3000L
+
+fun ConfigurationScreenUnlockMethod.toDomainModel(): UnlockMethod = when (this) {
+    is ConfigurationScreenUnlockMethod.Automatic -> UnlockMethod.Automatic
+    is ConfigurationScreenUnlockMethod.ConfirmationScreen -> UnlockMethod.ConfirmationScreen
+    is ConfigurationScreenUnlockMethod.Notification -> UnlockMethod.Notification
+}

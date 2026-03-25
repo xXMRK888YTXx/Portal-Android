@@ -40,7 +40,7 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
                     serverCertificateFingerprint = wifiDevice.serverCertificateFingerprint,
                     searchIpDynamically = deviceSettings.searchIpDynamically,
-                    unlockMethod = UnlockMethod.ConfirmationScreen.toDeviceConfigurationUnlockMethod(deviceSettings.unlockOnlyWhenScreenUnlocked)
+                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(deviceSettings.unlockOnlyWhenScreenUnlocked)
                 )
 
                 bluetoothDevice != null -> Device.BluetoothDevice(
@@ -48,7 +48,7 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     deviceName = bluetoothDevice.name,
                     macAddress = bluetoothDevice.macAddress,
                     awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
-                    unlockMethod = UnlockMethod.ConfirmationScreen.toDeviceConfigurationUnlockMethod(deviceSettings.unlockOnlyWhenScreenUnlocked)
+                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(deviceSettings.unlockOnlyWhenScreenUnlocked)
                 )
 
                 else -> throw DeviceNotFoundException(deviceId)

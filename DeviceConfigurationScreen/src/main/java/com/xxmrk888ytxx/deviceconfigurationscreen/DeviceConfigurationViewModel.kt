@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.deviceconfigurationscreen
 
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.mvi.DefaultSideEffect
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
@@ -10,12 +11,15 @@ import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.UpdateHostContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class DeviceConfigurationViewModel @AssistedInject internal constructor(
@@ -24,8 +28,7 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     private val removeDeviceContract: RemoveDeviceContract,
     private val changeDeviceSettingsContract: ChangeDeviceSettingsContract,
     private val updateHostContract: UpdateHostContract
-) :
-    SideEffectPortalViewModel<ScreenState, DeviceConfigurationUiEvent>(ScreenState.Loading) {
+) : SideEffectPortalViewModel<ScreenState, DeviceConfigurationUiEvent>(ScreenState.Loading) {
 
     private var isSettingsUpdateInProgress = false
 
@@ -35,6 +38,7 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
                 sideEffect.emit(DefaultSideEffect.ShowToast(uiText(R.string.device_not_found)))
                 sideEffect.emit(DefaultSideEffect.NavigationBack)
             }
+            .onEach { fastDebugLog(it) }
             .collect { device ->
                 _state.value = ScreenState.DeviceInfo(device)
             }
@@ -53,7 +57,12 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             )
 
             is DeviceConfigurationUiEvent.OnHostChanged -> changeHostState(event.newIp)
+            is DeviceConfigurationUiEvent.OnUnlockMethodChanged -> changeUnlockMethodState(event.newMethod)
         }
+    }
+
+    private fun changeUnlockMethodState(newMethod: UnlockMethod) = viewModelScope.launch {
+        changeDeviceSettingsContract.updateUnlockMethodState(deviceId, newMethod)
     }
 
     private fun changeHostState(newIp: String) = viewModelScope.launch {

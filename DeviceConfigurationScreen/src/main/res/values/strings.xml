@@ -22,4 +22,5 @@
     <string name="automatically">Automatically</string>
     <string name="notification">Notification</string>
     <string name="confirmation_screen">Confirmation screen</string>
+    <string name="unlock_method">Unlock method</string>
 </resources>

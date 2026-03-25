@@ -233,7 +233,7 @@ fun DeviceInfoState(
         UnlockMethodSelector(
             currentMethod = screenState.device.unlockMethod,
             onMethodChanged = { newMethod ->
-                //onEvent(DeviceConfigurationUiEvent.OnUnlockMethodChanged(newMethod))
+                onEvent(DeviceConfigurationUiEvent.OnUnlockMethodChanged(newMethod))
             },
         )
 
@@ -424,20 +424,19 @@ fun UnlockMethodSelector(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Unlock method",
+            text = stringResource(R.string.unlock_method),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             UnlockMethod.entries.forEach { method ->
-
-                // Сравниваем именно классы, чтобы игнорировать внутренние параметры data class
                 val isSelected = currentMethod::class == method::class
-
                 FilterChip(
                     selected = isSelected,
                     onClick = {
@@ -461,8 +460,8 @@ fun UnlockMethodSelector(
 private fun getUnlockMethodName(method: UnlockMethod): String {
     return when (method) {
         is UnlockMethod.Automatic -> stringResource(R.string.automatically)
-        is  UnlockMethod.ConfirmationScreen -> stringResource(R.string.notification)
-        is UnlockMethod.Notification -> stringResource(R.string.confirmation_screen)
+        is UnlockMethod.Notification -> stringResource(R.string.notification)
+        is UnlockMethod.ConfirmationScreen -> stringResource(R.string.confirmation_screen)
     }
 }
 

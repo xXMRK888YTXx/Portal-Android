@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.xxmrk888ytxx.database.entry.DeviceSettingsEntry
+import com.xxmrk888ytxx.database.model.UnlockMethod
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -11,6 +12,7 @@ interface DeviceSettingsDao {
 
     @get:Query("SELECT * FROM ${DeviceSettingsEntry.TABLE_NAME}")
     val deviceSettings: Flow<List<DeviceSettingsEntry>>
+
     @Query("SELECT * FROM ${DeviceSettingsEntry.TABLE_NAME} WHERE deviceId = :deviceId LIMIT 1")
     fun getDeviceSettingsByDeviceId(deviceId: String): Flow<DeviceSettingsEntry?>
 
@@ -19,4 +21,7 @@ interface DeviceSettingsDao {
 
     @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET searchIpDynamically = :searchIpDynamically WHERE deviceId = :deviceId")
     suspend fun updateSearchIpDynamically(deviceId: String, searchIpDynamically: Boolean)
+
+    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockMethod = :methodId WHERE deviceId = :deviceId")
+    suspend fun updateUnlockMethod(deviceId: String, methodId: Int)
 }
