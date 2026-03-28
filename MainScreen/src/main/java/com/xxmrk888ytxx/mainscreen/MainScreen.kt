@@ -250,28 +250,26 @@ private fun DeviceItem(
     onEvent: (MainScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Define actions in one place — easy to extend
     val actions = remember(isUnlockButtonAvailable) {
         listOf(
             DeviceAction(
-                label = "Unlock",
-                icon = R.drawable.lock_open,
+                label = R.string.options,
+                icon = R.drawable.options,
                 enabled = isUnlockButtonAvailable,
-                onClick = { onEvent(MainScreenEvent.SendUnlockRequest(device)) }
+                onClick = { onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId)) }
             ),
             DeviceAction(
-                label = "Create Shortcut",
+                label = R.string.create_shortcut,
                 icon = R.drawable.shortcut,
                 enabled = true,
                 onClick = { onEvent(MainScreenEvent.ShowCreateShortcutModelDialog(device)) }
             ),
-            // Add more actions here as needed
         )
     }
 
     Card(
         onClick = {
-            onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId))
+            onEvent(MainScreenEvent.SendUnlockRequest(device))
         },
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -283,7 +281,6 @@ private fun DeviceItem(
                 .fillMaxWidth()
                 .padding(vertical = 12.dp)
         ) {
-            // — Device info row —
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -337,7 +334,7 @@ private fun DeviceItem(
                         enabled = action.enabled,
                         label = {
                             Text(
-                                text = action.label,
+                                text = stringResource(action.label),
                                 style = MaterialTheme.typography.labelMedium
                             )
                         },

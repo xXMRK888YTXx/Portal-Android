@@ -18,4 +18,6 @@
     <string name="this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app">This permission is required to display device unlock prompts on top of all windows. This allows you to instantly grant or deny access without unlocking your phone or opening the app.</string>
     <string name="wi_fi" translatable="false">Wi-Fi</string>
     <string name="bluetooth" translatable="false">Bluetooth</string>
+    <string name="unlock">Unlock</string>
+    <string name="options">Options</string>
 </resources>
