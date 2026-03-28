@@ -51,7 +51,7 @@ class BluetoothDriver @Inject constructor(
         try {
             bluetoothConnection = bluetoothManager.openConnection(device.macAddress)
             val registerModel = RegisterModel()
-            val registerJsonString = Json.encodeToString(registerModel)
+            val registerJsonString = json.encodeToString(registerModel)
             bluetoothConnection.sendData(registerJsonString.toByteArray(UTF_8))
             fastDebugLog("Sent register message")
             observeMessages(
@@ -113,9 +113,13 @@ class BluetoothDriver @Inject constructor(
         val readJob = launch {
             bluetoothConnection.incomingData.collect { data ->
                 val jsonString = data.toString(UTF_8)
-                fastDebugLog("Received message: $jsonString")
+                fastDebugLog("Received message: $jsonString for $clientId")
                 val request = jsonString.remoteUnlockRequest
-                if (request?.clientId != clientId) return@collect
+                if (request?.clientId != clientId) {
+                    fastDebugLog("${request?.clientId} != $clientId. Skip")
+                    return@collect
+                }
+                fastDebugLog("${request.clientId} == $clientId. Continue")
                 val domainRequest = when (request.type) {
                     BluetoothRemoteUnlockRequest.UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(request.requestId)
                     else -> null
@@ -123,7 +127,7 @@ class BluetoothDriver @Inject constructor(
                 if (domainRequest != null) {
                     receivedRequestChannel.send(domainRequest)
                 } else {
-                    fastDebugLog("Unknown message type: ${request?.type}")
+                    fastDebugLog("Unknown message type: ${request.type}")
                 }
             }
         }

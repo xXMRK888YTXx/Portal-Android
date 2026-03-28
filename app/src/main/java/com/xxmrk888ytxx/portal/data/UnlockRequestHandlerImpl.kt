@@ -29,12 +29,14 @@ class UnlockRequestHandlerImpl @Inject constructor(
         clientId: String,
         request: UnlockServiceRequest
     ) {
-        if (request.requestId != null && _handledRequestsId.value.contains(request.requestId)) return
+        if (request.requestId != null && _handledRequestsId.value.contains(request.requestId)) {
+            fastDebugLog("${request.requestId} Already Handled. Skip")
+            return
+        }
         request.requestId?.let { requestId ->
             _handledRequestsId.update { it + requestId }
         }
         fastDebugLog("onNewRequest: $request")
-        //unlockServiceManager.sendMessageToHost(clientId, UnlockServiceMessage.Unlock)
         val wifiDevice = wifiDeviceRepository.getDeviceById(clientId).first()
         val bluetoothDevice = bluetoothDeviceRepository.getDeviceById(clientId).first()
         val deviceName = wifiDevice?.deviceName ?: bluetoothDevice?.name ?: return

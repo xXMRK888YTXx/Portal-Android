@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothSocket
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
 import com.xxmrk888ytxx.portal.domain.connection.BluetoothConnection
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlin.text.Charsets.UTF_8
 
 class RfcommBluetoothConnection(
     private val socket: BluetoothSocket
@@ -75,6 +77,10 @@ class RfcommBluetoothConnection(
         saveCall { socket.close() }
         scope.cancel()
         sendChannel.close()
+        while (true) {
+            val request = sendChannel.tryReceive().getOrNull() ?: break
+            request.deferred.completeExceptionally(CancellationException())
+        }
         fastDebugLog("BluetoothConnection closed")
     }
 
@@ -89,7 +95,7 @@ class RfcommBluetoothConnection(
                         .order(ByteOrder.BIG_ENDIAN)
                         .putInt(sendRequest.data.size)
                         .array()
-
+                    fastDebugLog("Try send: ${sendRequest.data.toString(UTF_8)}.")
 
                     outputStream.write(lengthBytes)
                     outputStream.write(sendRequest.data)
@@ -122,7 +128,7 @@ class RfcommBluetoothConnection(
                 }
 
                 val payload = readExact(inputStream, length)
-                fastDebugLog("Bluetooth received data: ${payload.size} bytes")
+                fastDebugLog("Bluetooth received data: ${payload.toString(UTF_8)}")
                 _incomingData.emit(payload)
             }
         } catch (e: IOException) {

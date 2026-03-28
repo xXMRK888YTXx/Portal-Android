@@ -35,7 +35,7 @@ class BluetoothManagerImpl @Inject constructor(
 
     private val cashedConnectionMap: MutableStateFlow<Map<MacAddress, BluetoothConnection>> = MutableStateFlow(emptyMap())
     private val observeCloseCashedConnectionScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private val cashedConnectionOperationMutex = Mutex()
+    private val openConnectionMutex = Mutex()
 
     val bluetoothManager: android.bluetooth.BluetoothManager by lazy {
         context.getSystemService<android.bluetooth.BluetoothManager>()
@@ -58,36 +58,36 @@ class BluetoothManagerImpl @Inject constructor(
     }
 
     override suspend fun openConnection(macAddress: String): BluetoothConnection = withContext(Dispatchers.IO) {
-        checkBluetoothStateAndPermission()
-        val cashedConnection = getCashedConnection(macAddress)
-        if (cashedConnection != null) {
-            cashedConnection.acquire()
-            return@withContext cashedConnection
+        openConnectionMutex.withLock {
+            checkBluetoothStateAndPermission()
+            val cashedConnection = getCashedConnection(macAddress)
+            if (cashedConnection != null) {
+                cashedConnection.acquire()
+                return@withContext cashedConnection
+            }
+            val androidBluetoothDevice =
+                bluetoothAdapter.bondedDevices.firstOrNull { it.address == macAddress }
+                    ?: throw IllegalArgumentException("Device $macAddress not paired")
+            val socket = androidBluetoothDevice.createRfcommSocketToServiceRecord(
+                UUID.fromString(PORTAL_BLUETOOTH_SERVICE_UUID)
+            )
+            socket.connect()
+            return@withContext RfcommBluetoothConnection(socket).also { addCashedConnection(macAddress, it) }
         }
-        val androidBluetoothDevice =
-            bluetoothAdapter.bondedDevices.firstOrNull { it.address == macAddress }
-                ?: throw IllegalArgumentException("Device $macAddress not paired")
-        val socket = androidBluetoothDevice.createRfcommSocketToServiceRecord(
-            UUID.fromString(PORTAL_BLUETOOTH_SERVICE_UUID)
-        )
-        socket.connect()
-        return@withContext RfcommBluetoothConnection(socket).also { addCashedConnection(macAddress, it) }
     }
 
-    private suspend fun getCashedConnection(macAddress: MacAddress): BluetoothConnection? = cashedConnectionOperationMutex.withLock {
+    private suspend fun getCashedConnection(macAddress: MacAddress): BluetoothConnection? {
         return cashedConnectionMap.value[macAddress]
     }
 
     private suspend fun addCashedConnection(
         macAddress: MacAddress,
         connection: BluetoothConnection
-    ) = cashedConnectionOperationMutex.withLock {
+    ) {
         cashedConnectionMap.update { it.toMutableMap().apply { put(macAddress, connection)  } }
         observeCloseCashedConnectionScope.launch {
             connection.isClosed.first { isClosed -> isClosed }
-            cashedConnectionOperationMutex.withLock {
-                cashedConnectionMap.update { it.toMutableMap().apply { remove(macAddress) } }
-            }
+            openConnectionMutex.withLock { cashedConnectionMap.update { it.toMutableMap().apply { remove(macAddress) } } }
         }
     }
 
