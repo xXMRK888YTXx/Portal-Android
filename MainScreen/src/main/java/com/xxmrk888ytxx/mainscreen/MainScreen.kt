@@ -272,6 +272,7 @@ private fun DeviceItem(
             onEvent(MainScreenEvent.SendUnlockRequest(device))
         },
         modifier = modifier.fillMaxWidth(),
+        enabled = isUnlockButtonAvailable, // Карточка не кликабельна, если разблокировка недоступна
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
         )
@@ -319,6 +320,26 @@ private fun DeviceItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+
+                // Добавляем подсказку в правой части карточки
+                if (isUnlockButtonAvailable) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.touch),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                        Text(
+                            text = stringResource(R.string.tap_to_unlock),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -345,6 +366,7 @@ private fun DeviceItem(
                                 modifier = Modifier.size(16.dp)
                             )
                         },
+                        // Использование alpha для disabled состояния
                         modifier = Modifier.alpha(if (action.enabled) 1f else 0.5f)
                     )
                 }
