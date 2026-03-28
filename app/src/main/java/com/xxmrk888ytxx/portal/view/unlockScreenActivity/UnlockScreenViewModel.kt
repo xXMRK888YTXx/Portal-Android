@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
+import com.xxmrk888ytxx.coreandroid.mvi.UiEventHandler
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
@@ -14,13 +15,16 @@ import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.utils.getParsableExtraCompat
+import com.xxmrk888ytxx.portal.view.model.UnlockScreenUiEvent
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
@@ -29,9 +33,10 @@ class UnlockScreenViewModel @Inject constructor(
     private val biometricDialogController: BiometricDialogController,
     private val unlockMessageSender: UnlockMessageSender,
     private val provideDeviceNameByClientId: ProvideDeviceNameByClientId
-) : ViewModel(), Navigator, SideEffectSender<UnlockScreenSideEffect> {
+) : ViewModel(), Navigator, SideEffectSender<UnlockScreenSideEffect>,
+    UiEventHandler<UnlockScreenUiEvent> {
 
-    private val _effect = MutableSharedFlow<UnlockScreenSideEffect>(extraBufferCapacity = 1)
+    private val _effect = MutableSharedFlow<UnlockScreenSideEffect>(extraBufferCapacity = 1, replay = 1)
 
     override val effect: Flow<UnlockScreenSideEffect> = _effect.asSharedFlow()
 
@@ -39,22 +44,35 @@ class UnlockScreenViewModel @Inject constructor(
 
     private val isEventSent = MutableStateFlow(false)
 
+    private val _deviceName = MutableStateFlow("")
+    val deviceName: StateFlow<String> = _deviceName.asStateFlow()
 
-    fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
-        val deviceName = provideDeviceNameByClientId.provideName(unlockScreenData?.clientId ?: return@launch)
+
+    private fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
         biometricDialogController.sendRequest(
             activity = activity,
             onEvent = {
                 when (it) {
-                    BiometricDialogEvent.Success -> unlockScreenData?.let { unlockData -> unlockHost(unlockData) }
+                    BiometricDialogEvent.Success -> unlockScreenData?.let { unlockData ->
+                        unlockHost(
+                            unlockData
+                        )
+                    }
 
-                    BiometricDialogEvent.Canceled, BiometricDialogEvent.Error -> sendCancelEventAndDismissScreen()
+                    BiometricDialogEvent.Error -> sendCancelEventAndDismissScreen()
 
-                    BiometricDialogEvent.Failed -> Unit
+                    BiometricDialogEvent.Failed, BiometricDialogEvent.Canceled -> Unit
                 }
             },
-            description = deviceName
+            description = _deviceName.value
         )
+    }
+
+    override fun handleEvent(event: UnlockScreenUiEvent) {
+        when (event) {
+            is UnlockScreenUiEvent.Allow -> requestBiometricAuth(event.fragmentActivity)
+            UnlockScreenUiEvent.Deny -> sendCancelEventAndDismissScreen()
+        }
     }
 
     private fun unlockHost(unlockScreenData: UnlockScreenData) {
@@ -88,17 +106,23 @@ class UnlockScreenViewModel @Inject constructor(
     }
 
     override fun fromSettingsScreenToLogsScreen() {
-        
+
     }
 
     override fun navigateUp() {
     }
 
     fun isValidIntent(intent: Intent?): Boolean {
-        unlockScreenData = intent?.getParsableExtraCompat(
+        if (unlockScreenData != null) return true
+        val intentUnlockScreenData = intent?.getParsableExtraCompat(
             UnlockScreenActivity.EXTRA_UNLOCK_SCREEN_DATA,
             UnlockScreenData::class.java
         ) ?: return false
+        unlockScreenData = intentUnlockScreenData
+        viewModelScope.launch {
+            _deviceName.value =
+                provideDeviceNameByClientId.provideName(intentUnlockScreenData.clientId) ?: ""
+        }
         return true
     }
 
@@ -107,7 +131,12 @@ class UnlockScreenViewModel @Inject constructor(
         if (isEventSent.value) return
         isEventSent.value = true
         viewModelScope.launch(NonCancellable) {
-            unlockScreenData?.let { unlockData -> unlockMessageSender.sendMessage(unlockData.clientId, UnlockServiceMessage.Canceled(unlockData.requestId)) }
+            unlockScreenData?.let { unlockData ->
+                unlockMessageSender.sendMessage(
+                    unlockData.clientId,
+                    UnlockServiceMessage.Canceled(unlockData.requestId)
+                )
+            }
         }.invokeOnCompletion { dismissScreen() }
     }
 

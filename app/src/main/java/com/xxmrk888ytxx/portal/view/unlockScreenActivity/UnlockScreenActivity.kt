@@ -5,13 +5,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
+import com.xxmrk888ytxx.portal.view.ui.UnlockScreen
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
 import javax.inject.Inject
 import kotlin.getValue
@@ -32,29 +38,35 @@ class UnlockScreenActivity @Inject constructor(
             finish()
             return
         }
-        setContent {
-            setContentWithThemeAndProviders(
-                navigator = unlockScreenViewModel,
-                toastManager = toastManager
-            ) {
-                LaunchedEffect(unlockScreenViewModel) {
-                    unlockScreenViewModel.effect.collect {
-                        when(it) {
-                            UnlockScreenSideEffect.Dismiss -> finish()
-                        }
+        setContentWithThemeAndProviders(
+            navigator = unlockScreenViewModel,
+            toastManager = toastManager
+        ) {
+            LaunchedEffect(unlockScreenViewModel) {
+                unlockScreenViewModel.effect.collect {
+                    when(it) {
+                        UnlockScreenSideEffect.Dismiss -> finish()
                     }
                 }
+            }
 
-                Scaffold(Modifier.fillMaxSize()) {
-
-                }
+            Scaffold(Modifier.fillMaxSize()) { paddingValues ->
+                val deviceName by unlockScreenViewModel.deviceName.collectAsState()
+                UnlockScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .verticalScroll(rememberScrollState())
+                    ,
+                    onEvent = unlockScreenViewModel::handleEvent,
+                    deviceName = deviceName
+                )
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        unlockScreenViewModel.requestBiometricAuth(this@UnlockScreenActivity)
     }
 
     override fun onPause() {
