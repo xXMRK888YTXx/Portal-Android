@@ -73,7 +73,7 @@ fun SettingsScreen(
                 SettingsSwitchItem(
                     title = stringResource(R.string.allow_password_unlock),
                     subtitle = stringResource(R.string.can_be_used_as_an_alternative_to_biometric_authentication),
-                    iconRes = R.drawable.fingerprint,
+                    iconRes = R.drawable.password,
                     checked = screenState.isAdditionalPasswordAuthEnabled,
                     enabled = screenState.isBiometricProtectionEnabled,
                     onCheckedChange = { isChecked ->
@@ -84,7 +84,7 @@ fun SettingsScreen(
                 SettingsSwitchItem(
                     title = stringResource(R.string.unpair_devices_if_the_biometric_environment_has_changed),
                     subtitle = stringResource(R.string.if_a_new_fingerprint_is_added_or_an_old_one_is_deleted_all_paired_devices_will_be_removed),
-                    iconRes = R.drawable.fingerprint,
+                    iconRes = R.drawable.encrypted,
                     checked = screenState.isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
                     enabled = screenState.isBiometricProtectionEnabled,
                     onCheckedChange = { isChecked ->
