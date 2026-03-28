@@ -18,8 +18,6 @@ import javax.inject.Inject
 class WifiDeviceRepositoryImpl @Inject constructor(
     private val deviceDao: DeviceDao,
     private val secureStorage: SecureStorage,
-    private val shortcutManager: ShortcutManager,
-    private val shortcutRepository: ShortcutRepository,
     private val wifiDeviceDao: WifiDeviceDao
 ) : WifiDeviceRepository {
     override suspend fun saveDevice(wifiDevice: WifiDevice) = withContext(Dispatchers.IO) {
@@ -40,14 +38,6 @@ class WifiDeviceRepositoryImpl @Inject constructor(
         wifiDeviceDao.getWifiDeviceById(deviceId).map { deviceEntry ->
             deviceEntry?.toDomainModel()
         }
-
-    override suspend fun removeDevice(deviceId: String) = withContext<Unit>(Dispatchers.IO) {
-        val deviceShortcuts = shortcutRepository.getShortcutsByDeviceId(deviceId)
-        deviceDao.removeDevice(deviceId)
-        deviceShortcuts.forEach { shortcut ->
-            shortcutManager.removeShortcut(shortcut.shortcutId)
-        }
-    }
 
     override suspend fun updateHost(deviceId: String, newHost: String) =
         withContext(Dispatchers.IO) {

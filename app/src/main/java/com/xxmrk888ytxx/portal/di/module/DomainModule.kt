@@ -24,6 +24,7 @@ import com.xxmrk888ytxx.portal.data.ShortcutRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BluetoothUnlockServiceManager
+import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.ProvideDeviceNameByClientIdImpl
 import com.xxmrk888ytxx.portal.data.SettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
@@ -37,6 +38,7 @@ import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.BluetoothPortalApi
 import com.xxmrk888ytxx.portal.domain.CertificateManager
+import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
@@ -77,8 +79,8 @@ interface DomainModule {
     ) : SecureStorage
 
     @Binds
-    fun bindsDeviceRepository(
-        deviceRepositoryImpl: WifiDeviceRepositoryImpl
+    fun bindsWifiDeviceRepository(
+        wifiDeviceRepositoryImpl: WifiDeviceRepositoryImpl
     ) : WifiDeviceRepository
 
     @Binds
@@ -188,6 +190,12 @@ interface DomainModule {
     fun bindsBiometricEnvironmentEventHandler(
         biometricEnvironmentEventHandlerImpl: BiometricEnvironmentEventHandlerImpl
     ) : BiometricEnvironmentEventHandler
+
+    @Binds
+    @AppScope
+    fun bindsDeviceRepository(
+        deviceRepositoryImpl: DeviceRepositoryImpl
+    ) : DeviceRepository
 
     companion object {
         @Provides

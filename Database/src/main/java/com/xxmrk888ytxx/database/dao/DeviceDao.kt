@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class DeviceDao {
 
+    @get:Query("SELECT * FROM ${DeviceEntry.TABLE_NAME}")
+    abstract val devices: Flow<List<DeviceEntry>>
+
     @Upsert
     protected abstract suspend fun upsertDeviceInternal(deviceEntry: DeviceEntry)
 

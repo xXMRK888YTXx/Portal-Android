@@ -7,7 +7,6 @@ interface WifiDeviceRepository {
     val devices: Flow<List<WifiDevice>>
     suspend fun saveDevice(wifiDevice: WifiDevice)
     fun getDeviceById(deviceId: String): Flow<WifiDevice?>
-    suspend fun removeDevice(deviceId: String)
     suspend fun updateHost(deviceId: String, newHost: String)
     suspend fun updateDeviceName(deviceId: String, newName: String)
 }
