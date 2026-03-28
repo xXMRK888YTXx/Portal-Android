@@ -185,10 +185,6 @@ fun DeviceInfoState(
                     value = screenState.device.deviceId
                 )
                 InfoItem(
-                    title = stringResource(R.string.device_name),
-                    value = screenState.device.deviceName
-                )
-                InfoItem(
                     title = stringResource(R.string.device_type),
                     value = when(screenState.device) {
                         is Device.WifiDevice -> stringResource(R.string.wifi)
@@ -215,10 +211,11 @@ fun DeviceInfoState(
             }
         }
 
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 4.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
+        EditableNameCard(
+            currentName = screenState.device.deviceName,
+            onNameSaved = { newName ->
+               onEvent(DeviceConfigurationUiEvent.OnDeviceNameChanged(newName))
+            }
         )
 
         if (screenState.device is Device.WifiDevice) {
@@ -229,6 +226,12 @@ fun DeviceInfoState(
                 }
             )
         }
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 4.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
 
         UnlockMethodSelector(
             currentMethod = screenState.device.unlockMethod,
@@ -453,6 +456,111 @@ fun UnlockMethodSelector(
                         )
                     }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EditableNameCard(
+    currentName: String,
+    onNameSaved: (String) -> Unit
+) {
+    var isEditing by rememberSaveable { mutableStateOf(false) }
+    var nameValue by rememberSaveable(currentName) { mutableStateOf(currentName) }
+
+    OutlinedCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        AnimatedContent(
+            targetState = isEditing,
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut() using SizeTransform(clip = false)
+            },
+            label = "EditNameAnimation"
+        ) { editing ->
+            if (editing) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.device_name),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    OutlinedTextField(
+                        value = nameValue,
+                        onValueChange = { nameValue = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        textStyle = MaterialTheme.typography.bodyLarge,
+                        shape = MaterialTheme.shapes.medium
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton(
+                            onClick = {
+                                nameValue = currentName
+                                isEditing = false
+                            }
+                        ) {
+                            Text(text = stringResource(android.R.string.cancel))
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Button(
+                            onClick = {
+                                onNameSaved(nameValue)
+                                isEditing = false
+                            },
+                            enabled = nameValue.isNotBlank() && nameValue != currentName
+                        ) {
+                            Text(text = stringResource(R.string.save))
+                        }
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable { isEditing = true }
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.device_name),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = currentName,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Icon(
+                        painterResource(R.drawable.edit),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }

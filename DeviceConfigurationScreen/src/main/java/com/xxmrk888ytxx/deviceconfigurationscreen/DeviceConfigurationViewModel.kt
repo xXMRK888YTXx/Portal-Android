@@ -8,17 +8,14 @@ import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
-import com.xxmrk888ytxx.deviceconfigurationscreen.contract.UpdateHostContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -27,7 +24,6 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     private val provideDeviceInfoContract: ProvideDeviceInfoContract,
     private val removeDeviceContract: RemoveDeviceContract,
     private val changeDeviceSettingsContract: ChangeDeviceSettingsContract,
-    private val updateHostContract: UpdateHostContract
 ) : SideEffectPortalViewModel<ScreenState, DeviceConfigurationUiEvent>(ScreenState.Loading) {
 
     private var isSettingsUpdateInProgress = false
@@ -51,17 +47,20 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             is DeviceConfigurationUiEvent.OnAwaitUnlockChanged -> changeAwaitUnlockRequestsState(
                 event.newValue
             )
-
             is DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged -> changeSearchIpDynamicallyState(
                 event.newValue
             )
-
             is DeviceConfigurationUiEvent.OnHostChanged -> changeHostState(event.newIp)
             is DeviceConfigurationUiEvent.OnUnlockMethodChanged -> changeUnlockMethodState(event.newMethod)
             is DeviceConfigurationUiEvent.OnUnlockOnlyWhenScreenUnlockedChanged -> changeUnlockOnlyWhenScreenUnlockedState(
                 event.newValue
             )
+            is DeviceConfigurationUiEvent.OnDeviceNameChanged -> changeDeviceName(event.newName)
         }
+    }
+
+    private fun changeDeviceName(newName: String) = viewModelScope.launch {
+        changeDeviceSettingsContract.updateDeviceName(newName, deviceId)
     }
 
     private fun changeUnlockOnlyWhenScreenUnlockedState(newValue: Boolean) = viewModelScope.launch {
@@ -73,7 +72,7 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     }
 
     private fun changeHostState(newIp: String) = viewModelScope.launch {
-        updateHostContract.update(newIp, deviceId)
+        changeDeviceSettingsContract.updateHost(newIp, deviceId)
     }
 
     private fun changeSearchIpDynamicallyState(newValue: Boolean) = withLoading {

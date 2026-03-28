@@ -13,4 +13,7 @@ abstract class BluetoothDeviceDao {
 
     @Query("SELECT * FROM ${BluetoothDeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId LIMIT 1")
     abstract fun getWifiDeviceById(deviceId: String): Flow<BluetoothDeviceEntry?>
+
+    @Query("UPDATE ${BluetoothDeviceEntry.TABLE_NAME} SET deviceName = :newDeviceName WHERE deviceId = :deviceId")
+    abstract suspend fun updateDeviceName(deviceId: String, newDeviceName: String)
 }

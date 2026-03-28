@@ -8,6 +8,7 @@ sealed interface DeviceConfigurationUiEvent : UiEvent {
     data class OnHostChanged(val newIp: String) : DeviceConfigurationUiEvent
     data class OnUnlockMethodChanged(val newMethod: UnlockMethod): DeviceConfigurationUiEvent
     data class OnUnlockOnlyWhenScreenUnlockedChanged(val newValue: Boolean) : DeviceConfigurationUiEvent
+    data class OnDeviceNameChanged(val newName: String) : DeviceConfigurationUiEvent
     data object NavigateBack : DeviceConfigurationUiEvent
     data object RemoveDevice : DeviceConfigurationUiEvent
 }

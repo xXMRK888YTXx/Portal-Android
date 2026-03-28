@@ -32,6 +32,10 @@ class BluetoothDeviceRepositoryImpl @Inject constructor(
 
     override fun getDeviceById(deviceId: String): Flow<BluetoothDevice?> = bluetoothDeviceDao.getWifiDeviceById(deviceId).map { it?.toDomainModel() }
 
+    override suspend fun updateDeviceName(deviceId: String, newName: String) = withContext(Dispatchers.IO) {
+        bluetoothDeviceDao.updateDeviceName(deviceId, newName)
+    }
+
     private fun BluetoothDeviceEntry.toDomainModel() : BluetoothDevice {
         return BluetoothDevice(
             clientId = deviceId,

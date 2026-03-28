@@ -54,6 +54,11 @@ class WifiDeviceRepositoryImpl @Inject constructor(
             wifiDeviceDao.updateHost(deviceId, newHost)
         }
 
+    override suspend fun updateDeviceName(deviceId: String, newName: String) =
+        withContext(Dispatchers.IO) {
+            wifiDeviceDao.updateDeviceName(deviceId = deviceId, newDeviceName = newName)
+        }
+
     override val devices: Flow<List<WifiDevice>> = wifiDeviceDao.devices.map { deviceList ->
         deviceList.map { deviceEntry ->
             deviceEntry.toDomainModel()
