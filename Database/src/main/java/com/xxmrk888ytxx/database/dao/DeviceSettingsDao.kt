@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.xxmrk888ytxx.database.entry.DeviceSettingsEntry
 import com.xxmrk888ytxx.database.model.UnlockMethod
+import com.xxmrk888ytxx.database.model.UnlockMethod.Companion.AUTOMATIC_METHOD_ID
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -27,4 +28,7 @@ interface DeviceSettingsDao {
 
     @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockOnlyWhenScreenUnlocked = :newValue WHERE deviceId = :deviceId")
     suspend fun updateUnlockOnlyWhenScreenUnlockedState(deviceId: String, newValue: Boolean)
+
+    @Query("SELECT * FROM ${DeviceSettingsEntry.TABLE_NAME} WHERE unlockMethod == $AUTOMATIC_METHOD_ID")
+    suspend fun getAllDevicesWithNotSecureUnlockMethod(): List<DeviceSettingsEntry>
 }

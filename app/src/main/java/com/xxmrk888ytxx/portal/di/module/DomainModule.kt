@@ -94,6 +94,7 @@ interface DomainModule {
     ) : DeviceUnlockManager
 
     @Binds
+    @AppScope
     fun bindsDeviceSettingsRepository(
         deviceSettingsRepositoryImpl: DeviceSettingsRepositoryImpl
     ) : DeviceSettingsRepository
