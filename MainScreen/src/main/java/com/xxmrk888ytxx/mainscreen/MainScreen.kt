@@ -182,24 +182,66 @@ fun DeviceList(
     onEvent: (MainScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // 1. Фильтруем устройства по типу
+    val wifiDevices = remember(screenState.devices) {
+        screenState.devices.filter { it.deviceType == DeviceType.WIFI }
+    }
+    val bluetoothDevices = remember(screenState.devices) {
+        screenState.devices.filter { it.deviceType == DeviceType.BLUETOOTH }
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(
-            items = screenState.devices,
-            key = { it.deviceId }
-        ) { device ->
-            DeviceItem(
-                device = device,
-                isUnlockButtonAvailable = !screenState.isLoading,
-                onEvent = onEvent
-            )
+        if (wifiDevices.isNotEmpty()) {
+            item {
+                Text(
+                    text = stringResource(R.string.wi_fi),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                )
+            }
+            items(
+                items = wifiDevices,
+                key = { it.deviceId }
+            ) { device ->
+                DeviceItem(
+                    device = device,
+                    isUnlockButtonAvailable = !screenState.isLoading,
+                    onEvent = onEvent
+                )
+            }
+        }
+
+        if (bluetoothDevices.isNotEmpty()) {
+            item {
+                Text(
+                    text = stringResource(R.string.bluetooth),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(
+                        start = 4.dp,
+                        bottom = 4.dp,
+                        top = if (wifiDevices.isNotEmpty()) 12.dp else 0.dp
+                    )
+                )
+            }
+            items(
+                items = bluetoothDevices,
+                key = { it.deviceId }
+            ) { device ->
+                DeviceItem(
+                    device = device,
+                    isUnlockButtonAvailable = !screenState.isLoading,
+                    onEvent = onEvent
+                )
+            }
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DeviceItem(
