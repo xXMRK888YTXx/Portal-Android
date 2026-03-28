@@ -30,6 +30,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
+import kotlin.math.abs
 import kotlin.random.Random
 
 class UnlockRequestManagerImpl @Inject constructor(
@@ -126,7 +127,7 @@ class UnlockRequestManagerImpl @Inject constructor(
             build()
         }
         notificationManager.notify(
-            UNLOCK_NOTIFICATION_ID,
+            abs(deviceId.hashCode()),
             notification
         )
     }
@@ -157,6 +158,5 @@ class UnlockRequestManagerImpl @Inject constructor(
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "UnlockNotificationChannel"
         const val AWAIT_SCREEN_UNLOCK_TIMEOUT = 300_000L
-        const val UNLOCK_NOTIFICATION_ID = 8192
     }
 }
