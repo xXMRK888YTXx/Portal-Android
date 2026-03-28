@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.data
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.DEFAULT_VALUE
 import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.REMOVED_BY_CHANGES_IN_BIOMETRIC_ENVIRONMENT
@@ -17,7 +18,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SettingsRepositoryImpl @Inject constructor(
-    private val preferencesStorage: PreferencesStorage
+    private val preferencesStorage: PreferencesStorage,
+    private val deviceRepository: DeviceRepository
 ) : SettingsRepository {
 
     private val biometricAuthEnabled = booleanPreferencesKey("biometricAuthEnabled")
@@ -67,6 +69,13 @@ class SettingsRepositoryImpl @Inject constructor(
                 removePairedClientsIfBiometricEnvironmentChanged,
                 isEnabled
             )
+
+            if (!isEnabled) {
+                deviceRepository.removeAllDevices()
+                updatePairedClientsWasRemoveBySecurityChangesCode(
+                    REMOVED_BY_SECURITY_SETTINGS_CHANGES
+                )
+            }
         }
 
     override suspend fun updatePairedClientsWasRemoveBySecurityChangesCode(newCode: Int) =
