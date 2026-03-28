@@ -63,6 +63,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.coreandroid.DefaultValidator
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
@@ -625,7 +626,7 @@ fun UnlockMethodSelector(
                             onMethodChanged(method)
                         }
                     },
-                    enabled = if (method.isUnsafe) isUnsafeUnlockMethodsDisabled else true,
+                    enabled = if (method.isUnsafe) !isUnsafeUnlockMethodsDisabled else true,
                     label = {
                         Text(
                             text = getUnlockMethodName(method),

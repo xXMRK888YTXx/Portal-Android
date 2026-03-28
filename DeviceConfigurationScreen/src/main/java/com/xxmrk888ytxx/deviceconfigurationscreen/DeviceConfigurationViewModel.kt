@@ -21,6 +21,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -62,7 +63,10 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             .isDisabled
             .distinctUntilChanged()
             .collect { isDisabled ->
-                updateStateMutex.withLock { _state.update { state -> (state as? ScreenState.DeviceInfo)?.copy(isUnsafeUnlockMethodsDisabled = isDisabled) ?: state } }
+                _state.first { it is ScreenState.DeviceInfo }
+                updateStateMutex.withLock {
+                    _state.update { state -> (state as? ScreenState.DeviceInfo)?.copy(isUnsafeUnlockMethodsDisabled = isDisabled) ?: state }
+                }
             }
     }
 
