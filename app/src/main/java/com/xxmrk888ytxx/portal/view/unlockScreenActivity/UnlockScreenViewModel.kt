@@ -10,8 +10,8 @@ import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
 import com.xxmrk888ytxx.coreandroid.mvi.UiEventHandler
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
+import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
-import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.utils.getParsableExtraCompat
@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
@@ -32,7 +33,8 @@ import javax.inject.Provider
 class UnlockScreenViewModel @Inject constructor(
     private val biometricDialogController: BiometricDialogController,
     private val unlockMessageSender: UnlockMessageSender,
-    private val provideDeviceNameByClientId: ProvideDeviceNameByClientId
+    private val provideDeviceNameByClientId: ProvideDeviceNameByClientId,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel(), Navigator, SideEffectSender<UnlockScreenSideEffect>,
     UiEventHandler<UnlockScreenUiEvent> {
 
@@ -43,6 +45,7 @@ class UnlockScreenViewModel @Inject constructor(
     private var unlockScreenData: UnlockScreenData? = null
 
     private val isEventSent = MutableStateFlow(false)
+    private val isAllowEventHandling = MutableStateFlow(false)
 
     private val _deviceName = MutableStateFlow("")
     val deviceName: StateFlow<String> = _deviceName.asStateFlow()
@@ -70,9 +73,23 @@ class UnlockScreenViewModel @Inject constructor(
 
     override fun handleEvent(event: UnlockScreenUiEvent) {
         when (event) {
-            is UnlockScreenUiEvent.Allow -> requestBiometricAuth(event.fragmentActivity)
+            is UnlockScreenUiEvent.Allow -> allowUnlock(event)
             UnlockScreenUiEvent.Deny -> sendCancelEventAndDismissScreen()
         }
+    }
+
+    private fun allowUnlock(event: UnlockScreenUiEvent.Allow) {
+        if (isAllowEventHandling.value) return
+        isAllowEventHandling.value = true
+        viewModelScope.launch {
+            val isBiometricUnlockEnabled = settingsRepository.portalSettings.first().isBiometricAuthEnabled
+            if (isBiometricUnlockEnabled) {
+                requestBiometricAuth(event.fragmentActivity)
+            } else {
+                if (event.isSentByUser)
+                    unlockScreenData?.let { unlockHost(it) }
+            }
+        }.invokeOnCompletion { isAllowEventHandling.value = false }
     }
 
     private fun unlockHost(unlockScreenData: UnlockScreenData) {

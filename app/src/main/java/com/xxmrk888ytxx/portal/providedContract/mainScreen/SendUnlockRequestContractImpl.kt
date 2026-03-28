@@ -7,6 +7,7 @@ import com.xxmrk888ytxx.portal.domain.BiometricRequestController
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
+import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first
@@ -17,10 +18,11 @@ class SendUnlockRequestContractImpl @Inject constructor(
     private val wifiDeviceRepository: WifiDeviceRepository,
     private val deviceUnlockManager: DeviceUnlockManager,
     private val biometricRequestController: BiometricRequestController,
-    private val bluetoothDeviceRepository: BluetoothDeviceRepository
+    private val bluetoothDeviceRepository: BluetoothDeviceRepository,
+    private val settingsRepository: SettingsRepository
 ) : SendUnlockRequestContract {
     override suspend fun unlock(device: MainScreenDevice): Result<Unit> = runCatching {
-        val biometricAuthResult =  try {
+        val biometricAuthResult = if (!settingsRepository.portalSettings.first().isBiometricAuthEnabled) true else try {
             biometricRequestController.waitBiometricAuthResult(
                 dialogDescription = device.deviceName
             ) == BiometricAuthResult.Success
