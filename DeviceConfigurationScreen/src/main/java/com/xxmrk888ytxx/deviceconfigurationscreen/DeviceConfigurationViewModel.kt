@@ -4,11 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.mvi.DefaultSideEffect
-import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
+import com.xxmrk888ytxx.deviceconfigurationscreen.contract.UnsafeMethodAvailableStateProvider
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.BottomSheetDialogState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationScreenSideEffect
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
@@ -20,20 +20,25 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class DeviceConfigurationViewModel @AssistedInject internal constructor(
     @Assisted private val deviceId: String,
     private val provideDeviceInfoContract: ProvideDeviceInfoContract,
     private val removeDeviceContract: RemoveDeviceContract,
     private val changeDeviceSettingsContract: ChangeDeviceSettingsContract,
+    private val unsafeMethodAvailableStateProvider: UnsafeMethodAvailableStateProvider
 ) : SideEffectPortalViewModel<ScreenState, DeviceConfigurationUiEvent>(ScreenState.Loading) {
 
     private val isSettingsUpdateInProgress = MutableStateFlow(false)
     private val isDeletionInProgress = MutableStateFlow(false)
 
+    private val updateStateMutex = Mutex()
 
     private val observeDeviceJob = viewModelScope.launch {
         provideDeviceInfoContract.provideDeviceInfo(deviceId)
@@ -43,7 +48,21 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             }
             .onEach { fastDebugLog(it) }
             .collect { device ->
-                _state.value = ScreenState.DeviceInfo(device)
+                updateStateMutex.withLock {
+                    _state.update {
+                        (it as? ScreenState.DeviceInfo)?.copy(device = device) ?: ScreenState.DeviceInfo(device)
+                    }
+                }
+
+            }
+    }
+
+    private val observeUnsafeMethodAvailableState = viewModelScope.launch {
+        unsafeMethodAvailableStateProvider
+            .isDisabled
+            .distinctUntilChanged()
+            .collect { isDisabled ->
+                updateStateMutex.withLock { _state.update { state -> (state as? ScreenState.DeviceInfo)?.copy(isUnsafeUnlockMethodsDisabled = isDisabled) ?: state } }
             }
     }
 
@@ -98,17 +117,21 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
         changeDeviceSettingsContract.updateAwaitUnlockRequestsState(deviceId, newValue)
     }
 
-    private fun showDeletionDialog() {
-        _state.update {
-            (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.DeleteDevice)
-                ?: it
+    private fun showDeletionDialog() = viewModelScope.launch {
+        updateStateMutex.withLock {
+            _state.update {
+                (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.DeleteDevice)
+                    ?: it
+            }
         }
     }
 
-    private fun hideDeletionDialog() {
-        _state.update {
-            (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.None)
-                ?: it
+    private fun hideDeletionDialog() = viewModelScope.launch {
+        updateStateMutex.withLock {
+            _state.update {
+                (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.None)
+                    ?: it
+            }
         }
     }
 

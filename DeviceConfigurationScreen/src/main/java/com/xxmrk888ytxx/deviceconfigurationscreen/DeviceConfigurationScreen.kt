@@ -326,6 +326,7 @@ fun DeviceInfoState(
 
         UnlockMethodSelector(
             currentMethod = screenState.device.unlockMethod,
+            isUnsafeUnlockMethodsDisabled = screenState.isUnsafeUnlockMethodsDisabled,
             onMethodChanged = { newMethod ->
                 onEvent(DeviceConfigurationUiEvent.OnUnlockMethodChanged(newMethod))
             },
@@ -596,6 +597,7 @@ private fun InfoItem(title: String, value: String) {
 @Composable
 fun UnlockMethodSelector(
     currentMethod: UnlockMethod,
+    isUnsafeUnlockMethodsDisabled: Boolean,
     onMethodChanged: (UnlockMethod) -> Unit,
 ) {
     Column(
@@ -615,7 +617,7 @@ fun UnlockMethodSelector(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             UnlockMethod.entries.forEach { method ->
-                val isSelected = currentMethod::class == method::class
+                val isSelected = currentMethod == method
                 FilterChip(
                     selected = isSelected,
                     onClick = {
@@ -623,6 +625,7 @@ fun UnlockMethodSelector(
                             onMethodChanged(method)
                         }
                     },
+                    enabled = if (method.isUnsafe) isUnsafeUnlockMethodsDisabled else true,
                     label = {
                         Text(
                             text = getUnlockMethodName(method),
