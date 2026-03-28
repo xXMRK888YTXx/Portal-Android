@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+//TODO Move to PortalSettings
 class PreferenceManagerImpl @Inject constructor(
     private val preferencesStorage: PreferencesStorage
 ) : PreferenceManager {

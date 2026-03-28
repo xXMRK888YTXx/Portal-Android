@@ -24,6 +24,7 @@ import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BluetoothUnlockServiceManager
 import com.xxmrk888ytxx.portal.data.ProvideDeviceNameByClientIdImpl
+import com.xxmrk888ytxx.portal.data.SettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
@@ -44,6 +45,7 @@ import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
+import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
@@ -173,6 +175,11 @@ interface DomainModule {
     fun bindsProvideDeviceNameByClientId(
         provideDeviceNameByClientIdImpl: ProvideDeviceNameByClientIdImpl
     ) : ProvideDeviceNameByClientId
+
+    @Binds
+    fun bindsSettingsRepository(
+        settingsRepositoryImpl: SettingsRepositoryImpl
+    ) : SettingsRepository
 
     companion object {
         @Provides
