@@ -21,7 +21,9 @@ class SendUnlockRequestContractImpl @Inject constructor(
 ) : SendUnlockRequestContract {
     override suspend fun unlock(device: MainScreenDevice): Result<Unit> = runCatching {
         val biometricAuthResult =  try {
-            biometricRequestController.waitBiometricAuthResult() == BiometricAuthResult.Success
+            biometricRequestController.waitBiometricAuthResult(
+                dialogDescription = device.deviceName
+            ) == BiometricAuthResult.Success
         }catch (_: TimeoutCancellationException) {
             null
         }

@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.data
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricRequestController
+import com.xxmrk888ytxx.portal.domain.model.BiometricAuthRequestOption
 import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.BufferOverflow
@@ -16,22 +17,28 @@ import javax.inject.Inject
 import kotlin.jvm.Throws
 
 @AppScope
-class BiometricRequestManager @Inject constructor() : BiometricRequestController, BiometricActivityResultReceiver {
+class BiometricRequestManager @Inject constructor() : BiometricRequestController,
+    BiometricActivityResultReceiver {
 
-    private val _biometricAuthRequestForActivity = MutableSharedFlow<Unit>(
+    private val _biometricAuthRequestForActivity = MutableSharedFlow<BiometricAuthRequestOption>(
         extraBufferCapacity = 1
     )
 
-    override val biometricAuthRequestForActivity: Flow<Unit> = _biometricAuthRequestForActivity.asSharedFlow()
+    override val biometricAuthRequestForActivity: Flow<BiometricAuthRequestOption> =
+        _biometricAuthRequestForActivity.asSharedFlow()
 
     private val _biometricAuthResult = MutableSharedFlow<BiometricAuthResult>(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    private val biometricAuthResult = _biometricAuthResult.asSharedFlow().onSubscription { _biometricAuthRequestForActivity.emit(Unit) }
+    private val biometricAuthResult = _biometricAuthResult.asSharedFlow()
 
     @Throws(TimeoutCancellationException::class)
-    override suspend fun waitBiometricAuthResult(timeout: Long): BiometricAuthResult = withTimeout(timeout) {
+    override suspend fun waitBiometricAuthResult(
+        timeout: Long,
+        dialogDescription: String?
+    ): BiometricAuthResult = withTimeout(timeout) {
+        _biometricAuthRequestForActivity.emit(BiometricAuthRequestOption(description = dialogDescription))
         biometricAuthResult.first()
     }
 

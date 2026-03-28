@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
@@ -26,7 +27,8 @@ import javax.inject.Provider
 
 class UnlockScreenViewModel @Inject constructor(
     private val biometricDialogController: BiometricDialogController,
-    private val unlockMessageSender: UnlockMessageSender
+    private val unlockMessageSender: UnlockMessageSender,
+    private val provideDeviceNameByClientId: ProvideDeviceNameByClientId
 ) : ViewModel(), Navigator, SideEffectSender<UnlockScreenSideEffect> {
 
     private val _effect = MutableSharedFlow<UnlockScreenSideEffect>(extraBufferCapacity = 1)
@@ -39,6 +41,7 @@ class UnlockScreenViewModel @Inject constructor(
 
 
     fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
+        val deviceName = provideDeviceNameByClientId.provideName(unlockScreenData?.clientId ?: return@launch)
         biometricDialogController.sendRequest(
             activity = activity,
             onEvent = {
@@ -50,6 +53,7 @@ class UnlockScreenViewModel @Inject constructor(
                     BiometricDialogEvent.Failed -> Unit
                 }
             },
+            description = deviceName
         )
     }
 

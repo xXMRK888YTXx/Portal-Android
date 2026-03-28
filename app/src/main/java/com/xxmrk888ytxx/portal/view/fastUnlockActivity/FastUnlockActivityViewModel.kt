@@ -10,6 +10,7 @@ import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.data.service.UnlockFromShortcutService
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +22,8 @@ import javax.inject.Provider
 class FastUnlockActivityViewModel @Inject constructor(
     private val shortcutRepository: ShortcutRepository,
     private val biometricDialogController: BiometricDialogController,
-    private val toastManager: ToastManager
+    private val toastManager: ToastManager,
+    private val provideDeviceNameByClientId: ProvideDeviceNameByClientId
 ) : ViewModel(), Navigator {
 
     private val _onFinishEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
@@ -64,23 +66,27 @@ class FastUnlockActivityViewModel @Inject constructor(
                 }
 
             when {
-                shortcut.isRequiredBiometricUnlock -> biometricDialogController.sendRequest(
-                    activity,
-                    onEvent = {
-                        when (it) {
-                            BiometricDialogEvent.Success -> startUnlockService(
-                                activity.applicationContext,
-                                shortcut.clientId
-                            )
+                shortcut.isRequiredBiometricUnlock -> {
+                    val deviceName = provideDeviceNameByClientId.provideName(shortcut.clientId)
+                    biometricDialogController.sendRequest(
+                        activity,
+                        onEvent = {
+                            when (it) {
+                                BiometricDialogEvent.Success -> startUnlockService(
+                                    activity.applicationContext,
+                                    shortcut.clientId
+                                )
 
-                            BiometricDialogEvent.Canceled, BiometricDialogEvent.Error -> {
-                                _onFinishEvent.tryEmit(Unit)
+                                BiometricDialogEvent.Canceled, BiometricDialogEvent.Error -> {
+                                    _onFinishEvent.tryEmit(Unit)
+                                }
+
+                                BiometricDialogEvent.Failed -> {}
                             }
-
-                            BiometricDialogEvent.Failed -> {}
-                        }
-                    }
-                )
+                        },
+                        description = deviceName
+                    )
+                }
 
                 else -> startUnlockService(
                     activity.applicationContext,

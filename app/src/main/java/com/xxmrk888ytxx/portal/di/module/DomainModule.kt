@@ -23,6 +23,7 @@ import com.xxmrk888ytxx.portal.data.ShortcutRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BluetoothUnlockServiceManager
+import com.xxmrk888ytxx.portal.data.ProvideDeviceNameByClientIdImpl
 import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
@@ -40,6 +41,7 @@ import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
+import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
@@ -166,6 +168,11 @@ interface DomainModule {
     fun bindsUnlockMessageSender(
         unlockMessageSenderImpl: UnlockMessageSenderImpl
     ) : UnlockMessageSender
+
+    @Binds
+    fun bindsProvideDeviceNameByClientId(
+        provideDeviceNameByClientIdImpl: ProvideDeviceNameByClientIdImpl
+    ) : ProvideDeviceNameByClientId
 
     companion object {
         @Provides

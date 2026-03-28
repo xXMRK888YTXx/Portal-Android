@@ -73,7 +73,7 @@ fun FragmentActivity.collectBiometricAuthResult(
 ) =
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            biometricActivityResultReceiver.biometricAuthRequestForActivity.collect {
+            biometricActivityResultReceiver.biometricAuthRequestForActivity.collect { option ->
                 biometricDialogController.sendRequest(
                     activity = this@collectBiometricAuthResult,
                     onEvent = {
@@ -88,7 +88,8 @@ fun FragmentActivity.collectBiometricAuthResult(
 
                             BiometricDialogEvent.Failed -> {}
                         }
-                    }
+                    },
+                    description = option.description
                 )
             }
         }

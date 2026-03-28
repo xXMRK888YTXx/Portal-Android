@@ -14,6 +14,7 @@ class BiometricDialogControllerImpl @Inject constructor(
 ) : BiometricDialogController {
     override suspend fun sendRequest(
         activity: FragmentActivity,
+        description: String?,
         onEvent: (BiometricDialogEvent) -> Unit
     ) {
         biometricAuthManager.requestBiometricAuth(activity) {
@@ -22,8 +23,8 @@ class BiometricDialogControllerImpl @Inject constructor(
             onFailed = { onEvent(BiometricDialogEvent.Failed) }
             onCanceled = { onEvent(BiometricDialogEvent.Canceled) }
 
-            title = context.getString(R.string.verify_with_biometrics)
-            subTitle = context.getString(R.string.confirm_your_identity)
+            title = context.getString(R.string.confirm_your_identity)
+            subTitle = description ?: context.getString(R.string.confirm_your_identity)
         }
     }
 }
