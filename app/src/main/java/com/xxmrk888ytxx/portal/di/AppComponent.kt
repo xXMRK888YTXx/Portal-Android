@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.data.BiometricEnvironmentObserver
 import com.xxmrk888ytxx.portal.di.module.ActivityBindsModule
 import com.xxmrk888ytxx.portal.di.module.AddNewDeviceModule
 import com.xxmrk888ytxx.portal.di.module.BroadcastReceiverBindsModule
@@ -47,7 +48,7 @@ interface AppComponent {
     val activityProviderMap: Map<Class<out Activity>, @JvmSuppressWildcards Provider<Activity>>
     val serviceProviderMap: Map<Class<out Service>, @JvmSuppressWildcards Provider<Service>>
     val broadcastReceiverProviderMap: Map<Class<out BroadcastReceiver>, @JvmSuppressWildcards Provider<BroadcastReceiver>>
-
+    val biometricEnvironmentObserver: BiometricEnvironmentObserver
     val awaitUnlockRequestManager: AwaitUnlockRequestManager
     @Component.Factory
     interface Factory {

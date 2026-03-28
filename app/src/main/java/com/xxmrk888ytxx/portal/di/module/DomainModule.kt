@@ -4,6 +4,7 @@ import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
+import com.xxmrk888ytxx.portal.data.BiometricEnvironmentEventHandlerImpl
 import com.xxmrk888ytxx.portal.data.BiometricRequestManager
 import com.xxmrk888ytxx.portal.data.BluetoothDeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.BluetoothManagerImpl
@@ -30,6 +31,7 @@ import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.BiometricEnvironmentEventHandler
 import com.xxmrk888ytxx.portal.domain.BiometricRequestController
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
@@ -180,6 +182,12 @@ interface DomainModule {
     fun bindsSettingsRepository(
         settingsRepositoryImpl: SettingsRepositoryImpl
     ) : SettingsRepository
+
+    @Binds
+    @AppScope
+    fun bindsBiometricEnvironmentEventHandler(
+        biometricEnvironmentEventHandlerImpl: BiometricEnvironmentEventHandlerImpl
+    ) : BiometricEnvironmentEventHandler
 
     companion object {
         @Provides

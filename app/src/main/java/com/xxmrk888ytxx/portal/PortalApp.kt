@@ -12,6 +12,7 @@ class PortalApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        appComponent.biometricEnvironmentObserver.startObserve()
         appComponent.awaitUnlockRequestManager.restoreUnlockState()
     }
 }
