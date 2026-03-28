@@ -13,16 +13,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -33,15 +33,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +61,7 @@ import com.xxmrk888ytxx.coreandroid.DefaultValidator
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.BottomSheetDialogState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
@@ -186,7 +187,7 @@ fun DeviceInfoState(
                 )
                 InfoItem(
                     title = stringResource(R.string.device_type),
-                    value = when(screenState.device) {
+                    value = when (screenState.device) {
                         is Device.WifiDevice -> stringResource(R.string.wifi)
                         is Device.BluetoothDevice -> stringResource(R.string.bluetooth)
                     }
@@ -214,7 +215,7 @@ fun DeviceInfoState(
         EditableNameCard(
             currentName = screenState.device.deviceName,
             onNameSaved = { newName ->
-               onEvent(DeviceConfigurationUiEvent.OnDeviceNameChanged(newName))
+                onEvent(DeviceConfigurationUiEvent.OnDeviceNameChanged(newName))
             }
         )
 
@@ -244,7 +245,8 @@ fun DeviceInfoState(
             SwitchSettingCard(
                 title = stringResource(R.string.unlock_only_when_the_screen_is_on),
                 description = stringResource(R.string.if_your_phone_screen_is_locked_your_pc_will_only_be_unlocked_once_your_phone_has_been_unlocked),
-                isChecked = (screenState.device.unlockMethod as? UnlockMethod.Automatic)?.unlockOnlyWhenScreenUnlocked ?: false,
+                isChecked = (screenState.device.unlockMethod as? UnlockMethod.Automatic)?.unlockOnlyWhenScreenUnlocked
+                    ?: false,
                 onCheckedChange = {
                     onEvent(DeviceConfigurationUiEvent.OnUnlockOnlyWhenScreenUnlockedChanged(it))
                 }
@@ -275,7 +277,7 @@ fun DeviceInfoState(
 
         Button(
             onClick = {
-                onEvent(DeviceConfigurationUiEvent.RemoveDevice)
+                onEvent(DeviceConfigurationUiEvent.ShowRemoveDialog)
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -289,6 +291,88 @@ fun DeviceInfoState(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = stringResource(R.string.remove_device))
+        }
+    }
+
+    if (screenState.bottomSheetDialogState is BottomSheetDialogState.DeleteDevice) {
+        RemoveDeviceBottomSheet(
+            onDismiss = {
+                onEvent(DeviceConfigurationUiEvent.HideRemoveDialog)
+            },
+            onConfirm = {
+                onEvent(DeviceConfigurationUiEvent.RemoveDevice)
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RemoveDeviceBottomSheet(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.delete),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(32.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.remove_device_bottom_sheet),
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = stringResource(R.string.are_you_sure_you_want_to_remove_this_device_this_action_cannot_be_undone),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    onConfirm()
+                    onDismiss()
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
+            ) {
+                Text(stringResource(R.string.remove))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.cancel))
+            }
         }
     }
 }

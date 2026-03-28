@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.BottomSheetDialogState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
@@ -15,8 +16,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DeviceConfigurationViewModel @AssistedInject internal constructor(
@@ -26,7 +29,9 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     private val changeDeviceSettingsContract: ChangeDeviceSettingsContract,
 ) : SideEffectPortalViewModel<ScreenState, DeviceConfigurationUiEvent>(ScreenState.Loading) {
 
-    private var isSettingsUpdateInProgress = false
+    private val isSettingsUpdateInProgress = MutableStateFlow(false)
+    private val isDeletionInProgress = MutableStateFlow(false)
+
 
     private val observeDeviceJob = viewModelScope.launch {
         provideDeviceInfoContract.provideDeviceInfo(deviceId)
@@ -56,6 +61,8 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
                 event.newValue
             )
             is DeviceConfigurationUiEvent.OnDeviceNameChanged -> changeDeviceName(event.newName)
+            is DeviceConfigurationUiEvent.HideRemoveDialog -> hideDeletionDialog()
+            is DeviceConfigurationUiEvent.ShowRemoveDialog -> showDeletionDialog()
         }
     }
 
@@ -83,15 +90,30 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
         changeDeviceSettingsContract.updateAwaitUnlockRequestsState(deviceId, newValue)
     }
 
+    private fun showDeletionDialog() {
+        _state.update {
+            (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.DeleteDevice) ?: it
+        }
+    }
+
+    private fun hideDeletionDialog() {
+        _state.update {
+            (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.None) ?: it
+        }
+    }
+
     private fun withLoading(block: suspend () -> Unit) {
-        if (isSettingsUpdateInProgress) return
-        isSettingsUpdateInProgress = true
+        if (isSettingsUpdateInProgress.value) return
+        isSettingsUpdateInProgress.value = true
         viewModelScope.launch {
             block()
-        }.invokeOnCompletion { isSettingsUpdateInProgress = false }
+        }.invokeOnCompletion { isSettingsUpdateInProgress.value = false }
     }
 
     private fun removeDevice() {
+        if (isDeletionInProgress.value) return
+        isDeletionInProgress.value = true
+        isSettingsUpdateInProgress.value = true
         val device = _state.value as? ScreenState.DeviceInfo ?: return
         viewModelScope.launch {
             observeDeviceJob.cancelAndJoin()

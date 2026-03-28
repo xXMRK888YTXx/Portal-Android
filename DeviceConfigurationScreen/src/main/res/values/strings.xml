@@ -23,4 +23,8 @@
     <string name="notification">Notification</string>
     <string name="confirmation_screen">Confirmation screen</string>
     <string name="unlock_method">Unlock method</string>
+    <string name="remove_device_bottom_sheet">Remove Device?</string>
+    <string name="are_you_sure_you_want_to_remove_this_device_this_action_cannot_be_undone">Are you sure you want to remove this device? This action cannot be undone.</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove">Remove</string>
 </resources>

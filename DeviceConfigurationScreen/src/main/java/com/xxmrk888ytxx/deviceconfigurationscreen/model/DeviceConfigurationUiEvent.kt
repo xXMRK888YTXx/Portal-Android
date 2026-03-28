@@ -11,4 +11,6 @@ sealed interface DeviceConfigurationUiEvent : UiEvent {
     data class OnDeviceNameChanged(val newName: String) : DeviceConfigurationUiEvent
     data object NavigateBack : DeviceConfigurationUiEvent
     data object RemoveDevice : DeviceConfigurationUiEvent
+    data object ShowRemoveDialog : DeviceConfigurationUiEvent
+    data object HideRemoveDialog : DeviceConfigurationUiEvent
 }
