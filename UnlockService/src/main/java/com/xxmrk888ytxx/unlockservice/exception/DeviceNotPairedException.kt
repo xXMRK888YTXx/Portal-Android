@@ -1,3 +1,3 @@
 package com.xxmrk888ytxx.unlockservice.exception
 
-class DeviceNotPairedException(val macAddress: String) : UnlockServiceException("Device $macAddress not paired")
+class DeviceNotPairedException(val macAddress: String) : Exception("Device $macAddress not paired")

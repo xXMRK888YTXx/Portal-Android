@@ -47,6 +47,17 @@ class BluetoothDriver @Inject constructor(
     ) {
         val device = bluetoothDeviceRepository.getDeviceById(clientId).first()
             ?: throw InvalidClientIdException(clientId)
+        val isPaired = bluetoothManager.pairedDeviceMacAddresses.first()?.let { pairedDevices ->
+            pairedDevices.contains(device.macAddress)
+        } ?: true
+        if (!isPaired) {
+            fastDebugLog("Device not paired. ClientId = ${device.clientId} macAddress: ${device.macAddress}. Wait for pair")
+            bluetoothManager.pairedDeviceMacAddresses.first { pairedDevices ->
+                pairedDevices?.contains(device.macAddress) == true
+            }
+            fastDebugLog("Device already paired. ClientId = ${device.clientId} macAddress: ${device.macAddress}. Continue work")
+        }
+
         lateinit var bluetoothConnection: BluetoothConnection
         try {
             bluetoothConnection = bluetoothManager.openConnection(device.macAddress)
