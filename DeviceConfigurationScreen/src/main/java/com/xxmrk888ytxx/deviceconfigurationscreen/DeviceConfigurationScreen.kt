@@ -1,11 +1,14 @@
 package com.xxmrk888ytxx.deviceconfigurationscreen
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -28,6 +31,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -51,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -63,6 +68,7 @@ import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.BottomSheetDialogState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationScreenSideEffect
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
@@ -75,7 +81,16 @@ fun DeviceConfigurationScreen(
     onEvent: (DeviceConfigurationUiEvent) -> Unit,
     sideEffect: Flow<SideEffect>
 ) {
-    HandleSideEffect<SideEffect>(sideEffect) {}
+
+    val context = LocalContext.current
+    HandleSideEffect<DeviceConfigurationScreenSideEffect>(sideEffect) { effect ->
+        when(effect) {
+            DeviceConfigurationScreenSideEffect.OpenBluetoothSettings -> {
+                val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+                context.startActivity(intent)
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -108,6 +123,71 @@ fun DeviceConfigurationScreen(
             when (state) {
                 is ScreenState.DeviceInfo -> DeviceInfoState(state, onEvent)
                 ScreenState.Loading -> LoadingState()
+            }
+        }
+    }
+}
+
+@Composable
+private fun BluetoothPairingWarningCard(
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedCard(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f)
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.bluetooth_disabled),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = stringResource(R.string.pairing_required),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            Text(
+                text = stringResource(R.string.pairing_required_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Button(
+                onClick = onOpenSettings,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                ),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.settings),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = stringResource(R.string.go_to_settings))
             }
         }
     }
@@ -172,6 +252,16 @@ fun DeviceInfoState(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        AnimatedVisibility(
+            (screenState.device as? Device.BluetoothDevice)?.isPaired == false,
+        ) {
+            BluetoothPairingWarningCard(
+                onOpenSettings = {
+                    onEvent(DeviceConfigurationUiEvent.OpenBluetoothSettings)
+                },
+            )
+        }
+
         OutlinedCard(
             modifier = Modifier.fillMaxWidth()
         ) {

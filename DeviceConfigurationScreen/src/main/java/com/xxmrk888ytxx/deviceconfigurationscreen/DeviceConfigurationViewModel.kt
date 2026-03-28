@@ -4,11 +4,13 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.mvi.DefaultSideEffect
+import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.BottomSheetDialogState
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationScreenSideEffect
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEvent
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
@@ -52,17 +54,23 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             is DeviceConfigurationUiEvent.OnAwaitUnlockChanged -> changeAwaitUnlockRequestsState(
                 event.newValue
             )
+
             is DeviceConfigurationUiEvent.OnSearchIpDynamicallyChanged -> changeSearchIpDynamicallyState(
                 event.newValue
             )
+
             is DeviceConfigurationUiEvent.OnHostChanged -> changeHostState(event.newIp)
             is DeviceConfigurationUiEvent.OnUnlockMethodChanged -> changeUnlockMethodState(event.newMethod)
             is DeviceConfigurationUiEvent.OnUnlockOnlyWhenScreenUnlockedChanged -> changeUnlockOnlyWhenScreenUnlockedState(
                 event.newValue
             )
+
             is DeviceConfigurationUiEvent.OnDeviceNameChanged -> changeDeviceName(event.newName)
             is DeviceConfigurationUiEvent.HideRemoveDialog -> hideDeletionDialog()
             is DeviceConfigurationUiEvent.ShowRemoveDialog -> showDeletionDialog()
+            is DeviceConfigurationUiEvent.OpenBluetoothSettings -> sideEffect.tryEmit(
+                DeviceConfigurationScreenSideEffect.OpenBluetoothSettings
+            )
         }
     }
 
@@ -92,13 +100,15 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
 
     private fun showDeletionDialog() {
         _state.update {
-            (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.DeleteDevice) ?: it
+            (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.DeleteDevice)
+                ?: it
         }
     }
 
     private fun hideDeletionDialog() {
         _state.update {
-            (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.None) ?: it
+            (it as? ScreenState.DeviceInfo)?.copy(bottomSheetDialogState = BottomSheetDialogState.None)
+                ?: it
         }
     }
 

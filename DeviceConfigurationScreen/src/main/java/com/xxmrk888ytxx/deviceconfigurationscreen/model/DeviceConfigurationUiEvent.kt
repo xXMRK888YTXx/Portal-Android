@@ -13,4 +13,5 @@ sealed interface DeviceConfigurationUiEvent : UiEvent {
     data object RemoveDevice : DeviceConfigurationUiEvent
     data object ShowRemoveDialog : DeviceConfigurationUiEvent
     data object HideRemoveDialog : DeviceConfigurationUiEvent
+    data object OpenBluetoothSettings : DeviceConfigurationUiEvent
 }

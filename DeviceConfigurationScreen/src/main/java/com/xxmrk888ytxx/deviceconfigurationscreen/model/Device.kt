@@ -23,6 +23,7 @@ sealed class Device(
         override val deviceName: String,
         val macAddress: String,
         override val awaitUnlockRequests: Boolean,
-        override val unlockMethod: UnlockMethod
+        override val unlockMethod: UnlockMethod,
+        val isPaired: Boolean
     ) : Device(deviceId, deviceName, awaitUnlockRequests, unlockMethod)
 }

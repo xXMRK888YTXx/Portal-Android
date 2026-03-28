@@ -5,6 +5,7 @@ import com.xxmrk888ytxx.deviceconfigurationscreen.exception.DeviceNotFoundExcept
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod as DeviceConfigurationUnlockMethod
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
+import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
@@ -17,7 +18,8 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
     private val wifiDeviceRepository: WifiDeviceRepository,
     private val certificateRepository: CertificateManager,
     private val deviceSettingsRepository: DeviceSettingsRepository,
-    private val bluetoothDeviceRepository: BluetoothDeviceRepository
+    private val bluetoothDeviceRepository: BluetoothDeviceRepository,
+    private val bluetoothManager: BluetoothManager
 ) : ProvideDeviceInfoContract {
     override suspend fun provideDeviceInfo(deviceId: String): Flow<Device> {
         val wifiDevice = wifiDeviceRepository.getDeviceById(deviceId)
@@ -26,8 +28,9 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
         return combine(
             wifiDevice,
             bluetoothDevice,
-            deviceSetting
-        ) { wifiDevice, bluetoothDevice, deviceSettings ->
+            deviceSetting,
+            bluetoothManager.pairedDeviceMacAddresses
+        ) { wifiDevice, bluetoothDevice, deviceSettings, pairedDeviceMacAddresses ->
             val deviceSettings = deviceSettings ?: throw DeviceNotFoundException(deviceId)
             when {
                 wifiDevice != null -> Device.WifiDevice(
@@ -40,7 +43,9 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
                     serverCertificateFingerprint = wifiDevice.serverCertificateFingerprint,
                     searchIpDynamically = deviceSettings.searchIpDynamically,
-                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(deviceSettings.unlockOnlyWhenScreenUnlocked)
+                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(
+                        deviceSettings.unlockOnlyWhenScreenUnlocked
+                    )
                 )
 
                 bluetoothDevice != null -> Device.BluetoothDevice(
@@ -48,7 +53,11 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     deviceName = bluetoothDevice.name,
                     macAddress = bluetoothDevice.macAddress,
                     awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
-                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(deviceSettings.unlockOnlyWhenScreenUnlocked)
+                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(
+                        deviceSettings.unlockOnlyWhenScreenUnlocked
+                    ),
+                    isPaired = pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) ?: true
+                    // If pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) == null its mean permission not grated
                 )
 
                 else -> throw DeviceNotFoundException(deviceId)
