@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.settingsscreen
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,8 +11,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -56,13 +59,34 @@ fun SettingsScreen(
             SettingsSection(title = stringResource(R.string.security)) {
 
                 SettingsSwitchItem(
-                    title = "Biometric Unlock",
-                    subtitle = "Use fingerprint or face to unlock",
+                    title = stringResource(R.string.biometric_unlock),
+                    subtitle = stringResource(R.string.use_fingerprint_or_face_to_unlock),
                     iconRes = R.drawable.fingerprint,
                     checked = screenState.isBiometricProtectionEnabled,
                     onCheckedChange = { isChecked ->
-                        // Отправляем event во ViewModel для обновления состояния
-                        // onEvent(SettingsScreenEvent.OnBiometricToggle(isChecked))
+                        onEvent(SettingsScreenEvent.OnBiometricProtectionStateChanged(isChecked))
+                    }
+                )
+
+                SettingsSwitchItem(
+                    title = stringResource(R.string.allow_password_unlock),
+                    subtitle = stringResource(R.string.can_be_used_as_an_alternative_to_biometric_authentication),
+                    iconRes = R.drawable.fingerprint,
+                    checked = screenState.isAdditionalPasswordAuthEnabled,
+                    enabled = screenState.isBiometricProtectionEnabled,
+                    onCheckedChange = { isChecked ->
+                        onEvent(SettingsScreenEvent.OnAdditionalPasswordAuthStateChanged(isChecked))
+                    }
+                )
+
+                SettingsSwitchItem(
+                    title = stringResource(R.string.unpair_devices_if_the_biometric_environment_has_changed),
+                    subtitle = stringResource(R.string.if_a_new_fingerprint_is_added_or_an_old_one_is_deleted_all_paired_devices_will_be_removed),
+                    iconRes = R.drawable.fingerprint,
+                    checked = screenState.isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
+                    enabled = screenState.isBiometricProtectionEnabled,
+                    onCheckedChange = { isChecked ->
+                        onEvent(SettingsScreenEvent.OnRemovePairedClientsIfBiometricEnvironmentStateChanged(isChecked))
                     }
                 )
             }
@@ -187,14 +211,18 @@ fun SettingsSwitchItem(
     @DrawableRes iconRes: Int,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    subtitle: String? = null
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+    enabled: Boolean = true // Новый флаг
 ) {
+    val alpha by animateFloatAsState(if (enabled) 1f else 0.38f)
+
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            // Используем toggleable вместо clickable для правильной семантики Switch
             .toggleable(
                 value = checked,
+                enabled = enabled,
                 onValueChange = onCheckedChange,
                 role = Role.Switch
             )
@@ -203,14 +231,18 @@ fun SettingsSwitchItem(
     ) {
         Icon(
             painter = painterResource(id = iconRes),
-            contentDescription = title,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
             modifier = Modifier.size(24.dp)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .alpha(alpha)
+        ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
@@ -227,8 +259,8 @@ fun SettingsSwitchItem(
 
         Switch(
             checked = checked,
-            // Передаем null, так как клик обрабатывается на уровне Row через toggleable
-            onCheckedChange = null
+            onCheckedChange = null,
+            enabled = enabled
         )
     }
 }

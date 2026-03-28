@@ -5,4 +5,6 @@ import kotlinx.coroutines.flow.Flow
 interface ProvideSettingsState {
     val appVersion: Flow<String>
     val isBiometricProtectionEnabled: Flow<Boolean>
+    val isAdditionalPasswordAuthEnabled: Flow<Boolean>
+    val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled: Flow<Boolean>
 }
