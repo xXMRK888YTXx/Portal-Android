@@ -74,15 +74,21 @@ internal class BiometricAuthManagerImpl(
             }
         )
 
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(options.title)
-            .setDescription(options.description)
-            .setSubtitle(options.subTitle)
-            .setNegativeButtonText(options.negativeButtonText)
-            .setAllowedAuthenticators(if (isStrongBiometricAvailable) BIOMETRIC_STRONG else BIOMETRIC_WEAK)
-            .build()
+        val promptInfo = BiometricPrompt.PromptInfo.Builder().apply {
+            setTitle(options.title)
+            setDescription(options.description)
+            setSubtitle(options.subTitle)
+            setAllowedAuthenticators(getAllowedAuthenticators(options))
+            if (!options.allowPasswordAuth)
+                setNegativeButtonText(options.negativeButtonText)
+        }.build()
 
         biometricPrompt.authenticate(promptInfo)
+    }
+
+    private fun getAllowedAuthenticators(options: BiometricAuthOptions) : Int {
+        if (options.allowPasswordAuth) return BIOMETRIC_WEAK or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        return if (isStrongBiometricAvailable) BIOMETRIC_STRONG else BIOMETRIC_WEAK
     }
 
     private val isStrongBiometricAvailable: Boolean

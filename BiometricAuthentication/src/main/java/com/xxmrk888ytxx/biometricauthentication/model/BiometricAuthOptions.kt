@@ -27,6 +27,7 @@ data class BiometricAuthOptions internal constructor(
     var subTitle: String? = null,
     var negativeButtonText: String = "Cancel",
     var description: String? = null,
+    var allowPasswordAuth: Boolean = false,
     var onSuccess: () -> Unit = {},
     var onError: () -> Unit = {},
     var onFailed: () -> Unit = {},
