@@ -142,4 +142,9 @@ class MainActivity @Inject constructor(
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        activityViewModel.onResume()
+    }
 }

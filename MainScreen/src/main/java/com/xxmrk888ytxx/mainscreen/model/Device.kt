@@ -4,7 +4,8 @@ data class Device(
     val deviceId: String,
     val host: String,
     val deviceName: String,
-    val deviceType: DeviceType
+    val deviceType: DeviceType,
+    val isHaveErrorsWithDevice: Boolean,
 )
 
 enum class DeviceType {

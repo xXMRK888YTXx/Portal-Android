@@ -2,10 +2,12 @@ package com.xxmrk888ytxx.portal.view.mainActivity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.runOnUiThread
+import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.view.model.Screen
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +21,8 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class ActivityViewModel @Inject constructor(
-    private val preferenceManager: PreferenceManager
+    private val preferenceManager: PreferenceManager,
+    private val bluetoothManager: BluetoothManager
 ) : ViewModel(), Navigator {
 
     private val prepareScreenScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -72,6 +75,10 @@ class ActivityViewModel @Inject constructor(
 
     override fun navigateUp() = runOnUiThread {
         backStack?.removeLastOrNull()
+    }
+
+    fun onResume() = viewModelScope.launch {
+        bluetoothManager.updatePairedDeviceMacAddresses()
     }
 
     internal inner class BottomBarNavigation {

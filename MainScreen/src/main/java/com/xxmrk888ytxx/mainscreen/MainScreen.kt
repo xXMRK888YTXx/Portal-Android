@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
@@ -250,12 +251,22 @@ private fun DeviceItem(
     onEvent: (MainScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val actions = remember(isUnlockButtonAvailable) {
+    val hasError = device.isHaveErrorsWithDevice
+
+    // Выделяем цвета отдельно для чистоты кода
+    val errorColor = MaterialTheme.colorScheme.error
+    val cardBorder = if (hasError) {
+        BorderStroke(1.dp, errorColor)
+    } else {
+        null
+    }
+
+    val actions = remember(isUnlockButtonAvailable, device.deviceId) {
         listOf(
             DeviceAction(
                 label = R.string.options,
                 icon = R.drawable.options,
-                enabled = isUnlockButtonAvailable,
+                enabled = true,
                 onClick = { onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId)) }
             ),
             DeviceAction(
@@ -269,12 +280,19 @@ private fun DeviceItem(
 
     Card(
         onClick = {
-            onEvent(MainScreenEvent.SendUnlockRequest(device))
+            if (!hasError) {
+                onEvent(MainScreenEvent.SendUnlockRequest(device))
+            } else {
+                onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId))
+            }
         },
         modifier = modifier.fillMaxWidth(),
-        enabled = isUnlockButtonAvailable, // Карточка не кликабельна, если разблокировка недоступна
+        enabled = isUnlockButtonAvailable,
+        shape = MaterialTheme.shapes.medium,
+        border = cardBorder, // Применяем обводку здесь
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8f)
         )
     ) {
         Column(
@@ -298,7 +316,7 @@ private fun DeviceItem(
                     ),
                     contentDescription = null,
                     modifier = Modifier.size(40.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = if (hasError) errorColor else MaterialTheme.colorScheme.primary
                 )
 
                 Column(
@@ -321,8 +339,7 @@ private fun DeviceItem(
                     )
                 }
 
-                // Добавляем подсказку в правой части карточки
-                if (isUnlockButtonAvailable) {
+                if (isUnlockButtonAvailable && !hasError) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -339,6 +356,30 @@ private fun DeviceItem(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
+                }
+            }
+
+            // Текст ошибки
+            if (hasError) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.error),
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = errorColor
+                    )
+                    Text(
+                        text = stringResource(R.string.an_error_occurred_go_to_options_for_details),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = errorColor
+                    )
                 }
             }
 
@@ -366,7 +407,6 @@ private fun DeviceItem(
                                 modifier = Modifier.size(16.dp)
                             )
                         },
-                        // Использование alpha для disabled состояния
                         modifier = Modifier.alpha(if (action.enabled) 1f else 0.5f)
                     )
                 }
