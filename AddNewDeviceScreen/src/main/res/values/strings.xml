@@ -2,9 +2,9 @@
 <resources>
     <string name="protocol_selection">Protocol Selection</string>
     <string name="wifi">WiFi</string>
-    <string name="wifi_description">TODO: WiFi protocol description. Wireless network for high-speed data transmission.</string>
+    <string name="wifi_description">Connects via local network. Ensure your PC and device are on the same Wi-Fi.</string>
+    <string name="bluetooth_description">Requires a Bluetooth module on your PC. Works only when devices are close to each other.</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="bluetooth_description">TODO: Bluetooth protocol description. Technology for short-range data transmission.</string>
     <string name="configuring_a_wi_fi_connection">Configuring a Wi-Fi connection</string>
     <string name="enter_the_details_specified_on_the_pc">Enter the details specified on the PC</string>
     <string name="ip_address">IP Address</string>

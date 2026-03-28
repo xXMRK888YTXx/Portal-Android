@@ -123,7 +123,7 @@ fun AddNewDeviceScreen(
                         text = when (pageType) {
                             Page.SELECT_TYPE -> stringResource(R.string.protocol_selection)
                             Page.CONFIGURATION_WIFI -> stringResource(R.string.configuring_a_wi_fi_connection)
-                            Page.CONFIGURATION_BLUETOOTH -> "Configuring a Bluetooth connection"
+                            Page.CONFIGURATION_BLUETOOTH -> stringResource(R.string.configuring_a_bluetooth_connection)
                         },
                         style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.basicMarquee(),
