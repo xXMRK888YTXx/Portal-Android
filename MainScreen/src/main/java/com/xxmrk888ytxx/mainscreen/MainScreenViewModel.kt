@@ -6,6 +6,7 @@ import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.mainscreen.contract.CreateShortcutContract
 import com.xxmrk888ytxx.mainscreen.contract.PermissionContract
+import com.xxmrk888ytxx.mainscreen.contract.ManageDevicesRemovedBannerStateContract
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
 import com.xxmrk888ytxx.mainscreen.exception.LauncherNotSupportShortcutException
@@ -28,7 +29,8 @@ class MainScreenViewModel @Inject constructor(
     private val provideSavedDevices: ProvideSavedDevices,
     private val unlockRequestContract: SendUnlockRequestContract,
     private val createShortcutContract: CreateShortcutContract,
-    private val permissionContract: PermissionContract
+    private val permissionContract: PermissionContract,
+    private val manageDevicesRemovedBannerStateContract: ManageDevicesRemovedBannerStateContract
 ) : SideEffectPortalViewModel<ScreenState, MainScreenEvent>(ScreenState()) {
 
     private val isLoading = MutableStateFlow(false)
@@ -44,9 +46,16 @@ class MainScreenViewModel @Inject constructor(
             provideSavedDevices.devices,
             isLoading,
             createShortcutDialogState,
-            permissionBannerItemListState
-        ) { deviceList, isLoading, createShortcutDialogState, permissionBannerItemList ->
-            ScreenState(deviceList, isLoading, createShortcutDialogState, permissionBannerItemList)
+            permissionBannerItemListState,
+            manageDevicesRemovedBannerStateContract.devicesRemovedBannerState
+        ) { deviceList, isLoading, createShortcutDialogState, permissionBannerItemList, provideDevicesRemovedBannerStateContract ->
+            ScreenState(
+                devices = deviceList,
+                isLoading = isLoading,
+                createShortcutDialogState = createShortcutDialogState,
+                permissionBannerItemList = permissionBannerItemList,
+                devicesRemovedBannerState = provideDevicesRemovedBannerStateContract
+            )
         }.stateWhileSubscribed()
 
 
@@ -77,7 +86,12 @@ class MainScreenViewModel @Inject constructor(
             MainScreenEvent.RequestNotificationPermission -> sideEffect.tryEmit(MainScreenSideEffect.RequestNotificationPermission)
             is MainScreenEvent.PermissionGranted -> checkPermission()
             MainScreenEvent.ActivityInOnResumeState -> checkPermission()
+            MainScreenEvent.DismissDevicesRemovedBanner -> dismissDismissDevicesRemovedBanner()
         }
+    }
+
+    private fun dismissDismissDevicesRemovedBanner() = viewModelScope.launch {
+        manageDevicesRemovedBannerStateContract.resetState()
     }
 
     private fun requestFullScreenIntentPermission() = viewModelScope.launch {
@@ -101,10 +115,10 @@ class MainScreenViewModel @Inject constructor(
                     fastDebugLog(error)
                     val errorMessage = when (error) {
                         is LauncherNotSupportShortcutException -> {
-                            uiText("Your home screen launcher doesn't support shortcuts.")
+                            uiText(R.string.your_home_screen_launcher_doesn_t_support_shortcuts)
                         }
 
-                        else -> uiText("Failed to create shortcut. Please try again.")
+                        else -> uiText(R.string.failed_to_create_shortcut_please_try_again)
                     }
                     sendToastSideEffect(errorMessage)
                 }

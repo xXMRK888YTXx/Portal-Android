@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -39,6 +40,7 @@ import com.xxmrk888ytxx.mainscreen.model.CreateShortcutDialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.DeviceAction
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
+import com.xxmrk888ytxx.mainscreen.model.DevicesRemovedBannerState
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
 import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
 import com.xxmrk888ytxx.mainscreen.model.Permission
@@ -135,6 +137,14 @@ fun MainScreen(
                 )
             }
 
+            AnimatedVisibility(
+                visible = screenState.devicesRemovedBannerState !is DevicesRemovedBannerState.None
+            ) {
+                DevicesRemovedBanner(screenState.devicesRemovedBannerState) {
+                    onEvent(MainScreenEvent.DismissDevicesRemovedBanner)
+                }
+            }
+
             Box(Modifier.weight(1f)) {
                 AnimatedContent(
                     targetState = screenState.devices,
@@ -173,6 +183,74 @@ fun MainScreen(
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+}
+
+@Composable
+fun DevicesRemovedBanner(
+    devicesRemovedBannerState: DevicesRemovedBannerState,
+    modifier: Modifier = Modifier,
+    onOkClick: () -> Unit
+) {
+    if (devicesRemovedBannerState is DevicesRemovedBannerState.None) return
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        shape = RoundedCornerShape(16.dp),
+        // Добавляем обводку цветом ошибки
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.priority),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(40.dp)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "All Devices Removed",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = when(devicesRemovedBannerState) {
+                    DevicesRemovedBannerState.None -> ""
+                    DevicesRemovedBannerState.RemovedByChangesInBiometricEnvironment -> stringResource(
+                        R.string.changes_have_been_detected_in_the_biometric_data_all_paired_devices_have_been_removed
+                    )
+                    DevicesRemovedBannerState.RemovedBySecurityChanges -> stringResource(R.string.we_have_changed_the_security_settings_all_devices_have_been_removed)
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                // Текст описания можно оставить чуть мягче (onSurface) или тоже в тон ошибки
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Кнопку тоже можно сделать Outlined или оставить залитой для акцента
+            Button(
+                onClick = onOkClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = stringResource(R.string.ok))
+            }
+        }
     }
 }
 

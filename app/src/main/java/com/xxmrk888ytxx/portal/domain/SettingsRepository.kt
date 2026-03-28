@@ -8,5 +8,11 @@ interface SettingsRepository {
     suspend fun updateBiometricAuthEnabled(isEnabled: Boolean)
     suspend fun updateAdditionalPasswordAuthEnabled(isEnabled: Boolean)
     suspend fun updateRemovePairedClientsIfBiometricEnvironmentChanged(isEnabled: Boolean)
-    suspend fun updatePairedClientsWasRemovedBySecurityChanges(newCode: Int)
+    suspend fun updatePairedClientsWasRemoveBySecurityChangesCode(newCode: Int)
+
+    companion object {
+        const val DEFAULT_VALUE = 0
+        const val REMOVED_BY_SECURITY_SETTINGS_CHANGES = 1
+        const val REMOVED_BY_CHANGES_IN_BIOMETRIC_ENVIRONMENT = 2
+    }
 }

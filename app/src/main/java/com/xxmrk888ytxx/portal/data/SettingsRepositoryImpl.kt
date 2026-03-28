@@ -3,11 +3,16 @@ package com.xxmrk888ytxx.portal.data
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
+import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.DEFAULT_VALUE
+import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.REMOVED_BY_CHANGES_IN_BIOMETRIC_ENVIRONMENT
+import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.REMOVED_BY_SECURITY_SETTINGS_CHANGES
 import com.xxmrk888ytxx.portal.domain.model.PortalSettings
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -24,11 +29,11 @@ class SettingsRepositoryImpl @Inject constructor(
         intPreferencesKey("pairedClientsWasRemovedBySecurityChanges")
 
 
-    override val portalSettings: Flow<PortalSettings> = combine(
+    override val portalSettings: Flow<PortalSettings> = combine<Any,PortalSettings>(
         preferencesStorage.getProperty(biometricAuthEnabled, false),
         preferencesStorage.getProperty(additionalPasswordAuthEnabled, false),
         preferencesStorage.getProperty(removePairedClientsIfBiometricEnvironmentChanged, false),
-        preferencesStorage.getProperty(pairedClientsWasRemovedBySecurityChanges, 0)
+        preferencesStorage.getProperty(pairedClientsWasRemovedBySecurityChanges, DEFAULT_VALUE)
     ) { flowArray ->
         val biometricAuthEnabled = flowArray[0] as Boolean
         val additionalPasswordAuthEnabled = flowArray[1] as Boolean
@@ -64,7 +69,7 @@ class SettingsRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun updatePairedClientsWasRemovedBySecurityChanges(newCode: Int) =
+    override suspend fun updatePairedClientsWasRemoveBySecurityChangesCode(newCode: Int) =
         withContext(Dispatchers.IO) {
             preferencesStorage.writeProperty(pairedClientsWasRemovedBySecurityChanges, newCode)
         }

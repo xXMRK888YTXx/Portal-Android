@@ -15,4 +15,5 @@ sealed interface MainScreenEvent : UiEvent {
     data class PermissionGranted(val permission: Permission) : MainScreenEvent
     data class OnIsRequiredBiometricUnlockStateChanged(val isRequiredBiometricUnlock: Boolean) : MainScreenEvent
     data object ActivityInOnResumeState : MainScreenEvent
+    data object DismissDevicesRemovedBanner : MainScreenEvent
 }
