@@ -9,6 +9,7 @@ interface SettingsRepository {
     suspend fun updateAdditionalPasswordAuthEnabled(isEnabled: Boolean)
     suspend fun updateRemovePairedClientsIfBiometricEnvironmentChanged(isEnabled: Boolean)
     suspend fun updatePairedClientsWasRemoveBySecurityChangesCode(newCode: Int)
+    suspend fun updateUnsafeUnlockTypesDisabled(newState: Boolean)
 
     companion object {
         const val DEFAULT_VALUE = 0

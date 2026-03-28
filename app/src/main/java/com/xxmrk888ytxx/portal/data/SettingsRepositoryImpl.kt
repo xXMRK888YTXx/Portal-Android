@@ -30,22 +30,27 @@ class SettingsRepositoryImpl @Inject constructor(
     private val pairedClientsWasRemovedBySecurityChanges =
         intPreferencesKey("pairedClientsWasRemovedBySecurityChanges")
 
+    private val isUnsafeUnlockTypesDisabledKey = booleanPreferencesKey("isUnsafeUnlockTypesDisabledKey")
+
 
     override val portalSettings: Flow<PortalSettings> = combine<Any,PortalSettings>(
         preferencesStorage.getProperty(biometricAuthEnabled, false),
         preferencesStorage.getProperty(additionalPasswordAuthEnabled, false),
         preferencesStorage.getProperty(removePairedClientsIfBiometricEnvironmentChanged, false),
-        preferencesStorage.getProperty(pairedClientsWasRemovedBySecurityChanges, DEFAULT_VALUE)
+        preferencesStorage.getProperty(pairedClientsWasRemovedBySecurityChanges, DEFAULT_VALUE),
+        preferencesStorage.getProperty(isUnsafeUnlockTypesDisabledKey,false)
     ) { flowArray ->
         val biometricAuthEnabled = flowArray[0] as Boolean
         val additionalPasswordAuthEnabled = flowArray[1] as Boolean
         val removePairedClientsIfBiometricEnvironmentChanged = flowArray[2] as Boolean
         val pairedClientsWasRemovedBySecurityChanges = flowArray[3] as Int
+        val isUnsafeUnlockTypesDisabled = flowArray[4] as Boolean
         PortalSettings(
             isBiometricAuthEnabled = biometricAuthEnabled,
             isAdditionalPasswordAuthEnabled = additionalPasswordAuthEnabled,
             isRemovePairedClientsIfBiometricEnvironmentChangedEnabled = removePairedClientsIfBiometricEnvironmentChanged,
-            pairedClientsWasRemoveBySecurityChangesCode = pairedClientsWasRemovedBySecurityChanges
+            pairedClientsWasRemoveBySecurityChangesCode = pairedClientsWasRemovedBySecurityChanges,
+            isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled
         )
     }
 
@@ -82,4 +87,15 @@ class SettingsRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             preferencesStorage.writeProperty(pairedClientsWasRemovedBySecurityChanges, newCode)
         }
+
+    override suspend fun updateUnsafeUnlockTypesDisabled(newState: Boolean) = withContext(
+        Dispatchers.IO) {
+        preferencesStorage.writeProperty(isUnsafeUnlockTypesDisabledKey, newState)
+        if (!newState) {
+            deviceRepository.removeAllDevices()
+            updatePairedClientsWasRemoveBySecurityChangesCode(
+                REMOVED_BY_SECURITY_SETTINGS_CHANGES
+            )
+        }
+    }
 }

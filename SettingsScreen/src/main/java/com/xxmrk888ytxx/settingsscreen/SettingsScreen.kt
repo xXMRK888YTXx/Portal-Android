@@ -82,6 +82,16 @@ fun SettingsScreen(
                 )
 
                 SettingsSwitchItem(
+                    title = stringResource(R.string.prohibit_insecure_unlock_methods),
+                    subtitle = stringResource(R.string.the_automatically_unlock_method_will_be_disabled_for_devices_where_this_unlock_method_is_currently_set_it_will_be_changed_to_notification),
+                    iconRes = R.drawable.insecure,
+                    checked = screenState.isUnsafeUnlockTypesDisabled,
+                    onCheckedChange = { isChecked ->
+                        onEvent(SettingsScreenEvent.OnChangeUnsafeUnlockTypesState(isChecked))
+                    }
+                )
+
+                SettingsSwitchItem(
                     title = stringResource(R.string.unpair_devices_if_the_biometric_environment_has_changed),
                     subtitle = stringResource(R.string.if_a_new_fingerprint_is_added_or_an_old_one_is_deleted_all_paired_devices_will_be_removed),
                     iconRes = R.drawable.encrypted,
@@ -263,7 +273,8 @@ fun SettingsSwitchItem(
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 8.dp)
                 )
             }
         }

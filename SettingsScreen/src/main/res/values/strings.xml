@@ -25,4 +25,6 @@
     <string name="for_security_reasons_disabling_this_setting_will_result_in_the_removal_of_all_paired_devices_do_you_still_want_to_disable_it">For security reasons, disabling this setting will result in the removal of all paired devices! Do you still want to disable it?</string>
     <string name="if_you_disable_this_setting_in_future_all_your_paired_devices_will_be_deleted_do_you_still_want_to_enable_it_note_enabling_this_setting_will_not_affect_your_paired_devices">If you disable this setting in future, all your paired devices will be deleted! Do you still want to enable it? Note: Enabling this setting will not affect your paired devices.</string>
     <string name="enable">Enable</string>
+    <string name="prohibit_insecure_unlock_methods">Prohibit insecure unlock methods.</string>
+    <string name="the_automatically_unlock_method_will_be_disabled_for_devices_where_this_unlock_method_is_currently_set_it_will_be_changed_to_notification">The \"Automatically\" unlock method will be disabled. For devices where this unlock method is currently set, it will be changed to \"Notification.\"</string>
 </resources>

@@ -30,12 +30,14 @@ class SettingsViewModel @Inject constructor(
         provideSettingsState.isAdditionalPasswordAuthEnabled,
         provideSettingsState.isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
         bottomSheetState,
+        provideSettingsState.isUnsafeUnlockTypesDisabled
     ) { flowArray ->
         val isBiometricProtectionEnabled = flowArray[0] as Boolean
         val appVersion = flowArray[1] as String
         val isAdditionalPasswordAuthEnabled = flowArray[2] as Boolean
         val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled = flowArray[3] as Boolean
         val bottomSheetState = flowArray[4] as BottomSheetState
+        val isUnsafeUnlockTypesDisabled = flowArray[5] as Boolean
 
         ScreenState(
             bottomSheetState = bottomSheetState,
@@ -43,6 +45,7 @@ class SettingsViewModel @Inject constructor(
             appVersion = appVersion,
             isAdditionalPasswordAuthEnabled = isAdditionalPasswordAuthEnabled,
             isRemovePairedClientsIfBiometricEnvironmentChangedEnabled = isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
+            isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled
         )
     }.stateWhileSubscribed()
 
@@ -66,7 +69,14 @@ class SettingsViewModel @Inject constructor(
 
             is SettingsScreenEvent.ConfirmSecurityChanges -> event.actionAfterConfirm()
             SettingsScreenEvent.HideBottomSheet -> bottomSheetState.value = BottomSheetState.None
+            is SettingsScreenEvent.OnChangeUnsafeUnlockTypesState -> bottomSheetState.value = BottomSheetState.ConfirmSecurityChangesDialog(isForEnablingSetting = event.newState) {
+                changeUnsafeUnlockTypesState(event.newState)
+            }
         }
+    }
+
+    private fun changeUnsafeUnlockTypesState(newState: Boolean) = viewModelScope.launch {
+        changeSettingsContract.updateUnsafeUnlockTypesState(newState)
     }
 
     private fun changeBiometricAuthState(isEnabled: Boolean) = viewModelScope.launch {

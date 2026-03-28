@@ -20,4 +20,6 @@ class ProvideSettingsStateImpl @Inject constructor(
         settingsRepository.portalSettings.map { it.isAdditionalPasswordAuthEnabled }
     override val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled: Flow<Boolean> =
         settingsRepository.portalSettings.map { it.isRemovePairedClientsIfBiometricEnvironmentChangedEnabled }
+    override val isUnsafeUnlockTypesDisabled: Flow<Boolean> =
+        settingsRepository.portalSettings.map { it.isUnsafeUnlockTypesDisabled }
 }

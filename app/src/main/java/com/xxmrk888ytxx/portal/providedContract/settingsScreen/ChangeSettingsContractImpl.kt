@@ -18,4 +18,8 @@ class ChangeSettingsContractImpl @Inject constructor(
     override suspend fun updateRemovePairedClientsIfBiometricEnvironmentChangedState(isEnabled: Boolean) {
         settingsRepository.updateRemovePairedClientsIfBiometricEnvironmentChanged(isEnabled)
     }
+
+    override suspend fun updateUnsafeUnlockTypesState(newState: Boolean) {
+        settingsRepository.updateUnsafeUnlockTypesDisabled(newState)
+    }
 }
