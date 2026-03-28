@@ -19,9 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
+import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
 import com.xxmrk888ytxx.settingsscreen.model.ScreenState
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenSideEffect
@@ -138,6 +140,15 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
         }
+    }
+
+    when(screenState.bottomSheetState) {
+        is BottomSheetState.ConfirmSecurityChangesDialog -> ConfirmSecurityChangesDialog(
+            isForEnablingSetting = screenState.bottomSheetState.isForEnablingSetting,
+            onDismiss = { onEvent(SettingsScreenEvent.HideBottomSheet) },
+            onConfirm = { onEvent(SettingsScreenEvent.ConfirmSecurityChanges(screenState.bottomSheetState.actionAfterConfirm)) }
+        )
+        BottomSheetState.None -> {}
     }
 }
 
@@ -262,5 +273,79 @@ fun SettingsSwitchItem(
             onCheckedChange = null,
             enabled = enabled
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ConfirmSecurityChangesDialog(
+    isForEnablingSetting: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.security),
+                contentDescription = null,
+                tint = if (isForEnablingSetting) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(40.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.attention),
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = if (isForEnablingSetting)
+                    stringResource(R.string.if_you_disable_this_setting_in_future_all_your_paired_devices_will_be_deleted_do_you_still_want_to_enable_it_note_enabling_this_setting_will_not_affect_your_paired_devices)
+                    else stringResource(R.string.for_security_reasons_disabling_this_setting_will_result_in_the_removal_of_all_paired_devices_do_you_still_want_to_disable_it),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    onConfirm()
+                    onDismiss()
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isForEnablingSetting) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                    contentColor = if (isForEnablingSetting) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onError
+                )
+            ) {
+                Text(if (isForEnablingSetting) stringResource(R.string.enable) else stringResource(R.string.disable))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
     }
 }
