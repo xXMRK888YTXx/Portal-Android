@@ -44,6 +44,10 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun updateBiometricAuthEnabled(isEnabled: Boolean) =
         withContext(Dispatchers.IO) {
             preferencesStorage.writeProperty(biometricAuthEnabled, isEnabled)
+            if (!isEnabled) {
+                updateAdditionalPasswordAuthEnabled(false)
+                updateRemovePairedClientsIfBiometricEnvironmentChanged(false)
+            }
         }
 
     override suspend fun updateAdditionalPasswordAuthEnabled(isEnabled: Boolean) =
