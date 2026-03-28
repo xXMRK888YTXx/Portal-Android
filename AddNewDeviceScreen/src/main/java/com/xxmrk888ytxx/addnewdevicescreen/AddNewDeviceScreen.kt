@@ -9,6 +9,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.pager.HorizontalPager
@@ -132,7 +133,7 @@ fun AddNewDeviceScreen(
                     )
                 },
                 onNavigateBack = { onEvent(AddNewDeviceScreenUiEvent.PreviousPage(pageType)) },
-                actions = { },
+                actions = { }
             )
         },
         bottomBar = {
@@ -168,6 +169,22 @@ fun AddNewDeviceScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
+                    )
+                }
+            }
+        },
+        floatingActionButton = {
+
+            AnimatedVisibility(
+                pageType == Page.CONFIGURATION_WIFI || pageType == Page.CONFIGURATION_BLUETOOTH
+            ) {
+                FloatingActionButton(
+                    onClick = { onEvent(AddNewDeviceScreenUiEvent.OnScanQrCodeClicked) }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.qr_code_scanner),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
@@ -310,31 +327,6 @@ fun BluetoothConfigurationPage(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                onEvent(AddNewDeviceScreenUiEvent.OnScanQrCodeClicked)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.qr_code_scanner),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = stringResource(R.string.scan_qr_code),
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
 
         when (val pairedState = state.pairedDevices) {
             is BluetoothState.Disabled -> {
@@ -669,32 +661,6 @@ fun WifiConfigurationPage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEven
                         .fillMaxWidth()
                         .padding(16.dp)
                         .focusRequester(codeFocusRequester)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = {
-                    onEvent(AddNewDeviceScreenUiEvent.OnScanQrCodeClicked)
-                },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.qr_code_scanner),
-                    contentDescription = "Scan QR Code",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = stringResource(R.string.scan_qr_code),
-                    style = MaterialTheme.typography.titleMedium
                 )
             }
         }
