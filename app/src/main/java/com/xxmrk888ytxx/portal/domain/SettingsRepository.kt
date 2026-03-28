@@ -8,5 +8,5 @@ interface SettingsRepository {
     suspend fun updateBiometricAuthEnabled(isEnabled: Boolean)
     suspend fun updateAdditionalPasswordAuthEnabled(isEnabled: Boolean)
     suspend fun updateRemovePairedClientsIfBiometricEnvironmentChanged(isEnabled: Boolean)
-    suspend fun updatePairedClientsWasRemovedBySecurityChanges(isWasRemoved: Boolean)
+    suspend fun updatePairedClientsWasRemovedBySecurityChanges(newCode: Int)
 }

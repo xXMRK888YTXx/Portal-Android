@@ -4,5 +4,5 @@ data class PortalSettings(
     val isBiometricAuthEnabled: Boolean,
     val isAdditionalPasswordAuthEnabled: Boolean,
     val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled: Boolean,
-    val isPairedClientsWasRemoveBySecurityChanges: Boolean
+    val pairedClientsWasRemoveBySecurityChangesCode: Int
 )
