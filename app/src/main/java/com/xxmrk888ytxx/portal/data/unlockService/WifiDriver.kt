@@ -118,56 +118,6 @@ class WifiDriver @Inject constructor(
             sendJob.cancel()
             readJob.cancel()
         }
-        // TODO Remove
-//        client.webSocket(urlString = urlString) {
-//            fastDebugLog("Connected to websocket server")
-//
-//            //Send coroutine
-//            launch {
-//                for (messageForSend in messagesForSendChannel) {
-//                    try {
-//                        val remoteMessage = when (messageForSend) {
-//                            is UnlockMessage.ApproveUnlock -> ApproveUnlockWifi(
-//                                clientId = clientId,
-//                                requestId = messageForSend.requestId
-//                            )
-//
-//                            is UnlockMessage.Canceled -> RejectUnlockWifi(
-//                                clientId = clientId,
-//                                requestId = messageForSend.requestId
-//                            )
-//                        }
-//                        fastDebugLog("Try to send message: $messageForSend")
-//                        sendSerialized(remoteMessage)
-//                        fastDebugLog("Sent message: $messageForSend")
-//                    } catch (e: CancellationException) {
-//                        throw e
-//                    } catch (e: Exception) {
-//                        fastDebugLog("Error while sending message: $message. Exception ${e.message}")
-//                        break
-//                    }
-//                }
-//            }
-//
-//            //Read loop
-//            while (currentCoroutineContext().isActive) {
-//                fastDebugLog("Waiting messages")
-////                For debug
-////                val frame = incoming.receive().data.toString(UTF_8)
-////                fastDebugLog("Received message: $frame")
-//                val response = receiveDeserialized<WifiRemoteUnlockRequest>()
-//                val localRequest = when (response.type) {
-//                    UNLOCK_REQUEST_TYPE -> UnlockRequest.Auth(response.requestId)
-//                    else -> null
-//                }
-//                fastDebugLog("Received message: $response")
-//                if (localRequest != null) {
-//                    receivedRequestChannel.send(localRequest)
-//                } else {
-//                    fastDebugLog("Unknown message type: ${response.type}")
-//                }
-//            }
-//        }
     }
 
     private val String.wifiRemoteUnlockRequest: WifiRemoteUnlockRequest?
