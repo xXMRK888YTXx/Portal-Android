@@ -16,4 +16,5 @@ sealed interface MainScreenEvent : UiEvent {
     data class OnIsRequiredBiometricUnlockStateChanged(val isRequiredBiometricUnlock: Boolean) : MainScreenEvent
     data object ActivityInOnResumeState : MainScreenEvent
     data object DismissDevicesRemovedBanner : MainScreenEvent
+    data class WakeUpOnLANClicked(val device: Device) : MainScreenEvent
 }

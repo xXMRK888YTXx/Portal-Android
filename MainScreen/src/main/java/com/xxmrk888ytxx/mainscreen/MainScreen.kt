@@ -198,7 +198,6 @@ fun DevicesRemovedBanner(
             .fillMaxWidth()
             .padding(16.dp),
         shape = RoundedCornerShape(16.dp),
-        // Добавляем обводку цветом ошибки
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
     ) {
         Column(
@@ -232,14 +231,12 @@ fun DevicesRemovedBanner(
                     DevicesRemovedBannerState.RemovedBySecurityChanges -> stringResource(R.string.we_have_changed_the_security_settings_all_devices_have_been_removed)
                 },
                 style = MaterialTheme.typography.bodyMedium,
-                // Текст описания можно оставить чуть мягче (onSurface) или тоже в тон ошибки
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Кнопку тоже можно сделать Outlined или оставить залитой для акцента
             Button(
                 onClick = onOkClick,
                 colors = ButtonDefaults.buttonColors(
@@ -342,15 +339,21 @@ private fun DeviceItem(
     val actions = remember(isUnlockButtonAvailable, device.deviceId) {
         listOf(
             DeviceAction(
+                label = R.string.send_wake_up_on_lan_request,
+                icon = R.drawable.lan,
+                id = DeviceAction.WAKE_UP_ON_LAN_ID,
+                onClick = { onEvent(MainScreenEvent.WakeUpOnLANClicked(it)) }
+            ),
+            DeviceAction(
                 label = R.string.options,
                 icon = R.drawable.options,
-                enabled = true,
+                id = DeviceAction.OPTION_ID,
                 onClick = { onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId)) }
             ),
             DeviceAction(
                 label = R.string.create_shortcut,
                 icon = R.drawable.shortcut,
-                enabled = true,
+                id = DeviceAction.SHORTCUT_ID,
                 onClick = { onEvent(MainScreenEvent.ShowCreateShortcutModelDialog(device)) }
             ),
         )
@@ -437,7 +440,6 @@ private fun DeviceItem(
                 }
             }
 
-            // Текст ошибки
             if (hasError) {
                 Row(
                     modifier = Modifier
@@ -463,15 +465,17 @@ private fun DeviceItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
+            FlowRow(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(actions) { action ->
+                val actions = remember(device) {
+                    if (device.deviceType != DeviceType.WIFI) actions.filter { it.id != DeviceAction.WAKE_UP_ON_LAN_ID } else actions
+                }
+
+                actions.forEach { action ->
                     SuggestionChip(
-                        onClick = action.onClick,
-                        enabled = action.enabled,
+                        onClick = { action.onClick(device) },
                         label = {
                             Text(
                                 text = stringResource(action.label),
@@ -485,7 +489,6 @@ private fun DeviceItem(
                                 modifier = Modifier.size(16.dp)
                             )
                         },
-                        modifier = Modifier.alpha(if (action.enabled) 1f else 0.5f)
                     )
                 }
             }

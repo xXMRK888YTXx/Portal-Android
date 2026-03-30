@@ -87,6 +87,7 @@ class MainScreenViewModel @Inject constructor(
             is MainScreenEvent.PermissionGranted -> checkPermission()
             MainScreenEvent.ActivityInOnResumeState -> checkPermission()
             MainScreenEvent.DismissDevicesRemovedBanner -> dismissDismissDevicesRemovedBanner()
+            is MainScreenEvent.WakeUpOnLANClicked -> TODO()
         }
     }
 
