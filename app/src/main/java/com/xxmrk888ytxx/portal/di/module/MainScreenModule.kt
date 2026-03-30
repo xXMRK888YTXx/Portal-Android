@@ -4,11 +4,13 @@ import com.xxmrk888ytxx.mainscreen.contract.CreateShortcutContract
 import com.xxmrk888ytxx.mainscreen.contract.PermissionContract
 import com.xxmrk888ytxx.mainscreen.contract.ManageDevicesRemovedBannerStateContract
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
+import com.xxmrk888ytxx.mainscreen.contract.SaveWOLMacAddress
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.CreateShortcutContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.PermissionContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.ManageDevicesRemovedBannerStateContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.ProvideSavedDevicesImpl
+import com.xxmrk888ytxx.portal.providedContract.mainScreen.SaveWOLMacAddressImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SendUnlockRequestContractImpl
 import dagger.Binds
 import dagger.Module
@@ -39,4 +41,9 @@ interface MainScreenModule {
     fun bindsProvideDevicesRemovedBannerStateContract(
         provideDevicesRemovedBannerStateContractImpl: ManageDevicesRemovedBannerStateContractImpl
     ) : ManageDevicesRemovedBannerStateContract
+
+    @Binds
+    fun bindsSaveWOLMacAddress(
+        saveWOLMacAddressImpl: SaveWOLMacAddressImpl
+    ) : SaveWOLMacAddress
 }

@@ -29,7 +29,8 @@ class ProvideSavedDevicesImpl @Inject constructor(
                 host = device.host,
                 deviceName = device.deviceName,
                 deviceType = DeviceType.WIFI,
-                isHaveErrorsWithDevice = false
+                isHaveErrorsWithDevice = false,
+                isWakeUpOnLanAvailable = false
             )
         }
 
@@ -41,7 +42,8 @@ class ProvideSavedDevicesImpl @Inject constructor(
                 host = device.macAddress,
                 deviceName = device.name,
                 deviceType = DeviceType.BLUETOOTH,
-                isHaveErrorsWithDevice = !isPaired
+                isHaveErrorsWithDevice = !isPaired,
+                isWakeUpOnLanAvailable = false
             )
         }
 

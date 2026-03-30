@@ -7,7 +7,7 @@ sealed interface MainScreenEvent : UiEvent {
     data class SendUnlockRequest(val device: Device) : MainScreenEvent
     data class ToDeviceDetailsScreen(val deviceId: String) : MainScreenEvent
     data class ShowCreateShortcutModelDialog(val device: Device) : MainScreenEvent
-    data object DismissCreateShortcutModelDialog : MainScreenEvent
+    data object DismissDialog : MainScreenEvent
     data object CreateShortcut : MainScreenEvent
     data object RequestNearbyDevicesPermission : MainScreenEvent
     data object RequestNotificationPermission : MainScreenEvent
@@ -17,4 +17,6 @@ sealed interface MainScreenEvent : UiEvent {
     data object ActivityInOnResumeState : MainScreenEvent
     data object DismissDevicesRemovedBanner : MainScreenEvent
     data class WakeUpOnLANClicked(val device: Device) : MainScreenEvent
+    data class OnMacAddressChanged(val newText: String) : MainScreenEvent
+    data object SaveWOLMacAddress : MainScreenEvent
 }

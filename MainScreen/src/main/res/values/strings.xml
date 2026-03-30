@@ -28,4 +28,8 @@
     <string name="we_have_changed_the_security_settings_all_devices_have_been_removed">We have changed the security settings. All paired devices have been removed.</string>
     <string name="changes_have_been_detected_in_the_biometric_data_all_paired_devices_have_been_removed">Changes in biometrics were detected. All paired devices have been removed.</string>
     <string name="send_wake_up_on_lan_request">Send Wake up on LAN Request</string>
+    <string name="confirm">Confirm</string>
+    <string name="mac_address">Mac Address</string>
+    <string name="enter_mac_address">Enter Mac Address</string>
+    <string name="mac_address_saved">Mac address saved</string>
 </resources>

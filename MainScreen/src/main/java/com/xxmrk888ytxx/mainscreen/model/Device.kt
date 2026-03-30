@@ -6,6 +6,7 @@ data class Device(
     val deviceName: String,
     val deviceType: DeviceType,
     val isHaveErrorsWithDevice: Boolean,
+    val isWakeUpOnLanAvailable: Boolean
 )
 
 enum class DeviceType {

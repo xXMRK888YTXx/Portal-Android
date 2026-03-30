@@ -39,3 +39,28 @@ inline fun saveCall(isPrintToDebug: Boolean = true, block: () -> Unit) {
             fastDebugLog(e)
     }
 }
+
+fun String.isValidMacInput(): Boolean {
+    // Разрешаем только 0-9, a-f, A-F и двоеточие
+    val allowedChars = "0123456789abcdefABCDEF"
+    if (this.any { it !in allowedChars }) return false
+
+    return length <= 12
+}
+
+fun String.formatToMacAddress(): String? {
+    // Убираем всё лишнее, оставляя только HEX
+    val cleaned = this.filter { it.isDigit() || it.lowercaseChar() in 'a'..'f' }
+
+    if (cleaned.length != 12) return null
+
+    val sb = StringBuilder()
+    for (i in cleaned.indices) {
+        if (i > 0 && i % 2 == 0) {
+            sb.append(":")
+        }
+        sb.append(cleaned[i].uppercaseChar())
+    }
+
+    return sb.toString()
+}

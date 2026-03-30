@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -23,7 +22,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,13 +33,15 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
+import com.xxmrk888ytxx.corecompose.MacAddressTransformation
 import com.xxmrk888ytxx.corecompose.uiText.asString
-import com.xxmrk888ytxx.mainscreen.model.CreateShortcutDialogState
+import com.xxmrk888ytxx.mainscreen.model.DialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.DeviceAction
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.mainscreen.model.DevicesRemovedBannerState
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
+import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent.*
 import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
 import com.xxmrk888ytxx.mainscreen.model.Permission
 import com.xxmrk888ytxx.mainscreen.model.PermissionBannerItem
@@ -58,7 +58,7 @@ fun MainScreen(
 
     val grantedPermissionHandler: (Permission) -> Unit = remember {
         {
-            onEvent(MainScreenEvent.PermissionGranted(it))
+            onEvent(PermissionGranted(it))
         }
     }
 
@@ -92,7 +92,7 @@ fun MainScreen(
         Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onEvent(MainScreenEvent.AddNewDevice) }
+                onClick = { onEvent(AddNewDevice) }
             ) {
                 Icon(painter = painterResource(R.drawable.outline_add), contentDescription = null)
             }
@@ -141,7 +141,7 @@ fun MainScreen(
                 visible = screenState.devicesRemovedBannerState !is DevicesRemovedBannerState.None
             ) {
                 DevicesRemovedBanner(screenState.devicesRemovedBannerState) {
-                    onEvent(MainScreenEvent.DismissDevicesRemovedBanner)
+                    onEvent(DismissDevicesRemovedBanner)
                 }
             }
 
@@ -158,18 +158,26 @@ fun MainScreen(
             }
         }
 
-        if (screenState.createShortcutDialogState is CreateShortcutDialogState.Showed) {
-            CreateShortcutBottomSheet(
+        when(screenState.dialogState) {
+            DialogState.Hidden -> {}
+            is DialogState.ShortcutDialog -> CreateShortcutBottomSheet(
                 onDismiss = {
-                    onEvent(MainScreenEvent.DismissCreateShortcutModelDialog)
+                    onEvent(DismissDialog)
                 },
                 onCreateClick = {
-                    onEvent(MainScreenEvent.CreateShortcut)
+                    onEvent(CreateShortcut)
                 },
                 onIsRequiredBiometricUnlockStateChanged = {
-                    onEvent(MainScreenEvent.OnIsRequiredBiometricUnlockStateChanged(it))
+                    onEvent(OnIsRequiredBiometricUnlockStateChanged(it))
                 },
-                createShortcutDialogState = screenState.createShortcutDialogState,
+                dialogState = screenState.dialogState,
+            )
+
+            is DialogState.EnterMacAddressDialog -> EnterMacAddressDialog(
+                dialogState = screenState.dialogState,
+                onDismiss = { onEvent(DismissDialog) },
+                onMacAddressChanged = { onEvent(MainScreenEvent.OnMacAddressChanged(it)) },
+                onConfirmClick = { onEvent(MainScreenEvent.SaveWOLMacAddress) }
             )
         }
     }
@@ -178,11 +186,62 @@ fun MainScreen(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                onEvent(MainScreenEvent.ActivityInOnResumeState)
+                onEvent(ActivityInOnResumeState)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EnterMacAddressDialog(
+    dialogState: DialogState.EnterMacAddressDialog,
+    onDismiss: () -> Unit,
+    onMacAddressChanged: (String) -> Unit,
+    onConfirmClick: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.enter_mac_address),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            OutlinedTextField(
+                value = dialogState.enteredMac,
+                onValueChange = onMacAddressChanged,
+                label = { Text(stringResource(R.string.mac_address)) },
+                placeholder = { Text("00:00:00:00:00:2B") },
+                singleLine = true,
+                visualTransformation = MacAddressTransformation(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp)
+            )
+
+            Button(
+                onClick = onConfirmClick,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = dialogState.isValidateMacAddress,
+            ) {
+                Text(stringResource(R.string.confirm))
+            }
+        }
     }
 }
 
@@ -342,19 +401,19 @@ private fun DeviceItem(
                 label = R.string.send_wake_up_on_lan_request,
                 icon = R.drawable.lan,
                 id = DeviceAction.WAKE_UP_ON_LAN_ID,
-                onClick = { onEvent(MainScreenEvent.WakeUpOnLANClicked(it)) }
+                onClick = { onEvent(WakeUpOnLANClicked(it)) }
             ),
             DeviceAction(
                 label = R.string.options,
                 icon = R.drawable.options,
                 id = DeviceAction.OPTION_ID,
-                onClick = { onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId)) }
+                onClick = { onEvent(ToDeviceDetailsScreen(device.deviceId)) }
             ),
             DeviceAction(
                 label = R.string.create_shortcut,
                 icon = R.drawable.shortcut,
                 id = DeviceAction.SHORTCUT_ID,
-                onClick = { onEvent(MainScreenEvent.ShowCreateShortcutModelDialog(device)) }
+                onClick = { onEvent(ShowCreateShortcutModelDialog(device)) }
             ),
         )
     }
@@ -362,9 +421,9 @@ private fun DeviceItem(
     Card(
         onClick = {
             if (!hasError) {
-                onEvent(MainScreenEvent.SendUnlockRequest(device))
+                onEvent(SendUnlockRequest(device))
             } else {
-                onEvent(MainScreenEvent.ToDeviceDetailsScreen(device.deviceId))
+                onEvent(ToDeviceDetailsScreen(device.deviceId))
             }
         },
         modifier = modifier.fillMaxWidth(),
@@ -466,7 +525,9 @@ private fun DeviceItem(
             Spacer(modifier = Modifier.height(8.dp))
 
             FlowRow(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val actions = remember(device) {
@@ -532,7 +593,7 @@ fun EmptyDevicesState(onEvent: (MainScreenEvent) -> Unit) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Button(onClick = { onEvent(MainScreenEvent.AddNewDevice) }) {
+        Button(onClick = { onEvent(AddNewDevice) }) {
             Icon(
                 painter = painterResource(R.drawable.outline_add),
                 contentDescription = null,
@@ -547,7 +608,7 @@ fun EmptyDevicesState(onEvent: (MainScreenEvent) -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateShortcutBottomSheet(
-    createShortcutDialogState: CreateShortcutDialogState.Showed,
+    dialogState: DialogState.ShortcutDialog,
     onDismiss: () -> Unit,
     onIsRequiredBiometricUnlockStateChanged: (Boolean) -> Unit,
     onCreateClick: () -> Unit
@@ -588,7 +649,7 @@ fun CreateShortcutBottomSheet(
                 )
 
                 Switch(
-                    checked = createShortcutDialogState.isRequiredBiometricUnlock,
+                    checked = dialogState.isRequiredBiometricUnlock,
                     onCheckedChange = onIsRequiredBiometricUnlockStateChanged
                 )
             }

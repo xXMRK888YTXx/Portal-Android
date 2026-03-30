@@ -3,21 +3,26 @@ package com.xxmrk888ytxx.mainscreen
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.coreandroid.formatToMacAddress
+import com.xxmrk888ytxx.coreandroid.isValidMacInput
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.mainscreen.contract.CreateShortcutContract
 import com.xxmrk888ytxx.mainscreen.contract.PermissionContract
 import com.xxmrk888ytxx.mainscreen.contract.ManageDevicesRemovedBannerStateContract
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
+import com.xxmrk888ytxx.mainscreen.contract.SaveWOLMacAddress
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
 import com.xxmrk888ytxx.mainscreen.exception.LauncherNotSupportShortcutException
-import com.xxmrk888ytxx.mainscreen.model.CreateShortcutDialogState
+import com.xxmrk888ytxx.mainscreen.model.DialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
+import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
 import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
 import com.xxmrk888ytxx.mainscreen.model.Permission
 import com.xxmrk888ytxx.mainscreen.model.PermissionBannerItem
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import com.xxmrk888ytxx.mainscreen.model.ShortcutOption
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -30,12 +35,13 @@ class MainScreenViewModel @Inject constructor(
     private val unlockRequestContract: SendUnlockRequestContract,
     private val createShortcutContract: CreateShortcutContract,
     private val permissionContract: PermissionContract,
-    private val manageDevicesRemovedBannerStateContract: ManageDevicesRemovedBannerStateContract
+    private val manageDevicesRemovedBannerStateContract: ManageDevicesRemovedBannerStateContract,
+    private val saveWOLMacAddress: SaveWOLMacAddress
 ) : SideEffectPortalViewModel<ScreenState, MainScreenEvent>(ScreenState()) {
 
     private val isLoading = MutableStateFlow(false)
-    private val createShortcutDialogState =
-        MutableStateFlow<CreateShortcutDialogState>(CreateShortcutDialogState.Hidden)
+    private val dialogState =
+        MutableStateFlow<DialogState>(DialogState.Hidden)
 
     private val permissionBannerItemListState =
         MutableStateFlow<List<PermissionBannerItem>>(emptyList())
@@ -45,14 +51,14 @@ class MainScreenViewModel @Inject constructor(
         combine(
             provideSavedDevices.devices,
             isLoading,
-            createShortcutDialogState,
+            dialogState,
             permissionBannerItemListState,
             manageDevicesRemovedBannerStateContract.devicesRemovedBannerState
         ) { deviceList, isLoading, createShortcutDialogState, permissionBannerItemList, provideDevicesRemovedBannerStateContract ->
             ScreenState(
                 devices = deviceList,
                 isLoading = isLoading,
-                createShortcutDialogState = createShortcutDialogState,
+                dialogState = createShortcutDialogState,
                 permissionBannerItemList = permissionBannerItemList,
                 devicesRemovedBannerState = provideDevicesRemovedBannerStateContract
             )
@@ -70,7 +76,7 @@ class MainScreenViewModel @Inject constructor(
             }
 
             is MainScreenEvent.ShowCreateShortcutModelDialog -> showCreateShortcutDialog(event.device)
-            is MainScreenEvent.DismissCreateShortcutModelDialog -> hideCreateShortcutDialog()
+            is MainScreenEvent.DismissDialog -> hideCreateShortcutDialog()
             is MainScreenEvent.OnIsRequiredBiometricUnlockStateChanged -> updateCreateShortcutDialogState {
                 it.copy(
                     isRequiredBiometricUnlock = event.isRequiredBiometricUnlock
@@ -87,7 +93,39 @@ class MainScreenViewModel @Inject constructor(
             is MainScreenEvent.PermissionGranted -> checkPermission()
             MainScreenEvent.ActivityInOnResumeState -> checkPermission()
             MainScreenEvent.DismissDevicesRemovedBanner -> dismissDismissDevicesRemovedBanner()
-            is MainScreenEvent.WakeUpOnLANClicked -> TODO()
+            is MainScreenEvent.WakeUpOnLANClicked -> sendWACRequest(event.device)
+            is MainScreenEvent.OnMacAddressChanged -> updateMacAddressText(event.newText)
+            MainScreenEvent.SaveWOLMacAddress -> saveWALMacAddress()
+        }
+    }
+
+    private fun saveWALMacAddress() {
+        if (isLoading.value) return
+        viewModelScope.launch {
+            val dialogState =
+                (dialogState.value as? DialogState.EnterMacAddressDialog) ?: return@launch
+            val macAddress = dialogState.enteredMac.formatToMacAddress() ?: return@launch
+            this@MainScreenViewModel.dialogState.value = DialogState.Hidden
+            saveWOLMacAddress.save(dialogState.device.deviceId, macAddress)
+            sendToastSideEffect(R.string.mac_address_saved.uiText())
+        }.invokeOnCompletion { isLoading.value = false }
+    }
+
+    private fun updateMacAddressText(newText: String) {
+        if (!newText.isValidMacInput()) return
+        updateEnterMacAddressDialog {
+            it.copy(
+                enteredMac = newText,
+                isValidateMacAddress = newText.length == 12
+            )
+        }
+    }
+
+    private fun sendWACRequest(device: Device) {
+        if (device.deviceType != DeviceType.WIFI) return
+        if (!device.isWakeUpOnLanAvailable) {
+            dialogState.value = DialogState.EnterMacAddressDialog(device = device)
+            return
         }
     }
 
@@ -101,13 +139,13 @@ class MainScreenViewModel @Inject constructor(
 
     private fun createShortcut() {
         if (isLoading.value) return
-        val createShortcutDialogState =
-            createShortcutDialogState.value as? CreateShortcutDialogState.Showed ?: return
+        val dialogState =
+            dialogState.value as? DialogState.ShortcutDialog ?: return
         val shortcutOption = ShortcutOption(
-            createShortcutDialogState.device,
-            createShortcutDialogState.isRequiredBiometricUnlock
+            dialogState.device,
+            dialogState.isRequiredBiometricUnlock
         )
-        handleEvent(MainScreenEvent.DismissCreateShortcutModelDialog)
+        handleEvent(MainScreenEvent.DismissDialog)
         isLoading.update { true }
         viewModelScope.launch {
             createShortcutContract.createShortcutContract(shortcutOption)
@@ -126,19 +164,27 @@ class MainScreenViewModel @Inject constructor(
         }.invokeOnCompletion { isLoading.update { false } }
     }
 
-    private fun updateCreateShortcutDialogState(onUpdate: (CreateShortcutDialogState.Showed) -> CreateShortcutDialogState.Showed) {
-        createShortcutDialogState.update {
-            if (it !is CreateShortcutDialogState.Showed) return@update it
+
+    private fun updateEnterMacAddressDialog(onUpdate: (DialogState.EnterMacAddressDialog) -> DialogState.EnterMacAddressDialog) {
+        dialogState.update {
+            if (it !is DialogState.EnterMacAddressDialog) return@update it
+            onUpdate(it)
+        }
+    }
+
+    private fun updateCreateShortcutDialogState(onUpdate: (DialogState.ShortcutDialog) -> DialogState.ShortcutDialog) {
+        dialogState.update {
+            if (it !is DialogState.ShortcutDialog) return@update it
             onUpdate(it)
         }
     }
 
     private fun showCreateShortcutDialog(device: Device) {
-        createShortcutDialogState.value = CreateShortcutDialogState.Showed(device)
+        dialogState.value = DialogState.ShortcutDialog(device)
     }
 
     private fun hideCreateShortcutDialog() {
-        createShortcutDialogState.value = CreateShortcutDialogState.Hidden
+        dialogState.value = DialogState.Hidden
     }
 
     private fun sendUnlockRequest(device: Device) {
