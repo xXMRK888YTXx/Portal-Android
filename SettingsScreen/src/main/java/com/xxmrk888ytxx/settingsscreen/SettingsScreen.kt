@@ -113,36 +113,42 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(R.string.terms_of_use),
                     iconRes = R.drawable.ic_terms,
-                    onClick = { /* onEvent(SettingsScreenEvent.OnTermsClick) */ }
+                    onClick = { onEvent(SettingsScreenEvent.OnTermsClicked) }
                 )
                 SettingsItem(
                     title = stringResource(R.string.privacy_policy),
                     iconRes = R.drawable.ic_privacy,
-                    onClick = { /* onEvent(SettingsScreenEvent.OnPrivacyClick) */ }
+                    onClick = { onEvent(SettingsScreenEvent.OnPrivacyClicked) }
                 )
                 SettingsItem(
-                    title = stringResource(R.string.source_code),
+                    title = stringResource(R.string.source_code_android),
                     subtitle = stringResource(R.string.github_repository),
                     iconRes = R.drawable.code,
-                    onClick = { /* onEvent(SettingsScreenEvent.OnSourceCodeClick) */ }
+                    onClick = { onEvent(SettingsScreenEvent.OnAndroidSourceCodeClick) }
+                )
+                SettingsItem(
+                    title = stringResource(R.string.source_code_pc),
+                    subtitle = stringResource(R.string.github_repository),
+                    iconRes = R.drawable.code,
+                    onClick = { onEvent(SettingsScreenEvent.OnPCSourceCodeClick) }
                 )
                 SettingsItem(
                     title = stringResource(R.string.android_app_developer),
                     subtitle = stringResource(R.string.xxmrk888ytxx),
                     iconRes = R.drawable.ic_developer,
-                    onClick = { /* onEvent(SettingsScreenEvent.OnDeveloperClick) */ }
+                    onClick = { onEvent(SettingsScreenEvent.OnAndroidDeveloperClick) }
                 )
                 SettingsItem(
                     title = stringResource(R.string.pc_client_developer),
                     subtitle = stringResource(R.string.xxkoksmenxx),
                     iconRes = R.drawable.ic_developer,
-                    onClick = { /* onEvent(SettingsScreenEvent.OnDeveloperClick) */ }
+                    onClick = { onEvent(SettingsScreenEvent.OnPCDeveloperClicked) }
                 )
                 SettingsItem(
                     title = stringResource(R.string.app_version),
                     subtitle = screenState.appVersion,
                     iconRes = R.drawable.ic_version,
-                    onClick = { /* Обычно на версию не кликают, но можно добавить пасхалку */ }
+                    onClick = {  }
                 )
                 SettingsItem(
                     title = stringResource(R.string.app_logs),

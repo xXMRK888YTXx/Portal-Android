@@ -4,7 +4,8 @@
     <string name="about_app">About app</string>
     <string name="terms_of_use">Terms of Use</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="source_code">Source Code</string>
+    <string name="source_code_android">Source Code of android app</string>
+    <string name="source_code_pc">Source Code of PC client</string>
     <string name="github_repository">GitHub Repository</string>
     <string name="android_app_developer">Android app developer</string>
     <string name="pc_client_developer">PC client developer</string>

@@ -26,6 +26,7 @@ import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BluetoothUnlockServiceManager
 import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
+import com.xxmrk888ytxx.portal.data.LinkManagerImpl
 import com.xxmrk888ytxx.portal.data.ProvideDeviceNameByClientIdImpl
 import com.xxmrk888ytxx.portal.data.SettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
@@ -44,6 +45,7 @@ import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
+import com.xxmrk888ytxx.portal.domain.LinkManager
 import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
@@ -205,6 +207,11 @@ interface DomainModule {
     fun bindsBiometricAuthStateProvider(
         biometricAuthStateProviderImpl: BiometricAuthStateProviderImpl
     ) : BiometricAuthStateProvider
+
+    @Binds
+    fun bindsLinkManager(
+        linkManagerImpl: LinkManagerImpl
+    ) : LinkManager
 
     companion object {
         @Provides

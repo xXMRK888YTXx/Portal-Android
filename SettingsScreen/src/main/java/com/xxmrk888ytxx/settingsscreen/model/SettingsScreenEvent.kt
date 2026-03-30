@@ -10,4 +10,12 @@ sealed interface SettingsScreenEvent : UiEvent {
     data class OnChangeUnsafeUnlockTypesState(val newState: Boolean) : SettingsScreenEvent
     class ConfirmSecurityChanges(val actionAfterConfirm: () -> Unit) : SettingsScreenEvent
     data object HideBottomSheet : SettingsScreenEvent
+    data object OnTermsClicked: SettingsScreenEvent
+    data object OnPrivacyClicked: SettingsScreenEvent
+    data object OnAndroidSourceCodeClick: SettingsScreenEvent
+    data object OnPCSourceCodeClick: SettingsScreenEvent
+
+    data object OnAndroidDeveloperClick: SettingsScreenEvent
+    data object OnPCDeveloperClicked: SettingsScreenEvent
+
 }
