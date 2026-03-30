@@ -9,7 +9,7 @@ import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.runOnUiThread
 import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
-import com.xxmrk888ytxx.portal.domain.PreferenceManager
+import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.view.model.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,12 +17,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
 class ActivityViewModel @Inject constructor(
-    private val preferenceManager: PreferenceManager,
+    private val settingsRepository: SettingsRepository,
     private val bluetoothManager: BluetoothManager,
     private val biometricAuthStateProvider: BiometricAuthStateProvider
 ) : ViewModel(), Navigator {
@@ -42,7 +43,7 @@ class ActivityViewModel @Inject constructor(
     fun prepareScreen() {
         if (_isScreenReady.value) return
         prepareScreenScope.launch {
-            preferenceManager.isOnboardingPassed.collect { isPassed ->
+            settingsRepository.portalSettings.map { it.isOnboardingPassed }.collect { isPassed ->
                 if (isPassed) {
                     _startScreen.value = Screen.MainScreen
                 }

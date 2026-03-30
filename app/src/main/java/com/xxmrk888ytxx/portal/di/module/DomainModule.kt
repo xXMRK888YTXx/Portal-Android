@@ -17,7 +17,6 @@ import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
 import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
 import com.xxmrk888ytxx.portal.data.PermissionManagerImpl
 import com.xxmrk888ytxx.portal.data.WifiPortalApiImpl
-import com.xxmrk888ytxx.portal.data.PreferenceManagerImpl
 import com.xxmrk888ytxx.portal.data.QRScannerManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
 import com.xxmrk888ytxx.portal.data.ShortcutManagerImpl
@@ -49,7 +48,6 @@ import com.xxmrk888ytxx.portal.domain.LinkManager
 import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
-import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
@@ -66,10 +64,6 @@ import dagger.Provides
 
 @Module
 interface DomainModule {
-    @Binds
-    fun bindsPreferenceManager(
-        preferenceManagerImpl: PreferenceManagerImpl
-    ) : PreferenceManager
 
     @Binds
     fun bindsCertificateManager(

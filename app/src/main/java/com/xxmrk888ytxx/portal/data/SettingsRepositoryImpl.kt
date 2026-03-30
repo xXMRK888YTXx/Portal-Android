@@ -30,27 +30,32 @@ class SettingsRepositoryImpl @Inject constructor(
     private val pairedClientsWasRemovedBySecurityChanges =
         intPreferencesKey("pairedClientsWasRemovedBySecurityChanges")
 
-    private val isUnsafeUnlockTypesDisabledKey = booleanPreferencesKey("isUnsafeUnlockTypesDisabledKey")
+    private val isUnsafeUnlockTypesDisabledKey =
+        booleanPreferencesKey("isUnsafeUnlockTypesDisabledKey")
+    private val isOnboardingPassedKey = booleanPreferencesKey("is_onboarding_passed")
 
 
-    override val portalSettings: Flow<PortalSettings> = combine<Any,PortalSettings>(
+    override val portalSettings: Flow<PortalSettings> = combine<Any, PortalSettings>(
         preferencesStorage.getProperty(biometricAuthEnabled, false),
         preferencesStorage.getProperty(additionalPasswordAuthEnabled, false),
         preferencesStorage.getProperty(removePairedClientsIfBiometricEnvironmentChanged, false),
         preferencesStorage.getProperty(pairedClientsWasRemovedBySecurityChanges, DEFAULT_VALUE),
-        preferencesStorage.getProperty(isUnsafeUnlockTypesDisabledKey,false)
+        preferencesStorage.getProperty(isUnsafeUnlockTypesDisabledKey, false),
+        preferencesStorage.getProperty(isOnboardingPassedKey, false)
     ) { flowArray ->
         val biometricAuthEnabled = flowArray[0] as Boolean
         val additionalPasswordAuthEnabled = flowArray[1] as Boolean
         val removePairedClientsIfBiometricEnvironmentChanged = flowArray[2] as Boolean
         val pairedClientsWasRemovedBySecurityChanges = flowArray[3] as Int
         val isUnsafeUnlockTypesDisabled = flowArray[4] as Boolean
+        val isOnboardingPassed = flowArray[5] as Boolean
         PortalSettings(
             isBiometricAuthEnabled = biometricAuthEnabled,
             isAdditionalPasswordAuthEnabled = additionalPasswordAuthEnabled,
             isRemovePairedClientsIfBiometricEnvironmentChangedEnabled = removePairedClientsIfBiometricEnvironmentChanged,
             pairedClientsWasRemoveBySecurityChangesCode = pairedClientsWasRemovedBySecurityChanges,
-            isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled
+            isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled,
+            isOnboardingPassed = isOnboardingPassed,
         )
     }
 
@@ -89,7 +94,8 @@ class SettingsRepositoryImpl @Inject constructor(
         }
 
     override suspend fun updateUnsafeUnlockTypesDisabled(newState: Boolean) = withContext(
-        Dispatchers.IO) {
+        Dispatchers.IO
+    ) {
         preferencesStorage.writeProperty(isUnsafeUnlockTypesDisabledKey, newState)
         if (!newState) {
             deviceRepository.removeAllDevices()
@@ -97,5 +103,9 @@ class SettingsRepositoryImpl @Inject constructor(
                 REMOVED_BY_SECURITY_SETTINGS_CHANGES
             )
         }
+    }
+
+    override suspend fun markOnboardingAsPassed() = withContext(Dispatchers.IO) {
+        preferencesStorage.writeProperty(isOnboardingPassedKey, true)
     }
 }

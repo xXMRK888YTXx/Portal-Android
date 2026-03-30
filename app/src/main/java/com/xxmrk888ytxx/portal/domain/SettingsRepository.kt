@@ -10,6 +10,7 @@ interface SettingsRepository {
     suspend fun updateRemovePairedClientsIfBiometricEnvironmentChanged(isEnabled: Boolean)
     suspend fun updatePairedClientsWasRemoveBySecurityChangesCode(newCode: Int)
     suspend fun updateUnsafeUnlockTypesDisabled(newState: Boolean)
+    suspend fun markOnboardingAsPassed()
 
     companion object {
         const val DEFAULT_VALUE = 0
