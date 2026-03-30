@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.settingsscreen
 
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import com.xxmrk888ytxx.settingsscreen.contract.BiometricProtectionAvailableStateProvider
 import com.xxmrk888ytxx.settingsscreen.contract.ChangeSettingsContract
 import com.xxmrk888ytxx.settingsscreen.contract.ProvideSettingsState
 import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
     private val provideSettingsState: ProvideSettingsState,
-    private val changeSettingsContract: ChangeSettingsContract
+    private val changeSettingsContract: ChangeSettingsContract,
+    private val biometricProtectionAvailableStateProvider: BiometricProtectionAvailableStateProvider
 ) : SideEffectPortalViewModel<ScreenState, SettingsScreenEvent>(
     ScreenState()
 ) {
@@ -30,7 +32,8 @@ class SettingsViewModel @Inject constructor(
         provideSettingsState.isAdditionalPasswordAuthEnabled,
         provideSettingsState.isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
         bottomSheetState,
-        provideSettingsState.isUnsafeUnlockTypesDisabled
+        provideSettingsState.isUnsafeUnlockTypesDisabled,
+        biometricProtectionAvailableStateProvider.isAvailable
     ) { flowArray ->
         val isBiometricProtectionEnabled = flowArray[0] as Boolean
         val appVersion = flowArray[1] as String
@@ -38,6 +41,7 @@ class SettingsViewModel @Inject constructor(
         val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled = flowArray[3] as Boolean
         val bottomSheetState = flowArray[4] as BottomSheetState
         val isUnsafeUnlockTypesDisabled = flowArray[5] as Boolean
+        val isBiometricAuthAvailable = flowArray[6] as Boolean
 
         ScreenState(
             bottomSheetState = bottomSheetState,
@@ -45,7 +49,8 @@ class SettingsViewModel @Inject constructor(
             appVersion = appVersion,
             isAdditionalPasswordAuthEnabled = isAdditionalPasswordAuthEnabled,
             isRemovePairedClientsIfBiometricEnvironmentChangedEnabled = isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
-            isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled
+            isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled,
+            isBiometricAuthAvailable = isBiometricAuthAvailable
         )
     }.stateWhileSubscribed()
 

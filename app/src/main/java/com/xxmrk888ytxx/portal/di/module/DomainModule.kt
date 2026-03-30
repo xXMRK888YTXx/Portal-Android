@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.di.module
 import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
+import com.xxmrk888ytxx.portal.data.BiometricAuthStateProviderImpl
 import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
 import com.xxmrk888ytxx.portal.data.BiometricEnvironmentEventHandlerImpl
 import com.xxmrk888ytxx.portal.data.BiometricRequestManager
@@ -31,6 +32,7 @@ import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
+import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.BiometricEnvironmentEventHandler
 import com.xxmrk888ytxx.portal.domain.BiometricRequestController
@@ -197,6 +199,12 @@ interface DomainModule {
     fun bindsDeviceRepository(
         deviceRepositoryImpl: DeviceRepositoryImpl
     ) : DeviceRepository
+
+    @Binds
+    @AppScope
+    fun bindsBiometricAuthStateProvider(
+        biometricAuthStateProviderImpl: BiometricAuthStateProviderImpl
+    ) : BiometricAuthStateProvider
 
     companion object {
         @Provides

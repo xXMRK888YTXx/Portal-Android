@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -65,19 +66,10 @@ fun SettingsScreen(
                     subtitle = stringResource(R.string.use_fingerprint_or_face_to_unlock),
                     iconRes = R.drawable.fingerprint,
                     checked = screenState.isBiometricProtectionEnabled,
+                    enabled = screenState.isBiometricProtectionEnabled || screenState.isBiometricAuthAvailable,
+                    errorText = if (!screenState.isBiometricAuthAvailable) stringResource(R.string.biometrics_is_not_configured_or_is_unavailable) else null,
                     onCheckedChange = { isChecked ->
                         onEvent(SettingsScreenEvent.OnBiometricProtectionStateChanged(isChecked))
-                    }
-                )
-
-                SettingsSwitchItem(
-                    title = stringResource(R.string.allow_password_unlock),
-                    subtitle = stringResource(R.string.can_be_used_as_an_alternative_to_biometric_authentication),
-                    iconRes = R.drawable.password,
-                    checked = screenState.isAdditionalPasswordAuthEnabled,
-                    enabled = screenState.isBiometricProtectionEnabled,
-                    onCheckedChange = { isChecked ->
-                        onEvent(SettingsScreenEvent.OnAdditionalPasswordAuthStateChanged(isChecked))
                     }
                 )
 
@@ -99,6 +91,17 @@ fun SettingsScreen(
                     enabled = screenState.isBiometricProtectionEnabled,
                     onCheckedChange = { isChecked ->
                         onEvent(SettingsScreenEvent.OnRemovePairedClientsIfBiometricEnvironmentStateChanged(isChecked))
+                    }
+                )
+
+                SettingsSwitchItem(
+                    title = stringResource(R.string.allow_password_unlock),
+                    subtitle = stringResource(R.string.can_be_used_as_an_alternative_to_biometric_authentication),
+                    iconRes = R.drawable.password,
+                    checked = screenState.isAdditionalPasswordAuthEnabled,
+                    enabled = screenState.isBiometricProtectionEnabled,
+                    onCheckedChange = { isChecked ->
+                        onEvent(SettingsScreenEvent.OnAdditionalPasswordAuthStateChanged(isChecked))
                     }
                 )
             }
@@ -234,9 +237,12 @@ fun SettingsSwitchItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    enabled: Boolean = true // Новый флаг
+    errorText: String? = null,
+    enabled: Boolean = true
 ) {
     val alpha by animateFloatAsState(if (enabled) 1f else 0.38f)
+
+    val isError = remember(errorText) { errorText != null }
 
     Row(
         modifier = modifier
@@ -267,14 +273,24 @@ fun SettingsSwitchItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
             )
+
             if (subtitle != null) {
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(end = 8.dp)
+                )
+            }
+
+            if (errorText != null) {
+                Text(
+                    text = errorText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 4.dp, end = 8.dp)
                 )
             }
         }

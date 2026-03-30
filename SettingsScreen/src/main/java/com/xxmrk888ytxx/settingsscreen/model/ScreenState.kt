@@ -6,5 +6,6 @@ data class ScreenState(
     val appVersion: String = "",
     val isAdditionalPasswordAuthEnabled: Boolean = false,
     val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled: Boolean = false,
-    val isUnsafeUnlockTypesDisabled: Boolean = false
+    val isUnsafeUnlockTypesDisabled: Boolean = false,
+    val isBiometricAuthAvailable: Boolean = false
 )

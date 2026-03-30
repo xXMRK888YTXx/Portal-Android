@@ -27,4 +27,5 @@
     <string name="enable">Enable</string>
     <string name="prohibit_insecure_unlock_methods">Prohibit insecure unlock methods.</string>
     <string name="the_automatically_unlock_method_will_be_disabled_for_devices_where_this_unlock_method_is_currently_set_it_will_be_changed_to_notification">The \"Automatically\" unlock method will be disabled. For devices where this unlock method is currently set, it will be changed to \"Notification.\"</string>
+    <string name="biometrics_is_not_configured_or_is_unavailable">Biometrics is not configured or is unavailable.</string>
 </resources>

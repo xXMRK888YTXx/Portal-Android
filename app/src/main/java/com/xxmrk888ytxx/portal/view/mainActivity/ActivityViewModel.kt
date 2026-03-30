@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.runOnUiThread
+import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.PreferenceManager
 import com.xxmrk888ytxx.portal.view.model.Screen
@@ -22,7 +23,8 @@ import javax.inject.Provider
 
 class ActivityViewModel @Inject constructor(
     private val preferenceManager: PreferenceManager,
-    private val bluetoothManager: BluetoothManager
+    private val bluetoothManager: BluetoothManager,
+    private val biometricAuthStateProvider: BiometricAuthStateProvider
 ) : ViewModel(), Navigator {
 
     private val prepareScreenScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -78,7 +80,8 @@ class ActivityViewModel @Inject constructor(
     }
 
     fun onResume() = viewModelScope.launch {
-        bluetoothManager.updatePairedDeviceMacAddresses()
+        launch { bluetoothManager.updatePairedDeviceMacAddresses() }
+        launch { biometricAuthStateProvider.updateState() }
     }
 
     internal inner class BottomBarNavigation {
