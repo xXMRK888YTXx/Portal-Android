@@ -49,6 +49,11 @@ class WifiDeviceRepositoryImpl @Inject constructor(
             wifiDeviceDao.updateDeviceName(deviceId = deviceId, newDeviceName = newName)
         }
 
+    override suspend fun updateWOLMacAddress(deviceId: String, macAddress: String) =
+        withContext(Dispatchers.IO) {
+            wifiDeviceDao.updateWOLMacAddress(deviceId, macAddress)
+        }
+
     override val devices: Flow<List<WifiDevice>> = wifiDeviceDao.devices.map { deviceList ->
         deviceList.map { deviceEntry ->
             deviceEntry.toDomainModel()
@@ -62,7 +67,8 @@ class WifiDeviceRepositoryImpl @Inject constructor(
             deviceName = deviceName,
             host = host,
             clientCertificate = clientCertificate,
-            serverCertificateFingerprint = serverCertificateFingerprint
+            serverCertificateFingerprint = serverCertificateFingerprint,
+            wolMacAddress = wolMacAddress
         )
     }
 

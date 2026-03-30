@@ -27,6 +27,7 @@ data class WifiDeviceEntry(
     @ColumnInfo("host") val host: String,
     @ColumnInfo("serverCertificateFingerprint") val serverCertificateFingerprint: String,
     @ColumnInfo("clientCertificateKeyAlias") val clientCertificateKeyAlias: String,
+    @ColumnInfo("wolMacAddress") val wolMacAddress: String? = null
 ) {
     companion object {
         const val TABLE_NAME = "WifiDeviceTable"

@@ -6,4 +6,5 @@ data class WifiDevice(
     val host: String,
     val clientCertificate: Certificate,
     val serverCertificateFingerprint: String,
+    val wolMacAddress: String? = null
 )

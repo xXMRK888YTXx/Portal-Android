@@ -19,4 +19,7 @@ abstract class WifiDeviceDao {
 
     @Query("SELECT * FROM ${WifiDeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId LIMIT 1")
     abstract fun getWifiDeviceById(deviceId: String): Flow<WifiDeviceEntry?>
+
+    @Query("UPDATE ${WifiDeviceEntry.TABLE_NAME} SET wolMacAddress = :macAddress WHERE deviceId = :deviceId")
+    abstract suspend fun updateWOLMacAddress(deviceId: String, macAddress: String)
 }

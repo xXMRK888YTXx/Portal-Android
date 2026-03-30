@@ -9,4 +9,5 @@ interface WifiDeviceRepository {
     fun getDeviceById(deviceId: String): Flow<WifiDevice?>
     suspend fun updateHost(deviceId: String, newHost: String)
     suspend fun updateDeviceName(deviceId: String, newName: String)
+    suspend fun updateWOLMacAddress(deviceId: String, macAddress: String)
 }

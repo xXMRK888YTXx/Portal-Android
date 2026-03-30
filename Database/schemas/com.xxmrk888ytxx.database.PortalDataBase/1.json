@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e4d166cd2bca0e56e083c9fe8d5344e0",
+    "identityHash": "baee2bc80273cb4bfe19d1df05ffc598",
     "entities": [
       {
         "tableName": "DeviceTable",
@@ -35,7 +35,7 @@
       },
       {
         "tableName": "WifiDeviceTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `deviceName` TEXT NOT NULL, `host` TEXT NOT NULL, `serverCertificateFingerprint` TEXT NOT NULL, `clientCertificateKeyAlias` TEXT NOT NULL, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `deviceName` TEXT NOT NULL, `host` TEXT NOT NULL, `serverCertificateFingerprint` TEXT NOT NULL, `clientCertificateKeyAlias` TEXT NOT NULL, `wolMacAddress` TEXT, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "deviceId",
@@ -66,6 +66,11 @@
             "columnName": "clientCertificateKeyAlias",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "wolMacAddress",
+            "columnName": "wolMacAddress",
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -276,7 +281,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e4d166cd2bca0e56e083c9fe8d5344e0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'baee2bc80273cb4bfe19d1df05ffc598')"
     ]
   }
 }
