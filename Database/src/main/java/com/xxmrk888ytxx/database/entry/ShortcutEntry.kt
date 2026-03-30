@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.database.entry
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
@@ -21,9 +22,9 @@ import com.xxmrk888ytxx.database.entry.ShortcutEntry.Companion.TABLE_NAME
     ]
 )
 data class ShortcutEntry(
-    @PrimaryKey val shortcutId: String,
-    val deviceId: String,
-    val isRequiredBiometricUnlock: Boolean,
+    @PrimaryKey @ColumnInfo("shortcutId") val shortcutId: String,
+    @ColumnInfo("deviceId") val deviceId: String,
+    @ColumnInfo("isRequiredBiometricUnlock") val isRequiredBiometricUnlock: Boolean,
 ) {
     companion object {
         const val TABLE_NAME = "ShortcutEntry"
