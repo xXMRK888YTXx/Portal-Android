@@ -332,6 +332,15 @@ fun EnterMacAddressDialog(
             ) {
                 Text(stringResource(R.string.confirm))
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.cancel))
+            }
         }
     }
 }
