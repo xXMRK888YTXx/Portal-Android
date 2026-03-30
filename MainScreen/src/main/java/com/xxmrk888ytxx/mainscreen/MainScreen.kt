@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -176,8 +178,15 @@ fun MainScreen(
             is DialogState.EnterMacAddressDialog -> EnterMacAddressDialog(
                 dialogState = screenState.dialogState,
                 onDismiss = { onEvent(DismissDialog) },
-                onMacAddressChanged = { onEvent(MainScreenEvent.OnMacAddressChanged(it)) },
-                onConfirmClick = { onEvent(MainScreenEvent.SaveWOLMacAddress) }
+                onMacAddressChanged = { onEvent(OnMacAddressChanged(it)) },
+                onConfirmClick = { onEvent(SaveWOLMacAddress) }
+            )
+
+            is DialogState.WALRequestDialog -> WALRequestDialog(
+                dialogState = screenState.dialogState,
+                onDismiss = { onEvent(DismissDialog) },
+                onIsTryToSendEnabledChanged = { onEvent(MainScreenEvent.OnIsTryToSendEnabledChanged(it)) },
+                onSendClick = { onEvent(MainScreenEvent.SendWOLRequest) }
             )
         }
     }
@@ -191,6 +200,88 @@ fun MainScreen(
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WALRequestDialog(
+    dialogState: DialogState.WALRequestDialog,
+    onDismiss: () -> Unit,
+    onIsTryToSendEnabledChanged: (Boolean) -> Unit,
+    onSendClick: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.send_wake_up_on_lan_request),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp)
+                    .toggleable(
+                        value = dialogState.isTryToSendUnlockRequestEnabled,
+                        onValueChange = onIsTryToSendEnabledChanged,
+                        role = Role.Switch
+                    )
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 16.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.send_unlock_requests),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = stringResource(R.string.the_application_will_attempt_to_unlock_your_pc_within_5_minutes),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Switch(
+                    checked = dialogState.isTryToSendUnlockRequestEnabled,
+                    onCheckedChange = null
+                )
+            }
+
+            Button(
+                onClick = onSendClick,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(stringResource(R.string.send))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
     }
 }
 

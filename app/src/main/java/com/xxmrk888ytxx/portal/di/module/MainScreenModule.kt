@@ -6,12 +6,14 @@ import com.xxmrk888ytxx.mainscreen.contract.ManageDevicesRemovedBannerStateContr
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SaveWOLMacAddress
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
+import com.xxmrk888ytxx.mainscreen.contract.SendWOLContract
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.CreateShortcutContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.PermissionContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.ManageDevicesRemovedBannerStateContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.ProvideSavedDevicesImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SaveWOLMacAddressImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SendUnlockRequestContractImpl
+import com.xxmrk888ytxx.portal.providedContract.mainScreen.SendWOLContractImpl
 import dagger.Binds
 import dagger.Module
 
@@ -46,4 +48,9 @@ interface MainScreenModule {
     fun bindsSaveWOLMacAddress(
         saveWOLMacAddressImpl: SaveWOLMacAddressImpl
     ) : SaveWOLMacAddress
+
+    @Binds
+    fun bindsSendWOLContract(
+        sendWOLContractImpl: SendWOLContractImpl
+    ) : SendWOLContract
 }

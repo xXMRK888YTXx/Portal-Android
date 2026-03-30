@@ -12,6 +12,7 @@ import com.xxmrk888ytxx.mainscreen.contract.ManageDevicesRemovedBannerStateContr
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SaveWOLMacAddress
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
+import com.xxmrk888ytxx.mainscreen.contract.SendWOLContract
 import com.xxmrk888ytxx.mainscreen.exception.LauncherNotSupportShortcutException
 import com.xxmrk888ytxx.mainscreen.model.DialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
@@ -36,7 +37,8 @@ class MainScreenViewModel @Inject constructor(
     private val createShortcutContract: CreateShortcutContract,
     private val permissionContract: PermissionContract,
     private val manageDevicesRemovedBannerStateContract: ManageDevicesRemovedBannerStateContract,
-    private val saveWOLMacAddress: SaveWOLMacAddress
+    private val saveWOLMacAddress: SaveWOLMacAddress,
+    private val sendWOLContract: SendWOLContract
 ) : SideEffectPortalViewModel<ScreenState, MainScreenEvent>(ScreenState()) {
 
     private val isLoading = MutableStateFlow(false)
@@ -93,10 +95,30 @@ class MainScreenViewModel @Inject constructor(
             is MainScreenEvent.PermissionGranted -> checkPermission()
             MainScreenEvent.ActivityInOnResumeState -> checkPermission()
             MainScreenEvent.DismissDevicesRemovedBanner -> dismissDismissDevicesRemovedBanner()
-            is MainScreenEvent.WakeUpOnLANClicked -> sendWACRequest(event.device)
+            is MainScreenEvent.WakeUpOnLANClicked -> showWACRequestDialog(event.device)
             is MainScreenEvent.OnMacAddressChanged -> updateMacAddressText(event.newText)
             MainScreenEvent.SaveWOLMacAddress -> saveWALMacAddress()
+            is MainScreenEvent.OnIsTryToSendEnabledChanged -> updateWALRequestDialog {
+                it.copy(
+                    isTryToSendUnlockRequestEnabled = event.newState
+                )
+            }
+
+            MainScreenEvent.SendWOLRequest -> sendWOLRequest()
         }
+    }
+
+    private fun sendWOLRequest() {
+        if (isLoading.value) return
+        isLoading.value = true
+        viewModelScope.launch {
+            val dialogState = (dialogState.value as? DialogState.WALRequestDialog) ?: return@launch
+            this@MainScreenViewModel.dialogState.value = DialogState.Hidden
+            sendWOLContract.sendRequest(
+                dialogState.device,
+                dialogState.isTryToSendUnlockRequestEnabled
+            )
+        }.invokeOnCompletion { isLoading.value = false }
     }
 
     private fun saveWALMacAddress() {
@@ -121,12 +143,13 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
-    private fun sendWACRequest(device: Device) {
+    private fun showWACRequestDialog(device: Device) {
         if (device.deviceType != DeviceType.WIFI) return
         if (!device.isWakeUpOnLanAvailable) {
             dialogState.value = DialogState.EnterMacAddressDialog(device = device)
             return
         }
+        dialogState.value = DialogState.WALRequestDialog(device = device)
     }
 
     private fun dismissDismissDevicesRemovedBanner() = viewModelScope.launch {
@@ -164,6 +187,13 @@ class MainScreenViewModel @Inject constructor(
         }.invokeOnCompletion { isLoading.update { false } }
     }
 
+
+    private fun updateWALRequestDialog(onUpdate: (DialogState.WALRequestDialog) -> DialogState.WALRequestDialog) {
+        dialogState.update {
+            if (it !is DialogState.WALRequestDialog) return@update it
+            onUpdate(it)
+        }
+    }
 
     private fun updateEnterMacAddressDialog(onUpdate: (DialogState.EnterMacAddressDialog) -> DialogState.EnterMacAddressDialog) {
         dialogState.update {

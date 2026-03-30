@@ -1,7 +1,5 @@
 package com.xxmrk888ytxx.mainscreen.model
 
-import androidx.compose.ui.text.input.TextFieldValue
-
 sealed interface DialogState {
     object Hidden : DialogState
 
@@ -9,6 +7,11 @@ sealed interface DialogState {
         val device: Device,
         val enteredMac: String = "",
         val isValidateMacAddress: Boolean = false
+    ) : DialogState
+
+    data class WALRequestDialog(
+        val device: Device,
+        val isTryToSendUnlockRequestEnabled: Boolean = true
     ) : DialogState
 
     data class ShortcutDialog(

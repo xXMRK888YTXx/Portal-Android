@@ -32,4 +32,9 @@
     <string name="mac_address">Mac Address</string>
     <string name="enter_mac_address">Enter Mac Address</string>
     <string name="mac_address_saved">Mac address saved</string>
+    <string name="send_a_wal_request">Send a WAL Request</string>
+    <string name="send_unlock_requests">Send unlock requests</string>
+    <string name="the_application_will_attempt_to_unlock_your_pc_within_5_minutes">The application will attempt to unlock your PC within 5 minutes.</string>
+    <string name="send">Send</string>
+    <string name="cancel">Cancel</string>
 </resources>

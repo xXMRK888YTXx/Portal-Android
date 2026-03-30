@@ -30,7 +30,7 @@ class ProvideSavedDevicesImpl @Inject constructor(
                 deviceName = device.deviceName,
                 deviceType = DeviceType.WIFI,
                 isHaveErrorsWithDevice = false,
-                isWakeUpOnLanAvailable = false
+                isWakeUpOnLanAvailable = device.wolMacAddress != null
             )
         }
 

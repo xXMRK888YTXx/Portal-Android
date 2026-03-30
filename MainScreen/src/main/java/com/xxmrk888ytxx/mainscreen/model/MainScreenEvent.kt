@@ -18,5 +18,7 @@ sealed interface MainScreenEvent : UiEvent {
     data object DismissDevicesRemovedBanner : MainScreenEvent
     data class WakeUpOnLANClicked(val device: Device) : MainScreenEvent
     data class OnMacAddressChanged(val newText: String) : MainScreenEvent
+    data class OnIsTryToSendEnabledChanged(val newState: Boolean): MainScreenEvent
+    data object SendWOLRequest : MainScreenEvent
     data object SaveWOLMacAddress : MainScreenEvent
 }
