@@ -303,19 +303,25 @@ fun DeviceInfoState(
             }
         }
 
-        EditableNameCard(
-            currentName = screenState.device.deviceName,
-            onNameSaved = { newName ->
+        EditableFieldCard(
+            title = stringResource(R.string.device_name),
+            currentValue = screenState.device.deviceName,
+            onValueSaved = { newName ->
                 onEvent(DeviceConfigurationUiEvent.OnDeviceNameChanged(newName))
-            }
+            },
+            validator = { it.isNotBlank() }
         )
 
         if (screenState.device is Device.WifiDevice) {
-            EditableIpCard(
-                currentIp = screenState.device.host,
-                onIpSaved = { newIp ->
+            EditableFieldCard(
+                title = stringResource(R.string.host),
+                currentValue = screenState.device.host,
+                onValueSaved = { newIp ->
                     onEvent(DeviceConfigurationUiEvent.OnHostChanged(newIp))
-                }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                validator = { it.isNotBlank() && DefaultValidator.isHostValid(it) },
+                editIconContentDescription = stringResource(R.string.edit_host)
             )
         }
 
@@ -470,25 +476,29 @@ fun RemoveDeviceBottomSheet(
 }
 
 @Composable
-private fun EditableIpCard(
-    currentIp: String,
-    onIpSaved: (String) -> Unit
+fun EditableFieldCard(
+    title: String,
+    currentValue: String,
+    onValueSaved: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+    validator: (String) -> Boolean = { it.isNotBlank() },
+    editIconContentDescription: String? = null
 ) {
     var isEditing by rememberSaveable { mutableStateOf(false) }
-    var ipValue by rememberSaveable(currentIp) { mutableStateOf(currentIp) }
-    val isValidIp = remember(ipValue) {
-        DefaultValidator.isHostValid(ipValue)
-    }
+    var textValue by rememberSaveable(currentValue) { mutableStateOf(currentValue) }
+
+    val isValid = remember(textValue) { validator(textValue) }
 
     OutlinedCard(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         AnimatedContent(
             targetState = isEditing,
             transitionSpec = {
                 fadeIn() togetherWith fadeOut() using SizeTransform(clip = false)
             },
-            label = "EditIpAnimation"
+            label = "EditFieldAnimation"
         ) { editing ->
             if (editing) {
                 Column(
@@ -498,20 +508,20 @@ private fun EditableIpCard(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.host),
+                        text = title,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
 
                     OutlinedTextField(
-                        value = ipValue,
-                        onValueChange = { ipValue = it },
+                        value = textValue,
+                        onValueChange = { textValue = it },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                        keyboardOptions = keyboardOptions,
                         textStyle = MaterialTheme.typography.bodyLarge,
                         shape = MaterialTheme.shapes.medium,
-                        isError = !isValidIp
+                        isError = !isValid
                     )
 
                     Row(
@@ -521,7 +531,7 @@ private fun EditableIpCard(
                     ) {
                         TextButton(
                             onClick = {
-                                ipValue = currentIp
+                                textValue = currentValue
                                 isEditing = false
                             }
                         ) {
@@ -532,10 +542,10 @@ private fun EditableIpCard(
 
                         Button(
                             onClick = {
-                                onIpSaved(ipValue)
+                                onValueSaved(textValue)
                                 isEditing = false
                             },
-                            enabled = ipValue.isNotBlank() && ipValue.isNotEmpty() && ipValue != currentIp && isValidIp
+                            enabled = textValue != currentValue && isValid
                         ) {
                             Text(text = stringResource(R.string.save))
                         }
@@ -557,19 +567,19 @@ private fun EditableIpCard(
                             .padding(end = 16.dp)
                     ) {
                         Text(
-                            text = stringResource(R.string.host),
+                            text = title,
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = currentIp,
+                            text = currentValue,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Icon(
-                        painterResource(R.drawable.edit),
-                        contentDescription = stringResource(R.string.edit_host),
+                        painter = painterResource(R.drawable.edit),
+                        contentDescription = editIconContentDescription,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -639,110 +649,6 @@ fun UnlockMethodSelector(
     }
 }
 
-@Composable
-private fun EditableNameCard(
-    currentName: String,
-    onNameSaved: (String) -> Unit
-) {
-    var isEditing by rememberSaveable { mutableStateOf(false) }
-    var nameValue by rememberSaveable(currentName) { mutableStateOf(currentName) }
-
-    OutlinedCard(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        AnimatedContent(
-            targetState = isEditing,
-            transitionSpec = {
-                fadeIn() togetherWith fadeOut() using SizeTransform(clip = false)
-            },
-            label = "EditNameAnimation"
-        ) { editing ->
-            if (editing) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.device_name),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    OutlinedTextField(
-                        value = nameValue,
-                        onValueChange = { nameValue = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                        textStyle = MaterialTheme.typography.bodyLarge,
-                        shape = MaterialTheme.shapes.medium
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextButton(
-                            onClick = {
-                                nameValue = currentName
-                                isEditing = false
-                            }
-                        ) {
-                            Text(text = stringResource(android.R.string.cancel))
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Button(
-                            onClick = {
-                                onNameSaved(nameValue)
-                                isEditing = false
-                            },
-                            enabled = nameValue.isNotBlank() && nameValue != currentName
-                        ) {
-                            Text(text = stringResource(R.string.save))
-                        }
-                    }
-                }
-            } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .clickable { isEditing = true }
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 16.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.device_name),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = currentName,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Icon(
-                        painterResource(R.drawable.edit),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun getUnlockMethodName(method: UnlockMethod): String {
