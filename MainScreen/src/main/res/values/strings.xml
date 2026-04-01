@@ -37,4 +37,6 @@
     <string name="the_application_will_attempt_to_unlock_your_pc_within_5_minutes">The application will attempt to unlock your PC within 5 minutes.</string>
     <string name="send">Send</string>
     <string name="cancel">Cancel</string>
+    <string name="wol_request_sent">WOL request sent</string>
+    <string name="error_during_sending_the_wol_request">Error during sending the WOL request</string>
 </resources>

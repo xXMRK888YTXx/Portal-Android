@@ -115,7 +115,11 @@ class MainScreenViewModel @Inject constructor(
             sendWOLContract.sendRequest(
                 dialogState.device,
                 dialogState.isTryToSendUnlockRequestEnabled
-            )
+            ).onSuccess {
+                sendToastSideEffect(uiText(R.string.wol_request_sent))
+            }.onFailure {
+                sendToastSideEffect(R.string.error_during_sending_the_wol_request.uiText())
+            }
         }.invokeOnCompletion { isLoading.value = false }
     }
 

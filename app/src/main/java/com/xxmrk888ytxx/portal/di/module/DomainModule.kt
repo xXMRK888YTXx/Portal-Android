@@ -29,6 +29,7 @@ import com.xxmrk888ytxx.portal.data.LinkManagerImpl
 import com.xxmrk888ytxx.portal.data.ProvideDeviceNameByClientIdImpl
 import com.xxmrk888ytxx.portal.data.SettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
+import com.xxmrk888ytxx.portal.data.WOLManagerImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
@@ -58,6 +59,7 @@ import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
 import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
+import com.xxmrk888ytxx.portal.domain.WOLManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -206,6 +208,11 @@ interface DomainModule {
     fun bindsLinkManager(
         linkManagerImpl: LinkManagerImpl
     ) : LinkManager
+
+    @Binds
+    fun bindsWOLManager(
+        wolManagerImpl: WOLManagerImpl
+    ) : WOLManager
 
     companion object {
         @Provides
