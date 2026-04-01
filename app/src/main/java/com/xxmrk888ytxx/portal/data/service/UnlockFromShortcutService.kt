@@ -47,7 +47,7 @@ class UnlockFromShortcutService @Inject constructor(
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val deviceId = intent?.getStringExtra(DEVICE_ID_EXTRA)
         if (intent?.action != SHORTCUT_UNLOCK_ACTION || deviceId == null) {
-            stopSelf()
+            stopSelf(startId)
             return START_NOT_STICKY
         }
         startForeground(NOTIFICATION_ID, notification)

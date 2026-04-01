@@ -73,6 +73,15 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name=".data.service.WOLUnlockService"
+            android:exported="false"
+            android:foregroundServiceType="shortService">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.WOL_UNLOCK_ACTION" />
+            </intent-filter>
+        </service>
+
         <receiver android:name=".data.broadcastReceiver.BootReceiver"
             android:exported="false">
             <intent-filter>

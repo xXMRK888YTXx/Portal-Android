@@ -17,4 +17,6 @@
     <string name="an_authorization_request_was_sent_from">An authorization request was sent from</string>
     <string name="deny">Deny</string>
     <string name="allow">Allow</string>
+    <string name="unlocking_the_device_wol">Unlocking the device (WOL)</string>
+    <string name="unblocking_via_wol">Unblocking via WOL</string>
 </resources>

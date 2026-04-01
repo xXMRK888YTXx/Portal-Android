@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.portal.data
 
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.domain.WOLManager
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,7 @@ class WOLManagerImpl @Inject constructor() : WOLManager {
         val socket = DatagramSocket()
         socket.send(packet)
         socket.close()
+        fastDebugLog("WOL packet sent successfully.")
     }
 
     private fun getMacBytes(macAddress: String): ByteArray {
