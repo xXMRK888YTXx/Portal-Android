@@ -45,7 +45,8 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     searchIpDynamically = deviceSettings.searchIpDynamically,
                     unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(
                         deviceSettings.unlockOnlyWhenScreenUnlocked
-                    )
+                    ),
+                    wolMacAddress = wifiDevice.wolMacAddress?.filter { it != ':' }
                 )
 
                 bluetoothDevice != null -> Device.BluetoothDevice(

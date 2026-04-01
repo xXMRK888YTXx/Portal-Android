@@ -33,4 +33,6 @@
 
     <string name="device_error_hint">An error occurred. Go to Options for details</string>
     <string name="tap_to_unlock">Tap to unlock</string>
+    <string name="wake_on_lan_mac_address">Wake on LAN Mac Address</string>
+    <string name="not_specified">Not specified</string>
 </resources>

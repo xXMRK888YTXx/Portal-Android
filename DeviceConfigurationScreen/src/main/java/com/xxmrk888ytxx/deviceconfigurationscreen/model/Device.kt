@@ -15,7 +15,8 @@ sealed class Device(
         val serverCertificateFingerprint: String,
         override val awaitUnlockRequests: Boolean,
         val searchIpDynamically: Boolean,
-        override val unlockMethod: UnlockMethod
+        override val unlockMethod: UnlockMethod,
+        val wolMacAddress: String?
     ) : Device(deviceId, deviceName, awaitUnlockRequests, unlockMethod)
 
     data class BluetoothDevice(

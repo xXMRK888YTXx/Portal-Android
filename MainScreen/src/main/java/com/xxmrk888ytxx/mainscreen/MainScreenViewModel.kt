@@ -4,26 +4,24 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.formatToMacAddress
-import com.xxmrk888ytxx.coreandroid.isValidMacInput
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.mainscreen.contract.CreateShortcutContract
-import com.xxmrk888ytxx.mainscreen.contract.PermissionContract
 import com.xxmrk888ytxx.mainscreen.contract.ManageDevicesRemovedBannerStateContract
+import com.xxmrk888ytxx.mainscreen.contract.PermissionContract
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SaveWOLMacAddress
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
 import com.xxmrk888ytxx.mainscreen.contract.SendWOLContract
 import com.xxmrk888ytxx.mainscreen.exception.LauncherNotSupportShortcutException
-import com.xxmrk888ytxx.mainscreen.model.DialogState
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
+import com.xxmrk888ytxx.mainscreen.model.DialogState
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
 import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
 import com.xxmrk888ytxx.mainscreen.model.Permission
 import com.xxmrk888ytxx.mainscreen.model.PermissionBannerItem
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import com.xxmrk888ytxx.mainscreen.model.ShortcutOption
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -253,6 +251,14 @@ class MainScreenViewModel @Inject constructor(
             }
         }
         permissionBannerItemListState.value = permissionBannerItems
+    }
+
+    fun String.isValidMacInput(): Boolean {
+        // Разрешаем только 0-9, a-f, A-F и двоеточие
+        val allowedChars = "0123456789abcdefABCDEF"
+        if (this.any { it !in allowedChars }) return false
+
+        return length <= 12
     }
 
     init {

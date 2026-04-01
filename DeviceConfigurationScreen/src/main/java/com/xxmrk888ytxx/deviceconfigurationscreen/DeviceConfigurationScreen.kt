@@ -59,13 +59,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.coreandroid.DefaultValidator
-import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.coreandroid.formatToMacAddress
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
+import com.xxmrk888ytxx.corecompose.MacAddressTransformation
 import com.xxmrk888ytxx.corecompose.sharedUi.CenterAlignedTopAppBarWithBackArrow
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.BottomSheetDialogState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
@@ -295,6 +298,7 @@ fun DeviceInfoState(
                         title = stringResource(R.string.client_fingerprint),
                         value = screenState.device.clientCertificateFingerprint
                     )
+
                     InfoItem(
                         title = stringResource(R.string.server_fingerprint),
                         value = screenState.device.serverCertificateFingerprint
@@ -322,6 +326,22 @@ fun DeviceInfoState(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                 validator = { it.isNotBlank() && DefaultValidator.isHostValid(it) },
                 editIconContentDescription = stringResource(R.string.edit_host)
+            )
+
+            val formatedMac = remember(screenState.device.wolMacAddress) {
+                screenState.device.wolMacAddress?.formatToMacAddress()
+            }
+            val rawMacAddress = screenState.device.wolMacAddress ?: stringResource(R.string.not_specified)
+            EditableFieldCard(
+                title = stringResource(R.string.wake_on_lan_mac_address),
+                currentValue = rawMacAddress,
+                onValueSaved = { /* Handle save */ },
+                onTransformValueInNotEditMode = {
+                    formatedMac ?: it
+                },
+                visualTransformation = MacAddressTransformation(),
+                fontStyle = if (formatedMac == null) FontStyle.Italic else FontStyle.Normal,
+                validator = { it.isValidMacInput() }
             )
         }
 
@@ -483,7 +503,10 @@ fun EditableFieldCard(
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     validator: (String) -> Boolean = { it.isNotBlank() },
-    editIconContentDescription: String? = null
+    editIconContentDescription: String? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    fontStyle: FontStyle = FontStyle.Normal,
+    onTransformValueInNotEditMode: (String) -> String = { it },
 ) {
     var isEditing by rememberSaveable { mutableStateOf(false) }
     var textValue by rememberSaveable(currentValue) { mutableStateOf(currentValue) }
@@ -513,13 +536,17 @@ fun EditableFieldCard(
                         color = MaterialTheme.colorScheme.primary
                     )
 
+
                     OutlinedTextField(
                         value = textValue,
                         onValueChange = { textValue = it },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         keyboardOptions = keyboardOptions,
-                        textStyle = MaterialTheme.typography.bodyLarge,
+                        visualTransformation = visualTransformation,
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            fontStyle = fontStyle
+                        ),
                         shape = MaterialTheme.shapes.medium,
                         isError = !isValid
                     )
@@ -561,6 +588,10 @@ fun EditableFieldCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    val transformedValue = remember(isEditing,currentValue) {
+                        if (isEditing) currentValue else onTransformValueInNotEditMode(currentValue)
+                    }
+
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -572,7 +603,7 @@ fun EditableFieldCard(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = currentValue,
+                            text = transformedValue,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -664,4 +695,14 @@ fun LoadingState() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
+}
+
+fun String.isValidMacInput(): Boolean {
+    val cleanInput = this.replace(":", "")
+    val allowedChars = "0123456789abcdefABCDEF"
+
+    if (cleanInput.any { it !in allowedChars }) return false
+
+    // A valid MAC address has exactly 12 hex digits
+    return cleanInput.length == 12
 }
