@@ -88,7 +88,7 @@ fun DeviceConfigurationScreen(
 
     val context = LocalContext.current
     HandleSideEffect<DeviceConfigurationScreenSideEffect>(sideEffect) { effect ->
-        when(effect) {
+        when (effect) {
             DeviceConfigurationScreenSideEffect.OpenBluetoothSettings -> {
                 val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
                 context.startActivity(intent)
@@ -328,21 +328,24 @@ fun DeviceInfoState(
                 editIconContentDescription = stringResource(R.string.edit_host)
             )
 
-            val formatedMac = remember(screenState.device.wolMacAddress) {
-                screenState.device.wolMacAddress?.formatToMacAddress()
-            }
-            val rawMacAddress = screenState.device.wolMacAddress ?: stringResource(R.string.not_specified)
+            val wolMac = (screenState.device as? Device.WifiDevice)?.wolMacAddress
+            val formattedMac = remember(wolMac) { wolMac?.formatToMacAddress() }
+
+            val displayMac = wolMac?.formatToMacAddress() ?: stringResource(R.string.not_specified)
+
+            val editValue = wolMac ?: ""
+
             EditableFieldCard(
                 title = stringResource(R.string.wake_on_lan_mac_address),
-                currentValue = rawMacAddress,
+                currentValue = editValue, // Теперь здесь либо MAC, либо ""
                 onValueSaved = {
                     onEvent(DeviceConfigurationUiEvent.OnWakeOnLanMacAddressChanged(it))
                 },
                 onTransformValueInNotEditMode = {
-                    formatedMac ?: it
+                    displayMac
                 },
                 visualTransformation = MacAddressTransformation(),
-                fontStyle = if (formatedMac == null) FontStyle.Italic else FontStyle.Normal,
+                fontStyle = if (wolMac == null) FontStyle.Italic else FontStyle.Normal,
                 validator = { it.isValidMacInput() }
             )
         }
@@ -541,7 +544,10 @@ fun EditableFieldCard(
 
                     OutlinedTextField(
                         value = textValue,
-                        onValueChange = { textValue = it },
+                        onValueChange = {
+                            if (!validator(it)) return@OutlinedTextField
+                            textValue = it
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         keyboardOptions = keyboardOptions,
@@ -590,7 +596,7 @@ fun EditableFieldCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    val transformedValue = remember(isEditing,currentValue) {
+                    val transformedValue = remember(isEditing, currentValue) {
                         if (isEditing) currentValue else onTransformValueInNotEditMode(currentValue)
                     }
 
@@ -702,9 +708,11 @@ fun LoadingState() {
 fun String.isValidMacInput(): Boolean {
     val cleanInput = this.replace(":", "")
     val allowedChars = "0123456789abcdefABCDEF"
+    // Разрешаем ввод, если символы корректны и их не больше 12
+    return cleanInput.all { it in allowedChars } && cleanInput.length <= 12
+}
 
-    if (cleanInput.any { it !in allowedChars }) return false
-
-    // A valid MAC address has exactly 12 hex digits
-    return cleanInput.length == 12
+// Добавьте проверку на завершенность
+fun String.isMacComplete(): Boolean {
+    return this.replace(":", "").length == 12
 }
