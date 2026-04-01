@@ -335,7 +335,9 @@ fun DeviceInfoState(
             EditableFieldCard(
                 title = stringResource(R.string.wake_on_lan_mac_address),
                 currentValue = rawMacAddress,
-                onValueSaved = { /* Handle save */ },
+                onValueSaved = {
+                    onEvent(DeviceConfigurationUiEvent.OnWakeOnLanMacAddressChanged(it))
+                },
                 onTransformValueInNotEditMode = {
                     formatedMac ?: it
                 },

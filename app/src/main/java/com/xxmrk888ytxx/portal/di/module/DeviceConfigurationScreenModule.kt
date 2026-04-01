@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.portal.di.module
 
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
+import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeMacAddressContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.UnsafeMethodAvailableStateProvider
@@ -8,6 +9,7 @@ import com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen.Change
 import com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen.ProvideDeviceInfoContractImpl
 import com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen.RemoveDeviceContractImpl
 import com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen.UnsafeMethodAvailableStateProviderImpl
+import com.xxmrk888ytxx.portal.providedContract.settingsScreen.ChangeMacAddressContractImpl
 import dagger.Binds
 import dagger.Module
 
@@ -30,4 +32,9 @@ interface DeviceConfigurationScreenModule {
     fun bindsUnsafeMethodAvailableStateProvider(
         unsafeMethodAvailableStateProviderImpl: UnsafeMethodAvailableStateProviderImpl
     ) : UnsafeMethodAvailableStateProvider
+
+    @Binds
+    fun bindsChangeMacAddressContract(
+        changeMacAddressContractImpl: ChangeMacAddressContractImpl
+    ) : ChangeMacAddressContract
 }

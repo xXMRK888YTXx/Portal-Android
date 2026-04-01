@@ -9,6 +9,7 @@ sealed interface DeviceConfigurationUiEvent : UiEvent {
     data class OnUnlockMethodChanged(val newMethod: UnlockMethod): DeviceConfigurationUiEvent
     data class OnUnlockOnlyWhenScreenUnlockedChanged(val newValue: Boolean) : DeviceConfigurationUiEvent
     data class OnDeviceNameChanged(val newName: String) : DeviceConfigurationUiEvent
+    data class OnWakeOnLanMacAddressChanged(val newMac: String): DeviceConfigurationUiEvent
     data object NavigateBack : DeviceConfigurationUiEvent
     data object RemoveDevice : DeviceConfigurationUiEvent
     data object ShowRemoveDialog : DeviceConfigurationUiEvent

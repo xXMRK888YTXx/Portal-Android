@@ -3,9 +3,11 @@ package com.xxmrk888ytxx.deviceconfigurationscreen
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.coreandroid.formatToMacAddress
 import com.xxmrk888ytxx.coreandroid.mvi.DefaultSideEffect
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeDeviceSettingsContract
+import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ChangeMacAddressContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.RemoveDeviceContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.UnsafeMethodAvailableStateProvider
@@ -33,7 +35,8 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     private val provideDeviceInfoContract: ProvideDeviceInfoContract,
     private val removeDeviceContract: RemoveDeviceContract,
     private val changeDeviceSettingsContract: ChangeDeviceSettingsContract,
-    private val unsafeMethodAvailableStateProvider: UnsafeMethodAvailableStateProvider
+    private val unsafeMethodAvailableStateProvider: UnsafeMethodAvailableStateProvider,
+    private val changeMacAddressContract: ChangeMacAddressContract
 ) : SideEffectPortalViewModel<ScreenState, DeviceConfigurationUiEvent>(ScreenState.Loading) {
 
     private val isSettingsUpdateInProgress = MutableStateFlow(false)
@@ -51,7 +54,8 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             .collect { device ->
                 updateStateMutex.withLock {
                     _state.update {
-                        (it as? ScreenState.DeviceInfo)?.copy(device = device) ?: ScreenState.DeviceInfo(device)
+                        (it as? ScreenState.DeviceInfo)?.copy(device = device)
+                            ?: ScreenState.DeviceInfo(device)
                     }
                 }
 
@@ -65,7 +69,11 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             .collect { isDisabled ->
                 _state.first { it is ScreenState.DeviceInfo }
                 updateStateMutex.withLock {
-                    _state.update { state -> (state as? ScreenState.DeviceInfo)?.copy(isUnsafeUnlockMethodsDisabled = isDisabled) ?: state }
+                    _state.update { state ->
+                        (state as? ScreenState.DeviceInfo)?.copy(
+                            isUnsafeUnlockMethodsDisabled = isDisabled
+                        ) ?: state
+                    }
                 }
             }
     }
@@ -94,7 +102,14 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
             is DeviceConfigurationUiEvent.OpenBluetoothSettings -> sideEffect.tryEmit(
                 DeviceConfigurationScreenSideEffect.OpenBluetoothSettings
             )
+
+            is DeviceConfigurationUiEvent.OnWakeOnLanMacAddressChanged -> updateWOLMacAddress(event.newMac)
         }
+    }
+
+    private fun updateWOLMacAddress(newMac: String) = withLoading {
+        val formattedMac = newMac.formatToMacAddress() ?: return@withLoading
+        changeMacAddressContract.updateWakeOnLanMacAddress(deviceId, formattedMac)
     }
 
     private fun changeDeviceName(newName: String) = viewModelScope.launch {
