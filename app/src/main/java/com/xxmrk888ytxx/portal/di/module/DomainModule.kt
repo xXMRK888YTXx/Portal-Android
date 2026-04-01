@@ -30,6 +30,7 @@ import com.xxmrk888ytxx.portal.data.ProvideDeviceNameByClientIdImpl
 import com.xxmrk888ytxx.portal.data.SettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
 import com.xxmrk888ytxx.portal.data.WOLManagerImpl
+import com.xxmrk888ytxx.portal.data.WOLServiceManagerImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
@@ -60,6 +61,7 @@ import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
 import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.WOLManager
+import com.xxmrk888ytxx.portal.domain.WOLServiceManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -213,6 +215,11 @@ interface DomainModule {
     fun bindsWOLManager(
         wolManagerImpl: WOLManagerImpl
     ) : WOLManager
+
+    @Binds
+    fun bindsWOLServiceManager(
+        wolServiceManagerImpl: WOLServiceManagerImpl
+    ) : WOLServiceManager
 
     companion object {
         @Provides

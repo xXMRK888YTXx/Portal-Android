@@ -47,14 +47,14 @@ class WOLUnlockService @Inject constructor(
             return START_NOT_STICKY
         }
         startForeground(NOTIFICATION_ID, notification)
-        val isOneTimeMode = intent.getBooleanExtra(ONE_TIME_REQUEST_MODE_ID, true)
+        val trySendUnlockRequests = intent.getBooleanExtra(TRY_SEND_UNLOCK_REQUEST_FLAG_ID, false)
         serviceScope.launch {
-            handleUnlock(deviceId, isOneTimeMode)
+            handleUnlock(deviceId, trySendUnlockRequests)
         }.invokeOnCompletion { stopSelf(startId) }
         return START_NOT_STICKY
     }
 
-    private suspend fun handleUnlock(deviceId: String, isOneTimeMode: Boolean) {
+    private suspend fun handleUnlock(deviceId: String, trySendUnlockRequests: Boolean) {
         val wifiDevice =  wifiDeviceRepository.getDeviceById(deviceId).first()
 
         if (wifiDevice == null) {
@@ -68,10 +68,10 @@ class WOLUnlockService @Inject constructor(
             return
         }
 
-        if (isOneTimeMode) {
-            tryUnlock(wifiDevice, macAddress)
-        } else {
+        if (trySendUnlockRequests) {
             performRetryUnlock(wifiDevice, macAddress)
+        } else {
+            wolManager.sendWOLRequest(macAddress)
         }
     }
 
@@ -114,12 +114,12 @@ class WOLUnlockService @Inject constructor(
     }
 
     override fun onTimeout(startId: Int) {
-        stopSelf()
+        stopSelf(startId)
     }
 
     companion object {
         const val NOTIFICATION_ID = 5553
-        const val ONE_TIME_REQUEST_MODE_ID = "ONE_TIME_REQUEST_MODE_ID"
+        const val TRY_SEND_UNLOCK_REQUEST_FLAG_ID = "TRY_SEND_UNLOCK_REQUEST_FLAG_ID"
         const val WOL_UNLOCK_TIMEOUT_MILLS = 170_000L
         const val RETRY_UNLOCK_TIMEOUT = 2000L
         const val DEVICE_ID_EXTRA = "DEVICE_ID_EXTRA"
