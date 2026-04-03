@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.portal.data
 
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.data.model.WifiPairBody
 import com.xxmrk888ytxx.portal.data.model.PairResponse
@@ -10,6 +11,7 @@ import com.xxmrk888ytxx.portal.domain.model.WifiPairResult
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
@@ -28,12 +30,17 @@ class WifiPortalApiImpl @Inject constructor(
             contentType(ContentType.Application.Json)
             setBody(WifiPairBody(pairCode))
         }
+        fastDebugLog(response.bodyAsText())
         val body: PairResponse = response.body()
         val serverHash = response.headers[NetworkFactory.SERVER_CERTIFICATE_HASH_HEADER]
             ?: throw IllegalStateException("Server certificate hash not found")
 
 
-        return@runCatching WifiPairResult(body.clientId, serverHash)
+        return@runCatching WifiPairResult(
+            clientId = body.clientId,
+            certificateFingerprint = serverHash,
+            macAddress = body.macAddress?.replace('-',':')
+        )
     }
 
     override suspend fun unlock(

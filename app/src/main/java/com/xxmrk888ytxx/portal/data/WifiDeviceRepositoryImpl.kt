@@ -29,7 +29,8 @@ class WifiDeviceRepositoryImpl @Inject constructor(
                 deviceName = wifiDevice.deviceName,
                 host = wifiDevice.host,
                 serverCertificateFingerprint = wifiDevice.serverCertificateFingerprint,
-                clientCertificateKeyAlias = keyAlias
+                clientCertificateKeyAlias = keyAlias,
+                wolMacAddress = wifiDevice.wolMacAddress
             )
         )
     }

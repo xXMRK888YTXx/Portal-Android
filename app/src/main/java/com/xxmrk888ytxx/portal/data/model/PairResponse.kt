@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PairResponse(
-    @SerialName("clientId") val clientId: String
+    @SerialName("clientId") val clientId: String,
+    @SerialName("macAddress") val macAddress: String?
 )

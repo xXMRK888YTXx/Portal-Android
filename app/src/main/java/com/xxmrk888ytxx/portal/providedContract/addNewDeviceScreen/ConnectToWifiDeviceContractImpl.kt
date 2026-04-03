@@ -28,7 +28,8 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
                 deviceName = deviceName,
                 host = host,
                 clientCertificate = clientCertificate,
-                serverCertificateFingerprint = pairResult.certificateFingerprint
+                serverCertificateFingerprint = pairResult.certificateFingerprint,
+                wolMacAddress = pairResult.macAddress
             )
         )
         return@runCatching pairResult.clientId
