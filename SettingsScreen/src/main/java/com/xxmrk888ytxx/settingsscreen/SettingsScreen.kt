@@ -1,9 +1,11 @@
 package com.xxmrk888ytxx.settingsscreen
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
@@ -12,7 +14,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -21,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
@@ -78,6 +83,7 @@ fun SettingsScreen(
                     subtitle = stringResource(R.string.the_automatically_unlock_method_will_be_disabled_for_devices_where_this_unlock_method_is_currently_set_it_will_be_changed_to_notification),
                     iconRes = R.drawable.insecure,
                     checked = screenState.isUnsafeUnlockTypesDisabled,
+                    isExpandable = true,
                     onCheckedChange = { isChecked ->
                         onEvent(SettingsScreenEvent.OnChangeUnsafeUnlockTypesState(isChecked))
                     }
@@ -243,12 +249,20 @@ fun SettingsSwitchItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    isExpandable: Boolean = false,
+    collapsedMaxLines: Int = 2,
     errorText: String? = null,
     enabled: Boolean = true
 ) {
-    val alpha by animateFloatAsState(if (enabled) 1f else 0.38f)
+    val alpha by animateFloatAsState(
+        targetValue = if (enabled) 1f else 0.38f,
+        label = "alpha_anim"
+    )
 
     val isError = remember(errorText) { errorText != null }
+
+    var isExpanded by remember { mutableStateOf(false) }
+    var hasVisualOverflow by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -275,6 +289,7 @@ fun SettingsSwitchItem(
             modifier = Modifier
                 .weight(1f)
                 .alpha(alpha)
+                .animateContentSize()
         ) {
             Text(
                 text = title,
@@ -287,8 +302,33 @@ fun SettingsSwitchItem(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = if (isExpandable && !isExpanded) collapsedMaxLines else Int.MAX_VALUE,
+                    overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { textLayoutResult ->
+                        // Проверяем, обрезался ли текст
+                        if (isExpandable && !isExpanded) {
+                            hasVisualOverflow = textLayoutResult.hasVisualOverflow
+                        }
+                    },
                     modifier = Modifier.padding(end = 8.dp)
                 )
+
+                // Показываем кнопку только если включено расширение И (текст обрезался ИЛИ уже раскрыт)
+                if (isExpandable && (hasVisualOverflow || isExpanded)) {
+                    Text(
+                        text = if (isExpanded) "Show less" else "Read more",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .padding(top = 4.dp, end = 8.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = { isExpanded = !isExpanded }
+                            )
+                            .padding(vertical = 4.dp) // Увеличиваем зону клика
+                    )
+                }
             }
 
             if (errorText != null) {
