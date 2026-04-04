@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Portal</string>
+    <string name="app_name" translatable="false">Portal</string>
     <string name="verify_with_biometrics">Verify with Biometrics</string>
     <string name="confirm_your_identity">Confirm your identity</string>
     <string name="requests_for_unlocking">Requests for unlocking</string>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="unlock_background_service">Фоновая служба разблокировки</string>
+    <string name="background_service_running_wifi">Фоновая служба запущена (Wi-Fi)</string>
+    <string name="background_service_running_bluetooth">Фоновая служба запущена (Bluetooth)</string>
+</resources>

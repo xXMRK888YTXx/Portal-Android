@@ -184,7 +184,8 @@ fun AppInfoPage(
         Text(
             text = stringResource(R.string.welcome_to_portal),
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
@@ -215,7 +216,7 @@ fun AppInfoPage(
                 append(stringResource(R.string.terms_of_use))
             }
 
-            append(" and ")
+            append(stringResource(R.string.and))
 
             withLink(
                 LinkAnnotation.Clickable(
@@ -498,9 +499,10 @@ fun PermissionsPage(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Required Permissions",
+            text = stringResource(R.string.required_permissions),
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
@@ -594,7 +596,7 @@ fun PermissionItem(
 
             if (isGranted) {
                 Text(
-                    text = "Granted",
+                    text = stringResource(R.string.granted),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
@@ -605,7 +607,7 @@ fun PermissionItem(
                     onClick = onRequest,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    Text("Allow")
+                    Text(stringResource(R.string.allow))
                 }
             }
         }

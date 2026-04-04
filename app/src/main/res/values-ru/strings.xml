@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="verify_with_biometrics">Подтвердить с помощью биометрии</string>
+    <string name="confirm_your_identity">Подтвердите личность</string>
+    <string name="requests_for_unlocking">Запросы на разблокировку</string>
+    <string name="is_requesting_unlocking">%1$s запрашивает разблокировку</string>
+    <string name="the_device_has_been_removed_the_shortcut_is_not_available">Устройство было удалено, ярлык недоступен.</string>
+    <string name="unlock">Разблокировать %1$s</string>
+    <string name="unlocking_the_device">Разблокировка устройства через ярлык</string>
+    <string name="please_wait_a_moment">Пожалуйста, подождите.</string>
+    <string name="notification_during_unlocking_via_shortcut">Уведомление при разблокировке через ярлык</string>
+    <string name="devices">Устройства</string>
+    <string name="settings">Настройки</string>
+    <string name="the_device_associated_with_the_shortcut_cannot_be_found">Устройство, связанное с ярлыком, не найдено</string>
+    <string name="click_to_allow">Нажмите, чтобы разрешить</string>
+    <string name="unlock_request">Запрос на разблокировку</string>
+    <string name="an_authorization_request_was_sent_from">Запрос на авторизацию отправлен с</string>
+    <string name="deny">Отклонить</string>
+    <string name="allow">Разрешить</string>
+    <string name="unlocking_the_device_wol">Разблокировка устройства (WOL)</string>
+    <string name="unblocking_via_wol">Разблокировка через WOL</string>
+</resources>

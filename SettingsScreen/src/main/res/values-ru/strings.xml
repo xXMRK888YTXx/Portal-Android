@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="security">Безопасность</string>
+    <string name="about_app">О приложении</string>
+    <string name="terms_of_use">Условия использования</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="source_code_android">Исходный код Android-приложения</string>
+    <string name="source_code_pc">Исходный код ПК-клиента</string>
+    <string name="github_repository">Репозиторий GitHub</string>
+    <string name="android_app_developer">Разработчик Android-приложения</string>
+    <string name="pc_client_developer">Разработчик ПК-клиента</string>
+    <string name="app_version">Версия приложения</string>
+    <string name="app_logs">Логи приложения</string>
+    <string name="settings">Настройки</string>
+    <string name="xxmrk888ytxx" translatable="false">xXMRK888YTXx</string>
+    <string name="xxkoksmenxx" translatable="false">xXKoksMenXx</string>
+    <string name="biometric_unlock">Биометрическая разблокировка</string>
+    <string name="use_fingerprint_or_face_to_unlock">Использовать отпечаток пальца или лицо для разблокировки</string>
+    <string name="allow_password_unlock">Разрешить разблокировку по паролю</string>
+    <string name="can_be_used_as_an_alternative_to_biometric_authentication">Может использоваться как альтернатива биометрической аутентификации</string>
+    <string name="unpair_devices_if_the_biometric_environment_has_changed">Отвязывать устройства при изменении биометрических данных</string>
+    <string name="if_a_new_fingerprint_is_added_or_an_old_one_is_deleted_all_paired_devices_will_be_removed">При добавлении нового отпечатка пальца все привязанные устройства будут удалены</string>
+    <string name="disable">Всё равно отключить</string>
+    <string name="cancel">Отмена</string>
+    <string name="attention">Внимание</string>
+    <string name="for_security_reasons_disabling_this_setting_will_result_in_the_removal_of_all_paired_devices_do_you_still_want_to_disable_it">В целях безопасности отключение этой настройки приведет к удалению всех привязанных устройств! Вы уверены, что хотите её отключить?</string>
+    <string name="if_you_disable_this_setting_in_future_all_your_paired_devices_will_be_deleted_do_you_still_want_to_enable_it_note_enabling_this_setting_will_not_affect_your_paired_devices">Если вы отключите эту настройку в будущем, все ваши привязанные устройства будут удалены! Вы уверены, что хотите её включить? Примечание: включение этой настройки не повлияет на ваши текущие привязанные устройства.</string>
+    <string name="enable">Включить</string>
+    <string name="prohibit_insecure_unlock_methods">Запретить небезопасные методы разблокировки</string>
+    <string name="the_automatically_unlock_method_will_be_disabled_for_devices_where_this_unlock_method_is_currently_set_it_will_be_changed_to_notification">Повышает безопасность при использовании приложения.\n\n1. Запрещает использование метода разблокировки "Автоматически". (Для устройств, использующих этот метод, он будет изменен на "Уведомление")\n\n2. При использовании ярлыков принудительно включается требование биометрической аутентификации (За исключением случаев, когда опция "Биометрическая разблокировка" отключена в настройках).</string>
+    <string name="biometrics_is_not_configured_or_is_unavailable">Биометрия не настроена или недоступна.</string>
+    <string name="open_source_licenses">Лицензии открытого ПО</string>
+</resources>
