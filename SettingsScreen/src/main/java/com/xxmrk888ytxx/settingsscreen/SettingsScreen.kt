@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.settingsscreen
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -14,8 +15,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +46,12 @@ fun SettingsScreen(
     sideEffect: Flow<SideEffect>
 ) {
     HandleSideEffect<SettingsScreenSideEffect>(sideEffect) {}
+    var isLogsVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var versionClickCounter by rememberSaveable {
+        mutableIntStateOf(0)
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -154,13 +163,20 @@ fun SettingsScreen(
                     title = stringResource(R.string.app_version),
                     subtitle = screenState.appVersion,
                     iconRes = R.drawable.ic_version,
-                    onClick = {  }
+                    onClick = {
+                        versionClickCounter += 1
+                        if (versionClickCounter == 5) {
+                            isLogsVisible = true
+                        }
+                    }
                 )
-                SettingsItem(
-                    title = stringResource(R.string.app_logs),
-                    iconRes = R.drawable.ic_version,
-                    onClick = { onEvent(SettingsScreenEvent.OnLogsClick) }
-                )
+                AnimatedVisibility(isLogsVisible) {
+                    SettingsItem(
+                        title = stringResource(R.string.app_logs),
+                        iconRes = R.drawable.ic_version,
+                        onClick = { onEvent(SettingsScreenEvent.OnLogsClick) }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -313,7 +329,6 @@ fun SettingsSwitchItem(
                     modifier = Modifier.padding(end = 8.dp)
                 )
 
-                // Показываем кнопку только если включено расширение И (текст обрезался ИЛИ уже раскрыт)
                 if (isExpandable && (hasVisualOverflow || isExpanded)) {
                     Text(
                         text = if (isExpanded) "Show less" else "Read more",
@@ -326,7 +341,7 @@ fun SettingsSwitchItem(
                                 indication = null,
                                 onClick = { isExpanded = !isExpanded }
                             )
-                            .padding(vertical = 4.dp) // Увеличиваем зону клика
+                            .padding(vertical = 4.dp)
                     )
                 }
             }
