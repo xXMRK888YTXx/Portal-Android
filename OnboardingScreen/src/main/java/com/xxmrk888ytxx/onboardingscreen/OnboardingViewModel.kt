@@ -18,6 +18,11 @@ class OnboardingViewModel @Inject constructor(
     override fun handleEvent(event: OnboardingScreenUiEvent) {
         when(event) {
             OnboardingScreenUiEvent.NextPage -> onboardingFinished()
+            OnboardingScreenUiEvent.FinishOnboarding -> {}
+            OnboardingScreenUiEvent.OpenGithub -> {}
+            OnboardingScreenUiEvent.OpenSecuritySettings -> {}
+            OnboardingScreenUiEvent.RequestNotificationPermission -> {}
+            is OnboardingScreenUiEvent.TosAcceptedChanged -> {}
         }
     }
 

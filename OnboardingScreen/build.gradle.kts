@@ -8,3 +8,9 @@ plugins {
 extensions.configure<LibraryExtension> {
     namespace = "com.xxmrk888ytxx.onboardingscreen"
 }
+
+dependencies {
+    implementation(libs.coil.compose)
+    implementation(libs.okhttp)
+    implementation(libs.androidx.ui)
+}

@@ -8,6 +8,8 @@ class OnboardingFinishedContractImpl @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : OnboardingFinishedContract {
     override suspend fun onBoardingFinished() {
+        //TODO Remove return
+        return
         settingsRepository.markOnboardingAsPassed()
     }
 }

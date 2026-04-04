@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.xxmrk888ytxx.coreandroid.AvatarLink
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
@@ -156,13 +157,13 @@ fun SettingsScreen(
                 GithubProfileItem(
                     title = stringResource(R.string.android_app_developer),
                     subtitle = stringResource(R.string.xxmrk888ytxx),
-                    avatarUrl = "https://avatars.githubusercontent.com/u/34775859?v=4",
+                    avatarUrl = AvatarLink.ANDROID_DEVELOPER_LINK,
                     onClick = { onEvent(SettingsScreenEvent.OnAndroidDeveloperClick) }
                 )
                 GithubProfileItem(
                     title = stringResource(R.string.pc_client_developer),
                     subtitle = stringResource(R.string.xxkoksmenxx),
-                    avatarUrl = "https://avatars.githubusercontent.com/u/105588059?v=4",
+                    avatarUrl = AvatarLink.PC_DEVELOPER_LINK,
                     onClick = { onEvent(SettingsScreenEvent.OnPCDeveloperClicked) }
                 )
                 SettingsItem(
