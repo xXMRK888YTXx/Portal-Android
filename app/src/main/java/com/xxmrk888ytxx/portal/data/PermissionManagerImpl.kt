@@ -7,24 +7,21 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import android.provider.Settings
-import android.provider.Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
+import androidx.core.net.toUri
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import javax.inject.Inject
-import androidx.core.net.toUri
 
 class PermissionManagerImpl @Inject constructor(
     private val context: Context
 ) : PermissionManager {
-    override val isBluetoothPermissionGranted: Boolean
-        get() = isNearbyDevicesPermissionGranted
-
     override val isNotificationPermissionGranted: Boolean
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PERMISSION_GRANTED
         } else {
             true
         }
+
     override val isNearbyDevicesPermissionGranted: Boolean
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED

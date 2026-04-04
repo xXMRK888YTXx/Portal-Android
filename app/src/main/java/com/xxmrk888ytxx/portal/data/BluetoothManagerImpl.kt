@@ -112,7 +112,7 @@ class BluetoothManagerImpl @Inject constructor(
     }
 
     private fun checkBluetoothStateAndPermission() {
-        if (!permissionManager.isBluetoothPermissionGranted) throw BluetoothPermissionNotGrantedException()
+        if (!permissionManager.isNearbyDevicesPermissionGranted) throw BluetoothPermissionNotGrantedException()
         if (!isBluetoothEnabled) throw BluetoothDisabledException()
     }
 
