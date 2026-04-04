@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.BiometricEnvironmentObserver
+import com.xxmrk888ytxx.portal.data.UnsafeUnlockTypesStateObserver
 import com.xxmrk888ytxx.portal.di.module.ActivityBindsModule
 import com.xxmrk888ytxx.portal.di.module.AddNewDeviceModule
 import com.xxmrk888ytxx.portal.di.module.BroadcastReceiverBindsModule
@@ -50,8 +51,10 @@ interface AppComponent {
     val broadcastReceiverProviderMap: Map<Class<out BroadcastReceiver>, @JvmSuppressWildcards Provider<BroadcastReceiver>>
     val biometricEnvironmentObserver: BiometricEnvironmentObserver
     val awaitUnlockRequestManager: AwaitUnlockRequestManager
+    val unsafeUnlockTypesStateObserver: UnsafeUnlockTypesStateObserver
+
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance context:Context) : AppComponent
+        fun create(@BindsInstance context: Context): AppComponent
     }
 }

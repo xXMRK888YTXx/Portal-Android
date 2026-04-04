@@ -3,27 +3,20 @@ package com.xxmrk888ytxx.portal.data
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.database.dao.DeviceSettingsDao
 import com.xxmrk888ytxx.database.entry.DeviceSettingsEntry
-import com.xxmrk888ytxx.database.model.UnlockMethod as DatabaseUnlockMethod
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
-import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.model.DeviceSettings
 import com.xxmrk888ytxx.portal.domain.model.UnlockMethod
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import com.xxmrk888ytxx.database.model.UnlockMethod as DatabaseUnlockMethod
 
 class DeviceSettingsRepositoryImpl @Inject constructor(
     private val deviceSettingsDao: DeviceSettingsDao,
-    private val settingsRepository: SettingsRepository,
 ) : DeviceSettingsRepository {
 
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val deviceSettings: Flow<List<DeviceSettings>> =
         deviceSettingsDao.deviceSettings.map { list ->
@@ -94,21 +87,5 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
         is UnlockMethod.Automatic -> DatabaseUnlockMethod.AUTOMATIC
         UnlockMethod.Notification -> DatabaseUnlockMethod.NOTIFICATION
         UnlockMethod.ConfirmationScreen -> DatabaseUnlockMethod.CONFIRMATION_SCREEN
-    }
-
-    init {
-        scope.launch {
-            settingsRepository
-                .portalSettings
-                .map { it.isUnsafeUnlockTypesDisabled }
-                .distinctUntilChanged()
-                .collect { isDisabled ->
-                    if (isDisabled) {
-                        getAllDevicesWithNotSecureUnlockMethod().forEach {
-                            updateUnlockMethod(it.deviceId, UnlockMethod.Notification)
-                        }
-                    }
-                }
-        }
     }
 }

@@ -18,4 +18,10 @@ interface ShortcutDao {
 
     @Query("SELECT * FROM ${ShortcutEntry.TABLE_NAME} WHERE deviceId = :deviceId")
     suspend fun getShortcutsByDeviceId(deviceId: String): List<ShortcutEntry>
+
+    @Query("SELECT * FROM ${ShortcutEntry.TABLE_NAME} WHERE isRequiredBiometricUnlock = 0")
+    suspend fun getShortcutWithInsecureUnlock(): List<ShortcutEntry>
+
+    @Query("UPDATE ${ShortcutEntry.TABLE_NAME} SET isRequiredBiometricUnlock = :newValue WHERE shortcutId = :shortcutId")
+    suspend fun updateIsRequiredBiometricUnlock(shortcutId: String, newValue: Boolean)
 }

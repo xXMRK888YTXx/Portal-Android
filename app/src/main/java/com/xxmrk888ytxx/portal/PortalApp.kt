@@ -14,5 +14,6 @@ class PortalApp : Application() {
         super.onCreate()
         appComponent.biometricEnvironmentObserver.startObserve()
         appComponent.awaitUnlockRequestManager.restoreUnlockState()
+        appComponent.unsafeUnlockTypesStateObserver
     }
 }

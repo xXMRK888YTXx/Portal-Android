@@ -27,6 +27,17 @@ class ShortcutRepositoryImpl @Inject constructor(
         shortcutDao.getShortcutsByDeviceId(deviceId).map { it.toDomainModel() }
     }
 
+    override suspend fun getShortcutWithInsecureUnlock(): List<Shortcut> = withContext(Dispatchers.IO) {
+        shortcutDao.getShortcutWithInsecureUnlock().map { it.toDomainModel() }
+    }
+
+    override suspend fun updateIsRequiredBiometricUnlock(
+        shortcutId: String,
+        newValue: Boolean
+    ) {
+        shortcutDao.updateIsRequiredBiometricUnlock(shortcutId, newValue)
+    }
+
     private fun Shortcut.toEntry(): ShortcutEntry = ShortcutEntry(
         shortcutId = shortcutId,
         deviceId = clientId,

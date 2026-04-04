@@ -7,4 +7,6 @@ interface ShortcutRepository {
     suspend fun removeShortcut(shortcutId: String)
     suspend fun getShortcutById(shortcutId: String): Shortcut?
     suspend fun getShortcutsByDeviceId(deviceId: String): List<Shortcut>
+    suspend fun getShortcutWithInsecureUnlock(): List<Shortcut>
+    suspend fun updateIsRequiredBiometricUnlock(shortcutId: String, newValue: Boolean)
 }
