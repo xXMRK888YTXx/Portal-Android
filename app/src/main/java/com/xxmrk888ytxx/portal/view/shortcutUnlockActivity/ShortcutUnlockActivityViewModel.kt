@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.portal.view.fastUnlockActivity
+package com.xxmrk888ytxx.portal.view.shortcutUnlockActivity
 
 import android.content.Context
 import android.content.Intent
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
-class FastUnlockActivityViewModel @Inject constructor(
+class ShortcutUnlockActivityViewModel @Inject constructor(
     private val shortcutRepository: ShortcutRepository,
     private val biometricDialogController: BiometricDialogController,
     private val toastManager: ToastManager,
@@ -109,7 +109,7 @@ class FastUnlockActivityViewModel @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     class Factory @Inject constructor(
-        private val viewModel: Provider<FastUnlockActivityViewModel>
+        private val viewModel: Provider<ShortcutUnlockActivityViewModel>
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return viewModel.get() as T

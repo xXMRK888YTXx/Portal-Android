@@ -2,7 +2,7 @@ package com.xxmrk888ytxx.portal.di.module
 
 import android.app.Activity
 import com.xxmrk888ytxx.portal.di.key.ActivityKey
-import com.xxmrk888ytxx.portal.view.fastUnlockActivity.ShortcutUnlockActivity
+import com.xxmrk888ytxx.portal.view.shortcutUnlockActivity.ShortcutUnlockActivity
 import com.xxmrk888ytxx.portal.view.mainActivity.MainActivity
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity
 import dagger.Binds

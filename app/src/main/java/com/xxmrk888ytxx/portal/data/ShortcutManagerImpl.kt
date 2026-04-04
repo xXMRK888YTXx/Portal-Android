@@ -12,8 +12,8 @@ import com.xxmrk888ytxx.portal.data.broadcastReceiver.ShortcutPinnedReceiver.Com
 import com.xxmrk888ytxx.portal.data.model.Shortcut
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
-import com.xxmrk888ytxx.portal.view.fastUnlockActivity.ShortcutUnlockActivity
-import com.xxmrk888ytxx.portal.view.fastUnlockActivity.ShortcutUnlockActivity.Companion.SHORTCUT_ID_EXTRA
+import com.xxmrk888ytxx.portal.view.shortcutUnlockActivity.ShortcutUnlockActivity
+import com.xxmrk888ytxx.portal.view.shortcutUnlockActivity.ShortcutUnlockActivity.Companion.SHORTCUT_ID_EXTRA
 import javax.inject.Inject
 
 class ShortcutManagerImpl @Inject constructor(

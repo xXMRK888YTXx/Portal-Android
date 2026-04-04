@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.portal.view.fastUnlockActivity
+package com.xxmrk888ytxx.portal.view.shortcutUnlockActivity
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -11,16 +11,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ShortcutUnlockActivity @Inject constructor(
-    private val fastUnlockActivityViewModelFactory: FastUnlockActivityViewModel.Factory
+    private val shortcutUnlockActivityViewModelFactory: ShortcutUnlockActivityViewModel.Factory
 ) : FragmentActivity() {
 
-    private val fastUnlockActivityViewModel by viewModels<FastUnlockActivityViewModel> { fastUnlockActivityViewModelFactory }
+    private val shortcutUnlockActivityViewModel by viewModels<ShortcutUnlockActivityViewModel> { shortcutUnlockActivityViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                fastUnlockActivityViewModel.onFinishEvent.collect {
+                shortcutUnlockActivityViewModel.onFinishEvent.collect {
                     finish()
                 }
             }
@@ -30,7 +30,7 @@ class ShortcutUnlockActivity @Inject constructor(
 
     override fun onResume() {
         super.onResume()
-        fastUnlockActivityViewModel.requestUnlock(this, intent)
+        shortcutUnlockActivityViewModel.requestUnlock(this, intent)
     }
 
     companion object {
