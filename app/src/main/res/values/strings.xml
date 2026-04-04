@@ -6,7 +6,7 @@
     <string name="is_requesting_unlocking">%1$s is requesting unlocking</string>
     <string name="the_device_has_been_removed_the_shortcut_is_not_available">The device has been removed, the shortcut is not available.</string>
     <string name="unlock">Unlock %1$s</string>
-    <string name="unlocking_the_device">Unlocking the device</string>
+    <string name="unlocking_the_device">Unlocking the device from shortcut</string>
     <string name="please_wait_a_moment">Please wait a moment.</string>
     <string name="notification_during_unlocking_via_shortcut">Notification during unlocking via shortcut</string>
     <string name="devices">Devices</string>

@@ -11,6 +11,7 @@ import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
+import com.xxmrk888ytxx.portal.domain.WOLManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,15 +21,23 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class UnlockFromShortcutService @Inject constructor(
-    private val wifiDeviceRepository: WifiDeviceRepository,
-    private val deviceUnlockManager: DeviceUnlockManager,
-    private val bluetoothDeviceRepository: BluetoothDeviceRepository
-) : Service() {
+    wifiDeviceRepository: WifiDeviceRepository,
+    deviceUnlockManager: DeviceUnlockManager,
+    bluetoothDeviceRepository: BluetoothDeviceRepository,
+    wolManager: WOLManager
+) : ClientUnlockService(
+    wolManager,
+    deviceUnlockManager,
+    wifiDeviceRepository,
+    bluetoothDeviceRepository
+) {
+    override val notificationId: Int
+        get() = NOTIFICATION_ID
 
-    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    override val action: String
+        get() = SHORTCUT_UNLOCK_ACTION
 
-
-    val notification: Notification
+    override val notification: Notification
         get() = buildNotification(SHORTCUT_UNLOCK_SERVICE_CHANNEL) {
             setContentTitle(getString(R.string.unlocking_the_device))
             setContentText(getString(R.string.please_wait_a_moment))
@@ -44,43 +53,10 @@ class UnlockFromShortcutService @Inject constructor(
         )
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val deviceId = intent?.getStringExtra(DEVICE_ID_EXTRA)
-        if (intent?.action != SHORTCUT_UNLOCK_ACTION || deviceId == null) {
-            stopSelf(startId)
-            return START_NOT_STICKY
-        }
-        startForeground(NOTIFICATION_ID, notification)
-        doUnlock(deviceId,startId)
-        return START_NOT_STICKY
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        serviceScope.cancel()
-    }
-
-    private fun doUnlock(deviceId: String, startId: Int) = serviceScope.launch {
-        try {
-            fastDebugLog("doUnlock: $deviceId")
-            val wifiDevice = wifiDeviceRepository.getDeviceById(deviceId).first()
-            val bluetoothDevice = bluetoothDeviceRepository.getDeviceById(deviceId).first()
-
-            when {
-                wifiDevice != null -> deviceUnlockManager.unlockWifiDevice(wifiDevice).getOrThrow()
-                bluetoothDevice != null -> deviceUnlockManager.unlockBluetoothDevice(bluetoothDevice).getOrThrow()
-                else -> fastDebugLog("Device where id = $deviceId doesn't exits")
-            }
-        }catch (e: Exception) {
-            fastDebugLog("Exception in UnlockFromShortcutService: $e")
-        }
-    }.invokeOnCompletion { stopSelf(startId) }
-
 
     companion object {
         const val SHORTCUT_UNLOCK_SERVICE_CHANNEL = "SHORTCUT_UNLOCK_SERVICE"
-        const val NOTIFICATION_ID = 4653
+        private const val NOTIFICATION_ID = 4653
         const val SHORTCUT_UNLOCK_ACTION = "com.xxmrk888ytxx.portal.SHORTCUT_UNLOCK_ACTION"
-        const val DEVICE_ID_EXTRA = "DEVICE_ID_EXTRA"
     }
 }

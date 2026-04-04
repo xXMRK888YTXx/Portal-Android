@@ -8,7 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.data.model.Shortcut
+import com.xxmrk888ytxx.portal.data.service.ClientUnlockService
 import com.xxmrk888ytxx.portal.data.service.UnlockFromShortcutService
+import com.xxmrk888ytxx.portal.data.service.model.ClientUnlockServiceParams
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
@@ -74,7 +77,8 @@ class ShortcutUnlockActivityViewModel @Inject constructor(
                             when (it) {
                                 BiometricDialogEvent.Success -> startUnlockService(
                                     activity.applicationContext,
-                                    shortcut.clientId
+                                    shortcut.clientId,
+                                    shortcut
                                 )
 
                                 BiometricDialogEvent.Canceled, BiometricDialogEvent.Error -> {
@@ -90,7 +94,8 @@ class ShortcutUnlockActivityViewModel @Inject constructor(
 
                 else -> startUnlockService(
                     activity.applicationContext,
-                    shortcut.clientId
+                    shortcut.clientId,
+                    shortcut
                 )
             }
         } catch (_: IllegalArgumentException) {
@@ -98,9 +103,15 @@ class ShortcutUnlockActivityViewModel @Inject constructor(
         }
     }
 
-    private fun startUnlockService(context: Context, clientId: String) {
+    private fun startUnlockService(context: Context, clientId: String, shortcut: Shortcut) {
+        val clientUnlockServiceParams = ClientUnlockServiceParams(
+            clientId = clientId,
+            tryToRetryUnlockUntilSuccessOrTimeout = shortcut.isSendWOLRequest,
+            isSendWOLRequest = shortcut.isSendWOLRequest,
+            isSendUnlockRequest = true
+        )
         val intent = Intent(context, UnlockFromShortcutService::class.java).apply {
-            putExtra(UnlockFromShortcutService.DEVICE_ID_EXTRA, clientId)
+            putExtra(ClientUnlockService.CLIENT_UNLOCK_SERVICE_PARAMS_KEY, clientUnlockServiceParams)
             action = UnlockFromShortcutService.SHORTCUT_UNLOCK_ACTION
         }
         context.startForegroundService(intent)

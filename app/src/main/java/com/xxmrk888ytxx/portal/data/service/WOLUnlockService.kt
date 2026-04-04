@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import com.xxmrk888ytxx.portal.domain.WOLManager
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
@@ -24,81 +25,30 @@ import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 class WOLUnlockService @Inject constructor(
-    private val wolManager: WOLManager,
-    private val deviceUnlockManager: DeviceUnlockManager,
-    private val wifiDeviceRepository: WifiDeviceRepository,
-) : Service() {
+    wifiDeviceRepository: WifiDeviceRepository,
+    deviceUnlockManager: DeviceUnlockManager,
+    bluetoothDeviceRepository: BluetoothDeviceRepository,
+    wolManager: WOLManager
+) : ClientUnlockService(
+    wolManager,
+    deviceUnlockManager,
+    wifiDeviceRepository,
+    bluetoothDeviceRepository
+) {
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-
-    val notification: Notification
+    override val notificationId: Int
+        get() = NOTIFICATION_ID
+    override val action: String
+        get() = WOL_UNLOCK_ACTION
+    override val notification: Notification
         get() = buildNotification(WOL_UNLOCK_CHANNEL_ID) {
             setContentTitle(getString(R.string.unlocking_the_device_wol))
             setContentText(getString(R.string.please_wait_a_moment))
         }
 
     override fun onBind(p0: Intent?): IBinder? = null
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val deviceId = intent?.getStringExtra(DEVICE_ID_EXTRA)
-        if (intent?.action != WOL_UNLOCK_ACTION || deviceId == null) {
-            stopSelf(startId)
-            return START_NOT_STICKY
-        }
-        startForeground(NOTIFICATION_ID, notification)
-        val trySendUnlockRequests = intent.getBooleanExtra(TRY_SEND_UNLOCK_REQUEST_FLAG_ID, false)
-        serviceScope.launch {
-            handleUnlock(deviceId, trySendUnlockRequests)
-        }.invokeOnCompletion { stopSelf(startId) }
-        return START_NOT_STICKY
-    }
-
-    private suspend fun handleUnlock(deviceId: String, trySendUnlockRequests: Boolean) {
-        val wifiDevice =  wifiDeviceRepository.getDeviceById(deviceId).first()
-
-        if (wifiDevice == null) {
-            fastDebugLog("Device where id = $deviceId doesn't exist. Stop WOL Unlock")
-            return
-        }
-
-        val macAddress = wifiDevice.wolMacAddress
-        if (macAddress == null) {
-            fastDebugLog("Device where id = $deviceId doesn't have mac address. Stop WOL Unlock")
-            return
-        }
-
-        if (trySendUnlockRequests) {
-            performRetryUnlock(wifiDevice, macAddress)
-        } else {
-            wolManager.sendWOLRequest(macAddress)
-        }
-    }
-
-    private suspend fun performRetryUnlock(wifiDevice: WifiDevice, macAddress: String) {
-        withTimeoutOrNull(WOL_UNLOCK_TIMEOUT_MILLS) {
-            while (isActive) {
-                val isUnlockSuccessful = tryUnlock(wifiDevice, macAddress)
-                if (isUnlockSuccessful) {
-                    fastDebugLog("Unlock success. Stop WOL Unlock")
-                    return@withTimeoutOrNull true
-                } else {
-                    fastDebugLog("Unlock failed. Restart WOL Unlock")
-                    delay(RETRY_UNLOCK_TIMEOUT)
-                }
-            }
-        } ?: fastDebugLog("Unlock timeout. Stop WOL Unlock")
-    }
-
-    private suspend fun tryUnlock(wifiDevice: WifiDevice, macAddress: String): Boolean {
-        return try {
-            wolManager.sendWOLRequest(macAddress)
-            deviceUnlockManager.unlockWifiDevice(wifiDevice).isSuccess
-        } catch (e: Exception) {
-            fastDebugLog("Error during tryUnlock: ${e.message}")
-            false
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -113,16 +63,8 @@ class WOLUnlockService @Inject constructor(
         serviceScope.cancel()
     }
 
-    override fun onTimeout(startId: Int) {
-        stopSelf(startId)
-    }
-
     companion object {
-        const val NOTIFICATION_ID = 5553
-        const val TRY_SEND_UNLOCK_REQUEST_FLAG_ID = "TRY_SEND_UNLOCK_REQUEST_FLAG_ID"
-        const val WOL_UNLOCK_TIMEOUT_MILLS = 170_000L
-        const val RETRY_UNLOCK_TIMEOUT = 2000L
-        const val DEVICE_ID_EXTRA = "DEVICE_ID_EXTRA"
+        private const val NOTIFICATION_ID = 5553
         const val WOL_UNLOCK_CHANNEL_ID = "WOL_UNLOCK_CHANNEL_ID"
         const val WOL_UNLOCK_ACTION = "com.xxmrk888ytxx.portal.WOL_UNLOCK_ACTION"
     }
