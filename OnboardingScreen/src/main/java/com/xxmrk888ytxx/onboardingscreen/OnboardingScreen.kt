@@ -11,15 +11,14 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -32,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -102,7 +100,11 @@ fun OnboardingScreen(
                 )
                 2 -> PermissionsPage(
                     isNotificationGranted = false,
-                    onRequestNotification = { onEvent(OnboardingScreenUiEvent.RequestNotificationPermission) }
+                    onRequestNotification = { onEvent(OnboardingScreenUiEvent.RequestNotificationPermission) },
+                    isNearbyDevicesGranted = false,
+                    onRequestNearbyDevices = {  },
+                    isOverlayGranted = false,
+                    onRequestOverlay = {  }
                 )
             }
         }
@@ -120,7 +122,8 @@ fun AppInfoPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -131,15 +134,13 @@ fun AppInfoPage(
         )
         Spacer(modifier = Modifier.height(32.dp))
         Text(
-            text = "Welcome to Portal",
+            text = stringResource(R.string.welcome_to_portal),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Tired of entering a password every time your computer goes to sleep? Portal takes the hassle out of it by turning your smartphone into a smart wireless key.\n" +
-                    "\n" +
-                    "You can unlock your PC in advance as you walk up to your desk, or configure it to send a request straight to your phone. A single touch to the biometric sensor, and you're in. Fast, secure, and with zero extra steps.",
+            text = stringResource(R.string.app_open_description),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -154,7 +155,7 @@ fun AppInfoPage(
         )
 
         val annotatedString = buildAnnotatedString {
-            append("I agree to the ")
+            append(stringResource(R.string.i_agree_to_the))
 
             withLink(
                 LinkAnnotation.Clickable(
@@ -163,7 +164,7 @@ fun AppInfoPage(
                     linkInteractionListener = { onTosClick() }
                 )
             ) {
-                append("Terms of Use")
+                append(stringResource(R.string.terms_of_use))
             }
 
             append(" and ")
@@ -175,11 +176,10 @@ fun AppInfoPage(
                     linkInteractionListener = { onPrivacyClick() }
                 )
             ) {
-                append("Privacy Policy")
+                append(stringResource(R.string.privacy_policy))
             }
         }
 
-        // Оборачиваем в Card с обработчиком onClick
         Card(
             onClick = { onTosChanged(!isTosAccepted) },
             modifier = Modifier
@@ -193,9 +193,8 @@ fun AppInfoPage(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp) // Внутренние отступы для красоты
+                    .padding(16.dp)
             ) {
-                // Текст занимает всё свободное место слева
                 Text(
                     text = annotatedString,
                     style = MaterialTheme.typography.bodyMedium,
@@ -242,7 +241,7 @@ fun OpenSourcePage(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Free and Open Source",
+            text = stringResource(R.string.free_and_open_source),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -251,7 +250,7 @@ fun OpenSourcePage(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Portal is a completely open-source project (GPL-3.0). No hidden in-app purchases, paid limitations, or annoying ads. The source code and developer contacts are waiting for you below.",
+            text = stringResource(R.string.portal_is_a_completely_open_source_project_gpl_3_0_no_hidden_in_app_purchases_paid_limitations_or_annoying_ads_the_source_code_and_developer_contacts_are_waiting_for_you_below),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -261,7 +260,7 @@ fun OpenSourcePage(
         Spacer(modifier = Modifier.height(32.dp))
 
         // Repositories Section
-        SectionTitle(title = "Source Code")
+        SectionTitle(title = stringResource(R.string.source_code))
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -270,15 +269,15 @@ fun OpenSourcePage(
         ) {
             Column {
                 RepositoryItem(
-                    title = "Portal Mobile Client",
-                    subtitle = "Android application source code",
+                    title = stringResource(R.string.portal_mobile_client),
+                    subtitle = stringResource(R.string.android_application_source_code),
                     icon = R.drawable.android,
                     onClick = onMobileRepoClick
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 RepositoryItem(
-                    title = "Portal Desktop Client",
-                    subtitle = "PC client source code",
+                    title = stringResource(R.string.portal_desktop_client),
+                    subtitle = stringResource(R.string.pc_client_source_code),
                     icon = R.drawable.desktop,
                     onClick = onDesktopRepoClick
                 )
@@ -288,7 +287,7 @@ fun OpenSourcePage(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Developers Section
-        SectionTitle(title = "Developers Team")
+        SectionTitle(title = stringResource(R.string.developers_team))
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -297,15 +296,15 @@ fun OpenSourcePage(
         ) {
             Column {
                 GithubProfileItem(
-                    title = "xXMRK888YTXx",
-                    subtitle = "Android Developer",
+                    title = stringResource(R.string.xxmrk888ytxx),
+                    subtitle = stringResource(R.string.android_developer),
                     avatarUrl = AvatarLink.ANDROID_DEVELOPER_LINK,
                     onClick = onFirstDevClick
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 GithubProfileItem(
-                    title = "xXKoksManXx",
-                    subtitle = "PC Developer",
+                    title = stringResource(R.string.xxkoksmanxx),
+                    subtitle = stringResource(R.string.pc_developer),
                     avatarUrl = AvatarLink.PC_DEVELOPER_LINK,
                     onClick = onSecondDevClick
                 )
@@ -423,18 +422,33 @@ fun GithubProfileItem(
     }
 }
 
+
+
 @Composable
 fun PermissionsPage(
     isNotificationGranted: Boolean,
-    onRequestNotification: () -> Unit
+    onRequestNotification: () -> Unit,
+    isNearbyDevicesGranted: Boolean,
+    onRequestNearbyDevices: () -> Unit,
+    isOverlayGranted: Boolean,
+    onRequestOverlay: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(horizontal = 24.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(48.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.security),
+            contentDescription = "Permissions",
+            modifier = Modifier.size(100.dp)
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+
         Text(
             text = "Required Permissions",
             style = MaterialTheme.typography.headlineMedium,
@@ -442,23 +456,43 @@ fun PermissionsPage(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "To provide you with the best experience, we need a few permissions to operate correctly.",
+            text = stringResource(R.string.for_the_app_to_work_correctly_you_must_provide_the_following_permissions_you_have_the_right_to_refuse_to_grant_all_or_some_permissions_but_in_this_case_some_functions_of_the_application_may_not_be_available),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Элемент списка разрешений
-        PermissionItem(
-            iconRes = R.drawable.notification,
-            title = "Notifications",
-            description = "Used to remind you about your upcoming tasks and important updates.",
-            isGranted = isNotificationGranted,
-            onRequest = onRequestNotification
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            PermissionItem(
+                iconRes = R.drawable.notification,
+                title = stringResource(R.string.notifications),
+                description = stringResource(R.string.it_is_used_to_display_pc_unlock_notifications_and_background_work),
+                isGranted = isNotificationGranted,
+                onRequest = onRequestNotification
+            )
 
-        // Сюда можно добавить другие разрешения (локация, камера и т.д.)
+            PermissionItem(
+                iconRes = R.drawable.nearby,
+                title = stringResource(R.string.nearby_devices),
+                description = stringResource(R.string.this_permission_is_required_by_the_app_if_you_use_bluetooth_to_unlock_your_device),
+                isGranted = isNearbyDevicesGranted,
+                onRequest = onRequestNearbyDevices
+            )
+
+            PermissionItem(
+                iconRes = R.drawable.open_in_full,
+                title = stringResource(R.string.display_over_other_apps),
+                description = stringResource(R.string.this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app),
+                isGranted = isOverlayGranted,
+                onRequest = onRequestOverlay
+            )
+        }
+
+        Spacer(modifier = Modifier.height(48.dp))
     }
 }
 
@@ -470,8 +504,12 @@ fun PermissionItem(
     isGranted: Boolean,
     onRequest: () -> Unit
 ) {
+    val cardAlpha = if (isGranted) 0.6f else 1f
+
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .alpha(cardAlpha),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -488,22 +526,44 @@ fun PermissionItem(
                 tint = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.width(16.dp))
+
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                Text(text = description, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = onRequest,
-                enabled = !isGranted
-            ) {
-                Text(if (isGranted) "Granted" else "Allow")
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            if (isGranted) {
+                Text(
+                    text = "Granted",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            } else {
+                Button(
+                    onClick = onRequest,
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text("Allow")
+                }
             }
         }
     }
 }
 
-// --- Компоненты навигации ---
 
 @Composable
 fun OnboardingBottomBar(
@@ -519,7 +579,6 @@ fun OnboardingBottomBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Кастомный индикатор страниц
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -542,7 +601,9 @@ fun OnboardingBottomBar(
             onClick = onNextClick,
             enabled = isNextEnabled
         ) {
-            Text(if (pagerState.currentPage == pagerState.pageCount - 1) "Get Started" else "Next")
+            Text(if (pagerState.currentPage == pagerState.pageCount - 1) stringResource(R.string.get_started) else stringResource(
+                R.string.next
+            ))
         }
     }
 }
