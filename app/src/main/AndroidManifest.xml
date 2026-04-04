@@ -21,11 +21,13 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
+        android:localeConfig="@xml/locale_config"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Portal"
-        tools:replace="android:appComponentFactory">
+        tools:replace="android:appComponentFactory"
+        tools:targetApi="33">
         <activity
             android:name=".view.mainActivity.MainActivity"
             android:exported="true"
