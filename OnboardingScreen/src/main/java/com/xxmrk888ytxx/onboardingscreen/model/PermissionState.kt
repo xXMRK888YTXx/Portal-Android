@@ -1,7 +1,6 @@
 package com.xxmrk888ytxx.onboardingscreen.model
 
-data class ScreenState(
-    val isTosAccepted: Boolean = false,
+data class PermissionState(
     val isNotificationGranted: Boolean = false,
     val isNearbyDevicesGranted: Boolean = false,
     val isOverlayGranted: Boolean = false

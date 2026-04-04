@@ -1,10 +1,28 @@
 package com.xxmrk888ytxx.onboardingscreen
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -12,9 +30,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -32,49 +58,59 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.xxmrk888ytxx.coreandroid.AvatarLink
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
-import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.onboardingscreen.model.OnboardingScreenSideEffect
 import com.xxmrk888ytxx.onboardingscreen.model.OnboardingScreenUiEvent
 import com.xxmrk888ytxx.onboardingscreen.model.ScreenState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+
 @Composable
 fun OnboardingScreen(
-    state: ScreenState,
+    screenState: ScreenState,
     onEvent: (OnboardingScreenUiEvent) -> Unit,
     sideEffect: Flow<SideEffect>
 ) {
-    val navigator = LocalNavigator.current
+
+
+    val requestPermissionContract = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) {
+        onEvent(OnboardingScreenUiEvent.UpdatePermissionState)
+    }
+    val pagerState = rememberPagerState(pageCount = { 3 })
     HandleSideEffect<OnboardingScreenSideEffect>(sideEffect) { effect ->
+        fastDebugLog(effect)
         when(effect) {
-            OnboardingScreenSideEffect.FinishOnboarding -> navigator.fromOnboardingScreenToMainScreen()
+            OnboardingScreenSideEffect.NextPage -> pagerState.animateScrollToPage(pagerState.currentPage + 1)
+            OnboardingScreenSideEffect.RequestNearbyDevicesPermission -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestPermissionContract.launch(Manifest.permission.BLUETOOTH_CONNECT)
+            }
+
+            OnboardingScreenSideEffect.RequestNotificationPermission -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestPermissionContract.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
-
-    val pagerState = rememberPagerState(pageCount = { 3 })
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         bottomBar = {
             OnboardingBottomBar(
                 pagerState = pagerState,
                 isNextEnabled = when (pagerState.currentPage) {
-                    0 -> true
+                    0 -> screenState.isTosAccepted
                     else -> true
                 },
                 onNextClick = {
-                    if (pagerState.currentPage < 3) {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                        }
-                    } else {
-                        onEvent(OnboardingScreenUiEvent.FinishOnboarding)
-                    }
+                    if (pagerState.canScrollForward) onEvent(OnboardingScreenUiEvent.NextPage)
+                    else onEvent(OnboardingScreenUiEvent.FinishOnboarding)
                 }
             )
         }
@@ -83,31 +119,43 @@ fun OnboardingScreen(
             state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
+            userScrollEnabled = false
         ) { page ->
             when (page) {
                 0 -> AppInfoPage(
-                    isTosAccepted = false,
+                    isTosAccepted = screenState.isTosAccepted,
                     onTosChanged = { onEvent(OnboardingScreenUiEvent.TosAcceptedChanged(it)) },
-                    onTosClick = {},
-                    onPrivacyClick = {}
+                    onTosClick = { onEvent(OnboardingScreenUiEvent.OpenTOSLink) },
+                    onPrivacyClick = { onEvent(OnboardingScreenUiEvent.OpenPrivacyPolicyLink) }
                 )
                 1 -> OpenSourcePage(
-                    onMobileRepoClick = {},
-                    onDesktopRepoClick = {  },
-                    onFirstDevClick = {},
-                    onSecondDevClick = {},
+                    onAndroidRepoClick = { onEvent(OnboardingScreenUiEvent.OpenAndroidSourceCode) },
+                    onDesktopRepoClick = { onEvent(OnboardingScreenUiEvent.OpenPCSourceCode) },
+                    onAndroidDevClick = { onEvent(OnboardingScreenUiEvent.OpenAndroidDevelopGithub) },
+                    onPCDevClick = { onEvent(OnboardingScreenUiEvent.OpenPCADeveloperGithub) },
                 )
                 2 -> PermissionsPage(
-                    isNotificationGranted = false,
+                    isNotificationGranted = screenState.isNotificationGranted,
                     onRequestNotification = { onEvent(OnboardingScreenUiEvent.RequestNotificationPermission) },
-                    isNearbyDevicesGranted = false,
-                    onRequestNearbyDevices = {  },
-                    isOverlayGranted = false,
-                    onRequestOverlay = {  }
+                    isNearbyDevicesGranted = screenState.isNearbyDevicesGranted,
+                    onRequestNearbyDevices = { onEvent(OnboardingScreenUiEvent.RequestNearbyDevicesPermission) },
+                    isOverlayGranted = screenState.isOverlayGranted,
+                    onRequestOverlay = { onEvent(OnboardingScreenUiEvent.RequestOverlayPermission) }
                 )
             }
         }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                onEvent(OnboardingScreenUiEvent.UpdatePermissionState)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 }
 
@@ -215,10 +263,10 @@ fun AppInfoPage(
 
 @Composable
 fun OpenSourcePage(
-    onMobileRepoClick: () -> Unit,
+    onAndroidRepoClick: () -> Unit,
     onDesktopRepoClick: () -> Unit,
-    onFirstDevClick: () -> Unit,
-    onSecondDevClick: () -> Unit
+    onAndroidDevClick: () -> Unit,
+    onPCDevClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -272,7 +320,7 @@ fun OpenSourcePage(
                     title = stringResource(R.string.portal_mobile_client),
                     subtitle = stringResource(R.string.android_application_source_code),
                     icon = R.drawable.android,
-                    onClick = onMobileRepoClick
+                    onClick = onAndroidRepoClick
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 RepositoryItem(
@@ -299,14 +347,14 @@ fun OpenSourcePage(
                     title = stringResource(R.string.xxmrk888ytxx),
                     subtitle = stringResource(R.string.android_developer),
                     avatarUrl = AvatarLink.ANDROID_DEVELOPER_LINK,
-                    onClick = onFirstDevClick
+                    onClick = onAndroidDevClick
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 GithubProfileItem(
                     title = stringResource(R.string.xxkoksmanxx),
                     subtitle = stringResource(R.string.pc_developer),
                     avatarUrl = AvatarLink.PC_DEVELOPER_LINK,
-                    onClick = onSecondDevClick
+                    onClick = onPCDevClick
                 )
             }
         }
@@ -601,7 +649,7 @@ fun OnboardingBottomBar(
             onClick = onNextClick,
             enabled = isNextEnabled
         ) {
-            Text(if (pagerState.currentPage == pagerState.pageCount - 1) stringResource(R.string.get_started) else stringResource(
+            Text(if (!pagerState.canScrollForward) stringResource(R.string.get_started) else stringResource(
                 R.string.next
             ))
         }
