@@ -12,9 +12,11 @@ import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SaveWOLMacAddress
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
 import com.xxmrk888ytxx.mainscreen.contract.SendWOLContract
+import com.xxmrk888ytxx.mainscreen.contract.SettingsProvider
 import com.xxmrk888ytxx.mainscreen.exception.LauncherNotSupportShortcutException
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
+import com.xxmrk888ytxx.mainscreen.model.DevicesRemovedBannerState
 import com.xxmrk888ytxx.mainscreen.model.DialogState
 import com.xxmrk888ytxx.mainscreen.model.MainScreenEvent
 import com.xxmrk888ytxx.mainscreen.model.MainScreenSideEffect
@@ -22,6 +24,7 @@ import com.xxmrk888ytxx.mainscreen.model.Permission
 import com.xxmrk888ytxx.mainscreen.model.PermissionBannerItem
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import com.xxmrk888ytxx.mainscreen.model.ShortcutOption
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -36,7 +39,8 @@ class MainScreenViewModel @Inject constructor(
     private val permissionContract: PermissionContract,
     private val manageDevicesRemovedBannerStateContract: ManageDevicesRemovedBannerStateContract,
     private val saveWOLMacAddress: SaveWOLMacAddress,
-    private val sendWOLContract: SendWOLContract
+    private val sendWOLContract: SendWOLContract,
+    private val settingsProvider: SettingsProvider
 ) : SideEffectPortalViewModel<ScreenState, MainScreenEvent>(ScreenState()) {
 
     private val isLoading = MutableStateFlow(false)
@@ -47,20 +51,29 @@ class MainScreenViewModel @Inject constructor(
         MutableStateFlow<List<PermissionBannerItem>>(emptyList())
 
 
+    @Suppress("UNCHECKED_CAST")
     override val state: StateFlow<ScreenState> =
         combine(
             provideSavedDevices.devices,
             isLoading,
             dialogState,
             permissionBannerItemListState,
-            manageDevicesRemovedBannerStateContract.devicesRemovedBannerState
-        ) { deviceList, isLoading, createShortcutDialogState, permissionBannerItemList, provideDevicesRemovedBannerStateContract ->
+            manageDevicesRemovedBannerStateContract.devicesRemovedBannerState,
+            settingsProvider.isBiometricProtectionAvailable
+        ) { flowArray ->
+            val deviceList = flowArray[0] as ImmutableList<Device>
+            val isLoading = flowArray[1] as Boolean
+            val createShortcutDialogState = flowArray[2] as DialogState
+            val permissionBannerItemList = flowArray[3] as List<PermissionBannerItem>
+            val provideDevicesRemovedBannerStateContract = flowArray[4] as DevicesRemovedBannerState
+            val isBiometricProtectionAvailable = flowArray[5] as Boolean
             ScreenState(
                 devices = deviceList,
                 isLoading = isLoading,
                 dialogState = createShortcutDialogState,
                 permissionBannerItemList = permissionBannerItemList,
-                devicesRemovedBannerState = provideDevicesRemovedBannerStateContract
+                devicesRemovedBannerState = provideDevicesRemovedBannerStateContract,
+                isBiometricProtectionAvailable = isBiometricProtectionAvailable
             )
         }.stateWhileSubscribed()
 
@@ -216,7 +229,12 @@ class MainScreenViewModel @Inject constructor(
     }
 
     private fun showCreateShortcutDialog(device: Device) {
-        dialogState.value = DialogState.ShortcutDialog(device)
+        dialogState.value = DialogState.ShortcutDialog(
+            device,
+            isWOLAvailable = device.isWakeUpOnLanAvailable,
+            isBiometricUnlockAvailable = state.value.isBiometricProtectionAvailable,
+            isWOLVisible = device.deviceType == DeviceType.WIFI
+        )
     }
 
     private fun hideCreateShortcutDialog() {

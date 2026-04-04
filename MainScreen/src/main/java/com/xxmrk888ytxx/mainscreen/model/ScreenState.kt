@@ -8,5 +8,6 @@ data class ScreenState(
     val isLoading: Boolean = false,
     val dialogState: DialogState = DialogState.Hidden,
     val permissionBannerItemList: List<PermissionBannerItem> = emptyList(),
-    val devicesRemovedBannerState:DevicesRemovedBannerState = DevicesRemovedBannerState.None
+    val devicesRemovedBannerState:DevicesRemovedBannerState = DevicesRemovedBannerState.None,
+    val isBiometricProtectionAvailable: Boolean = false
 )

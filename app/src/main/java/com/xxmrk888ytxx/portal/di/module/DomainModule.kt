@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.portal.di.module
 
 import android.content.Context
+import com.xxmrk888ytxx.mainscreen.contract.SettingsProvider
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BiometricAuthStateProviderImpl
@@ -62,6 +63,7 @@ import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.WOLManager
 import com.xxmrk888ytxx.portal.domain.WOLServiceManager
+import com.xxmrk888ytxx.portal.providedContract.mainScreen.SettingsProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -220,6 +222,11 @@ interface DomainModule {
     fun bindsWOLServiceManager(
         wolServiceManagerImpl: WOLServiceManagerImpl
     ) : WOLServiceManager
+
+    @Binds
+    fun bindsSettingsProvider(
+        settingsProviderImpl: SettingsProviderImpl
+    ) : SettingsProvider
 
     companion object {
         @Provides

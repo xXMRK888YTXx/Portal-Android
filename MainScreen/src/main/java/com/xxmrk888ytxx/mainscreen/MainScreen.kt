@@ -23,6 +23,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -714,7 +715,7 @@ fun CreateShortcutBottomSheet(
     dialogState: DialogState.ShortcutDialog,
     onDismiss: () -> Unit,
     onIsRequiredBiometricUnlockStateChanged: (Boolean) -> Unit,
-    onSendWolRequestChanged: (Boolean) -> Unit, // Новый колбэк
+    onSendWolRequestChanged: (Boolean) -> Unit,
     onCreateClick: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -736,21 +737,29 @@ fun CreateShortcutBottomSheet(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
-            // Блок Биометрии
             SettingsRowWithDescription(
                 title = stringResource(R.string.use_biometric_authentication),
                 description = stringResource(R.string.to_send_a_request_you_will_need_to_pass_a_biometrics_check),
+                errorMessage = if (!dialogState.isBiometricUnlockAvailable) {
+                    stringResource(R.string.biometrics_is_not_enabled_in_the_app_settings)
+                } else null,
                 checked = dialogState.isRequiredBiometricUnlock,
+                enabled = dialogState.isBiometricUnlockAvailable,
                 onCheckedChange = onIsRequiredBiometricUnlockStateChanged
             )
 
-            // Блок WOL запроса
-            SettingsRowWithDescription(
-                title = stringResource(R.string.send_wake_up_on_lan_request),
-                description = stringResource(R.string.the_application_will_attempt_to_unlock_your_pc_within_3_minutes),
-                checked = dialogState.isWolEnabled,
-                onCheckedChange = onSendWolRequestChanged
-            )
+            if (dialogState.isWOLVisible) {
+                SettingsRowWithDescription(
+                    title = stringResource(R.string.send_wake_up_on_lan_request),
+                    description = stringResource(R.string.the_application_will_attempt_to_unlock_your_pc_within_3_minutes),
+                    errorMessage = if (!dialogState.isWOLAvailable) {
+                        stringResource(R.string.the_device_s_mac_address_is_not_specified)
+                    } else null,
+                    checked = dialogState.isWolEnabled,
+                    enabled = dialogState.isWOLAvailable,
+                    onCheckedChange = onSendWolRequestChanged
+                )
+            }
 
             Button(
                 onClick = onCreateClick,
@@ -768,32 +777,56 @@ fun CreateShortcutBottomSheet(
 private fun SettingsRowWithDescription(
     title: String,
     description: String,
+    errorMessage: String?, // Новое поле для ошибки
     checked: Boolean,
+    enabled: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .toggleable(
+                value = checked,
+                enabled = enabled,
+                role = Role.Switch,
+                onValueChange = onCheckedChange
+            )
+            .alpha(if (enabled) 1f else 0.6f)
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(end = 16.dp)
+                .padding(end = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (errorMessage == null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
             )
+
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            // Если есть ошибка, показываем её дополнительно
+            if (errorMessage != null) {
+                Text(
+                    text = errorMessage,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
 
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = null,
+            enabled = enabled
         )
     }
 }
