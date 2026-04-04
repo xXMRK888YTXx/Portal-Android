@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.oss.licenses.plugin)
 }
 val catalogJavaVersion = libs.versions.jvm.target.get()
 val catalogCompileSdk = libs.versions.compile.sdk.get().toInt()
@@ -76,4 +77,11 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.play.services.code.scanner)
+}
+android {
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
 }

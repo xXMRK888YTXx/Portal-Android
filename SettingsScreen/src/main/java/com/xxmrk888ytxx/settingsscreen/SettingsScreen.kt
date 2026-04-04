@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.settingsscreen
 
+import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import com.xxmrk888ytxx.coreandroid.AvatarLink
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
@@ -52,7 +54,15 @@ fun SettingsScreen(
     onEvent: (SettingsScreenEvent) -> Unit,
     sideEffect: Flow<SideEffect>
 ) {
-    HandleSideEffect<SettingsScreenSideEffect>(sideEffect) {}
+    val context = LocalContext.current
+    HandleSideEffect<SettingsScreenSideEffect>(sideEffect) { effect ->
+        when(effect) {
+            SettingsScreenSideEffect.OpenOpenSourceLicenses -> {
+                val intent = Intent(context, OssLicensesMenuActivity::class.java)
+                context.startActivity(intent)
+            }
+        }
+    }
     var isLogsVisible by rememberSaveable {
         mutableStateOf(false)
     }
@@ -165,6 +175,11 @@ fun SettingsScreen(
                     subtitle = stringResource(R.string.xxkoksmenxx),
                     avatarUrl = AvatarLink.PC_DEVELOPER_LINK,
                     onClick = { onEvent(SettingsScreenEvent.OnPCDeveloperClicked) }
+                )
+                SettingsItem(
+                    title = stringResource(R.string.open_source_licenses),
+                    iconRes = R.drawable.code,
+                    onClick = { onEvent(SettingsScreenEvent.OpenOpenSourceLicenses) }
                 )
                 SettingsItem(
                     title = stringResource(R.string.app_version),

@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.settingsscreen
 
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.settingsscreen.contract.BiometricProtectionAvailableStateProvider
 import com.xxmrk888ytxx.settingsscreen.contract.ChangeSettingsContract
 import com.xxmrk888ytxx.settingsscreen.contract.OpenLinkContract
@@ -9,6 +10,7 @@ import com.xxmrk888ytxx.settingsscreen.contract.ProvideSettingsState
 import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
 import com.xxmrk888ytxx.settingsscreen.model.ScreenState
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent
+import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenSideEffect
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -84,6 +86,8 @@ class SettingsViewModel @Inject constructor(
             SettingsScreenEvent.OnAndroidSourceCodeClick -> openLink { openLinkContract.openAndroidSourceCodeLink() }
             SettingsScreenEvent.OnTermsClicked -> openLink { openLinkContract.openTermsOfUseLink() }
             SettingsScreenEvent.OnPCSourceCodeClick -> openLink { openLinkContract.openPCSourceCodeLink() }
+            SettingsScreenEvent.OpenOpenSourceLicenses -> sideEffect.tryEmit(
+                SettingsScreenSideEffect.OpenOpenSourceLicenses)
         }
     }
 

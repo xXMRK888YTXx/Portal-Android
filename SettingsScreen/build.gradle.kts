@@ -10,4 +10,5 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.okhttp)
     implementation(libs.androidx.ui)
+    implementation(libs.play.services.oss.licenses)
 }

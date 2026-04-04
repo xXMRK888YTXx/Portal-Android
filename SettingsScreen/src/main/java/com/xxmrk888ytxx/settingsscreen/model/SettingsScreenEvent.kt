@@ -17,5 +17,6 @@ sealed interface SettingsScreenEvent : UiEvent {
 
     data object OnAndroidDeveloperClick: SettingsScreenEvent
     data object OnPCDeveloperClicked: SettingsScreenEvent
+    data object OpenOpenSourceLicenses : SettingsScreenEvent
 
 }
