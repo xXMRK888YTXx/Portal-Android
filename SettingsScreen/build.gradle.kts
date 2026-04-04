@@ -5,3 +5,9 @@ plugins {
 android {
     namespace = "com.xxmrk888ytxx.settingsscreen"
 }
+
+dependencies {
+    implementation(libs.coil.compose)
+    implementation(libs.okhttp)
+    implementation(libs.androidx.ui)
+}

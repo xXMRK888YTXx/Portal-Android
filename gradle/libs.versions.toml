@@ -1,6 +1,7 @@
 [versions]
 agp = "9.1.0"
 biometric = "1.1.0"
+coilCompose = "2.7.0"
 fragmentKtx = "1.8.9"
 kotlin = "2.2.21"
 coreKtx = "1.17.0"
@@ -11,6 +12,7 @@ ktorClient = "3.4.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.4"
 composeBom = "2026.02.00"
+okhttp = "5.3.2"
 playServicesCodeScanner = "16.1.0"
 slf4jAndroid = "1.7.36"
 uiTextGoogleFonts = "1.10.3"
@@ -34,6 +36,7 @@ datastore = "1.2.0"
 splashscreen = "1.2.0"
 bouncycastle = "1.83"
 room = "2.8.4"
+ui = "1.10.6"
 
 
 
@@ -41,6 +44,7 @@ room = "2.8.4"
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -86,11 +90,13 @@ androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "playServicesCodeScanner" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 slf4j-android = { module = "org.slf4j:slf4j-android", version.ref = "slf4jAndroid" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 
 

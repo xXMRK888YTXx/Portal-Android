@@ -10,6 +10,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -23,6 +24,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -30,6 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
@@ -147,16 +153,16 @@ fun SettingsScreen(
                     iconRes = R.drawable.code,
                     onClick = { onEvent(SettingsScreenEvent.OnPCSourceCodeClick) }
                 )
-                SettingsItem(
+                GithubProfileItem(
                     title = stringResource(R.string.android_app_developer),
                     subtitle = stringResource(R.string.xxmrk888ytxx),
-                    iconRes = R.drawable.ic_developer,
+                    avatarUrl = "https://avatars.githubusercontent.com/u/34775859?v=4",
                     onClick = { onEvent(SettingsScreenEvent.OnAndroidDeveloperClick) }
                 )
-                SettingsItem(
+                GithubProfileItem(
                     title = stringResource(R.string.pc_client_developer),
                     subtitle = stringResource(R.string.xxkoksmenxx),
-                    iconRes = R.drawable.ic_developer,
+                    avatarUrl = "https://avatars.githubusercontent.com/u/105588059?v=4",
                     onClick = { onEvent(SettingsScreenEvent.OnPCDeveloperClicked) }
                 )
                 SettingsItem(
@@ -213,6 +219,61 @@ fun SettingsSection(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(content = content)
+        }
+    }
+}
+
+@Composable
+fun GithubProfileItem(
+    title: String,
+    avatarUrl: String?,
+    subtitle: String? = null,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(start = 10.dp, end = 16.dp, top = 10.dp, bottom = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val placeholder = painterResource(id = R.drawable.ic_developer)
+
+        Box(
+            modifier = Modifier.size(40.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(avatarUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Github Avatar",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                placeholder = placeholder,
+                error = placeholder,
+                fallback = placeholder
+            )
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
