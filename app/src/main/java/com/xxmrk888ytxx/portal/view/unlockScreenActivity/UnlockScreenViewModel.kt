@@ -131,7 +131,8 @@ class UnlockScreenViewModel @Inject constructor(
 
     fun isValidIntent(intent: Intent?): Boolean {
         if (unlockScreenData != null) return true
-        val intentUnlockScreenData = intent?.getParsableExtraCompat(
+        if (intent?.action != UnlockScreenActivity.UNLOCK_REQUEST_FROM_PC_ACTION) return false
+        val intentUnlockScreenData = intent.getParsableExtraCompat(
             UnlockScreenActivity.EXTRA_UNLOCK_SCREEN_DATA,
             UnlockScreenData::class.java
         ) ?: return false

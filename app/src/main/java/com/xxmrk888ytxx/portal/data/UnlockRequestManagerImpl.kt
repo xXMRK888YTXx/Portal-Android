@@ -137,6 +137,7 @@ class UnlockRequestManagerImpl @Inject constructor(
         requestId: String?
     ): Intent {
         return Intent(context, UnlockScreenActivity::class.java).apply {
+            action = UnlockScreenActivity.UNLOCK_REQUEST_FROM_PC_ACTION
             putExtra(
                 EXTRA_UNLOCK_SCREEN_DATA, UnlockScreenData(
                     clientId = deviceId,

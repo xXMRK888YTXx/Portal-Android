@@ -81,6 +81,7 @@ class UnlockScreenActivity @Inject constructor(
     }
 
     companion object {
+        const val UNLOCK_REQUEST_FROM_PC_ACTION: String = "com.xxmrk888ytxx.portal.UNLOCK_REQUEST_FROM_PC"
         const val EXTRA_UNLOCK_SCREEN_DATA = "EXTRA_UNLOCK_SCREEN_DATA"
     }
 }

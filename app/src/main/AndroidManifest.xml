@@ -45,7 +45,7 @@
             android:showForAllUsers="true"
             android:theme="@style/Theme.Portal">
             <intent-filter>
-                <action android:name="com.xxmrk888ytxx.portal.UNLOCK_FROM_SHORTCUT_ACTION" />
+                <action android:name="com.xxmrk888ytxx.portal.UNLOCK_REQUEST_FROM_PC" />
             </intent-filter>
         </activity>
 
@@ -54,7 +54,11 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:noHistory="true"
-            android:theme="@style/Theme.Portal.Transparent" />
+            android:theme="@style/Theme.Portal.Transparent">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.UNLOCK_FROM_SHORTCUT_ACTION" />
+            </intent-filter>
+        </activity>
 
         <receiver
             android:name=".data.broadcastReceiver.ShortcutPinnedReceiver"
@@ -82,7 +86,8 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".data.broadcastReceiver.BootReceiver"
+        <receiver
+            android:name=".data.broadcastReceiver.BootReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
