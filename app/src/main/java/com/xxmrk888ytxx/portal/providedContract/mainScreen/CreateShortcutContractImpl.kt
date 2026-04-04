@@ -30,7 +30,8 @@ class CreateShortcutContractImpl @Inject constructor(
             val shortcut = Shortcut(
                 shortcutId = UUID.randomUUID().toString(),
                 clientId = shortcutOption.device.deviceId,
-                isRequiredBiometricUnlock = shortcutOption.isRequiredBiometricUnlock
+                isRequiredBiometricUnlock = shortcutOption.isRequiredBiometricUnlock,
+                isSendWOLRequest = shortcutOption.isSendWOLRequest
             )
             shortcutManager.addShortcut(shortcut,
                 context.getString(R.string.unlock, shortcutOption.device.deviceName))

@@ -8,4 +8,5 @@ data class Shortcut(
     val shortcutId: String,
     val clientId: String,
     val isRequiredBiometricUnlock: Boolean,
+    val isSendWOLRequest: Boolean
 ) : Parcelable {}

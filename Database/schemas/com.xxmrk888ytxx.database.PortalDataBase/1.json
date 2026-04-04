@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "baee2bc80273cb4bfe19d1df05ffc598",
+    "identityHash": "c7597733d964fc917589e133e56f3fb7",
     "entities": [
       {
         "tableName": "DeviceTable",
@@ -226,7 +226,7 @@
       },
       {
         "tableName": "ShortcutEntry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shortcutId` TEXT NOT NULL, `deviceId` TEXT NOT NULL, `isRequiredBiometricUnlock` INTEGER NOT NULL, PRIMARY KEY(`shortcutId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shortcutId` TEXT NOT NULL, `deviceId` TEXT NOT NULL, `isRequiredBiometricUnlock` INTEGER NOT NULL, `isSendWOLRequest` INTEGER NOT NULL, PRIMARY KEY(`shortcutId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "shortcutId",
@@ -243,6 +243,12 @@
           {
             "fieldPath": "isRequiredBiometricUnlock",
             "columnName": "isRequiredBiometricUnlock",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSendWOLRequest",
+            "columnName": "isSendWOLRequest",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -281,7 +287,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'baee2bc80273cb4bfe19d1df05ffc598')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c7597733d964fc917589e133e56f3fb7')"
     ]
   }
 }

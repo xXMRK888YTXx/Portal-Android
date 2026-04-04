@@ -173,6 +173,9 @@ fun MainScreen(
                     onEvent(OnIsRequiredBiometricUnlockStateChanged(it))
                 },
                 dialogState = screenState.dialogState,
+                onSendWolRequestChanged = {
+                    onEvent(MainScreenEvent.OnIsRequiredSendWOLRequestChanged(it))
+                },
             )
 
             is DialogState.EnterMacAddressDialog -> EnterMacAddressDialog(
@@ -185,8 +188,8 @@ fun MainScreen(
             is DialogState.WALRequestDialog -> WALRequestDialog(
                 dialogState = screenState.dialogState,
                 onDismiss = { onEvent(DismissDialog) },
-                onIsTryToSendEnabledChanged = { onEvent(MainScreenEvent.OnIsTryToSendEnabledChanged(it)) },
-                onSendClick = { onEvent(MainScreenEvent.SendWOLRequest) }
+                onIsTryToSendEnabledChanged = { onEvent(OnIsTryToSendEnabledChanged(it)) },
+                onSendClick = { onEvent(SendWOLRequest) }
             )
         }
     }
@@ -254,7 +257,7 @@ fun WALRequestDialog(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        text = stringResource(R.string.the_application_will_attempt_to_unlock_your_pc_within_5_minutes),
+                        text = stringResource(R.string.the_application_will_attempt_to_unlock_your_pc_within_3_minutes),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -711,6 +714,7 @@ fun CreateShortcutBottomSheet(
     dialogState: DialogState.ShortcutDialog,
     onDismiss: () -> Unit,
     onIsRequiredBiometricUnlockStateChanged: (Boolean) -> Unit,
+    onSendWolRequestChanged: (Boolean) -> Unit, // Новый колбэк
     onCreateClick: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -723,44 +727,74 @@ fun CreateShortcutBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
-                .padding(bottom = 32.dp)
+                .padding(bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Text(
                 text = stringResource(R.string.create_shortcut),
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .padding(bottom = 24.dp)
-                    .align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = stringResource(R.string.use_biometric_authentication),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 16.dp)
-                )
+            // Блок Биометрии
+            SettingsRowWithDescription(
+                title = stringResource(R.string.use_biometric_authentication),
+                description = stringResource(R.string.to_send_a_request_you_will_need_to_pass_a_biometrics_check),
+                checked = dialogState.isRequiredBiometricUnlock,
+                onCheckedChange = onIsRequiredBiometricUnlockStateChanged
+            )
 
-                Switch(
-                    checked = dialogState.isRequiredBiometricUnlock,
-                    onCheckedChange = onIsRequiredBiometricUnlockStateChanged
-                )
-            }
+            // Блок WOL запроса
+            SettingsRowWithDescription(
+                title = stringResource(R.string.send_wake_up_on_lan_request),
+                description = stringResource(R.string.the_application_will_attempt_to_unlock_your_pc_within_3_minutes),
+                checked = dialogState.isWolEnabled,
+                onCheckedChange = onSendWolRequestChanged
+            )
 
             Button(
                 onClick = onCreateClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             ) {
                 Text(stringResource(R.string.create))
             }
         }
+    }
+}
+
+@Composable
+private fun SettingsRowWithDescription(
+    title: String,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
 

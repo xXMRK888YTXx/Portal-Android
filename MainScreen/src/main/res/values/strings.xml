@@ -34,9 +34,10 @@
     <string name="mac_address_saved">Mac address saved</string>
     <string name="send_a_wal_request">Send a WAL Request</string>
     <string name="send_unlock_requests">Send unlock requests</string>
-    <string name="the_application_will_attempt_to_unlock_your_pc_within_5_minutes">The application will attempt to unlock your PC within 5 minutes.</string>
+    <string name="the_application_will_attempt_to_unlock_your_pc_within_3_minutes">The application will attempt to unlock your PC within 3 minutes.</string>
     <string name="send">Send</string>
     <string name="cancel">Cancel</string>
     <string name="wol_request_sent">WOL request sent</string>
     <string name="error_during_sending_the_wol_request">Error during sending the WOL request</string>
+    <string name="to_send_a_request_you_will_need_to_pass_a_biometrics_check">To send a request, you will need to pass a biometrics check.</string>
 </resources>

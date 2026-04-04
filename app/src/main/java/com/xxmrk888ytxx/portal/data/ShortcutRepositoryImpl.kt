@@ -30,12 +30,14 @@ class ShortcutRepositoryImpl @Inject constructor(
     private fun Shortcut.toEntry(): ShortcutEntry = ShortcutEntry(
         shortcutId = shortcutId,
         deviceId = clientId,
-        isRequiredBiometricUnlock = isRequiredBiometricUnlock
+        isRequiredBiometricUnlock = isRequiredBiometricUnlock,
+        isSendWOLRequest = isSendWOLRequest
     )
 
     private fun ShortcutEntry.toDomainModel() = Shortcut(
         shortcutId = shortcutId,
         clientId = deviceId,
-        isRequiredBiometricUnlock = isRequiredBiometricUnlock
+        isRequiredBiometricUnlock = isRequiredBiometricUnlock,
+        isSendWOLRequest = isSendWOLRequest
     )
 }

@@ -16,7 +16,8 @@ sealed interface DialogState {
 
     data class ShortcutDialog(
         val device: Device,
-        val isRequiredBiometricUnlock: Boolean = true
+        val isRequiredBiometricUnlock: Boolean = false,
+        val isWolEnabled: Boolean = false,
     ) : DialogState
 }
 

@@ -25,6 +25,7 @@ data class ShortcutEntry(
     @PrimaryKey @ColumnInfo("shortcutId") val shortcutId: String,
     @ColumnInfo("deviceId") val deviceId: String,
     @ColumnInfo("isRequiredBiometricUnlock") val isRequiredBiometricUnlock: Boolean,
+    @ColumnInfo("isSendWOLRequest") val isSendWOLRequest: Boolean
 ) {
     companion object {
         const val TABLE_NAME = "ShortcutEntry"

@@ -103,6 +103,9 @@ class MainScreenViewModel @Inject constructor(
             }
 
             MainScreenEvent.SendWOLRequest -> sendWOLRequest()
+            is MainScreenEvent.OnIsRequiredSendWOLRequestChanged -> updateCreateShortcutDialogState {
+                it.copy(isWolEnabled = event.newValue)
+            }
         }
     }
 
@@ -167,8 +170,9 @@ class MainScreenViewModel @Inject constructor(
         val dialogState =
             dialogState.value as? DialogState.ShortcutDialog ?: return
         val shortcutOption = ShortcutOption(
-            dialogState.device,
-            dialogState.isRequiredBiometricUnlock
+            device = dialogState.device,
+            isRequiredBiometricUnlock = dialogState.isRequiredBiometricUnlock,
+            isSendWOLRequest = dialogState.isWolEnabled
         )
         handleEvent(MainScreenEvent.DismissDialog)
         isLoading.update { true }
