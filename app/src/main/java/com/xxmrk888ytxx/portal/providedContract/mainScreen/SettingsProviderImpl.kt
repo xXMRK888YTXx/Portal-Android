@@ -10,4 +10,5 @@ class SettingsProviderImpl @Inject constructor(
     settingsRepository: SettingsRepository
 ) : SettingsProvider {
     override val isBiometricProtectionAvailable: Flow<Boolean> = settingsRepository.portalSettings.map { it.isBiometricAuthEnabled }
+    override val isUnsafeUnlockTypesDisabled: Flow<Boolean> = settingsRepository.portalSettings.map { it.isUnsafeUnlockTypesDisabled }
 }

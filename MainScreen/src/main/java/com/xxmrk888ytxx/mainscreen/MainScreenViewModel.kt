@@ -59,7 +59,8 @@ class MainScreenViewModel @Inject constructor(
             dialogState,
             permissionBannerItemListState,
             manageDevicesRemovedBannerStateContract.devicesRemovedBannerState,
-            settingsProvider.isBiometricProtectionAvailable
+            settingsProvider.isBiometricProtectionAvailable,
+            settingsProvider.isUnsafeUnlockTypesDisabled
         ) { flowArray ->
             val deviceList = flowArray[0] as ImmutableList<Device>
             val isLoading = flowArray[1] as Boolean
@@ -67,13 +68,15 @@ class MainScreenViewModel @Inject constructor(
             val permissionBannerItemList = flowArray[3] as List<PermissionBannerItem>
             val provideDevicesRemovedBannerStateContract = flowArray[4] as DevicesRemovedBannerState
             val isBiometricProtectionAvailable = flowArray[5] as Boolean
+            val isUnsafeUnlockTypesDisabled = flowArray[6] as Boolean
             ScreenState(
                 devices = deviceList,
                 isLoading = isLoading,
                 dialogState = createShortcutDialogState,
                 permissionBannerItemList = permissionBannerItemList,
                 devicesRemovedBannerState = provideDevicesRemovedBannerStateContract,
-                isBiometricProtectionAvailable = isBiometricProtectionAvailable
+                isBiometricProtectionAvailable = isBiometricProtectionAvailable,
+                isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled
             )
         }.stateWhileSubscribed()
 
@@ -233,7 +236,9 @@ class MainScreenViewModel @Inject constructor(
             device,
             isWOLAvailable = device.isWakeUpOnLanAvailable,
             isBiometricUnlockAvailable = state.value.isBiometricProtectionAvailable,
-            isWOLVisible = device.deviceType == DeviceType.WIFI
+            isWOLVisible = device.deviceType == DeviceType.WIFI,
+            isUnsafeUnlockTypesDisabled = state.value.isUnsafeUnlockTypesDisabled,
+            isRequiredBiometricUnlock = state.value.isUnsafeUnlockTypesDisabled
         )
     }
 

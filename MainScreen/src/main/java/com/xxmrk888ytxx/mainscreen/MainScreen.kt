@@ -740,11 +740,14 @@ fun CreateShortcutBottomSheet(
             SettingsRowWithDescription(
                 title = stringResource(R.string.use_biometric_authentication),
                 description = stringResource(R.string.to_send_a_request_you_will_need_to_pass_a_biometrics_check),
-                errorMessage = if (!dialogState.isBiometricUnlockAvailable) {
-                    stringResource(R.string.biometrics_is_not_enabled_in_the_app_settings)
-                } else null,
+                errorMessage =
+                    when {
+                        !dialogState.isBiometricUnlockAvailable -> stringResource(R.string.biometrics_is_not_enabled_in_the_app_settings)
+                        dialogState.isUnsafeUnlockTypesDisabled -> stringResource(R.string.this_parameter_cannot_be_controlled_the_inhibit_insecure_unlock_methods_setting_is_enabled)
+                        else -> null
+                    },
                 checked = dialogState.isRequiredBiometricUnlock,
-                enabled = dialogState.isBiometricUnlockAvailable,
+                enabled = dialogState.isBiometricUnlockAvailable && !dialogState.isUnsafeUnlockTypesDisabled,
                 onCheckedChange = onIsRequiredBiometricUnlockStateChanged
             )
 

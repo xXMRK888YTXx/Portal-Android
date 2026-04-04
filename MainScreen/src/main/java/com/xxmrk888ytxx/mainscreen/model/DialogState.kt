@@ -20,7 +20,8 @@ sealed interface DialogState {
         val isWolEnabled: Boolean = false,
         val isBiometricUnlockAvailable: Boolean,
         val isWOLAvailable: Boolean,
-        val isWOLVisible: Boolean
+        val isWOLVisible: Boolean,
+        val isUnsafeUnlockTypesDisabled: Boolean
     ) : DialogState
 }
 
