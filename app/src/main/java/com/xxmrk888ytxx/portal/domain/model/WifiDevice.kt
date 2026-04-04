@@ -1,7 +1,7 @@
 package com.xxmrk888ytxx.portal.domain.model
 
 data class WifiDevice(
-    val deviceId: String,
+    val clientId: String,
     val deviceName: String,
     val host: String,
     val clientCertificate: Certificate,

@@ -23,8 +23,8 @@ class ShortcutRepositoryImpl @Inject constructor(
         shortcutDao.getShortcut(shortcutId)?.toDomainModel()
     }
 
-    override suspend fun getShortcutsByDeviceId(deviceId: String): List<Shortcut> = withContext(Dispatchers.IO) {
-        shortcutDao.getShortcutsByDeviceId(deviceId).map { it.toDomainModel() }
+    override suspend fun getShortcutsByClientId(clientId: String): List<Shortcut> = withContext(Dispatchers.IO) {
+        shortcutDao.getShortcutsByClientId(clientId).map { it.toDomainModel() }
     }
 
     override suspend fun getShortcutWithInsecureUnlock(): List<Shortcut> = withContext(Dispatchers.IO) {
@@ -40,14 +40,14 @@ class ShortcutRepositoryImpl @Inject constructor(
 
     private fun Shortcut.toEntry(): ShortcutEntry = ShortcutEntry(
         shortcutId = shortcutId,
-        deviceId = clientId,
+        clientId = clientId,
         isRequiredBiometricUnlock = isRequiredBiometricUnlock,
         isSendWOLRequest = isSendWOLRequest
     )
 
     private fun ShortcutEntry.toDomainModel() = Shortcut(
         shortcutId = shortcutId,
-        clientId = deviceId,
+        clientId = clientId,
         isRequiredBiometricUnlock = isRequiredBiometricUnlock,
         isSendWOLRequest = isSendWOLRequest
     )

@@ -33,11 +33,11 @@ class SendUnlockRequestContractImpl @Inject constructor(
 
         return@runCatching when(device.deviceType) {
             DeviceType.WIFI -> {
-                val savedDevice = wifiDeviceRepository.getDeviceById(device.deviceId).first() ?: throw IllegalArgumentException("Device with deviceId = ${device.deviceId} not exist")
+                val savedDevice = wifiDeviceRepository.getDeviceById(device.clientId).first() ?: throw IllegalArgumentException("Device with deviceId = ${device.clientId} not exist")
                 deviceUnlockManager.unlockWifiDevice(savedDevice).getOrThrow()
             }
             DeviceType.BLUETOOTH -> {
-               val savedDevice = bluetoothDeviceRepository.getDeviceById(device.deviceId).first() ?: throw IllegalArgumentException("Device with deviceId = ${device.deviceId} not exist")
+               val savedDevice = bluetoothDeviceRepository.getDeviceById(device.clientId).first() ?: throw IllegalArgumentException("Device with deviceId = ${device.clientId} not exist")
                 deviceUnlockManager.unlockBluetoothDevice(bluetoothDevice = savedDevice).getOrThrow()
             }
         }

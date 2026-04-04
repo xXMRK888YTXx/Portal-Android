@@ -69,7 +69,7 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
 
     private fun DeviceSettingsEntry.toDomainModel(): DeviceSettings {
         return DeviceSettings(
-            deviceId = deviceId,
+            clientId = clientId,
             awaitUnlockRequests = awaitUnlockRequests,
             searchIpDynamically = searchIpDynamically,
             unlockMethod = unlockMethod.toDomainModel(),

@@ -87,7 +87,7 @@ class MainScreenViewModel @Inject constructor(
             is MainScreenEvent.SendUnlockRequest -> sendUnlockRequest(event.device)
             is MainScreenEvent.ToDeviceDetailsScreen -> sendNavigationAction {
                 fromMainScreenToDeviceConfigurationScreen(
-                    event.deviceId
+                    event.clientId
                 )
             }
 
@@ -149,7 +149,7 @@ class MainScreenViewModel @Inject constructor(
                 (dialogState.value as? DialogState.EnterMacAddressDialog) ?: return@launch
             val macAddress = dialogState.enteredMac.formatToMacAddress() ?: return@launch
             this@MainScreenViewModel.dialogState.value = DialogState.Hidden
-            saveWOLMacAddress.save(dialogState.device.deviceId, macAddress)
+            saveWOLMacAddress.save(dialogState.device.clientId, macAddress)
             sendToastSideEffect(R.string.mac_address_saved.uiText())
         }.invokeOnCompletion { isLoading.value = false }
     }

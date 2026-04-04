@@ -11,9 +11,9 @@ abstract class BluetoothDeviceDao {
     @get:Query("SELECT * FROM ${BluetoothDeviceEntry.TABLE_NAME}")
     abstract val devices: Flow<List<BluetoothDeviceEntry>>
 
-    @Query("SELECT * FROM ${BluetoothDeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId LIMIT 1")
-    abstract fun getWifiDeviceById(deviceId: String): Flow<BluetoothDeviceEntry?>
+    @Query("SELECT * FROM ${BluetoothDeviceEntry.TABLE_NAME} WHERE clientId = :clientId LIMIT 1")
+    abstract fun getWifiDeviceById(clientId: String): Flow<BluetoothDeviceEntry?>
 
-    @Query("UPDATE ${BluetoothDeviceEntry.TABLE_NAME} SET deviceName = :newDeviceName WHERE deviceId = :deviceId")
-    abstract suspend fun updateDeviceName(deviceId: String, newDeviceName: String)
+    @Query("UPDATE ${BluetoothDeviceEntry.TABLE_NAME} SET deviceName = :newDeviceName WHERE clientId = :clientId")
+    abstract suspend fun updateDeviceName(clientId: String, newDeviceName: String)
 }

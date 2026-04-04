@@ -15,7 +15,7 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
     private val wifiPortalApi: WifiPortalApi,
 ) : ConnectToWifiDeviceContract {
 
-    override suspend fun connectAndDeviceId(
+    override suspend fun connectAndGetClientId(
         deviceName: String,
         host: String,
         pairCode: String
@@ -24,7 +24,7 @@ class ConnectToWifiDeviceContractImpl @Inject constructor(
         val pairResult = wifiPortalApi.pair(host, pairCode, clientCertificate).getOrThrow()
         wifiDeviceRepository.saveDevice(
             WifiDevice(
-                deviceId = pairResult.clientId,
+                clientId = pairResult.clientId,
                 deviceName = deviceName,
                 host = host,
                 clientCertificate = clientCertificate,

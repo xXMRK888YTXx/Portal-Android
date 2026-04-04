@@ -10,19 +10,19 @@ import com.xxmrk888ytxx.database.entry.WifiDeviceEntry.Companion.TABLE_NAME
 
 @Entity(
     tableName = TABLE_NAME,
-    indices = [Index("deviceId",unique = true)],
+    indices = [Index("clientId",unique = true)],
     foreignKeys = [
         ForeignKey(
             entity = DeviceEntry::class,
-            parentColumns = ["deviceId"],
-            childColumns = ["deviceId"],
+            parentColumns = ["clientId"],
+            childColumns = ["clientId"],
             onDelete = CASCADE,
             onUpdate = CASCADE
         )
     ]
 )
 data class WifiDeviceEntry(
-    @ColumnInfo("deviceId") @PrimaryKey val deviceId: String,
+    @ColumnInfo("clientId") @PrimaryKey val clientId: String,
     @ColumnInfo("deviceName") val deviceName: String,
     @ColumnInfo("host") val host: String,
     @ColumnInfo("serverCertificateFingerprint") val serverCertificateFingerprint: String,

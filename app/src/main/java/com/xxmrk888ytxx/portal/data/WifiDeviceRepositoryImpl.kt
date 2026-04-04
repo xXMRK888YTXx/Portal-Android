@@ -5,8 +5,6 @@ import com.xxmrk888ytxx.database.dao.WifiDeviceDao
 import com.xxmrk888ytxx.database.entry.WifiDeviceEntry
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.SecureStorage
-import com.xxmrk888ytxx.portal.domain.ShortcutManager
-import com.xxmrk888ytxx.portal.domain.ShortcutRepository
 import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +23,7 @@ class WifiDeviceRepositoryImpl @Inject constructor(
         secureStorage.saveCertificateByAlias(keyAlias, wifiDevice.clientCertificate)
         deviceDao.upsertWifiDevice(
             WifiDeviceEntry(
-                deviceId = wifiDevice.deviceId,
+                clientId = wifiDevice.clientId,
                 deviceName = wifiDevice.deviceName,
                 host = wifiDevice.host,
                 serverCertificateFingerprint = wifiDevice.serverCertificateFingerprint,
@@ -35,24 +33,24 @@ class WifiDeviceRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getDeviceById(deviceId: String): Flow<WifiDevice?> =
-        wifiDeviceDao.getWifiDeviceById(deviceId).map { deviceEntry ->
+    override fun getDeviceById(clientId: String): Flow<WifiDevice?> =
+        wifiDeviceDao.getWifiDeviceById(clientId).map { deviceEntry ->
             deviceEntry?.toDomainModel()
         }
 
-    override suspend fun updateHost(deviceId: String, newHost: String) =
+    override suspend fun updateHost(clientId: String, newHost: String) =
         withContext(Dispatchers.IO) {
-            wifiDeviceDao.updateHost(deviceId, newHost)
+            wifiDeviceDao.updateHost(clientId, newHost)
         }
 
-    override suspend fun updateDeviceName(deviceId: String, newName: String) =
+    override suspend fun updateDeviceName(clientId: String, newName: String) =
         withContext(Dispatchers.IO) {
-            wifiDeviceDao.updateDeviceName(deviceId = deviceId, newDeviceName = newName)
+            wifiDeviceDao.updateDeviceName(deviceId = clientId, newDeviceName = newName)
         }
 
-    override suspend fun updateWOLMacAddress(deviceId: String, macAddress: String) =
+    override suspend fun updateWOLMacAddress(clientId: String, macAddress: String) =
         withContext(Dispatchers.IO) {
-            wifiDeviceDao.updateWOLMacAddress(deviceId, macAddress)
+            wifiDeviceDao.updateWOLMacAddress(clientId, macAddress)
         }
 
     override val devices: Flow<List<WifiDevice>> = wifiDeviceDao.devices.map { deviceList ->
@@ -64,7 +62,7 @@ class WifiDeviceRepositoryImpl @Inject constructor(
     private suspend fun WifiDeviceEntry.toDomainModel(): WifiDevice {
         val clientCertificate = secureStorage.restoreCertificateByAlias(clientCertificateKeyAlias)
         return WifiDevice(
-            deviceId = deviceId,
+            clientId = clientId,
             deviceName = deviceName,
             host = host,
             clientCertificate = clientCertificate,

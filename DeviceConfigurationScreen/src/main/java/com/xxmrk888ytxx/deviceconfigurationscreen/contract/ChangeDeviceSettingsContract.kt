@@ -3,10 +3,10 @@ package com.xxmrk888ytxx.deviceconfigurationscreen.contract
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
 
 interface ChangeDeviceSettingsContract {
-    suspend fun updateAwaitUnlockRequestsState(deviceId: String, newState: Boolean)
-    suspend fun updateSearchIpDynamicallyState(deviceId: String, newState: Boolean)
-    suspend fun updateUnlockMethodState(deviceId: String, newMethod: UnlockMethod)
-    suspend fun updateUnlockOnlyWhenScreenUnlockedState(deviceId: String, newValue: Boolean)
-    suspend fun updateHost(newHost: String, deviceId: String)
-    suspend fun updateDeviceName(newName: String, deviceId: String)
+    suspend fun updateAwaitUnlockRequestsState(clientId: String, newState: Boolean)
+    suspend fun updateSearchIpDynamicallyState(clientId: String, newState: Boolean)
+    suspend fun updateUnlockMethodState(clientId: String, newMethod: UnlockMethod)
+    suspend fun updateUnlockOnlyWhenScreenUnlockedState(clientId: String, newValue: Boolean)
+    suspend fun updateHost(newHost: String, clientId: String)
+    suspend fun updateDeviceName(newName: String, clientId: String)
 }

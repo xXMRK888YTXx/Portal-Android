@@ -30,13 +30,13 @@ abstract class DeviceDao {
 
     @Transaction
     open suspend fun upsertWifiDevice(wifiDeviceEntry: WifiDeviceEntry) {
-        upsertDevice(DeviceEntry(deviceId = wifiDeviceEntry.deviceId))
+        upsertDevice(DeviceEntry(clientId = wifiDeviceEntry.clientId))
         upsertWifiDeviceInternal(wifiDeviceEntry)
     }
 
     @Transaction
     open suspend fun upsertBluetoothDevice(bluetoothDeviceEntry: BluetoothDeviceEntry) {
-        upsertDevice(DeviceEntry(deviceId = bluetoothDeviceEntry.deviceId))
+        upsertDevice(DeviceEntry(clientId = bluetoothDeviceEntry.clientId))
         upsertBluetoothDeviceInternal(bluetoothDeviceEntry)
     }
 
@@ -46,10 +46,10 @@ abstract class DeviceDao {
         upsertDeviceInternal(deviceEntry)
         //Add default device settings
         upsertDeviceSettingsInternal(DeviceSettingsEntry(
-            deviceId = deviceEntry.deviceId,
+            clientId = deviceEntry.clientId,
         ))
     }
 
-    @Query("DELETE FROM ${DeviceEntry.TABLE_NAME} WHERE deviceId = :deviceId")
-    abstract suspend fun removeDevice(deviceId: String)
+    @Query("DELETE FROM ${DeviceEntry.TABLE_NAME} WHERE clientId = :clientId")
+    abstract suspend fun removeDevice(clientId: String)
 }

@@ -8,10 +8,10 @@ import com.xxmrk888ytxx.database.entry.DeviceEntry.Companion.TABLE_NAME
 
 @Entity(
     tableName = TABLE_NAME,
-    indices = [Index("deviceId", unique = true)]
+    indices = [Index("clientId", unique = true)]
 )
 data class DeviceEntry(
-    @ColumnInfo("deviceId") @PrimaryKey val deviceId: String,
+    @ColumnInfo("clientId") @PrimaryKey val clientId: String,
 ) {
     internal companion object {
         const val TABLE_NAME = "DeviceTable"

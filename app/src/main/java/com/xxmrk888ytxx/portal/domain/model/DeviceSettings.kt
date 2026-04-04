@@ -1,7 +1,7 @@
 package com.xxmrk888ytxx.portal.domain.model
 
 data class DeviceSettings(
-    val deviceId: String,
+    val clientId: String,
     val awaitUnlockRequests: Boolean,
     val searchIpDynamically: Boolean,
     val unlockMethod: UnlockMethod,

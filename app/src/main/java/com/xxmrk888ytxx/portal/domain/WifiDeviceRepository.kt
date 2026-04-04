@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 interface WifiDeviceRepository {
     val devices: Flow<List<WifiDevice>>
     suspend fun saveDevice(wifiDevice: WifiDevice)
-    fun getDeviceById(deviceId: String): Flow<WifiDevice?>
-    suspend fun updateHost(deviceId: String, newHost: String)
-    suspend fun updateDeviceName(deviceId: String, newName: String)
-    suspend fun updateWOLMacAddress(deviceId: String, macAddress: String)
+    fun getDeviceById(clientId: String): Flow<WifiDevice?>
+    suspend fun updateHost(clientId: String, newHost: String)
+    suspend fun updateDeviceName(clientId: String, newName: String)
+    suspend fun updateWOLMacAddress(clientId: String, macAddress: String)
 }

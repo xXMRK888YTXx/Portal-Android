@@ -24,10 +24,10 @@ class DeviceUnlockManagerImpl @Inject constructor(
     override suspend fun unlockWifiDevice(wifiDevice: WifiDevice): Result<Unit> =
         runCatching(Dispatchers.IO) {
             val settings =
-                deviceSettingsRepository.getDeviceSettingsByDeviceId(wifiDevice.deviceId).first()
+                deviceSettingsRepository.getDeviceSettingsByDeviceId(wifiDevice.clientId).first()
                     ?: throw IllegalStateException("Device haven't settings")
             val host = when {
-                settings.searchIpDynamically -> mdnsManager.waitHostForClient(wifiDevice.deviceId)
+                settings.searchIpDynamically -> mdnsManager.waitHostForClient(wifiDevice.clientId)
                     .also { fastDebugLog("In unlockWifiDevice mdns found host: $it") }
                     ?: wifiDevice.host.also { fastDebugLog("In unlockWifiDevice mdns not found host. Using default") }
 
@@ -35,7 +35,7 @@ class DeviceUnlockManagerImpl @Inject constructor(
             }
             wifiPortalApi.unlock(
                 host = host,
-                clientId = wifiDevice.deviceId,
+                clientId = wifiDevice.clientId,
                 serverCertificateHash = wifiDevice.serverCertificateFingerprint,
                 clientCertificate = wifiDevice.clientCertificate
             ).getOrThrow()

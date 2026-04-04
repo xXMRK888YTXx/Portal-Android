@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.getSystemService
-import com.xxmrk888ytxx.coreandroid.AndroidLogger
 import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
@@ -15,10 +14,8 @@ import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
-import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
-import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity.Companion.EXTRA_UNLOCK_SCREEN_DATA
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
@@ -31,7 +28,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import kotlin.math.abs
-import kotlin.random.Random
 
 class UnlockRequestManagerImpl @Inject constructor(
     private val context: Context,
@@ -50,7 +46,7 @@ class UnlockRequestManagerImpl @Inject constructor(
     }
 
     override fun automaticUnlock(
-        deviceId: String,
+        clientId: String,
         unlockOnlyWhenScreenUnlocked: Boolean,
         request: UnlockServiceRequest
     ) {
@@ -66,26 +62,26 @@ class UnlockRequestManagerImpl @Inject constructor(
             }
 
             unlockMessageSender.sendMessage(
-                clientId = deviceId,
+                clientId = clientId,
                 message = UnlockServiceMessage.Unlock(request.requestId)
             )
         }
     }
 
     override fun showUnlockScreen(
-        deviceId: String,
+        clientId: String,
         deviceName: String,
         request: UnlockServiceRequest
     ) {
         fastDebugLog("showScreenImpl")
         when {
             permissionManager.isShowSystemAlertPermissionGranted -> showActivity(
-                deviceId,
+                clientId,
                 request
             ).also { fastDebugLog("showActivity") }
 
             permissionManager.isNotificationPermissionGranted -> sendNotification(
-                deviceId,
+                clientId,
                 deviceName,
                 request
             ).also { fastDebugLog("sendNotification") }
@@ -102,11 +98,11 @@ class UnlockRequestManagerImpl @Inject constructor(
     }
 
     override fun sendNotification(
-        deviceId: String,
+        clientId: String,
         deviceName: String,
         request: UnlockServiceRequest
     ) {
-        val intent = createIntentForStartUnlockScreen(deviceId, request.requestId)
+        val intent = createIntentForStartUnlockScreen(clientId, request.requestId)
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,
@@ -127,7 +123,7 @@ class UnlockRequestManagerImpl @Inject constructor(
             build()
         }
         notificationManager.notify(
-            abs(deviceId.hashCode()),
+            abs(clientId.hashCode()),
             notification
         )
     }

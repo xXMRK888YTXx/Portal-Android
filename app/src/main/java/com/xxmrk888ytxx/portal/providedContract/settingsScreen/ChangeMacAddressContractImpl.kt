@@ -8,9 +8,9 @@ class ChangeMacAddressContractImpl @Inject constructor(
     private val wifiDeviceRepository: WifiDeviceRepository
 ) : ChangeMacAddressContract {
     override suspend fun updateWakeOnLanMacAddress(
-        deviceId: String,
+        clientId: String,
         macAddress: String
     ) {
-        wifiDeviceRepository.updateWOLMacAddress(deviceId,macAddress)
+        wifiDeviceRepository.updateWOLMacAddress(clientId,macAddress)
     }
 }

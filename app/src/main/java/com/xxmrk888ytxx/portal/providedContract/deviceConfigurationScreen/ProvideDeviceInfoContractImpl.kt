@@ -21,20 +21,20 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
     private val bluetoothDeviceRepository: BluetoothDeviceRepository,
     private val bluetoothManager: BluetoothManager
 ) : ProvideDeviceInfoContract {
-    override suspend fun provideDeviceInfo(deviceId: String): Flow<Device> {
-        val wifiDevice = wifiDeviceRepository.getDeviceById(deviceId)
-        val bluetoothDevice = bluetoothDeviceRepository.getDeviceById(deviceId)
-        val deviceSetting = deviceSettingsRepository.getDeviceSettingsByDeviceId(deviceId)
+    override suspend fun provideDeviceInfo(clientId: String): Flow<Device> {
+        val wifiDevice = wifiDeviceRepository.getDeviceById(clientId)
+        val bluetoothDevice = bluetoothDeviceRepository.getDeviceById(clientId)
+        val deviceSetting = deviceSettingsRepository.getDeviceSettingsByDeviceId(clientId)
         return combine(
             wifiDevice,
             bluetoothDevice,
             deviceSetting,
             bluetoothManager.pairedDeviceMacAddresses
         ) { wifiDevice, bluetoothDevice, deviceSettings, pairedDeviceMacAddresses ->
-            val deviceSettings = deviceSettings ?: throw DeviceNotFoundException(deviceId)
+            val deviceSettings = deviceSettings ?: throw DeviceNotFoundException(clientId)
             when {
                 wifiDevice != null -> Device.WifiDevice(
-                    deviceId = wifiDevice.deviceId,
+                    clientId = wifiDevice.clientId,
                     deviceName = wifiDevice.deviceName,
                     host = wifiDevice.host,
                     clientCertificateFingerprint = certificateRepository.getX509CertificateFingerprint(
@@ -50,7 +50,7 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                 )
 
                 bluetoothDevice != null -> Device.BluetoothDevice(
-                    deviceId = bluetoothDevice.clientId,
+                    clientId = bluetoothDevice.clientId,
                     deviceName = bluetoothDevice.name,
                     macAddress = bluetoothDevice.macAddress,
                     awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
@@ -61,7 +61,7 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     // If pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) == null its mean permission not grated
                 )
 
-                else -> throw DeviceNotFoundException(deviceId)
+                else -> throw DeviceNotFoundException(clientId)
             }
         }
     }

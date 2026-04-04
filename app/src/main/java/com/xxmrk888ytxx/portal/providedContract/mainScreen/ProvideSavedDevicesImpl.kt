@@ -25,7 +25,7 @@ class ProvideSavedDevicesImpl @Inject constructor(
 
         val mappedWifi = wifiDevices.map { device ->
             MainScreenDevice(
-                deviceId = device.deviceId,
+                clientId = device.clientId,
                 host = device.host,
                 deviceName = device.deviceName,
                 deviceType = DeviceType.WIFI,
@@ -38,7 +38,7 @@ class ProvideSavedDevicesImpl @Inject constructor(
             val isPaired = pairedDeviceMacAddresses?.contains(device.macAddress) ?: true
             // If pairedDeviceMacAddresses?.contains(device.macAddress) == null it means permission not granted
             MainScreenDevice(
-                deviceId = device.clientId,
+                clientId = device.clientId,
                 host = device.macAddress,
                 deviceName = device.name,
                 deviceType = DeviceType.BLUETOOTH,

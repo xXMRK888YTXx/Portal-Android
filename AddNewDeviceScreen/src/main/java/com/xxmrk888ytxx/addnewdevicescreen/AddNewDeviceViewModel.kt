@@ -21,7 +21,6 @@ import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.uiText.buildUiText
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -137,7 +136,7 @@ class AddNewDeviceViewModel @Inject constructor(
     private fun connectToWifiDevice(value: ScreenState.Wifi) {
         updateLoadingState(true)
         viewModelScope.launch {
-            connectToWifiDeviceContract.connectAndDeviceId(
+            connectToWifiDeviceContract.connectAndGetClientId(
                 value.deviceName,
                 value.host,
                 value.pairCode

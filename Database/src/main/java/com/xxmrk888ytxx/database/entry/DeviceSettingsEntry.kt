@@ -11,19 +11,19 @@ import com.xxmrk888ytxx.database.model.UnlockMethod
 
 @Entity(
     tableName = TABLE_NAME,
-    indices = [Index("deviceId",unique = true)],
+    indices = [Index("clientId",unique = true)],
     foreignKeys = [
         ForeignKey(
             entity = DeviceEntry::class,
-            parentColumns = ["deviceId"],
-            childColumns = ["deviceId"],
+            parentColumns = ["clientId"],
+            childColumns = ["clientId"],
             onDelete = CASCADE,
             onUpdate = CASCADE
         )
     ]
 )
 data class DeviceSettingsEntry(
-    @PrimaryKey @ColumnInfo("deviceId") val deviceId: String,
+    @PrimaryKey @ColumnInfo("clientId") val clientId: String,
     @ColumnInfo("awaitUnlockRequests") val awaitUnlockRequests: Boolean = true,
     @ColumnInfo("searchIpDynamically") val searchIpDynamically: Boolean = false,
     @ColumnInfo("unlockMethod") val unlockMethod: UnlockMethod = UnlockMethod.NOTIFICATION,

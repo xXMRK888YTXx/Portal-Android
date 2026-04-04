@@ -10,19 +10,19 @@ import com.xxmrk888ytxx.database.entry.BluetoothDeviceEntry.Companion.TABLE_NAME
 
 @Entity(
     tableName = TABLE_NAME,
-    indices = [Index("deviceId",unique = true)],
+    indices = [Index("clientId",unique = true)],
     foreignKeys = [
         ForeignKey(
             entity = DeviceEntry::class,
-            parentColumns = ["deviceId"],
-            childColumns = ["deviceId"],
+            parentColumns = ["clientId"],
+            childColumns = ["clientId"],
             onDelete = CASCADE,
             onUpdate = CASCADE
         )
     ]
 )
 data class BluetoothDeviceEntry(
-    @ColumnInfo("deviceId") @PrimaryKey val deviceId: String,
+    @ColumnInfo("clientId") @PrimaryKey val clientId: String,
     @ColumnInfo("deviceName") val deviceName: String,
     @ColumnInfo("macAddress") val macAddress: String,
 ) {

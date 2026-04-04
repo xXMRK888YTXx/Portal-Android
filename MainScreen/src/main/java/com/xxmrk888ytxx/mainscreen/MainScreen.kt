@@ -445,7 +445,7 @@ fun DeviceList(
             }
             items(
                 items = wifiDevices,
-                key = { it.deviceId }
+                key = { it.clientId }
             ) { device ->
                 DeviceItem(
                     device = device,
@@ -470,7 +470,7 @@ fun DeviceList(
             }
             items(
                 items = bluetoothDevices,
-                key = { it.deviceId }
+                key = { it.clientId }
             ) { device ->
                 DeviceItem(
                     device = device,
@@ -499,7 +499,7 @@ private fun DeviceItem(
         null
     }
 
-    val actions = remember(isUnlockButtonAvailable, device.deviceId) {
+    val actions = remember(isUnlockButtonAvailable, device.clientId) {
         listOf(
             DeviceAction(
                 label = R.string.send_wake_up_on_lan_request,
@@ -511,7 +511,7 @@ private fun DeviceItem(
                 label = R.string.options,
                 icon = R.drawable.options,
                 id = DeviceAction.OPTION_ID,
-                onClick = { onEvent(ToDeviceDetailsScreen(device.deviceId)) }
+                onClick = { onEvent(ToDeviceDetailsScreen(device.clientId)) }
             ),
             DeviceAction(
                 label = R.string.create_shortcut,
@@ -527,7 +527,7 @@ private fun DeviceItem(
             if (!hasError) {
                 onEvent(SendUnlockRequest(device))
             } else {
-                onEvent(ToDeviceDetailsScreen(device.deviceId))
+                onEvent(ToDeviceDetailsScreen(device.clientId))
             }
         },
         modifier = modifier.fillMaxWidth(),

@@ -123,7 +123,7 @@ class MainActivity @Inject constructor(
                         entry<Screen.DeviceConfigurationScreen> { screen ->
                             ScreenContent(
                                 ::DeviceConfigurationScreen,
-                                { deviceConfigurationViewModelFactory.create(screen.deviceId) })
+                                { deviceConfigurationViewModelFactory.create(screen.clientId) })
                         }
 
                         entry<Screen.SettingsScreen> {

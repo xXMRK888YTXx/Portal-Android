@@ -14,8 +14,8 @@ import com.xxmrk888ytxx.database.entry.ShortcutEntry.Companion.TABLE_NAME
     foreignKeys = [
         ForeignKey(
             entity = DeviceEntry::class,
-            parentColumns = ["deviceId"],
-            childColumns = ["deviceId"],
+            parentColumns = ["clientId"],
+            childColumns = ["clientId"],
             onDelete = CASCADE,
             onUpdate = CASCADE
         )
@@ -23,7 +23,7 @@ import com.xxmrk888ytxx.database.entry.ShortcutEntry.Companion.TABLE_NAME
 )
 data class ShortcutEntry(
     @PrimaryKey @ColumnInfo("shortcutId") val shortcutId: String,
-    @ColumnInfo("deviceId") val deviceId: String,
+    @ColumnInfo("clientId") val clientId: String,
     @ColumnInfo("isRequiredBiometricUnlock") val isRequiredBiometricUnlock: Boolean,
     @ColumnInfo("isSendWOLRequest") val isSendWOLRequest: Boolean
 ) {

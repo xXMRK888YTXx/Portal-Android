@@ -13,11 +13,11 @@ class WOLServiceManagerImpl @Inject constructor(
 ) : WOLServiceManager {
 
     override suspend fun startWOLUnlock(
-        deviceId: String,
+        clientId: String,
         trySendUnlockRequests: Boolean
     ) {
         val clientUnlockServiceParams = ClientUnlockServiceParams(
-            clientId = deviceId,
+            clientId = clientId,
             tryToRetryUnlockUntilSuccessOrTimeout = trySendUnlockRequests,
             isSendWOLRequest = true,
             isSendUnlockRequest = trySendUnlockRequests

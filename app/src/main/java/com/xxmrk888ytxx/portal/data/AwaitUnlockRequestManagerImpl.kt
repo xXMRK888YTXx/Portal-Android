@@ -37,7 +37,7 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
         awaitUnlockRequestManagerScope.launch(start = CoroutineStart.LAZY) {
             val knownDeviceIds = mutableSetOf<String>()
             deviceServiceManager.deviceSettings.collect { deviceSettings ->
-                val currentDeviceIds = deviceSettings.map { it.deviceId }.toSet()
+                val currentDeviceIds = deviceSettings.map { it.clientId }.toSet()
                 val removedDeviceIds = knownDeviceIds - currentDeviceIds
                 removedDeviceIds.forEach { deviceId ->
                     disableForDevice(deviceId)
@@ -48,8 +48,8 @@ class AwaitUnlockRequestManagerImpl @Inject constructor(
 
                 deviceSettings.forEach {
                     when (it.awaitUnlockRequests) {
-                        true -> enableForDevice(it.deviceId)
-                        false -> disableForDevice(it.deviceId)
+                        true -> enableForDevice(it.clientId)
+                        false -> disableForDevice(it.clientId)
                     }
                 }
             }

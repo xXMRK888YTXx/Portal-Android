@@ -6,7 +6,6 @@ import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
-import com.xxmrk888ytxx.portal.domain.model.DeviceSettings
 import com.xxmrk888ytxx.portal.utils.toDomainModel
 import javax.inject.Inject
 
@@ -16,40 +15,40 @@ class ChangeDeviceSettingsContractImpl @Inject constructor(
     private val bluetoothDeviceRepository: BluetoothDeviceRepository
 ) : ChangeDeviceSettingsContract {
     override suspend fun updateAwaitUnlockRequestsState(
-        deviceId: String,
+        clientId: String,
         newState: Boolean
     ) {
-        deviceSettingsRepository.updateAwaitUnlockRequests(deviceId, newState)
+        deviceSettingsRepository.updateAwaitUnlockRequests(clientId, newState)
     }
 
     override suspend fun updateSearchIpDynamicallyState(
-        deviceId: String,
+        clientId: String,
         newState: Boolean
     ) {
-        deviceSettingsRepository.updateSearchIpDynamically(deviceId, newState)
+        deviceSettingsRepository.updateSearchIpDynamically(clientId, newState)
     }
 
     override suspend fun updateUnlockMethodState(
-        deviceId: String,
+        clientId: String,
         newMethod: UnlockMethod
     ) {
-        deviceSettingsRepository.updateUnlockMethod(deviceId, newMethod.toDomainModel())
+        deviceSettingsRepository.updateUnlockMethod(clientId, newMethod.toDomainModel())
     }
 
     override suspend fun updateUnlockOnlyWhenScreenUnlockedState(
-        deviceId: String,
+        clientId: String,
         newValue: Boolean
     ) {
-        deviceSettingsRepository.updateUnlockOnlyWhenScreenUnlockedState(deviceId, newValue)
+        deviceSettingsRepository.updateUnlockOnlyWhenScreenUnlockedState(clientId, newValue)
     }
 
-    override suspend fun updateHost(newHost: String, deviceId: String) = saveCall {
+    override suspend fun updateHost(newHost: String, clientId: String) = saveCall {
         //Only for wifi devices
-        wifiDeviceRepository.updateHost(deviceId, newHost)
+        wifiDeviceRepository.updateHost(clientId, newHost)
     }
 
-    override suspend fun updateDeviceName(newName: String, deviceId: String) {
-        wifiDeviceRepository.updateDeviceName(deviceId, newName)
-        bluetoothDeviceRepository.updateDeviceName(deviceId, newName)
+    override suspend fun updateDeviceName(newName: String, clientId: String) {
+        wifiDeviceRepository.updateDeviceName(clientId, newName)
+        bluetoothDeviceRepository.updateDeviceName(clientId, newName)
     }
 }

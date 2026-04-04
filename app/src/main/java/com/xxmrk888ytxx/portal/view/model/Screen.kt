@@ -19,7 +19,7 @@ sealed interface Screen : NavKey {
     data object AddNewDeviceScreen : Screen
 
     @Serializable
-    data class DeviceConfigurationScreen(val deviceId: String) : Screen
+    data class DeviceConfigurationScreen(val clientId: String) : Screen
 
     @Serializable
     data object SettingsScreen: Screen, ScreenWithBottomBar {

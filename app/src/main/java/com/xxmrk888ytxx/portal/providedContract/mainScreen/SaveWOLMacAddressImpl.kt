@@ -7,7 +7,7 @@ import javax.inject.Inject
 class SaveWOLMacAddressImpl @Inject constructor(
     private val wifiDeviceRepository: WifiDeviceRepository
 ) : SaveWOLMacAddress {
-    override suspend fun save(deviceId: String, macAddress: String) {
-        wifiDeviceRepository.updateWOLMacAddress(deviceId, macAddress)
+    override suspend fun save(clientId: String, macAddress: String) {
+        wifiDeviceRepository.updateWOLMacAddress(clientId, macAddress)
     }
 }

@@ -1,5 +1,5 @@
 package com.xxmrk888ytxx.deviceconfigurationscreen.contract
 
 interface ChangeMacAddressContract {
-    suspend fun updateWakeOnLanMacAddress(deviceId: String, macAddress: String)
+    suspend fun updateWakeOnLanMacAddress(clientId: String, macAddress: String)
 }

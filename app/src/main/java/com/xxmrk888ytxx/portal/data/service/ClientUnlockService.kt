@@ -86,7 +86,7 @@ abstract class ClientUnlockService(
     ) {
         val macAddress = wifiDevice.wolMacAddress
         if (macAddress == null) {
-            fastDebugLog("Mac address is null. WOL unavailable for deviceId ${wifiDevice.deviceId} ")
+            fastDebugLog("Mac address is null. WOL unavailable for deviceId ${wifiDevice.clientId} ")
         }
         doUnlock(clientUnlockServiceParams) {
             tryWifiDeviceUnlock(

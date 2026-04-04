@@ -2,15 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c7597733d964fc917589e133e56f3fb7",
+    "identityHash": "5d1ff1a3aed3a48bbbc1c2a58984502d",
     "entities": [
       {
         "tableName": "DeviceTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, PRIMARY KEY(`deviceId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`clientId` TEXT NOT NULL, PRIMARY KEY(`clientId`))",
         "fields": [
           {
-            "fieldPath": "deviceId",
-            "columnName": "deviceId",
+            "fieldPath": "clientId",
+            "columnName": "clientId",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -18,28 +18,28 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "deviceId"
+            "clientId"
           ]
         },
         "indices": [
           {
-            "name": "index_DeviceTable_deviceId",
+            "name": "index_DeviceTable_clientId",
             "unique": true,
             "columnNames": [
-              "deviceId"
+              "clientId"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_DeviceTable_deviceId` ON `${TABLE_NAME}` (`deviceId`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_DeviceTable_clientId` ON `${TABLE_NAME}` (`clientId`)"
           }
         ]
       },
       {
         "tableName": "WifiDeviceTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `deviceName` TEXT NOT NULL, `host` TEXT NOT NULL, `serverCertificateFingerprint` TEXT NOT NULL, `clientCertificateKeyAlias` TEXT NOT NULL, `wolMacAddress` TEXT, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`clientId` TEXT NOT NULL, `deviceName` TEXT NOT NULL, `host` TEXT NOT NULL, `serverCertificateFingerprint` TEXT NOT NULL, `clientCertificateKeyAlias` TEXT NOT NULL, `wolMacAddress` TEXT, PRIMARY KEY(`clientId`), FOREIGN KEY(`clientId`) REFERENCES `DeviceTable`(`clientId`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
-            "fieldPath": "deviceId",
-            "columnName": "deviceId",
+            "fieldPath": "clientId",
+            "columnName": "clientId",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -76,18 +76,18 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "deviceId"
+            "clientId"
           ]
         },
         "indices": [
           {
-            "name": "index_WifiDeviceTable_deviceId",
+            "name": "index_WifiDeviceTable_clientId",
             "unique": true,
             "columnNames": [
-              "deviceId"
+              "clientId"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WifiDeviceTable_deviceId` ON `${TABLE_NAME}` (`deviceId`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WifiDeviceTable_clientId` ON `${TABLE_NAME}` (`clientId`)"
           }
         ],
         "foreignKeys": [
@@ -96,21 +96,21 @@
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
-              "deviceId"
+              "clientId"
             ],
             "referencedColumns": [
-              "deviceId"
+              "clientId"
             ]
           }
         ]
       },
       {
         "tableName": "BluetoothDeviceTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `deviceName` TEXT NOT NULL, `macAddress` TEXT NOT NULL, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`clientId` TEXT NOT NULL, `deviceName` TEXT NOT NULL, `macAddress` TEXT NOT NULL, PRIMARY KEY(`clientId`), FOREIGN KEY(`clientId`) REFERENCES `DeviceTable`(`clientId`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
-            "fieldPath": "deviceId",
-            "columnName": "deviceId",
+            "fieldPath": "clientId",
+            "columnName": "clientId",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -130,18 +130,18 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "deviceId"
+            "clientId"
           ]
         },
         "indices": [
           {
-            "name": "index_BluetoothDeviceTable_deviceId",
+            "name": "index_BluetoothDeviceTable_clientId",
             "unique": true,
             "columnNames": [
-              "deviceId"
+              "clientId"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_BluetoothDeviceTable_deviceId` ON `${TABLE_NAME}` (`deviceId`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_BluetoothDeviceTable_clientId` ON `${TABLE_NAME}` (`clientId`)"
           }
         ],
         "foreignKeys": [
@@ -150,21 +150,21 @@
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
-              "deviceId"
+              "clientId"
             ],
             "referencedColumns": [
-              "deviceId"
+              "clientId"
             ]
           }
         ]
       },
       {
         "tableName": "DeviceSettingsTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `awaitUnlockRequests` INTEGER NOT NULL, `searchIpDynamically` INTEGER NOT NULL, `unlockMethod` INTEGER NOT NULL, `unlockOnlyWhenScreenUnlocked` INTEGER NOT NULL, PRIMARY KEY(`deviceId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`clientId` TEXT NOT NULL, `awaitUnlockRequests` INTEGER NOT NULL, `searchIpDynamically` INTEGER NOT NULL, `unlockMethod` INTEGER NOT NULL, `unlockOnlyWhenScreenUnlocked` INTEGER NOT NULL, PRIMARY KEY(`clientId`), FOREIGN KEY(`clientId`) REFERENCES `DeviceTable`(`clientId`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
-            "fieldPath": "deviceId",
-            "columnName": "deviceId",
+            "fieldPath": "clientId",
+            "columnName": "clientId",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -196,18 +196,18 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "deviceId"
+            "clientId"
           ]
         },
         "indices": [
           {
-            "name": "index_DeviceSettingsTable_deviceId",
+            "name": "index_DeviceSettingsTable_clientId",
             "unique": true,
             "columnNames": [
-              "deviceId"
+              "clientId"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_DeviceSettingsTable_deviceId` ON `${TABLE_NAME}` (`deviceId`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_DeviceSettingsTable_clientId` ON `${TABLE_NAME}` (`clientId`)"
           }
         ],
         "foreignKeys": [
@@ -216,17 +216,17 @@
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
-              "deviceId"
+              "clientId"
             ],
             "referencedColumns": [
-              "deviceId"
+              "clientId"
             ]
           }
         ]
       },
       {
         "tableName": "ShortcutEntry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shortcutId` TEXT NOT NULL, `deviceId` TEXT NOT NULL, `isRequiredBiometricUnlock` INTEGER NOT NULL, `isSendWOLRequest` INTEGER NOT NULL, PRIMARY KEY(`shortcutId`), FOREIGN KEY(`deviceId`) REFERENCES `DeviceTable`(`deviceId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shortcutId` TEXT NOT NULL, `clientId` TEXT NOT NULL, `isRequiredBiometricUnlock` INTEGER NOT NULL, `isSendWOLRequest` INTEGER NOT NULL, PRIMARY KEY(`shortcutId`), FOREIGN KEY(`clientId`) REFERENCES `DeviceTable`(`clientId`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "shortcutId",
@@ -235,8 +235,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "deviceId",
-            "columnName": "deviceId",
+            "fieldPath": "clientId",
+            "columnName": "clientId",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -276,10 +276,10 @@
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
-              "deviceId"
+              "clientId"
             ],
             "referencedColumns": [
-              "deviceId"
+              "clientId"
             ]
           }
         ]
@@ -287,7 +287,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c7597733d964fc917589e133e56f3fb7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5d1ff1a3aed3a48bbbc1c2a58984502d')"
     ]
   }
 }

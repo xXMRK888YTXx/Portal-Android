@@ -277,7 +277,7 @@ fun DeviceInfoState(
             ) {
                 InfoItem(
                     title = stringResource(R.string.device_id),
-                    value = screenState.device.deviceId
+                    value = screenState.device.clientId
                 )
                 InfoItem(
                     title = stringResource(R.string.device_type),

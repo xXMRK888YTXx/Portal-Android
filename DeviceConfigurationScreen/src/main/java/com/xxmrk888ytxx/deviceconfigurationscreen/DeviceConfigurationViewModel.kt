@@ -31,7 +31,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class DeviceConfigurationViewModel @AssistedInject internal constructor(
-    @Assisted private val deviceId: String,
+    @Assisted private val clientId: String,
     private val provideDeviceInfoContract: ProvideDeviceInfoContract,
     private val removeDeviceContract: RemoveDeviceContract,
     private val changeDeviceSettingsContract: ChangeDeviceSettingsContract,
@@ -45,7 +45,7 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
     private val updateStateMutex = Mutex()
 
     private val observeDeviceJob = viewModelScope.launch {
-        provideDeviceInfoContract.provideDeviceInfo(deviceId)
+        provideDeviceInfoContract.provideDeviceInfo(clientId)
             .catch {
                 sideEffect.emit(DefaultSideEffect.ShowToast(uiText(R.string.device_not_found)))
                 sideEffect.emit(DefaultSideEffect.NavigationBack)
@@ -109,31 +109,31 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
 
     private fun updateWOLMacAddress(newMac: String) = withLoading {
         val formattedMac = newMac.formatToMacAddress() ?: return@withLoading
-        changeMacAddressContract.updateWakeOnLanMacAddress(deviceId, formattedMac)
+        changeMacAddressContract.updateWakeOnLanMacAddress(clientId, formattedMac)
     }
 
     private fun changeDeviceName(newName: String) = viewModelScope.launch {
-        changeDeviceSettingsContract.updateDeviceName(newName, deviceId)
+        changeDeviceSettingsContract.updateDeviceName(newName, clientId)
     }
 
     private fun changeUnlockOnlyWhenScreenUnlockedState(newValue: Boolean) = viewModelScope.launch {
-        changeDeviceSettingsContract.updateUnlockOnlyWhenScreenUnlockedState(deviceId, newValue)
+        changeDeviceSettingsContract.updateUnlockOnlyWhenScreenUnlockedState(clientId, newValue)
     }
 
     private fun changeUnlockMethodState(newMethod: UnlockMethod) = viewModelScope.launch {
-        changeDeviceSettingsContract.updateUnlockMethodState(deviceId, newMethod)
+        changeDeviceSettingsContract.updateUnlockMethodState(clientId, newMethod)
     }
 
     private fun changeHostState(newIp: String) = viewModelScope.launch {
-        changeDeviceSettingsContract.updateHost(newIp, deviceId)
+        changeDeviceSettingsContract.updateHost(newIp, clientId)
     }
 
     private fun changeSearchIpDynamicallyState(newValue: Boolean) = withLoading {
-        changeDeviceSettingsContract.updateSearchIpDynamicallyState(deviceId, newValue)
+        changeDeviceSettingsContract.updateSearchIpDynamicallyState(clientId, newValue)
     }
 
     private fun changeAwaitUnlockRequestsState(newValue: Boolean) = withLoading {
-        changeDeviceSettingsContract.updateAwaitUnlockRequestsState(deviceId, newValue)
+        changeDeviceSettingsContract.updateAwaitUnlockRequestsState(clientId, newValue)
     }
 
     private fun showDeletionDialog() = viewModelScope.launch {
@@ -170,7 +170,7 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
         viewModelScope.launch {
             observeDeviceJob.cancelAndJoin()
             _state.value = ScreenState.Loading
-            removeDeviceContract.removeDevice(device.device.deviceId)
+            removeDeviceContract.removeDevice(device.device.clientId)
         }.invokeOnCompletion { sendNavigateUpSideEffect() }
     }
 

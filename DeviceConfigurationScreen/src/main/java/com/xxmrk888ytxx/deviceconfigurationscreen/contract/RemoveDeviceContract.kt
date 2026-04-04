@@ -1,5 +1,5 @@
 package com.xxmrk888ytxx.deviceconfigurationscreen.contract
 
 interface RemoveDeviceContract {
-    suspend fun removeDevice(deviceId: String): Result<Unit>
+    suspend fun removeDevice(clientId: String): Result<Unit>
 }

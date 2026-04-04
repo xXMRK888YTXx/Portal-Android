@@ -1,6 +1,5 @@
 package com.xxmrk888ytxx.portal.data
 
-import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
@@ -33,7 +32,7 @@ class UnsafeUnlockTypesStateObserver @Inject constructor(
                     .collect { isDisabled ->
                         if (isDisabled) {
                             deviceSettingsRepository.getAllDevicesWithNotSecureUnlockMethod().forEach {
-                                deviceSettingsRepository.updateUnlockMethod(it.deviceId, UnlockMethod.Notification)
+                                deviceSettingsRepository.updateUnlockMethod(it.clientId, UnlockMethod.Notification)
                             }
                         }
                     }

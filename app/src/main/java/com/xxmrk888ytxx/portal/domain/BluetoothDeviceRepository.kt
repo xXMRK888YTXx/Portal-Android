@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface BluetoothDeviceRepository {
     val devices: Flow<List<BluetoothDevice>>
     suspend fun saveDevice(bluetoothDevice: BluetoothDevice)
-    fun getDeviceById(deviceId: String): Flow<BluetoothDevice?>
-    suspend fun updateDeviceName(deviceId: String, newName: String)
+    fun getDeviceById(clientId: String): Flow<BluetoothDevice?>
+    suspend fun updateDeviceName(clientId: String, newName: String)
 }

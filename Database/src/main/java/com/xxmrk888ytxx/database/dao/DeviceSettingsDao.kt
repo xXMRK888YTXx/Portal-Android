@@ -14,19 +14,19 @@ interface DeviceSettingsDao {
     @get:Query("SELECT * FROM ${DeviceSettingsEntry.TABLE_NAME}")
     val deviceSettings: Flow<List<DeviceSettingsEntry>>
 
-    @Query("SELECT * FROM ${DeviceSettingsEntry.TABLE_NAME} WHERE deviceId = :deviceId LIMIT 1")
+    @Query("SELECT * FROM ${DeviceSettingsEntry.TABLE_NAME} WHERE clientId = :deviceId LIMIT 1")
     fun getDeviceSettingsByDeviceId(deviceId: String): Flow<DeviceSettingsEntry?>
 
-    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET awaitUnlockRequests = :awaitUnlockRequests WHERE deviceId = :deviceId")
+    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET awaitUnlockRequests = :awaitUnlockRequests WHERE clientId = :deviceId")
     suspend fun updateAwaitUnlockRequests(deviceId: String, awaitUnlockRequests: Boolean)
 
-    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET searchIpDynamically = :searchIpDynamically WHERE deviceId = :deviceId")
+    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET searchIpDynamically = :searchIpDynamically WHERE clientId = :deviceId")
     suspend fun updateSearchIpDynamically(deviceId: String, searchIpDynamically: Boolean)
 
-    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockMethod = :methodId WHERE deviceId = :deviceId")
+    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockMethod = :methodId WHERE clientId = :deviceId")
     suspend fun updateUnlockMethod(deviceId: String, methodId: Int)
 
-    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockOnlyWhenScreenUnlocked = :newValue WHERE deviceId = :deviceId")
+    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockOnlyWhenScreenUnlocked = :newValue WHERE clientId = :deviceId")
     suspend fun updateUnlockOnlyWhenScreenUnlockedState(deviceId: String, newValue: Boolean)
 
     @Query("SELECT * FROM ${DeviceSettingsEntry.TABLE_NAME} WHERE unlockMethod == $AUTOMATIC_METHOD_ID")

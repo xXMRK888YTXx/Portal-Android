@@ -15,7 +15,7 @@ class DeviceRepositoryImpl @Inject constructor(
     private val shortcutManager: ShortcutManager,
 ) : DeviceRepository {
     override suspend fun removeDevice(deviceId: String) = withContext<Unit>(Dispatchers.IO) {
-        val deviceShortcuts = shortcutRepository.getShortcutsByDeviceId(deviceId)
+        val deviceShortcuts = shortcutRepository.getShortcutsByClientId(deviceId)
         deviceDao.removeDevice(deviceId)
         deviceShortcuts.forEach { shortcut ->
             shortcutManager.removeShortcut(shortcut.shortcutId)
@@ -23,6 +23,6 @@ class DeviceRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeAllDevices() = withContext(Dispatchers.IO) {
-        deviceDao.devices.first().forEach { removeDevice(it.deviceId) }
+        deviceDao.devices.first().forEach { removeDevice(it.clientId) }
     }
 }
