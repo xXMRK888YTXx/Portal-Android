@@ -25,20 +25,38 @@ class UnsafeUnlockTypesStateObserver @Inject constructor(
 
     init {
         scope.launch {
-            settingsRepository
-                .portalSettings
-                .map { it.isUnsafeUnlockTypesDisabled }
-                .distinctUntilChanged()
-                .collect { isDisabled ->
-                    if (isDisabled) {
-                        deviceSettingsRepository.getAllDevicesWithNotSecureUnlockMethod().forEach {
-                            deviceSettingsRepository.updateUnlockMethod(it.deviceId, UnlockMethod.Notification)
-                        }
-                        shortcutRepository.getShortcutWithInsecureUnlock().forEach {
-                            shortcutRepository.updateIsRequiredBiometricUnlock(it.shortcutId, true)
+            launch {
+                settingsRepository
+                    .portalSettings
+                    .map { it.isUnsafeUnlockTypesDisabled }
+                    .distinctUntilChanged()
+                    .collect { isDisabled ->
+                        if (isDisabled) {
+                            deviceSettingsRepository.getAllDevicesWithNotSecureUnlockMethod().forEach {
+                                deviceSettingsRepository.updateUnlockMethod(it.deviceId, UnlockMethod.Notification)
+                            }
                         }
                     }
-                }
+            }
+
+            launch {
+                data class BiometricUnsafeDisabledParams(
+                    val isBiometricAuthEnabled: Boolean,
+                    val isUnsafeUnlockTypesDisabled: Boolean
+                )
+
+                settingsRepository
+                    .portalSettings
+                    .map { BiometricUnsafeDisabledParams(it.isBiometricAuthEnabled,it.isUnsafeUnlockTypesDisabled) }
+                    .distinctUntilChanged()
+                    .collect {
+                        if (it.isBiometricAuthEnabled && it.isUnsafeUnlockTypesDisabled) {
+                            shortcutRepository.getShortcutWithInsecureUnlock().forEach { shortcut ->
+                                shortcutRepository.updateIsRequiredBiometricUnlock(shortcut.shortcutId, true)
+                            }
+                        }
+                    }
+            }
         }
     }
 }
