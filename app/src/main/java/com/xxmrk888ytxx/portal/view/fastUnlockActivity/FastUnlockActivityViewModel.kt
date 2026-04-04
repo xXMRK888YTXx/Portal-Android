@@ -53,11 +53,11 @@ class FastUnlockActivityViewModel @Inject constructor(
 
     }
 
-    fun requestUnlock(activity: FastUnlockActivity, intent: Intent) = viewModelScope.launch {
-        if (intent.action != FastUnlockActivity.UNLOCK_FROM_SHORTCUT_ACTION) return@launch
+    fun requestUnlock(activity: ShortcutUnlockActivity, intent: Intent) = viewModelScope.launch {
+        if (intent.action != ShortcutUnlockActivity.UNLOCK_FROM_SHORTCUT_ACTION) return@launch
         try {
             val shortcutId =
-                intent.getStringExtra(FastUnlockActivity.SHORTCUT_ID_EXTRA)
+                intent.getStringExtra(ShortcutUnlockActivity.SHORTCUT_ID_EXTRA)
                     ?: throw IllegalArgumentException("Shortcut can't be null")
             val shortcut = shortcutRepository.getShortcutById(shortcutId)
                 ?: let {

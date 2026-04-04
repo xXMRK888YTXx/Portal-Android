@@ -12,8 +12,8 @@ import com.xxmrk888ytxx.portal.data.broadcastReceiver.ShortcutPinnedReceiver.Com
 import com.xxmrk888ytxx.portal.data.model.Shortcut
 import com.xxmrk888ytxx.portal.domain.ShortcutManager
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
-import com.xxmrk888ytxx.portal.view.fastUnlockActivity.FastUnlockActivity
-import com.xxmrk888ytxx.portal.view.fastUnlockActivity.FastUnlockActivity.Companion.SHORTCUT_ID_EXTRA
+import com.xxmrk888ytxx.portal.view.fastUnlockActivity.ShortcutUnlockActivity
+import com.xxmrk888ytxx.portal.view.fastUnlockActivity.ShortcutUnlockActivity.Companion.SHORTCUT_ID_EXTRA
 import javax.inject.Inject
 
 class ShortcutManagerImpl @Inject constructor(
@@ -21,8 +21,8 @@ class ShortcutManagerImpl @Inject constructor(
     private val shortcutRepository: ShortcutRepository
 ) : ShortcutManager {
     override suspend fun addShortcut(shortcut: Shortcut, label: String) {
-        val targetIntent = Intent(context, FastUnlockActivity::class.java).apply {
-            action = FastUnlockActivity.UNLOCK_FROM_SHORTCUT_ACTION
+        val targetIntent = Intent(context, ShortcutUnlockActivity::class.java).apply {
+            action = ShortcutUnlockActivity.UNLOCK_FROM_SHORTCUT_ACTION
             putExtra(SHORTCUT_ID_EXTRA, shortcut.shortcutId)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }

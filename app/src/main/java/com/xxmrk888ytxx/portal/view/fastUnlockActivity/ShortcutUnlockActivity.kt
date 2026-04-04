@@ -10,7 +10,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class FastUnlockActivity @Inject constructor(
+class ShortcutUnlockActivity @Inject constructor(
     private val fastUnlockActivityViewModelFactory: FastUnlockActivityViewModel.Factory
 ) : FragmentActivity() {
 
