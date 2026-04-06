@@ -13,13 +13,11 @@ class LinkManagerImpl @Inject constructor(
     private val context: Context
 ) : LinkManager {
     override suspend fun openTermsOfUseLink() {
-        //TODO change
-        openLink("https://github.com/xXMRK888YTXx")
+        openLink("https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Android/Terms%20of%20Service.md")
     }
 
     override suspend fun openPrivacyPolicyLink() {
-        //TODO change
-        openLink("https://github.com/xXMRK888YTXx")
+        openLink("https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Android/Privacy%20policy.md")
     }
 
     override suspend fun openAndroidDeveloperLink() {
@@ -35,7 +33,7 @@ class LinkManagerImpl @Inject constructor(
     }
 
     override suspend fun openPCSourceCodeLink() {
-        openLink("https://github.com/KoksMen/PortalTest")
+        openLink("https://github.com/KoksMen/Portal-Windows")
     }
 
     private suspend fun openLink(url: String) =  try {
