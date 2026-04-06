@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
+import com.xxmrk888ytxx.coreandroid.PortalViewModel
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
+import com.xxmrk888ytxx.coreandroid.mvi.UiEvent
 import com.xxmrk888ytxx.coreandroid.mvi.UiEventHandler
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
@@ -34,9 +37,8 @@ class UnlockScreenViewModel @Inject constructor(
     private val biometricDialogController: BiometricDialogController,
     private val unlockMessageSender: UnlockMessageSender,
     private val provideDeviceNameByClientId: ProvideDeviceNameByClientId,
-    private val settingsRepository: SettingsRepository
-) : ViewModel(), Navigator, SideEffectSender<UnlockScreenSideEffect>,
-    UiEventHandler<UnlockScreenUiEvent> {
+    private val settingsRepository: SettingsRepository,
+) : PortalViewModel<Unit, UnlockScreenUiEvent>(Unit), Navigator, SideEffectSender<UnlockScreenSideEffect> {
 
     private val _effect = MutableSharedFlow<UnlockScreenSideEffect>(extraBufferCapacity = 1, replay = 1)
 
@@ -50,6 +52,7 @@ class UnlockScreenViewModel @Inject constructor(
     private val _deviceName = MutableStateFlow("")
     val deviceName: StateFlow<String> = _deviceName.asStateFlow()
 
+    val themeColor = settingsRepository.portalSettings.map { it.themeColor }.stateWhileSubscribed(null)
 
     private fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
         biometricDialogController.sendRequest(

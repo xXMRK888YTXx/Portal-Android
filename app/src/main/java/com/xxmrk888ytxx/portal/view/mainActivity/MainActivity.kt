@@ -68,7 +68,8 @@ class MainActivity @Inject constructor(
         installSplashScreen().setKeepOnScreenCondition { !activityViewModel.isScreenReady.value }
         setContentWithThemeAndProviders(
             navigator = activityViewModel,
-            toastManager = toastManager
+            toastManager = toastManager,
+            themeColor = activityViewModel.themeColor
         ) {
             val startScreen by activityViewModel.startScreen.collectAsState()
 

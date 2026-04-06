@@ -40,7 +40,8 @@ class UnlockScreenActivity @Inject constructor(
         }
         setContentWithThemeAndProviders(
             navigator = unlockScreenViewModel,
-            toastManager = toastManager
+            toastManager = toastManager,
+            themeColor = unlockScreenViewModel.themeColor
         ) {
             LaunchedEffect(unlockScreenViewModel) {
                 unlockScreenViewModel.effect.collect {

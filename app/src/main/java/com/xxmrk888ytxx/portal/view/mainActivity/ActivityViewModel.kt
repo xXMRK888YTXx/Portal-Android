@@ -1,11 +1,14 @@
 package com.xxmrk888ytxx.portal.view.mainActivity
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.xxmrk888ytxx.coreandroid.Navigator
+import com.xxmrk888ytxx.coreandroid.PortalViewModel
+import com.xxmrk888ytxx.coreandroid.mvi.UiEvent
 import com.xxmrk888ytxx.coreandroid.runOnUiThread
 import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
@@ -18,6 +21,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
@@ -25,8 +29,8 @@ import javax.inject.Provider
 class ActivityViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val bluetoothManager: BluetoothManager,
-    private val biometricAuthStateProvider: BiometricAuthStateProvider
-) : ViewModel(), Navigator {
+    private val biometricAuthStateProvider: BiometricAuthStateProvider,
+) : PortalViewModel<Unit, UiEvent>(Unit), Navigator {
 
     private val prepareScreenScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -38,6 +42,8 @@ class ActivityViewModel @Inject constructor(
     private val _isScreenReady = MutableStateFlow(false)
     val isScreenReady = _isScreenReady
         .asStateFlow()
+
+    val themeColor = settingsRepository.portalSettings.map { it.themeColor }.stateWhileSubscribed(null)
 
 
     fun prepareScreen() {
@@ -84,6 +90,8 @@ class ActivityViewModel @Inject constructor(
         launch { bluetoothManager.updatePairedDeviceMacAddresses() }
         launch { biometricAuthStateProvider.updateState() }
     }
+
+    override fun handleEvent(event: UiEvent) {}
 
     internal inner class BottomBarNavigation {
         fun toSettingsScreen() {
