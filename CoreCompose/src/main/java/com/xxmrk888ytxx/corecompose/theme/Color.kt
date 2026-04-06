@@ -217,7 +217,31 @@ val surfaceContainerDarkHighContrast = Color(0xFF333027)
 val surfaceContainerHighDarkHighContrast = Color(0xFF3E3B32)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF4A473D)
 
+object AppSeedColors {
+    val DeepAmethyst = Color(0xFF4F378B)
+    val OceanTeal = Color(0xFF006A6A)
+    val ForestGreen = Color(0xFF2E6C56)
+    val Terracotta = Color(0xFF98402A)
+    val BurntSienna = Color(0xFF8F4C38)
+    val Goldenrod = Color(0xFF795900)
+    val DustyRose = Color(0xFF8D4A60)
+    val AzureBlue = Color(0xFF005B8F)
+    val OliveGreen = Color(0xFF55653C)
+    val Burgundy = Color(0xFF904A4C)
 
+    val allColors = listOf(
+        DeepAmethyst,
+        OceanTeal,
+        ForestGreen,
+        Terracotta,
+        BurntSienna,
+        Goldenrod,
+        DustyRose,
+        AzureBlue,
+        OliveGreen,
+        Burgundy
+    )
+}
 
 
 

@@ -5,6 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.LocalNavigator
@@ -24,7 +25,7 @@ fun ComponentActivity.setContentWithThemeAndProviders(
         ) {
             AppTheme(
                 darkTheme = useDarkTheme ?: isSystemInDarkTheme(),
-                dynamicColor = useDynamicColors,
+                seedColor = null,
                 content = content
             )
         }

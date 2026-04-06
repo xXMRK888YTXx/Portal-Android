@@ -25,6 +25,8 @@ dependencies {
     api(libs.androidx.compose.tooling)
     api(libs.androidx.compose.ui.text.google.fonts)
     api(libs.lifecycle.viewModel.compose)
+    implementation(libs.material.kolor)
+
 
     debugApi(libs.androidx.compose.tooling)
 }

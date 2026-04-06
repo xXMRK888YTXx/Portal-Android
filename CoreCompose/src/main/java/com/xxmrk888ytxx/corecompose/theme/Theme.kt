@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.materialkolor.rememberDynamicColorScheme
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -253,25 +254,40 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun AppTheme(
+    seedColor: Color? = null,
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
-  val colorScheme = when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-          val context = LocalContext.current
-          if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      }
-      
-      darkTheme -> darkScheme
-      else -> lightScheme
-  }
+    val context = LocalContext.current
+    val defaultColor = Color(0xFF6750A4)
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography,
-    content = content
-  )
+    val colorScheme = when {
+        // Condition 1: User provided a specific color
+        seedColor != null -> {
+            rememberDynamicColorScheme(
+                seedColor = seedColor,
+                isDark = darkTheme,
+            )
+        }
+
+        // Condition 2: No specific color, but system dynamic color is available (Android 12+)
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+
+        // Condition 3: Fallback to the standard default color
+        else -> {
+            rememberDynamicColorScheme(
+                seedColor = defaultColor,
+                isDark = darkTheme,
+            )
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = AppTypography,
+        content = content
+    )
 }
 
