@@ -198,13 +198,13 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(R.string.source_code_android),
                     subtitle = stringResource(R.string.github_repository),
-                    iconRes = R.drawable.code,
+                    iconRes = R.drawable.android,
                     onClick = { onEvent(SettingsScreenEvent.OnAndroidSourceCodeClick) }
                 )
                 SettingsItem(
                     title = stringResource(R.string.source_code_pc),
                     subtitle = stringResource(R.string.github_repository),
-                    iconRes = R.drawable.code,
+                    iconRes = R.drawable.desktop,
                     onClick = { onEvent(SettingsScreenEvent.OnPCSourceCodeClick) }
                 )
                 GithubProfileItem(
