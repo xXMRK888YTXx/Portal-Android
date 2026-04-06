@@ -30,4 +30,6 @@
     <string name="the_automatically_unlock_method_will_be_disabled_for_devices_where_this_unlock_method_is_currently_set_it_will_be_changed_to_notification">Increases the security when using the app.\n\n1. Prohibits using the unlock method "Automatically." (Devices with this unlock method will be switched to "Notification")\n\n2. When using shortcuts, the requirement for biometric authentication is forcibly enabled (The exception is if "Biometric Unlock" is disabled in the settings)</string>
     <string name="biometrics_is_not_configured_or_is_unavailable">Biometrics is not configured or is unavailable.</string>
     <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="show_less">Show less</string>
+    <string name="read_more">Read more</string>
 </resources>

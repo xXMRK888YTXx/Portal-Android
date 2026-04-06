@@ -408,7 +408,9 @@ fun SettingsSwitchItem(
 
                 if (isExpandable && (hasVisualOverflow || isExpanded)) {
                     Text(
-                        text = if (isExpanded) "Show less" else "Read more",
+                        text = if (isExpanded) stringResource(R.string.show_less) else stringResource(
+                            R.string.read_more
+                        ),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier

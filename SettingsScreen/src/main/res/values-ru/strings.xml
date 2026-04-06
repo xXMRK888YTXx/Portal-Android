@@ -30,4 +30,6 @@
     <string name="the_automatically_unlock_method_will_be_disabled_for_devices_where_this_unlock_method_is_currently_set_it_will_be_changed_to_notification">Повышает безопасность при использовании приложения.\n\n1. Запрещает использование метода разблокировки "Автоматически". (Для устройств, использующих этот метод, он будет изменен на "Уведомление")\n\n2. При использовании ярлыков принудительно включается требование биометрической аутентификации (За исключением случаев, когда опция "Биометрическая разблокировка" отключена в настройках).</string>
     <string name="biometrics_is_not_configured_or_is_unavailable">Биометрия не настроена или недоступна.</string>
     <string name="open_source_licenses">Лицензии открытого ПО</string>
+    <string name="show_less">Свернуть</string>
+    <string name="read_more">Читать далее</string>
 </resources>
