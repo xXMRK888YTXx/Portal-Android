@@ -337,7 +337,7 @@ fun DeviceInfoState(
 
             EditableFieldCard(
                 title = stringResource(R.string.wake_on_lan_mac_address),
-                currentValue = editValue, // Теперь здесь либо MAC, либо ""
+                currentValue = editValue,
                 onValueSaved = {
                     onEvent(DeviceConfigurationUiEvent.OnWakeOnLanMacAddressChanged(it))
                 },
@@ -667,7 +667,9 @@ fun UnlockMethodSelector(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             UnlockMethod.entries.forEach { method ->
-                val isSelected = currentMethod == method
+                val isSelected = remember(currentMethod,method) {
+                    currentMethod::class.isInstance(method)
+                }
                 FilterChip(
                     selected = isSelected,
                     onClick = {
