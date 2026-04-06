@@ -1,7 +1,6 @@
 package com.xxmrk888ytxx.portal.view.unlockScreenActivity
 
 import android.os.Bundle
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +19,6 @@ import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
 import com.xxmrk888ytxx.portal.view.ui.UnlockScreen
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
 import javax.inject.Inject
-import kotlin.getValue
 
 class UnlockScreenActivity @Inject constructor(
     private val toastManager: ToastManager,

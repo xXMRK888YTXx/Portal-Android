@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.ApplicationExtension
-import org.gradle.kotlin.dsl.configure
 
 plugins {
     alias(libs.plugins.android.application)

@@ -8,7 +8,6 @@ import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.unlockservice.R
-import com.xxmrk888ytxx.unlockservice.exception.InvalidClientIdException
 import com.xxmrk888ytxx.unlockservice.exception.PermissionDeniedException
 import com.xxmrk888ytxx.unlockservice.exception.UnlockServiceException
 import kotlinx.coroutines.CoroutineScope

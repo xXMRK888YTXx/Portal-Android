@@ -5,9 +5,9 @@ import com.xxmrk888ytxx.mainscreen.exception.BiometricAuthFailedException
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.portal.domain.BiometricRequestController
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
-import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
+import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.model.BiometricAuthResult
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first

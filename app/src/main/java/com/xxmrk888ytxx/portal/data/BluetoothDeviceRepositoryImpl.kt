@@ -5,7 +5,6 @@ import com.xxmrk888ytxx.database.dao.DeviceDao
 import com.xxmrk888ytxx.database.entry.BluetoothDeviceEntry
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
-import com.xxmrk888ytxx.portal.domain.model.WifiDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

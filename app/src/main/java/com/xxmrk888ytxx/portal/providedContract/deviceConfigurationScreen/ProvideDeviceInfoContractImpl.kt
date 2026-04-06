@@ -3,7 +3,6 @@ package com.xxmrk888ytxx.portal.providedContract.deviceConfigurationScreen
 import com.xxmrk888ytxx.deviceconfigurationscreen.contract.ProvideDeviceInfoContract
 import com.xxmrk888ytxx.deviceconfigurationscreen.exception.DeviceNotFoundException
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.Device
-import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod as DeviceConfigurationUnlockMethod
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.CertificateManager
@@ -13,6 +12,7 @@ import com.xxmrk888ytxx.portal.domain.model.UnlockMethod
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
+import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod as DeviceConfigurationUnlockMethod
 
 class ProvideDeviceInfoContractImpl @Inject constructor(
     private val wifiDeviceRepository: WifiDeviceRepository,

@@ -1,11 +1,9 @@
 package com.xxmrk888ytxx.portal.view.mainActivity.model
 
 import androidx.annotation.DrawableRes
-import androidx.compose.ui.res.stringResource
 import com.xxmrk888ytxx.coreandroid.uiText.UiText
 import com.xxmrk888ytxx.coreandroid.uiText.uiText
 import com.xxmrk888ytxx.portal.R
-import com.xxmrk888ytxx.portal.view.mainActivity.view.PortalBottomBar
 
 sealed class PortalBottomBarItem(
     val id: Int,

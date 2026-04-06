@@ -1,15 +1,15 @@
 package com.xxmrk888ytxx.portal.di.module
 
 import com.xxmrk888ytxx.mainscreen.contract.CreateShortcutContract
-import com.xxmrk888ytxx.mainscreen.contract.PermissionContract
 import com.xxmrk888ytxx.mainscreen.contract.ManageDevicesRemovedBannerStateContract
+import com.xxmrk888ytxx.mainscreen.contract.PermissionContract
 import com.xxmrk888ytxx.mainscreen.contract.ProvideSavedDevices
 import com.xxmrk888ytxx.mainscreen.contract.SaveWOLMacAddress
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
 import com.xxmrk888ytxx.mainscreen.contract.SendWOLContract
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.CreateShortcutContractImpl
-import com.xxmrk888ytxx.portal.providedContract.mainScreen.PermissionContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.ManageDevicesRemovedBannerStateContractImpl
+import com.xxmrk888ytxx.portal.providedContract.mainScreen.PermissionContractImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.ProvideSavedDevicesImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SaveWOLMacAddressImpl
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SendUnlockRequestContractImpl

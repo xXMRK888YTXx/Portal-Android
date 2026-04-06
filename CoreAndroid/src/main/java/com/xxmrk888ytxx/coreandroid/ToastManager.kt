@@ -1,6 +1,5 @@
 package com.xxmrk888ytxx.coreandroid
 
-import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 
 /**

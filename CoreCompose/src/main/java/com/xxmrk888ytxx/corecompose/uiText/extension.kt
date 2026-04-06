@@ -2,7 +2,6 @@ package com.xxmrk888ytxx.corecompose.uiText
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import com.xxmrk888ytxx.coreandroid.uiText.UiText
 import com.xxmrk888ytxx.coreandroid.uiText.asString
 

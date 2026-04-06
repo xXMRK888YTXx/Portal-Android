@@ -2,8 +2,8 @@ package com.xxmrk888ytxx.portal.data
 
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.runCatching
-import com.xxmrk888ytxx.portal.data.model.WifiPairBody
 import com.xxmrk888ytxx.portal.data.model.PairResponse
+import com.xxmrk888ytxx.portal.data.model.WifiPairBody
 import com.xxmrk888ytxx.portal.data.model.WifiUnlockBody
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
 import com.xxmrk888ytxx.portal.domain.model.Certificate

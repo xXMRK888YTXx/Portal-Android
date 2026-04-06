@@ -11,10 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
-import kotlin.jvm.Throws
 
 @AppScope
 class BiometricRequestManager @Inject constructor() : BiometricRequestController,

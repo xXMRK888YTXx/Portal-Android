@@ -1,9 +1,7 @@
 package com.xxmrk888ytxx.portal.data.trustManager
 
 import android.annotation.SuppressLint
-import com.xxmrk888ytxx.portal.domain.CertificateManager
 import java.security.cert.X509Certificate
-import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
 @SuppressLint("CustomX509TrustManager")

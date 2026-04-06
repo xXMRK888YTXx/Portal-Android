@@ -8,8 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.PortalViewModel
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
-import com.xxmrk888ytxx.coreandroid.mvi.UiEvent
-import com.xxmrk888ytxx.coreandroid.mvi.UiEventHandler
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.SettingsRepository

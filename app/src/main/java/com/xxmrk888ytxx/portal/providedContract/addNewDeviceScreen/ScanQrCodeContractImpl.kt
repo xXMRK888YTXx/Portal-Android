@@ -3,16 +3,15 @@ package com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ScanQrCodeContract
 import com.xxmrk888ytxx.addnewdevicescreen.model.ScanQrCodeResult
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
-import com.xxmrk888ytxx.portal.domain.QRScannerManager
-import kotlinx.coroutines.Dispatchers
-import javax.inject.Inject
 import com.xxmrk888ytxx.coreandroid.runCatching
+import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import com.xxmrk888ytxx.portal.exception.QRScanCanceledException
 import com.xxmrk888ytxx.portal.exception.QRScannerNotDownloadedException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import okhttp3.Address
+import javax.inject.Inject
 
 class ScanQrCodeContractImpl @Inject constructor(
     private val qrScannerManager: QRScannerManager,

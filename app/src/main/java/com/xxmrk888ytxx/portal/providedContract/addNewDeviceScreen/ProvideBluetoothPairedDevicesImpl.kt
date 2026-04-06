@@ -2,13 +2,13 @@ package com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen
 
 import com.xxmrk888ytxx.addnewdevicescreen.contract.ProvideBluetoothPairedDevices
 import com.xxmrk888ytxx.addnewdevicescreen.model.BluetoothDevice
-import com.xxmrk888ytxx.portal.domain.BluetoothManager
-import kotlinx.coroutines.Dispatchers
-import javax.inject.Inject
 import com.xxmrk888ytxx.coreandroid.runCatching
+import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.exception.BluetoothDisabledException
 import com.xxmrk888ytxx.portal.exception.BluetoothNotSupportedException
 import com.xxmrk888ytxx.portal.exception.BluetoothPermissionNotGrantedException
+import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
 
 class ProvideBluetoothPairedDevicesImpl @Inject constructor(
     private val bluetoothManager: BluetoothManager

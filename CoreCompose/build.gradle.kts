@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.LibraryExtension
-import org.gradle.kotlin.dsl.configure
 
 plugins {
     id("portal.android.base")

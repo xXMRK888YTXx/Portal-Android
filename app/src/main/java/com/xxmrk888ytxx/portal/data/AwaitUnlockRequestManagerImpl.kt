@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.collections.mutableSetOf
 
 class AwaitUnlockRequestManagerImpl @Inject constructor(
     @param:WifiUnlockServiceManagerQualifier private val wifiUnlockServiceManagerQualifier: UnlockServiceManager,

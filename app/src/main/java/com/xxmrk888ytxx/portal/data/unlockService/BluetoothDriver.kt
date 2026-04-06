@@ -4,9 +4,6 @@ import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.saveCall
 import com.xxmrk888ytxx.portal.data.model.BluetoothRemoteUnlockMessage
 import com.xxmrk888ytxx.portal.data.model.BluetoothRemoteUnlockRequest
-import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage
-import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage.ApproveUnlockWifi
-import com.xxmrk888ytxx.portal.data.model.WifiRemoteUnlockMessage.RejectUnlockWifi
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.connection.BluetoothConnection

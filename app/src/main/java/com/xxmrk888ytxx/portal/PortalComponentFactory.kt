@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import androidx.core.app.AppComponentFactory
 import javax.inject.Provider
-import kotlin.getValue
 
 class PortalComponentFactory : AppComponentFactory() {
 

@@ -7,17 +7,13 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.QRScannerManager
-import kotlinx.coroutines.Dispatchers
-import javax.inject.Inject
-import com.xxmrk888ytxx.coreandroid.runCatching
 import com.xxmrk888ytxx.portal.exception.FailedQRScanException
 import com.xxmrk888ytxx.portal.exception.QRScanCanceledException
 import com.xxmrk888ytxx.portal.exception.QRScannerNotDownloadedException
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class QRScannerManagerImpl @Inject constructor(
     private val context: Context

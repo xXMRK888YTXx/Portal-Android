@@ -1,6 +1,5 @@
 package com.xxmrk888ytxx.biometricauthentication
 
-import android.app.Activity
 import androidx.fragment.app.FragmentActivity
 import com.xxmrk888ytxx.biometricauthentication.model.BiometricAuthOptions
 import com.xxmrk888ytxx.biometricauthentication.model.BiometricState

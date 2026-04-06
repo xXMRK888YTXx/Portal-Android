@@ -8,15 +8,12 @@ import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.DEFAULT_VALUE
-import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.REMOVED_BY_CHANGES_IN_BIOMETRIC_ENVIRONMENT
 import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.REMOVED_BY_SECURITY_SETTINGS_CHANGES
 import com.xxmrk888ytxx.portal.domain.model.PortalSettings
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 

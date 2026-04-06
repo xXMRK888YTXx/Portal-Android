@@ -10,7 +10,6 @@ import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.MacAddress
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.connection.BluetoothConnection
-import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
 import com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice
 import com.xxmrk888ytxx.portal.exception.BluetoothDisabledException
 import com.xxmrk888ytxx.portal.exception.BluetoothNotSupportedException

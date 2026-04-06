@@ -8,8 +8,8 @@ import com.xxmrk888ytxx.portal.data.model.PairResponse
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.BluetoothPortalApi
 import com.xxmrk888ytxx.portal.domain.model.BluetoothDevice
-import com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice
 import com.xxmrk888ytxx.portal.domain.model.BluetoothPairResult
+import com.xxmrk888ytxx.portal.domain.model.PairedBluetoothDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
