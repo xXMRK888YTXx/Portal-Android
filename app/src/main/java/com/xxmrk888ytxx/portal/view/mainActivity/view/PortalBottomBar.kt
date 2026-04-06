@@ -46,10 +46,7 @@ fun PortalBottomBar(
                     label = {
                         Text(text = item.text.asString())
                     },
-                    colors = NavigationBarItemDefaults.colors(
-                        unselectedIconColor = Color.White,
-                        unselectedTextColor = Color.White
-                    )
+                    colors = NavigationBarItemDefaults.colors()
                 )
             }
         }
