@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.corecompose.theme
 import androidx.compose.ui.graphics.Color
+import kotlin.random.Random
 
 val primaryLight = Color(0xFF6D5E0F)
 val onPrimaryLight = Color(0xFFFFFFFF)
@@ -228,6 +229,8 @@ object AppSeedColors {
     val AzureBlue = Color(0xFF005B8F)
     val OliveGreen = Color(0xFF55653C)
     val Burgundy = Color(0xFF904A4C)
+
+    val RandomColor = Color.Unspecified
 
     val allColors = listOf(
         DeepAmethyst,

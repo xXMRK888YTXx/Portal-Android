@@ -32,4 +32,10 @@
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="show_less">Show less</string>
     <string name="read_more">Read more</string>
+    <string name="customization">Customization</string>
+    <string name="theme">Theme</string>
+    <string name="choose_a_theme">Choose a theme</string>
+    <string name="system">System</string>
+    <string name="random">Random</string>
+    <string name="colors">Colors</string>
 </resources>

@@ -1,8 +1,8 @@
 package com.xxmrk888ytxx.settingsscreen
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
-import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.settingsscreen.contract.BiometricProtectionAvailableStateProvider
 import com.xxmrk888ytxx.settingsscreen.contract.ChangeSettingsContract
 import com.xxmrk888ytxx.settingsscreen.contract.OpenLinkContract
@@ -88,7 +88,17 @@ class SettingsViewModel @Inject constructor(
             SettingsScreenEvent.OnPCSourceCodeClick -> openLink { openLinkContract.openPCSourceCodeLink() }
             SettingsScreenEvent.OpenOpenSourceLicenses -> sideEffect.tryEmit(
                 SettingsScreenSideEffect.OpenOpenSourceLicenses)
+            SettingsScreenEvent.OnThemeClicked -> showSelectThemeDialog()
+            is SettingsScreenEvent.OnThemeColorSelected -> changeThemeColor(event.newColor)
         }
+    }
+
+    private fun changeThemeColor(newColor: Color?) = viewModelScope.launch {
+
+    }
+
+    private fun showSelectThemeDialog() = viewModelScope.launch {
+        bottomSheetState.value = BottomSheetState.SelectThemeDialog()
     }
 
     private fun openLink(block: suspend () -> Unit) = viewModelScope.launch {
