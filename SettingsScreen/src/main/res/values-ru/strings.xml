@@ -32,4 +32,10 @@
     <string name="open_source_licenses">Лицензии открытого ПО</string>
     <string name="show_less">Свернуть</string>
     <string name="read_more">Читать далее</string>
+    <string name="customization">Персонализация</string>
+    <string name="theme">Тема</string>
+    <string name="choose_a_theme">Выберите тему</string>
+    <string name="system">Системная</string>
+    <string name="random">Случайная</string>
+    <string name="colors">Цвета</string>
 </resources>
