@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.portal.domain
 
+import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.portal.domain.model.PortalSettings
 import kotlinx.coroutines.flow.Flow
 
@@ -11,6 +12,7 @@ interface SettingsRepository {
     suspend fun updatePairedClientsWasRemoveBySecurityChangesCode(newCode: Int)
     suspend fun updateUnsafeUnlockTypesDisabled(newState: Boolean)
     suspend fun markOnboardingAsPassed()
+    suspend fun updateThemeColor(newColor: Color?)
 
     companion object {
         const val DEFAULT_VALUE = 0

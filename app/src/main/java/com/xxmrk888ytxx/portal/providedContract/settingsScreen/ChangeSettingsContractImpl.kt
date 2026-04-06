@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.portal.providedContract.settingsScreen
 
+import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.settingsscreen.contract.ChangeSettingsContract
 import javax.inject.Inject
@@ -21,5 +22,9 @@ class ChangeSettingsContractImpl @Inject constructor(
 
     override suspend fun updateUnsafeUnlockTypesState(newState: Boolean) {
         settingsRepository.updateUnsafeUnlockTypesDisabled(newState)
+    }
+
+    override suspend fun updateThemeColor(newColor: Color?) {
+        settingsRepository.updateThemeColor(newColor)
     }
 }

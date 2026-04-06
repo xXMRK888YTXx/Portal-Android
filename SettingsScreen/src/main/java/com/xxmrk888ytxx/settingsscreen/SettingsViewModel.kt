@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.settingsscreen
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.settingsscreen.contract.BiometricProtectionAvailableStateProvider
 import com.xxmrk888ytxx.settingsscreen.contract.ChangeSettingsContract
 import com.xxmrk888ytxx.settingsscreen.contract.OpenLinkContract
@@ -14,6 +15,7 @@ import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenSideEffect
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -94,11 +96,12 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun changeThemeColor(newColor: Color?) = viewModelScope.launch {
-
+        changeSettingsContract.updateThemeColor(newColor)
     }
 
     private fun showSelectThemeDialog() = viewModelScope.launch {
-        bottomSheetState.value = BottomSheetState.SelectThemeDialog()
+        fastDebugLog(provideSettingsState.themeColor.first())
+        bottomSheetState.value = BottomSheetState.SelectThemeDialog(provideSettingsState.themeColor.first())
     }
 
     private fun openLink(block: suspend () -> Unit) = viewModelScope.launch {

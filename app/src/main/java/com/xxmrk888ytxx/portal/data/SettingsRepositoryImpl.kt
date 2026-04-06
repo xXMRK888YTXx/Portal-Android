@@ -1,7 +1,10 @@
 package com.xxmrk888ytxx.portal.data
 
+import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.DEFAULT_VALUE
@@ -33,15 +36,17 @@ class SettingsRepositoryImpl @Inject constructor(
     private val isUnsafeUnlockTypesDisabledKey =
         booleanPreferencesKey("isUnsafeUnlockTypesDisabledKey")
     private val isOnboardingPassedKey = booleanPreferencesKey("is_onboarding_passed")
+    private val themeColorKey = longPreferencesKey("theme_color")
 
 
-    override val portalSettings: Flow<PortalSettings> = combine<Any, PortalSettings>(
+    override val portalSettings: Flow<PortalSettings> = combine<Any?, PortalSettings>(
         preferencesStorage.getProperty(biometricAuthEnabled, false),
         preferencesStorage.getProperty(additionalPasswordAuthEnabled, false),
         preferencesStorage.getProperty(removePairedClientsIfBiometricEnvironmentChanged, false),
         preferencesStorage.getProperty(pairedClientsWasRemovedBySecurityChanges, DEFAULT_VALUE),
         preferencesStorage.getProperty(isUnsafeUnlockTypesDisabledKey, false),
-        preferencesStorage.getProperty(isOnboardingPassedKey, false)
+        preferencesStorage.getProperty(isOnboardingPassedKey, false),
+        preferencesStorage.getPropertyOrNull(themeColorKey)
     ) { flowArray ->
         val biometricAuthEnabled = flowArray[0] as Boolean
         val additionalPasswordAuthEnabled = flowArray[1] as Boolean
@@ -49,6 +54,8 @@ class SettingsRepositoryImpl @Inject constructor(
         val pairedClientsWasRemovedBySecurityChanges = flowArray[3] as Int
         val isUnsafeUnlockTypesDisabled = flowArray[4] as Boolean
         val isOnboardingPassed = flowArray[5] as Boolean
+        val themeColor = flowArray[6] as Long?
+
         PortalSettings(
             isBiometricAuthEnabled = biometricAuthEnabled,
             isAdditionalPasswordAuthEnabled = additionalPasswordAuthEnabled,
@@ -56,6 +63,7 @@ class SettingsRepositoryImpl @Inject constructor(
             pairedClientsWasRemoveBySecurityChangesCode = pairedClientsWasRemovedBySecurityChanges,
             isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled,
             isOnboardingPassed = isOnboardingPassed,
+            themeColor = if (themeColor == null) null else Color(value = themeColor.toULong())
         )
     }
 
@@ -107,5 +115,14 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun markOnboardingAsPassed() = withContext(Dispatchers.IO) {
         preferencesStorage.writeProperty(isOnboardingPassedKey, true)
+    }
+
+    override suspend fun updateThemeColor(newColor: Color?) = withContext(Dispatchers.IO) {
+        fastDebugLog("updateThemeColor $newColor")
+        if (newColor == null) {
+            preferencesStorage.removeProperty(themeColorKey)
+            return@withContext
+        }
+        preferencesStorage.writeProperty(themeColorKey, newColor.value.toLong())
     }
 }

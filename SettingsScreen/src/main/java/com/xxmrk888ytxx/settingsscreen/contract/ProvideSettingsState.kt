@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.settingsscreen.contract
 
+import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.flow.Flow
 
 interface ProvideSettingsState {
@@ -8,4 +9,5 @@ interface ProvideSettingsState {
     val isAdditionalPasswordAuthEnabled: Flow<Boolean>
     val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled: Flow<Boolean>
     val isUnsafeUnlockTypesDisabled: Flow<Boolean>
+    val themeColor: Flow<Color?>
 }

@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.portal.providedContract.settingsScreen
 
+import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.portal.BuildConfig
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.settingsscreen.contract.ProvideSettingsState
@@ -22,4 +23,6 @@ class ProvideSettingsStateImpl @Inject constructor(
         settingsRepository.portalSettings.map { it.isRemovePairedClientsIfBiometricEnvironmentChangedEnabled }
     override val isUnsafeUnlockTypesDisabled: Flow<Boolean> =
         settingsRepository.portalSettings.map { it.isUnsafeUnlockTypesDisabled }
+    override val themeColor: Flow<Color?>
+        get() = settingsRepository.portalSettings.map { it.themeColor }
 }
