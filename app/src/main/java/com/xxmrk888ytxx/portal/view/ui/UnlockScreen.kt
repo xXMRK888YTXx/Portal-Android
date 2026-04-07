@@ -53,7 +53,6 @@ fun UnlockScreen(
                 .padding(horizontal = 24.dp, vertical = 48.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Верхняя часть: Иконка и заголовок
             Spacer(modifier = Modifier.weight(1f))
 
             Icon(
@@ -70,7 +69,8 @@ fun UnlockScreen(
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(12.dp))
