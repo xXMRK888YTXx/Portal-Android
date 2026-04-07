@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.xxmrk888ytxx.coreandroid.Navigator
-import com.xxmrk888ytxx.coreandroid.PortalViewModel
+import com.xxmrk888ytxx.coreandroid.SideEffectPortalViewModel
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.coreandroid.mvi.UiEvent
 import com.xxmrk888ytxx.coreandroid.runOnUiThread
 import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
 import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
+import com.xxmrk888ytxx.portal.view.mainActivity.model.MainActivitySideEffect
 import com.xxmrk888ytxx.portal.view.model.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +30,7 @@ class ActivityViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val bluetoothManager: BluetoothManager,
     private val biometricAuthStateProvider: BiometricAuthStateProvider,
-) : PortalViewModel<Unit, UiEvent>(Unit), Navigator {
+) : SideEffectPortalViewModel<Unit, UiEvent>(Unit), Navigator {
 
     private val prepareScreenScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -81,7 +83,11 @@ class ActivityViewModel @Inject constructor(
     }
 
     override fun navigateUp() = runOnUiThread {
-        backStack?.removeLastOrNull()
+        if (backStack?.size == 1) {
+            sideEffect.tryEmit(MainActivitySideEffect.FinishActivity)
+        } else {
+            backStack?.removeLastOrNull()
+        }
     }
 
     fun onResume() = viewModelScope.launch {
@@ -93,16 +99,17 @@ class ActivityViewModel @Inject constructor(
 
     internal inner class BottomBarNavigation {
         fun toSettingsScreen() {
-            navigate(Screen.SettingsScreen)
+            if (backStack?.lastOrNull() == Screen.SettingsScreen) return
+            backStack?.add(Screen.SettingsScreen)
         }
 
         fun toMainScreen() {
-            navigate(Screen.MainScreen)
-        }
-
-        private fun navigate(screen: Screen) = runOnUiThread {
-            backStack?.add(screen)
-            backStack?.lastIndex?.minus(1)?.let { backStack?.removeAt(it) }
+            fastDebugLog(backStack?.joinToString(":") { it.toString() })
+            if (backStack?.lastOrNull() == Screen.MainScreen) return
+            if (backStack?.contains(Screen.MainScreen) != true) {
+                backStack?.add(Screen.MainScreen)
+            }
+            backStack?.remove(Screen.SettingsScreen)
         }
 
     }

@@ -14,6 +14,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -35,12 +38,14 @@ import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.utils.ScreenContent
 import com.xxmrk888ytxx.portal.utils.collectBiometricAuthResult
+import com.xxmrk888ytxx.portal.view.mainActivity.model.MainActivitySideEffect
 import com.xxmrk888ytxx.portal.view.mainActivity.model.PortalBottomBarItem
 import com.xxmrk888ytxx.portal.view.mainActivity.view.PortalBottomBar
 import com.xxmrk888ytxx.portal.view.model.Screen
 import com.xxmrk888ytxx.portal.view.model.ScreenWithBottomBar
 import com.xxmrk888ytxx.settingsscreen.SettingsScreen
 import com.xxmrk888ytxx.settingsscreen.SettingsViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -62,6 +67,15 @@ class MainActivity @Inject constructor(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                activityViewModel.effect.collect {
+                    when (it) {
+                        MainActivitySideEffect.FinishActivity -> finish()
+                    }
+                }
+            }
+        }
         activityViewModel.prepareScreen()
         collectBiometricAuthResult(biometricActivityResultReceiver, biometricDialogController)
         enableEdgeToEdge()
