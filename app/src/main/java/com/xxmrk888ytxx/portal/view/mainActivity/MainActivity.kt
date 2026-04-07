@@ -4,6 +4,14 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -122,6 +130,35 @@ class MainActivity @Inject constructor(
                         rememberViewModelStoreNavEntryDecorator()
                     ),
                     backStack = backStack,
+                    predictivePopTransitionSpec = { swipeEdge ->
+                        val enterTransition = fadeIn(
+                            animationSpec = tween(
+                                durationMillis = BACK_PRESS_ANIMATION_DURATION,
+                                easing = LinearEasing
+                            )
+                        ) + scaleIn(
+                            initialScale = 0.9f,
+                            animationSpec = tween(
+                                durationMillis = BACK_PRESS_ANIMATION_DURATION,
+                                easing = FastOutSlowInEasing
+                            )
+                        )
+
+                        val exitTransition = slideOutHorizontally(
+                            targetOffsetX = { width -> if (swipeEdge == 0) width else -width },
+                            animationSpec = tween(
+                                durationMillis = BACK_PRESS_ANIMATION_DURATION,
+                                easing = FastOutSlowInEasing
+                            )
+                        ) + fadeOut(
+                            animationSpec = tween(
+                                durationMillis = BACK_PRESS_ANIMATION_DURATION,
+                                easing = LinearEasing
+                            )
+                        )
+
+                        enterTransition togetherWith exitTransition
+                    },
                     entryProvider = entryProvider {
                         entry<Screen.OnboardingScreen> {
                             ScreenContent(::OnboardingScreen, onboardingViewModelFactory)
@@ -161,5 +198,9 @@ class MainActivity @Inject constructor(
     override fun onResume() {
         super.onResume()
         activityViewModel.onResume()
+    }
+
+    private companion object {
+        const val BACK_PRESS_ANIMATION_DURATION = 300
     }
 }
