@@ -346,7 +346,8 @@ fun DeviceInfoState(
                 },
                 visualTransformation = MacAddressTransformation(),
                 fontStyle = if (wolMac == null) FontStyle.Italic else FontStyle.Normal,
-                validator = { it.isValidMacInput() }
+                inputFilter = { it.isEmpty() || it.isValidMacInput() },
+                validator = { it.length == 12 }
             )
         }
 
@@ -508,6 +509,7 @@ fun EditableFieldCard(
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     validator: (String) -> Boolean = { it.isNotBlank() },
+    inputFilter: (String) -> Boolean = { true },
     editIconContentDescription: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     fontStyle: FontStyle = FontStyle.Normal,
@@ -541,12 +543,13 @@ fun EditableFieldCard(
                         color = MaterialTheme.colorScheme.primary
                     )
 
-
                     OutlinedTextField(
                         value = textValue,
                         onValueChange = {
-                            if (!validator(it)) return@OutlinedTextField
-                            textValue = it
+                            // Use inputFilter instead of validator to block keystrokes
+                            if (inputFilter(it)) {
+                                textValue = it
+                            }
                         },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
@@ -580,7 +583,7 @@ fun EditableFieldCard(
                                 onValueSaved(textValue)
                                 isEditing = false
                             },
-                            enabled = textValue != currentValue && isValid
+                            enabled = isValid
                         ) {
                             Text(text = stringResource(R.string.save))
                         }
