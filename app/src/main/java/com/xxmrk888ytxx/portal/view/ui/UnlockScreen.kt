@@ -97,19 +97,17 @@ fun UnlockScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Button(
-                    onClick = { onEvent(UnlockScreenUiEvent.Allow(
-                        fragmentActivity = fragmentActivity,
-                        isSentByUser = true
-                    )) },
+                OutlinedButton(
+                    onClick = { onEvent(UnlockScreenUiEvent.Delay) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp),
                     shape = MaterialTheme.shapes.large
                 ) {
                     Text(
-                        text = stringResource(R.string.allow),
-                        style = MaterialTheme.typography.titleMedium
+                        text = stringResource(R.string.delay),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -124,6 +122,22 @@ fun UnlockScreen(
                         text = stringResource(R.string.deny),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                Button(
+                    onClick = { onEvent(UnlockScreenUiEvent.Allow(
+                        fragmentActivity = fragmentActivity,
+                        isSentByUser = true
+                    )) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Text(
+                        text = stringResource(R.string.allow),
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }

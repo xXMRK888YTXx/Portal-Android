@@ -6,4 +6,5 @@ import com.xxmrk888ytxx.coreandroid.mvi.UiEvent
 sealed interface UnlockScreenUiEvent : UiEvent {
     class Allow(val fragmentActivity: FragmentActivity, val isSentByUser: Boolean) : UnlockScreenUiEvent
     data object Deny : UnlockScreenUiEvent
+    data object Delay : UnlockScreenUiEvent
 }

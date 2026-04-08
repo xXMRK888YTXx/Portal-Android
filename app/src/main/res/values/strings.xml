@@ -20,4 +20,5 @@
     <string name="allow">Allow</string>
     <string name="unlocking_the_device_wol">Unlocking the device (WOL)</string>
     <string name="unblocking_via_wol">Unblocking via WOL</string>
+    <string name="delay">Delay</string>
 </resources>
