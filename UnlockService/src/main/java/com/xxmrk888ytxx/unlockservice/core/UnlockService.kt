@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.unlockservice.core
 
+import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -62,9 +63,12 @@ abstract class UnlockService : Service(), UnlockServiceController {
         buildNotificationChannel(
             id = FOREGROUND_CHANNEL_ID,
             name = getString(R.string.unlock_background_service)
-        )
+        ) {
+            importance = IMPORTANCE_LOW
+        }
         val notification = buildNotification(FOREGROUND_CHANNEL_ID) {
             setContentTitle(getString(R.string.unlock_background_service))
+            setSmallIcon(R.drawable.portal)
             setContentText(getString(notificationInfo.textResId))
         }
         startForeground(notificationInfo.id, notification)
