@@ -61,7 +61,7 @@ If you find Portal useful, consider supporting the developers:
 - **PC Client Developer:** [xXKoksMenXx](https://github.com/KoksMen)
 
 <div align="center">
-  <img src="app/src/main/ic_launcher-playstore.png" width="128">
+  <img src="app/src/main/ic_launcher-playstore.png" width="256">
   <h1>Portal 🔐 (RU)</h1>
 </div>
 
