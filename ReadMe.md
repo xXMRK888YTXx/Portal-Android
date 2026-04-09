@@ -1,4 +1,6 @@
-# ![Portal Icon](app/src/main/ic_launcher-playstore.png) Portal 🔐
+![Portal Icon](app/src/main/ic_launcher-playstore.png)
+
+# Portal 🔐
 
 **Portal** — is a completely **free** and **open-source** smart wireless key that transforms your Android smartphone into a tool for instant computer unlocking. No ads, no tracking, no hidden costs.
 
@@ -57,7 +59,9 @@ If you find Portal useful, consider supporting the developers:
 - **Android Developer:** [xXMRK888YTXx](https://github.com/xXMRK888YTXx)
 - **PC Client Developer:** [xXKoksMenXx](https://github.com/KoksMen)
 
-# ![Portal Icon](app/src/main/ic_launcher-playstore.png) Portal 🔐 (RU)
+![Portal Icon](app/src/main/ic_launcher-playstore.png)
+
+# Portal 🔐 (RU)
 
 **Portal** — это полностью **бесплатный** и **открытый (open-source)** умный беспроводной ключ, который превращает ваш Android-смартфон в инструмент для мгновенной разблокировки компьютера. Без рекламы, без слежки и без скрытых платежей.
 
