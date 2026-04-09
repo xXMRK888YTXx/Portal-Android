@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="app/src/main/ic_launcher-playstore.png" width="128">
+  <img src="app/src/main/ic_launcher-playstore.png" width="256">
   <h1>Portal 🔐</h1>
 </div>
 
