@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.coreandroid
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.NotificationManager.IMPORTANCE_LOW
 import android.content.Context
 import androidx.core.content.getSystemService
 import kotlinx.coroutines.CancellationException
@@ -18,6 +19,13 @@ inline fun Context.buildNotificationChannel(
     val notificationManager = getSystemService<NotificationManager>()
 
     notificationManager?.createNotificationChannel(channel)
+}
+
+fun Context.buildForegroundServiceNotificationChannel(
+    id: String,
+    name: String,
+) = buildNotificationChannel(id, name) {
+    importance = IMPORTANCE_LOW
 }
 
 inline fun Context.buildNotification(

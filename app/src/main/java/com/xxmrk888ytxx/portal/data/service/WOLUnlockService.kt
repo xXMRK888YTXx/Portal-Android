@@ -1,11 +1,10 @@
 package com.xxmrk888ytxx.portal.data.service
 
 import android.app.Notification
-import android.app.NotificationManager.IMPORTANCE_LOW
 import android.content.Intent
 import android.os.IBinder
+import com.xxmrk888ytxx.coreandroid.buildForegroundServiceNotificationChannel
 import com.xxmrk888ytxx.coreandroid.buildNotification
-import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
@@ -40,18 +39,17 @@ class WOLUnlockService @Inject constructor(
             setContentTitle(getString(R.string.unlocking_the_device_wol))
             setSmallIcon(com.xxmrk888ytxx.unlockservice.R.drawable.portal)
             setContentText(getString(R.string.please_wait_a_moment))
+            setOngoing(true)
         }
 
     override fun onBind(p0: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
-        buildNotificationChannel(
+        buildForegroundServiceNotificationChannel(
             WOL_UNLOCK_CHANNEL_ID,
             getString(R.string.unblocking_via_wol)
-        ) {
-            importance = IMPORTANCE_LOW
-        }
+        )
     }
 
     override fun onDestroy() {

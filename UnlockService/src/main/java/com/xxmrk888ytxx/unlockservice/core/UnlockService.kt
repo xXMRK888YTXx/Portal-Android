@@ -1,12 +1,11 @@
 package com.xxmrk888ytxx.unlockservice.core
 
-import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.xxmrk888ytxx.coreandroid.buildForegroundServiceNotificationChannel
 import com.xxmrk888ytxx.coreandroid.buildNotification
-import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.unlockservice.R
 import com.xxmrk888ytxx.unlockservice.exception.PermissionDeniedException
@@ -60,16 +59,15 @@ abstract class UnlockService : Service(), UnlockServiceController {
 
     override fun onCreate() {
         super.onCreate()
-        buildNotificationChannel(
+        buildForegroundServiceNotificationChannel(
             id = FOREGROUND_CHANNEL_ID,
             name = getString(R.string.unlock_background_service)
-        ) {
-            importance = IMPORTANCE_LOW
-        }
+        )
         val notification = buildNotification(FOREGROUND_CHANNEL_ID) {
             setContentTitle(getString(R.string.unlock_background_service))
             setSmallIcon(R.drawable.portal)
             setContentText(getString(notificationInfo.textResId))
+            setOngoing(true)
         }
         startForeground(notificationInfo.id, notification)
         fastDebugLog("Service: $this onCreate")
