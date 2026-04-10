@@ -83,6 +83,10 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.play.services.code.scanner)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
 }
 android {
     buildTypes {

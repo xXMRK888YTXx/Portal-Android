@@ -7,3 +7,9 @@ plugins {
 extensions.configure<LibraryExtension> {
     namespace = "com.xxmrk888ytxx.addnewdevicescreen"
 }
+
+dependencies {
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
+}
