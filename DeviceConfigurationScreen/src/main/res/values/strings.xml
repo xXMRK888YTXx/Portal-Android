@@ -17,8 +17,10 @@
     <string name="wifi">Wifi</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="mac_address">MAC address</string>
-    <string name="unlock_only_when_the_screen_is_on">Unlock only when the screen is on</string>
-    <string name="if_your_phone_screen_is_locked_your_pc_will_only_be_unlocked_once_your_phone_has_been_unlocked">If your phone screen is locked, your PC will only be unlocked once your phone has been unlocked</string>
+    <string name="unlock_only_when_unlocked">Unlock only when phone is unlocked</string>
+    <string name="unlock_only_when_unlocked_description">The PC will only be unlocked if the phone is already unlocked</string>
+    <string name="show_unlock_request_only_when_unlocked">Show unlock request only when phone is unlocked</string>
+    <string name="show_unlock_request_only_when_unlocked_description">The unlock request will only be shown if the phone is already unlocked</string>
     <string name="automatically">Automatically</string>
     <string name="notification">Notification</string>
     <string name="confirmation_screen">Confirmation screen</string>

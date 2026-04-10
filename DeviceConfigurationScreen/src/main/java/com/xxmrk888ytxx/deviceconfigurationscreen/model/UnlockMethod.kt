@@ -2,7 +2,7 @@ package com.xxmrk888ytxx.deviceconfigurationscreen.model
 
 sealed class UnlockMethod(val isUnsafe: Boolean = false) {
 
-    data class Automatic(val unlockOnlyWhenScreenUnlocked: Boolean) : UnlockMethod(isUnsafe = true)
+    data object Automatic : UnlockMethod(isUnsafe = true)
 
     data object Notification : UnlockMethod()
 
@@ -13,7 +13,7 @@ sealed class UnlockMethod(val isUnsafe: Boolean = false) {
             get() = listOf(
                 ConfirmationScreen,
                 Notification,
-                Automatic(false),
+                Automatic,
             )
     }
 }

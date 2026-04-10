@@ -17,9 +17,12 @@
     <string name="wifi">Wi-Fi</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="mac_address">MAC-адрес</string>
-    <string name="unlock_only_when_the_screen_is_on">Разблокировать только при включенном экране</string>
-    <string name="if_your_phone_screen_is_locked_your_pc_will_only_be_unlocked_once_your_phone_has_been_unlocked">Если экран вашего телефона заблокирован, ваш ПК будет разблокирован только после разблокировки телефона</string>
+    <string name="unlock_only_when_unlocked">Разблокировать только когда телефон разблокирован</string>
+    <string name="unlock_only_when_unlocked_description">ПК будет разблокирован только если телефон уже разблокирован</string>
+    <string name="show_unlock_request_only_when_unlocked">Показывать запрос только когда телефон разблокирован</string>
+    <string name="show_unlock_request_only_when_unlocked_description">Запрос на разблокировку будет показан только если телефон уже разблокирован</string>
     <string name="automatically">Автоматически</string>
+
     <string name="notification">Уведомление</string>
     <string name="confirmation_screen">Экран подтверждения</string>
     <string name="unlock_method">Метод разблокировки</string>

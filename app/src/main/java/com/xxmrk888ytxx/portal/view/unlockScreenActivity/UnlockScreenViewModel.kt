@@ -94,7 +94,8 @@ class UnlockScreenViewModel @Inject constructor(
             unlockRequestManager.sendNotification(
                 clientId = unlockScreenData.clientId,
                 deviceName = provideDeviceNameByClientId.provideName(unlockScreenData.clientId) ?: return@launch,
-                request = UnlockServiceRequest.Auth(unlockScreenData.requestId)
+                request = UnlockServiceRequest.Auth(unlockScreenData.requestId),
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = false
             )
             dismissScreen()
         }

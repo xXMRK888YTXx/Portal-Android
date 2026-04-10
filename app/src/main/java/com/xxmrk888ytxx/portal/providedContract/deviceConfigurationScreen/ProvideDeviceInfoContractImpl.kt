@@ -43,10 +43,9 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
                     serverCertificateFingerprint = wifiDevice.serverCertificateFingerprint,
                     searchIpDynamically = deviceSettings.searchIpDynamically,
-                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(
-                        deviceSettings.unlockOnlyWhenScreenUnlocked
-                    ),
-                    wolMacAddress = wifiDevice.wolMacAddress?.filter { it != ':' }
+                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(),
+                    wolMacAddress = wifiDevice.wolMacAddress?.filter { it != ':' },
+                    showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = deviceSettings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
                 )
 
                 bluetoothDevice != null -> Device.BluetoothDevice(
@@ -54,11 +53,9 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     deviceName = bluetoothDevice.name,
                     macAddress = bluetoothDevice.macAddress,
                     awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
-                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(
-                        deviceSettings.unlockOnlyWhenScreenUnlocked
-                    ),
-                    isPaired = pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) ?: true
-                    // If pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) == null its mean permission not grated
+                    unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(),
+                    isPaired = pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) ?: true, // If pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) == null its mean permission not grated
+                    showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = deviceSettings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
                 )
 
                 else -> throw DeviceNotFoundException(clientId)
@@ -66,12 +63,9 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
         }
     }
 
-    private fun UnlockMethod.toDeviceConfigurationUnlockMethod(unlockOnlyWhenScreenUnlocked: Boolean): DeviceConfigurationUnlockMethod {
+    private fun UnlockMethod.toDeviceConfigurationUnlockMethod(): DeviceConfigurationUnlockMethod {
         return when (this) {
-            is UnlockMethod.Automatic -> DeviceConfigurationUnlockMethod.Automatic(
-                unlockOnlyWhenScreenUnlocked
-            )
-
+            is UnlockMethod.Automatic -> DeviceConfigurationUnlockMethod.Automatic
             is UnlockMethod.ConfirmationScreen -> DeviceConfigurationUnlockMethod.ConfirmationScreen
             is UnlockMethod.Notification -> DeviceConfigurationUnlockMethod.Notification
         }

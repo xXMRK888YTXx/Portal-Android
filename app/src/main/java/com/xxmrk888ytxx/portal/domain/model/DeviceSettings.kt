@@ -5,5 +5,5 @@ data class DeviceSettings(
     val awaitUnlockRequests: Boolean,
     val searchIpDynamically: Boolean,
     val unlockMethod: UnlockMethod,
-    val unlockOnlyWhenScreenUnlocked: Boolean
+    val showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean
 )

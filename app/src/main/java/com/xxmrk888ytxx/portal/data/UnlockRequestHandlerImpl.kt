@@ -43,17 +43,19 @@ class UnlockRequestHandlerImpl @Inject constructor(
         when(settings.unlockMethod) {
             UnlockMethod.Automatic -> unlockRequestManager.automaticUnlock(
                 clientId = clientId,
-                unlockOnlyWhenScreenUnlocked = settings.unlockOnlyWhenScreenUnlocked,
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = settings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
                 request = request
             )
             UnlockMethod.ConfirmationScreen -> unlockRequestManager.showUnlockScreen(
                 clientId = clientId,
                 deviceName = deviceName,
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = settings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
                 request = request
             )
             UnlockMethod.Notification -> unlockRequestManager.sendNotification(
                 clientId = clientId,
                 deviceName = deviceName,
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = settings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
                 request = request
             )
         }

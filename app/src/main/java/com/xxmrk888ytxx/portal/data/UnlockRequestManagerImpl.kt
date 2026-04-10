@@ -35,7 +35,7 @@ class UnlockRequestManagerImpl @Inject constructor(
     private val unlockMessageSender: UnlockMessageSender,
 ) : UnlockRequestManager {
 
-    private val automaticUnlockScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+    private val unlockScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     private val notificationManager: NotificationManager by lazy {
         context.getSystemService<NotificationManager>()!!
@@ -47,18 +47,13 @@ class UnlockRequestManagerImpl @Inject constructor(
 
     override fun automaticUnlock(
         clientId: String,
-        unlockOnlyWhenScreenUnlocked: Boolean,
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
         request: UnlockServiceRequest
     ) {
-        automaticUnlockScope.launch {
+        unlockScope.launch {
 
-            if (unlockOnlyWhenScreenUnlocked) {
-                withTimeoutOrNull(AWAIT_SCREEN_UNLOCK_TIMEOUT) {
-                    while (isActive) {
-                        if (!keyguardManager.isKeyguardLocked) break
-                        delay(1500)
-                    }
-                } ?: return@launch
+            if (showUnlockScreenOrUnlockOnlyWhenScreenUnlocked && !waitScreenUnlock()) {
+                return@launch
             }
 
             unlockMessageSender.sendMessage(
@@ -71,61 +66,81 @@ class UnlockRequestManagerImpl @Inject constructor(
     override fun showUnlockScreen(
         clientId: String,
         deviceName: String,
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
         request: UnlockServiceRequest
     ) {
         fastDebugLog("showScreenImpl")
         when {
             permissionManager.isShowSystemAlertPermissionGranted -> showActivity(
                 clientId,
-                request
+                request,
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
             ).also { fastDebugLog("showActivity") }
 
             permissionManager.isNotificationPermissionGranted -> sendNotification(
                 clientId,
                 deviceName,
-                request
+                request,
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
             ).also { fastDebugLog("sendNotification") }
 
             else -> fastDebugLog("showUnlockScreen canceled because isShowSystemAlertPermissionGranted and isNotificationPermissionGranted permission is not granted")
         }
     }
 
-    private fun showActivity(deviceId: String, request: UnlockServiceRequest) {
-        val intent = createIntentForStartUnlockScreen(deviceId, request.requestId).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    private fun showActivity(
+        deviceId: String,
+        request: UnlockServiceRequest,
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean
+    ) {
+        unlockScope.launch {
+            if (showUnlockScreenOrUnlockOnlyWhenScreenUnlocked && !waitScreenUnlock()) {
+                return@launch
+            }
+
+            val intent = createIntentForStartUnlockScreen(deviceId, request.requestId).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(intent)
         }
-        context.startActivity(intent)
     }
 
     override fun sendNotification(
         clientId: String,
         deviceName: String,
-        request: UnlockServiceRequest
+        request: UnlockServiceRequest,
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean
     ) {
-        val intent = createIntentForStartUnlockScreen(clientId, request.requestId)
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        val notification = context.buildNotification(NOTIFICATION_CHANNEL_ID) {
-            setSmallIcon(R.drawable.ic_launcher_foreground)
-            setContentTitle(
-                context.getString(
-                    R.string.is_requesting_unlocking,
-                    deviceName
-                )
+        unlockScope.launch {
+            if (showUnlockScreenOrUnlockOnlyWhenScreenUnlocked && !waitScreenUnlock()) {
+                return@launch
+            }
+
+            val intent = createIntentForStartUnlockScreen(clientId, request.requestId)
+            val pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-            setContentText(context.getString(R.string.click_to_allow))
-            setAutoCancel(true)
-            setContentIntent(pendingIntent)
-            build()
+            val notification = context.buildNotification(NOTIFICATION_CHANNEL_ID) {
+                setSmallIcon(R.drawable.ic_launcher_foreground)
+                setContentTitle(
+                    context.getString(
+                        R.string.is_requesting_unlocking,
+                        deviceName
+                    )
+                )
+                setContentText(context.getString(R.string.click_to_allow))
+                setAutoCancel(true)
+                setContentIntent(pendingIntent)
+                build()
+            }
+            notificationManager.notify(
+                abs(clientId.hashCode()),
+                notification
+            )
         }
-        notificationManager.notify(
-            abs(clientId.hashCode()),
-            notification
-        )
     }
 
     private fun createIntentForStartUnlockScreen(
@@ -141,6 +156,16 @@ class UnlockRequestManagerImpl @Inject constructor(
                 )
             )
         }
+    }
+
+    private suspend fun waitScreenUnlock(): Boolean {
+        return withTimeoutOrNull(AWAIT_SCREEN_UNLOCK_TIMEOUT) {
+            while (isActive) {
+                if (!keyguardManager.isKeyguardLocked) return@withTimeoutOrNull true
+                delay(1500)
+            }
+            return@withTimeoutOrNull false
+        } ?: return false
     }
 
     init {

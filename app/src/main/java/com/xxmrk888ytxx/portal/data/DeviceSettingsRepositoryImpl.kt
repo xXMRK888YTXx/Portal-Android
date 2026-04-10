@@ -73,7 +73,7 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
             awaitUnlockRequests = awaitUnlockRequests,
             searchIpDynamically = searchIpDynamically,
             unlockMethod = unlockMethod.toDomainModel(),
-            unlockOnlyWhenScreenUnlocked = unlockOnlyWhenScreenUnlocked
+            showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = unlockOnlyWhenScreenUnlocked
         )
     }
 

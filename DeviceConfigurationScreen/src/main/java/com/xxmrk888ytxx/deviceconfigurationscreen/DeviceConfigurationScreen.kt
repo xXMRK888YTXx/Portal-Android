@@ -365,17 +365,26 @@ fun DeviceInfoState(
             },
         )
 
-        AnimatedVisibility(visible = screenState.device.unlockMethod is UnlockMethod.Automatic) {
-            SwitchSettingCard(
-                title = stringResource(R.string.unlock_only_when_the_screen_is_on),
-                description = stringResource(R.string.if_your_phone_screen_is_locked_your_pc_will_only_be_unlocked_once_your_phone_has_been_unlocked),
-                isChecked = (screenState.device.unlockMethod as? UnlockMethod.Automatic)?.unlockOnlyWhenScreenUnlocked
-                    ?: false,
-                onCheckedChange = {
-                    onEvent(DeviceConfigurationUiEvent.OnUnlockOnlyWhenScreenUnlockedChanged(it))
-                }
+        val (title, description) = if (screenState.device.unlockMethod is UnlockMethod.Automatic) {
+            Pair(
+                stringResource(R.string.unlock_only_when_unlocked),
+                stringResource(R.string.unlock_only_when_unlocked_description)
+            )
+        } else {
+            Pair(
+                stringResource(R.string.show_unlock_request_only_when_unlocked),
+                stringResource(R.string.show_unlock_request_only_when_unlocked_description)
             )
         }
+
+        SwitchSettingCard(
+            title = title,
+            description = description,
+            isChecked = screenState.device.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
+            onCheckedChange = {
+                onEvent(DeviceConfigurationUiEvent.OnUnlockOnlyWhenScreenUnlockedChanged(it))
+            }
+        )
 
         SwitchSettingCard(
             title = stringResource(R.string.await_unlock_requests),
