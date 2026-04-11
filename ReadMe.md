@@ -52,12 +52,16 @@ Messages and unlock commands are delivered through:
 *License: GPL-3.0*
 ---
 
-## 🛠 Technologies
+## 🛠 Technologies & Architecture
 
--   **Language:** Kotlin (Jetpack Compose)
--   **Architecture:** Clean Architecture + MVI
--   **Network:** Ktor (WebSockets), Bluetooth RFCOMM
--   **Storage:** Room, Android DataStore
+-   **Language:** Kotlin (Coroutines, Flow)
+-   **UI Framework:** Jetpack Compose (Material 3)
+-   **Architecture:** Multi-module, Clean Architecture, MVI (Model-View-Intent)
+-   **Dependency Injection:** Dagger 2
+-   **Local Storage:** Room (SQLite), Jetpack DataStore (Preferences)
+-   **Networking:** WebSockets, Bluetooth RFCOMM, mDNS, Wake-on-LAN (WOL)
+-   **Security:** Biometric API, Data Encryption (AES), Secure Storage
+-   **Build System:** Gradle Kotlin DSL, Version Catalogs, custom `buildSrc` plugins
 
 ## 📄 Documentation & Links
 
@@ -114,5 +118,17 @@ Messages and unlock commands are delivered through:
 ![Settings](Screenshots/3.jpg)
 ![Logs](Screenshots/4.jpg)
 
+## 🛠 Технологии и архитектура
+
+-   **Язык:** Kotlin (Coroutines, Flow)
+-   **UI Фреймворк:** Jetpack Compose (Material 3)
+-   **Архитектура:** Многомодульность, Clean Architecture, MVI (Model-View-Intent)
+-   **Внедрение зависимостей:** Dagger 2
+-   **Хранение данных:** Room (SQLite), Jetpack DataStore (Preferences)
+-   **Сеть:** WebSockets, Bluetooth RFCOMM, mDNS, Wake-on-LAN (WOL)
+-   **Безопасность:** Biometric API, Шифрование данных (AES), Secure Storage
+-   **Сборка:** Gradle Kotlin DSL, Version Catalogs, кастомные плагины в `buildSrc`
+
 ---
 *License: GPL-3.0*
+---
