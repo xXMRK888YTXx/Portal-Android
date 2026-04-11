@@ -42,7 +42,9 @@ Messages and unlock commands are delivered through:
 
 ## 📸 Screenshots
 
-<img src="Screenshots/0.jpg" width="200"> <img src="Screenshots/1.jpg" width="200"> <img src="Screenshots/2.jpg" width="200"> <img src="Screenshots/3.jpg" width="200"> <img src="Screenshots/4.jpg" width="200">
+<img src="Screenshots/0.jpg" width="200"> <img src="Screenshots/1.jpg" width="200">
+
+<img src="Screenshots/2.jpg" width="200"> <img src="Screenshots/3.jpg" width="200"> <img src="Screenshots/4.jpg" width="200">
 
 ---
 *License: GPL-3.0*
@@ -118,11 +120,9 @@ To ensure the authenticity of the application, please verify the build signature
 
 ## 📸 Скриншоты
 
-![Main Screen](Screenshots/0.jpg)
-![Add Device](Screenshots/1.jpg)
-![Device Config](Screenshots/2.jpg)
-![Settings](Screenshots/3.jpg)
-![Logs](Screenshots/4.jpg)
+<img src="Screenshots/0.jpg" width="200"> <img src="Screenshots/1.jpg" width="200">
+
+<img src="Screenshots/2.jpg" width="200"> <img src="Screenshots/3.jpg" width="200"> <img src="Screenshots/4.jpg" width="200">
 
 ## 🛠 Технологии и архитектура
 
