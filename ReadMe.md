@@ -42,9 +42,18 @@ Messages and unlock commands are delivered through:
 
 ## 📸 Screenshots
 
-<img src="Screenshots/0.jpg" width="200"> <img src="Screenshots/1.jpg" width="200">
+<div align="center">
+  <img src="Screenshots/0.jpg" width="200">
+  <img src="Screenshots/1.jpg" width="200">
+</div>
 
-<img src="Screenshots/2.jpg" width="200"> <img src="Screenshots/3.jpg" width="200"> <img src="Screenshots/4.jpg" width="200">
+<br>
+
+<div align="center">
+  <img src="Screenshots/2.jpg" width="200">
+  <img src="Screenshots/3.jpg" width="200">
+  <img src="Screenshots/4.jpg" width="200">
+</div>
 
 ---
 *License: GPL-3.0*
@@ -120,9 +129,18 @@ To ensure the authenticity of the application, please verify the build signature
 
 ## 📸 Скриншоты
 
-<img src="Screenshots/0.jpg" width="200"> <img src="Screenshots/1.jpg" width="200">
+<div align="center">
+  <img src="Screenshots/0.jpg" width="200">
+  <img src="Screenshots/1.jpg" width="200">
+</div>
 
-<img src="Screenshots/2.jpg" width="200"> <img src="Screenshots/3.jpg" width="200"> <img src="Screenshots/4.jpg" width="200">
+<br>
+
+<div align="center">
+  <img src="Screenshots/2.jpg" width="200">
+  <img src="Screenshots/3.jpg" width="200">
+  <img src="Screenshots/4.jpg" width="200">
+</div>
 
 ## 🛠 Технологии и архитектура
 
