@@ -63,6 +63,16 @@ Messages and unlock commands are delivered through:
 -   **Security:** Biometric API, Data Encryption (AES), Secure Storage
 -   **Build System:** Gradle Kotlin DSL, Version Catalogs, custom `buildSrc` plugins
 
+## 🔐 Security & Verification
+
+To ensure the authenticity of the application, please verify the build signature. Official builds are signed with one of the following keys:
+
+-   **Google Play Build:** SHA-256 Fingerprint: 11:B8:C9:72:70:0E:87:EB:4E:B9:00:4E:15:68:D8:72:32:87:2C:9F:0F:73:A5:3D:30:E7:CD:CF:49:AF:88:85
+-   **Personal Builds:** Signed with the personal key. You can find the valid signature in my [GitHub Profile ReadMe](https://github.com/xXMRK888YTXx).
+
+> [!WARNING]
+> Applications signed with any other keys are not built by me. Using such builds is highly discouraged unless you fully trust the provider.
+
 ## 📄 Documentation & Links
 
 - 🛡 **[Privacy Policy](https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Android/Privacy%20policy.md)**
@@ -128,6 +138,16 @@ Messages and unlock commands are delivered through:
 -   **Сеть:** WebSockets, Bluetooth RFCOMM, mDNS, Wake-on-LAN (WOL)
 -   **Безопасность:** Biometric API, Шифрование данных (AES), Secure Storage
 -   **Сборка:** Gradle Kotlin DSL, Version Catalogs, кастомные плагины в `buildSrc`
+
+## 🔐 Безопасность и проверка
+
+Для обеспечения подлинности приложения проверьте подпись сборки. Официальные версии подписываются одним из следующих ключей:
+
+-   **Версия из Google Play:** SHA-256 Fingerprint: 11:B8:C9:72:70:0E:87:EB:4E:B9:00:4E:15:68:D8:72:32:87:2C:9F:0F:73:A5:3D:30:E7:CD:CF:49:AF:88:85
+-   **Персональные сборки:** Подписаны личным ключом. Актуальную сигнатуру можно найти в моем [GitHub профиле](https://github.com/xXMRK888YTXx).
+
+> [!WARNING]
+> Приложения, подписанные любыми другими ключами, собраны не мной. Использование таких сборок крайне не рекомендуется, если вы не доверяете автору на 100%.
 
 ---
 *License: GPL-3.0*
