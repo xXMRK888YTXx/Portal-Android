@@ -35,11 +35,11 @@ Messages and unlock commands are delivered through:
 
 ## 📸 Screenshots
 
-*App screenshots will be added here soon*
-
-| Main Screen | Add Device | Settings |
-|:---:|:---:|:---:|
-| ![Main Screen]() | ![Add Device]() | ![Settings]() |
+![Main Screen](Screenshots/0.jpg)
+![Add Device](Screenshots/1.jpg)
+![Device Config](Screenshots/2.jpg)
+![Settings](Screenshots/3.jpg)
+![Logs](Screenshots/4.jpg)
 
 ## 🛠 Technologies
 
@@ -94,6 +94,12 @@ If you find Portal useful, consider supporting the developers:
 -   **Быстрые ярлыки:** Мгновенный доступ к разблокировке конкретных устройств прямо с рабочего стола.
 -   **Повышенная безопасность:** Шифрование данных и автоматическая отвязка устройств при изменении биометрических данных в системе.
 -   **Приватность:** Никаких облачных серверов — все взаимодействие происходит только в вашей локальной среде.
+
+## 📸 Скриншоты
+
+| Главный экран | Добавление | Настройка | Настройки | Логи |
+|:---:|:---:|:---:|:---:|:---:|
+| ![Главный экран](Screenshots/0.jpg) | ![Добавление](Screenshots/1.jpg) | ![Настройка](Screenshots/2.jpg) | ![Настройки](Screenshots/3.jpg) | ![Логи](Screenshots/4.jpg) |
 
 ## ❤️ Поддержка проекта
 
