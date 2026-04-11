@@ -13,6 +13,13 @@
 | **Android (GitHub Releases)** | [Download APK](https://github.com/xXMRK888YTXx/Portal-Android/releases) |
 | **PC Client (Windows)** | [Download PC Client](https://github.com/KoksMen/Portal-Windows/releases) |
 
+## ❤️ Support the Project
+
+If you find Portal useful, consider supporting the developers:
+- ☕ **[Support via Donate (EN)](https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Donate/donate-en.md)**
+- **Android Developer:** [xXMRK888YTXx](https://github.com/xXMRK888YTXx)
+- **PC Client Developer:** [xXKoksMenXx](https://github.com/KoksMen)
+
 ## 🚀 How it Works
 
 The application operates in two global modes:
@@ -41,6 +48,10 @@ Messages and unlock commands are delivered through:
 ![Settings](Screenshots/3.jpg)
 ![Logs](Screenshots/4.jpg)
 
+---
+*License: GPL-3.0*
+---
+
 ## 🛠 Technologies
 
 -   **Language:** Kotlin (Jetpack Compose)
@@ -52,13 +63,6 @@ Messages and unlock commands are delivered through:
 
 - 🛡 **[Privacy Policy](https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Android/Privacy%20policy.md)**
 - 📜 **[Terms of Service](https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Android/Terms%20of%20Service.md)**
-
-## ❤️ Support the Project
-
-If you find Portal useful, consider supporting the developers:
-- ☕ **[Support via Donate (EN)](https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Donate/donate-en.md)**
-- **Android Developer:** [xXMRK888YTXx](https://github.com/xXMRK888YTXx)
-- **PC Client Developer:** [xXKoksMenXx](https://github.com/KoksMen)
 
 <div align="center">
   <img src="app/src/main/ic_launcher-playstore.png" width="256">
@@ -74,6 +78,13 @@ If you find Portal useful, consider supporting the developers:
 | **Android (Google Play)** | [Google Play](https://play.google.com/store/apps/details?id=com.xxmrk888ytxx.portal) |
 | **Android (GitHub Releases)** | [Скачать APK](https://github.com/xXMRK888YTXx/Portal-Android/releases) |
 | **PC Клиент (Windows)** | [Скачать клиент для ПК](https://github.com/KoksMen/Portal-Windows/releases) |
+
+## ❤️ Поддержка проекта
+
+Если Portal оказался вам полезен, вы можете поддержать разработчиков:
+- ☕ **[Поддержать проект (RU)](https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Donate/donate-ru.md)**
+- **Разработчик Android:** [xXMRK888YTXx](https://github.com/xXMRK888YTXx)
+- **Разработчик ПК-клиента:** [xXKoksMenXx](https://github.com/KoksMen)
 
 ## 🚀 Как это работает
 
@@ -97,16 +108,11 @@ If you find Portal useful, consider supporting the developers:
 
 ## 📸 Скриншоты
 
-| Главный экран | Добавление | Настройка | Настройки | Логи |
-|:---:|:---:|:---:|:---:|:---:|
-| ![Главный экран](Screenshots/0.jpg) | ![Добавление](Screenshots/1.jpg) | ![Настройка](Screenshots/2.jpg) | ![Настройки](Screenshots/3.jpg) | ![Логи](Screenshots/4.jpg) |
-
-## ❤️ Поддержка проекта
-
-Если Portal оказался вам полезен, вы можете поддержать разработчиков:
-- ☕ **[Поддержать проект (RU)](https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Donate/donate-ru.md)**
-- **Разработчик Android:** [xXMRK888YTXx](https://github.com/xXMRK888YTXx)
-- **Разработчик ПК-клиента:** [xXKoksMenXx](https://github.com/KoksMen)
+![Main Screen](Screenshots/0.jpg)
+![Add Device](Screenshots/1.jpg)
+![Device Config](Screenshots/2.jpg)
+![Settings](Screenshots/3.jpg)
+![Logs](Screenshots/4.jpg)
 
 ---
 *License: GPL-3.0*
