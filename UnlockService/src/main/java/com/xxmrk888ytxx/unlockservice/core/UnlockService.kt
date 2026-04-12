@@ -2,7 +2,9 @@ package com.xxmrk888ytxx.unlockservice.core
 
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import com.xxmrk888ytxx.coreandroid.buildForegroundServiceNotificationChannel
 import com.xxmrk888ytxx.coreandroid.buildNotification
@@ -68,6 +70,11 @@ abstract class UnlockService : Service(), UnlockServiceController {
             setSmallIcon(R.drawable.portal)
             setContentText(getString(notificationInfo.textResId))
             setOngoing(true)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(notificationInfo.id, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE)
+        } else {
+            startForeground(notificationInfo.id, notification)
         }
         startForeground(notificationInfo.id, notification)
         fastDebugLog("Service: $this onCreate")

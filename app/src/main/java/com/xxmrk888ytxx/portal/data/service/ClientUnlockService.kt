@@ -3,6 +3,8 @@ package com.xxmrk888ytxx.portal.data.service
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.data.service.model.ClientUnlockServiceParams
@@ -48,7 +50,11 @@ abstract class ClientUnlockService(
             stopSelf(startId)
             return START_NOT_STICKY
         }
-        startForeground(notificationId, notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE)
+        } else {
+            startForeground(notificationId, notification)
+        }
         serviceScope.launch {
             handleUnlock(clientUnlockServiceParams)
         }.invokeOnCompletion { stopSelf(startId) }
