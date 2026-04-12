@@ -6,6 +6,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -20,8 +23,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -50,7 +55,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -60,6 +68,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -824,7 +833,7 @@ fun CreateShortcutBottomSheet(
 private fun SettingsRowWithDescription(
     title: String,
     description: String,
-    errorMessage: String?, // Новое поле для ошибки
+    errorMessage: String?,
     checked: Boolean,
     enabled: Boolean,
     onCheckedChange: (Boolean) -> Unit
@@ -860,7 +869,6 @@ private fun SettingsRowWithDescription(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Если есть ошибка, показываем её дополнительно
             if (errorMessage != null) {
                 Text(
                     text = errorMessage,
@@ -891,7 +899,10 @@ fun PermissionBannersPager(
             state = pagerState,
             contentPadding = PaddingValues(horizontal = 16.dp),
             pageSpacing = 12.dp,
-            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(),
             key = { banners[it].hashCode() }
         ) { page ->
             PermissionBannerCard(
@@ -909,11 +920,16 @@ fun PermissionBannersPager(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(banners.size) { iteration ->
-                    val color = if (pagerState.currentPage == iteration) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
-                    }
+                    val color by animateColorAsState(
+                        targetValue = if (pagerState.currentPage == iteration) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                        },
+                        animationSpec = tween(durationMillis = 300),
+                        label = "indicator_color"
+                    )
+
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
@@ -933,8 +949,13 @@ fun PermissionBannerCard(
     onEvent: (MainScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+    var showExpandButton by remember { mutableStateOf(false) }
+
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .animateContentSize(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -943,11 +964,18 @@ fun PermissionBannerCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .heightIn(
+                    min = 160.dp,
+                    max = if (isExpanded) Dp.Infinity else 160.dp
+                )
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
+
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(
                     painter = painterResource(id = banner.iconRes),
@@ -956,7 +984,7 @@ fun PermissionBannerCard(
                     tint = MaterialTheme.colorScheme.primary
                 )
 
-                Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = banner.title.asString(),
                         style = MaterialTheme.typography.titleMedium,
@@ -968,18 +996,42 @@ fun PermissionBannerCard(
                     Text(
                         text = banner.description.asString(),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
+                        maxLines = if (isExpanded) Int.MAX_VALUE else 3,
+                        overflow = TextOverflow.Ellipsis,
+                        onTextLayout = { textLayoutResult ->
+                            if (!isExpanded) {
+                                showExpandButton = textLayoutResult.hasVisualOverflow
+                            }
+                        }
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            if (isExpanded) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (showExpandButton) {
+                    TextButton(
+                        onClick = { isExpanded = !isExpanded },
+                        contentPadding = PaddingValues(horizontal = 0.dp)
+                    ) {
+                        Text(
+                            text = if (isExpanded) stringResource(R.string.show_less) else stringResource(R.string.show_more),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.width(1.dp))
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
                 Button(
                     onClick = { onEvent(banner.eventForRequestPermission) }
                 ) {
