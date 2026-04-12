@@ -12,6 +12,7 @@ sealed interface MainScreenEvent : UiEvent {
     data object RequestNearbyDevicesPermission : MainScreenEvent
     data object RequestNotificationPermission : MainScreenEvent
     data object RequestFullScreenIntentPermission : MainScreenEvent
+    data object RequestIgnoreBatteryOptimizationPermission : MainScreenEvent
     data class PermissionGranted(val permission: Permission) : MainScreenEvent
     data class OnIsRequiredBiometricUnlockStateChanged(val isRequiredBiometricUnlock: Boolean) : MainScreenEvent
     data object ActivityInOnResumeState : MainScreenEvent

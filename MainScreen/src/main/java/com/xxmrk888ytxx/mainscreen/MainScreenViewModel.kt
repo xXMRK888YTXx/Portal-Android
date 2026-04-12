@@ -122,7 +122,13 @@ class MainScreenViewModel @Inject constructor(
             is MainScreenEvent.OnIsRequiredSendWOLRequestChanged -> updateCreateShortcutDialogState {
                 it.copy(isWolEnabled = event.newValue)
             }
+
+            MainScreenEvent.RequestIgnoreBatteryOptimizationPermission -> requestIgnoreBatteryOptimizationPermission()
         }
+    }
+
+    private fun requestIgnoreBatteryOptimizationPermission() = viewModelScope.launch {
+        permissionContract.requestIgnoreBatteryOptimization()
     }
 
     private fun sendWOLRequest() {
@@ -278,6 +284,13 @@ class MainScreenViewModel @Inject constructor(
                     description = R.string.this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app.uiText(),
                     iconRes = R.drawable.open_in_full,
                     eventForRequestPermission = MainScreenEvent.RequestFullScreenIntentPermission
+                )
+
+                Permission.IgnoreBatteryOptimizations -> PermissionBannerItem(
+                    title = R.string.permission_to_ignore_battery_optimizations.uiText(),
+                    description = R.string.to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app.uiText(),
+                    iconRes = R.drawable.battery,
+                    eventForRequestPermission = MainScreenEvent.RequestIgnoreBatteryOptimizationPermission
                 )
             }
         }

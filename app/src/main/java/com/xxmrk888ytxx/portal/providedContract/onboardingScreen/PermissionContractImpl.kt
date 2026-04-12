@@ -11,10 +11,15 @@ class PermissionContractImpl @Inject constructor(
     override suspend fun providePermissionState(): PermissionState = PermissionState(
         isNotificationGranted = permissionManager.isNotificationPermissionGranted,
         isNearbyDevicesGranted = permissionManager.isNearbyDevicesPermissionGranted,
-        isOverlayGranted = permissionManager.isShowSystemAlertPermissionGranted
+        isOverlayGranted = permissionManager.isShowSystemAlertPermissionGranted,
+        isIgnoreBatteryOptimizationsGranted = permissionManager.isIgnoreBatteryOptimizationsPermissionGranted
     )
 
     override suspend fun requestOverlayPermission() {
         permissionManager.requestShowSystemAlertPermission()
+    }
+
+    override suspend fun requestIgnoreBatteryOptimization() {
+        permissionManager.requestIgnoreBatteryOptimizations()
     }
 }

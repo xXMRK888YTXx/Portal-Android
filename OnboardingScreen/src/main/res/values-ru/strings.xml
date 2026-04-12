@@ -30,4 +30,6 @@
     <string name="required_permissions">Необходимые разрешения</string>
     <string name="granted">Предоставлено</string>
     <string name="allow">Разрешить</string>
+    <string name="permission_to_ignore_battery_optimizations">Разрешение на игнорирование оптимизации батареи</string>
+    <string name="to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app">Для корректной работы всех функций в фоновом режиме отключите оптимизацию батареи для этого приложения.</string>
 </resources>

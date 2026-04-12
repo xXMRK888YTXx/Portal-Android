@@ -141,7 +141,9 @@ fun OnboardingScreen(
                     isNearbyDevicesGranted = screenState.isNearbyDevicesGranted,
                     onRequestNearbyDevices = { onEvent(OnboardingScreenUiEvent.RequestNearbyDevicesPermission) },
                     isOverlayGranted = screenState.isOverlayGranted,
-                    onRequestOverlay = { onEvent(OnboardingScreenUiEvent.RequestOverlayPermission) }
+                    onRequestOverlay = { onEvent(OnboardingScreenUiEvent.RequestOverlayPermission) },
+                    isIgnoreBatteryOptimizationsGranted = screenState.isIgnoreBatteryOptimizationsGranted,
+                    onRequestIgnoreBatteryOptimizations = { onEvent(OnboardingScreenUiEvent.RequestIgnoreBatteryOptimization) },
                 )
             }
         }
@@ -480,7 +482,9 @@ fun PermissionsPage(
     isNearbyDevicesGranted: Boolean,
     onRequestNearbyDevices: () -> Unit,
     isOverlayGranted: Boolean,
-    onRequestOverlay: () -> Unit
+    isIgnoreBatteryOptimizationsGranted: Boolean,
+    onRequestOverlay: () -> Unit,
+    onRequestIgnoreBatteryOptimizations: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -539,6 +543,14 @@ fun PermissionsPage(
                 description = stringResource(R.string.this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app),
                 isGranted = isOverlayGranted,
                 onRequest = onRequestOverlay
+            )
+
+            PermissionItem(
+                iconRes = R.drawable.battery,
+                title = stringResource(R.string.permission_to_ignore_battery_optimizations),
+                description = stringResource(R.string.to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app),
+                isGranted = isIgnoreBatteryOptimizationsGranted,
+                onRequest = onRequestIgnoreBatteryOptimizations
             )
         }
 

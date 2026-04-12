@@ -43,4 +43,6 @@
     <string name="biometrics_is_not_enabled_in_the_app_settings">Биометрия не включена в настройках приложения</string>
     <string name="the_device_s_mac_address_is_not_specified">Не указан MAC-адрес устройства</string>
     <string name="this_parameter_cannot_be_controlled_the_inhibit_insecure_unlock_methods_setting_is_enabled">Этот параметр недоступен для изменения, включена настройка \"Запретить небезопасные методы разблокировки\"</string>
+    <string name="permission_to_ignore_battery_optimizations">Разрешение на игнорирование оптимизации батареи</string>
+    <string name="to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app">Для корректной работы всех функций в фоновом режиме отключите оптимизацию батареи для этого приложения.</string>
 </resources>

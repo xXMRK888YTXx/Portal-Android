@@ -35,7 +35,12 @@ class OnboardingViewModel @Inject constructor(
             OnboardingScreenUiEvent.RequestNearbyDevicesPermission -> sideEffect.tryEmit(OnboardingScreenSideEffect.RequestNearbyDevicesPermission)
             OnboardingScreenUiEvent.RequestOverlayPermission -> requestOverlayPermission()
             OnboardingScreenUiEvent.UpdatePermissionState -> updatePermissionState()
+            OnboardingScreenUiEvent.RequestIgnoreBatteryOptimization -> requestIgnoreBatteryOptimization()
         }
+    }
+
+    private fun requestIgnoreBatteryOptimization() = viewModelScope.launch {
+        permissionContract.requestIgnoreBatteryOptimization()
     }
 
     private fun updatePermissionState() = viewModelScope.launch {
@@ -44,7 +49,8 @@ class OnboardingViewModel @Inject constructor(
             it.copy(
                 isNotificationGranted = permissionState.isNotificationGranted,
                 isNearbyDevicesGranted = permissionState.isNearbyDevicesGranted,
-                isOverlayGranted = permissionState.isOverlayGranted
+                isOverlayGranted = permissionState.isOverlayGranted,
+                isIgnoreBatteryOptimizationsGranted = permissionState.isIgnoreBatteryOptimizationsGranted
             )
         }
     }

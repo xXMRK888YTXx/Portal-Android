@@ -23,11 +23,19 @@ class PermissionContractImpl @Inject constructor(
             permissionList.add(Permission.ShowSystemAlertPermission)
         }
 
+        if (!permissionManager.isIgnoreBatteryOptimizationsPermissionGranted) {
+            permissionList.add(Permission.IgnoreBatteryOptimizations)
+        }
+
         return permissionList
     }
 
     override suspend fun requestShowFullScreenIntentPermission() {
         permissionManager.requestShowSystemAlertPermission()
+    }
+
+    override suspend fun requestIgnoreBatteryOptimization() {
+        permissionManager.requestIgnoreBatteryOptimizations()
     }
 
 }

@@ -16,4 +16,5 @@ sealed interface OnboardingScreenUiEvent : UiEvent {
     data object RequestNearbyDevicesPermission : OnboardingScreenUiEvent
     data object RequestOverlayPermission : OnboardingScreenUiEvent
     data object UpdatePermissionState : OnboardingScreenUiEvent
+    data object RequestIgnoreBatteryOptimization : OnboardingScreenUiEvent
 }

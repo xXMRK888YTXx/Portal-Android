@@ -43,4 +43,6 @@
     <string name="biometrics_is_not_enabled_in_the_app_settings">Biometrics is not enabled in the app settings</string>
     <string name="the_device_s_mac_address_is_not_specified">The device\'s MAC address is not specified</string>
     <string name="this_parameter_cannot_be_controlled_the_inhibit_insecure_unlock_methods_setting_is_enabled">This parameter cannot be controlled, the \"Inhibit insecure unlock methods\" setting is enabled</string>
+    <string name="permission_to_ignore_battery_optimizations">Permission to ignore battery optimizations</string>
+    <string name="to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app">To ensure all features work correctly in the background, please disable battery optimization for this app.</string>
 </resources>
