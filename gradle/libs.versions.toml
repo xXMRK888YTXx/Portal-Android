@@ -1,35 +1,55 @@
 [versions]
-agp = "8.13.2"
+agp = "9.1.0"
+biometric = "1.1.0"
+coilCompose = "2.7.0"
+fragmentKtx = "1.8.9"
 kotlin = "2.2.21"
-coreKtx = "1.17.0"
+coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
+mockk = "1.13.17"
 espressoCore = "3.7.0"
+ktorClient = "3.4.2"
 lifecycleRuntimeKtx = "2.10.0"
-activityCompose = "1.12.3"
-composeBom = "2026.01.01"
-uiTextGoogleFonts = "1.10.2"
-compile-sdk="36"
-min-sdk="28"
-jvm-target="17"
+activityCompose = "1.13.0"
+composeBom = "2026.03.01"
+materialKolor = "4.1.1"
+okhttp = "5.3.2"
+ossLicensesPlugin = "0.11.0"
+playServicesCodeScanner = "16.1.0"
+playServicesOssLicenses = "17.4.0"
+slf4jAndroid = "1.7.36"
+uiTextGoogleFonts = "1.10.6"
+compile-sdk = "36"
+min-sdk = "28"
+jvm-target = "17"
 appcompat = "1.7.1"
 material = "1.13.0"
 lifecycle = "2.10.0"
-dagger = "2.59.1"
+dagger = "2.59.2"
 coroutines = "1.10.2"
+mockk-android = "1.13.17"
 immutable-collections = "0.4.0"
 lifecycle-compose = "2.10.0"
-ksp = "2.2.21-2.0.4"
+ksp = "2.3.5"
 viewmodel-compose = "2.10.0"
 serialization-core = "1.10.0"
 nav3Core = "1.0.1"
 lifecycleViewmodelNav3 = "2.10.0"
-material3AdaptiveNav3 = "1.3.0-alpha08"
+material3AdaptiveNav3 = "1.3.0-alpha09"
+datastore = "1.2.1"
+splashscreen = "1.2.0"
+bouncycastle = "1.83"
+room = "2.8.4"
+ui = "1.10.6"
 
 
 
 [libraries]
+androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -48,12 +68,19 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 compose-compiler-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClient" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorClient" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClient" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClient" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorClient" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 dagger-core = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 androidx-compose-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-compose-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
@@ -67,19 +94,33 @@ androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runt
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
-
-
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
+bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+oss-licenses-plugin = { module = "com.google.android.gms:oss-licenses-plugin", version.ref = "ossLicensesPlugin" }
+play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "playServicesCodeScanner" }
+play-services-oss-licenses = { module = "com.google.android.gms:play-services-oss-licenses", version.ref = "playServicesOssLicenses" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+slf4j-android = { module = "org.slf4j:slf4j-android", version.ref = "slf4jAndroid" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 
 
 [plugins]
 android-application = { id = "com.android.application" }
 android-library = { id = "com.android.library" }
-kotlin-android = { id = "org.jetbrains.kotlin.android"}
+kotlin-android = { id = "org.jetbrains.kotlin.android" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose" }
-ksp = { id = "com.google.devtools.ksp"}
+ksp = { id = "com.google.devtools.ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization" }
+kotlin-parcelize = { id = "kotlin-parcelize" }
 portal-android-feature = { id = "portal.android.feature" }
 portal-android-compose-feature = { id = "portal.android.feature.compose" }
+oss-licenses-plugin = { id = "com.google.android.gms.oss-licenses-plugin" }
+room = { id = "androidx.room", version.ref = "room" }
 
 

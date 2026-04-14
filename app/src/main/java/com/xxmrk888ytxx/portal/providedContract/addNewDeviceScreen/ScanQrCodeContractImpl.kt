@@ -1,0 +1,50 @@
+package com.xxmrk888ytxx.portal.providedContract.addNewDeviceScreen
+
+import com.xxmrk888ytxx.addnewdevicescreen.contract.ScanQrCodeContract
+import com.xxmrk888ytxx.addnewdevicescreen.model.ScanQrCodeResult
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.coreandroid.runCatching
+import com.xxmrk888ytxx.portal.domain.QRScannerManager
+import com.xxmrk888ytxx.portal.exception.QRScanCanceledException
+import com.xxmrk888ytxx.portal.exception.QRScannerNotDownloadedException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
+
+class ScanQrCodeContractImpl @Inject constructor(
+    private val qrScannerManager: QRScannerManager,
+    private val json: Json
+) : ScanQrCodeContract {
+
+    @Serializable
+    private data class ScanResult(
+        @SerialName("name") val deviceName: String,
+        @SerialName("ip") val host: String? = null,
+        @SerialName("code") val pairCode: Int,
+        @SerialName("address") val macAddress: String? = null,
+    )
+
+    override suspend fun requestScan(): Result<ScanQrCodeResult> = runCatching(
+        Dispatchers.Default,
+        onMapException = {
+            when(it) {
+                is QRScanCanceledException -> com.xxmrk888ytxx.addnewdevicescreen.exception.QRScanCanceledException()
+                is QRScannerNotDownloadedException -> com.xxmrk888ytxx.addnewdevicescreen.exception.QRScannerNotDownloadedException()
+                else -> it
+            }
+        }
+    ) {
+        val scanResult = qrScannerManager.scan()
+        fastDebugLog(scanResult)
+        val parsedResult = json.decodeFromString<ScanResult>(scanResult)
+        fastDebugLog(parsedResult)
+        return@runCatching ScanQrCodeResult(
+            deviceName = parsedResult.deviceName,
+            host = parsedResult.host,
+            pairCode = parsedResult.pairCode,
+            macAddress = parsedResult.macAddress
+        )
+    }
+}

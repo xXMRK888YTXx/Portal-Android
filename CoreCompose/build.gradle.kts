@@ -1,9 +1,11 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     id("portal.android.base")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-android {
+extensions.configure<LibraryExtension> {
     namespace = "com.xxmrk888ytxx.corecompose"
 
     buildFeatures {
@@ -22,6 +24,8 @@ dependencies {
     api(libs.androidx.compose.tooling)
     api(libs.androidx.compose.ui.text.google.fonts)
     api(libs.lifecycle.viewModel.compose)
+    implementation(libs.material.kolor)
+
 
     debugApi(libs.androidx.compose.tooling)
 }

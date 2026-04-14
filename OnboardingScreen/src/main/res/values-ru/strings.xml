@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_to_portal">Добро пожаловать в Portal</string>
+    <string name="app_open_description">Устали вводить пароль каждый раз, когда ваш компьютер переходит в спящий режим? Portal избавляет от этих хлопот, превращая ваш смартфон в умный беспроводной ключ.\n\nВы можете заранее разблокировать свой ПК, подходя к рабочему месту, или настроить отправку запроса прямо на ваш телефон. Одно касание биометрического датчика, и вы в системе. Быстро, безопасно и никаких лишних действий.</string>
+    <string name="i_agree_to_the">"Я принимаю "</string>
+    <string name="terms_of_use">Условия использования</string>
+    <string name="privacy_policy">Политику конфиденциальности</string>
+    <string name="free_and_open_source">Свободное и открытое ПО</string>
+    <string name="portal_is_a_completely_open_source_project_gpl_3_0_no_hidden_in_app_purchases_paid_limitations_or_annoying_ads_the_source_code_and_developer_contacts_are_waiting_for_you_below">Portal — это полностью открытый проект (GPL-3.0). Никаких скрытых покупок в приложении, платных ограничений или надоедливой рекламы. Исходный код и контакты разработчиков ждут вас ниже.</string>
+    <string name="source_code">Исходный код</string>
+    <string name="portal_mobile_client">Мобильный клиент Portal</string>
+    <string name="android_application_source_code">Исходный код Android-приложения</string>
+    <string name="portal_desktop_client">Десктопный клиент Portal</string>
+    <string name="pc_client_source_code">Исходный код ПК-клиента</string>
+    <string name="developers_team">Команда разработчиков</string>
+    <string name="xxmrk888ytxx">xXMRK888YTXx</string>
+    <string name="android_developer">Android-разработчик</string>
+    <string name="xxkoksmanxx">xXKoksManXx</string>
+    <string name="pc_developer">Разработчик ПК-клиента</string>
+    <string name="for_the_app_to_work_correctly_you_must_provide_the_following_permissions_you_have_the_right_to_refuse_to_grant_all_or_some_permissions_but_in_this_case_some_functions_of_the_application_may_not_be_available">Для корректной работы приложения необходимо предоставить следующие разрешения. Вы имеете право отказаться от предоставления всех или некоторых разрешений, но в этом случае часть функций приложения может быть недоступна.</string>
+    <string name="notifications">Уведомления</string>
+    <string name="it_is_used_to_display_pc_unlock_notifications_and_background_work">Используются для отображения уведомлений о разблокировке ПК и для фоновой работы.</string>
+    <string name="nearby_devices">Устройства поблизости</string>
+    <string name="this_permission_is_required_by_the_app_if_you_use_bluetooth_to_unlock_your_device">Это разрешение требуется приложению, если вы используете Bluetooth для разблокировки устройства.</string>
+    <string name="display_over_other_apps">Отображение поверх других приложений</string>
+    <string name="this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app">Это разрешение необходимо для отображения запросов на разблокировку поверх всех окон. Это позволяет мгновенно разрешать или запрещать доступ, не разблокируя телефон и не открывая приложение.</string>
+    <string name="next">Далее</string>
+    <string name="get_started">Начать</string>
+    <string name="and">" и "</string>
+    <string name="required_permissions">Необходимые разрешения</string>
+    <string name="granted">Предоставлено</string>
+    <string name="allow">Разрешить</string>
+    <string name="permission_to_ignore_battery_optimizations">Разрешение на игнорирование оптимизации батареи</string>
+    <string name="to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app">Для корректной работы всех функций в фоновом режиме отключите оптимизацию батареи для этого приложения.</string>
+</resources>

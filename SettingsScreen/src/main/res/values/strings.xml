@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="security">Security</string>
+    <string name="about_app">About app</string>
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="source_code_android">Source Code of android app</string>
+    <string name="source_code_pc">Source Code of PC client</string>
+    <string name="github_repository">GitHub Repository</string>
+    <string name="android_app_developer">Android app developer</string>
+    <string name="pc_client_developer">PC client developer</string>
+    <string name="app_version">App Version</string>
+    <string name="app_logs">App Logs</string>
+    <string name="settings">Settings</string>
+    <string name="xxmrk888ytxx" translatable="false">xXMRK888YTXx</string>
+    <string name="xxkoksmenxx" translatable="false">xXKoksMenXx</string>
+    <string name="biometric_unlock">Biometric Unlock</string>
+    <string name="use_fingerprint_or_face_to_unlock">Use fingerprint or face to unlock</string>
+    <string name="allow_password_unlock">Allow password unlock</string>
+    <string name="can_be_used_as_an_alternative_to_biometric_authentication">Can be used as an alternative to biometric authentication</string>
+    <string name="unpair_devices_if_the_biometric_environment_has_changed">Unpair devices if the biometric environment has changed</string>
+    <string name="if_a_new_fingerprint_is_added_or_an_old_one_is_deleted_all_paired_devices_will_be_removed">If a new fingerprint is added, all paired devices will be removed</string>
+    <string name="disable">Anyway disable</string>
+    <string name="cancel">Cancel</string>
+    <string name="attention">Attention</string>
+    <string name="for_security_reasons_disabling_this_setting_will_result_in_the_removal_of_all_paired_devices_do_you_still_want_to_disable_it">For security reasons, disabling this setting will result in the removal of all paired devices! Do you still want to disable it?</string>
+    <string name="if_you_disable_this_setting_in_future_all_your_paired_devices_will_be_deleted_do_you_still_want_to_enable_it_note_enabling_this_setting_will_not_affect_your_paired_devices">If you disable this setting in future, all your paired devices will be deleted! Do you still want to enable it? Note: Enabling this setting will not affect your paired devices.</string>
+    <string name="enable">Enable</string>
+    <string name="prohibit_insecure_unlock_methods">Prohibit insecure unlock methods.</string>
+    <string name="the_automatically_unlock_method_will_be_disabled_for_devices_where_this_unlock_method_is_currently_set_it_will_be_changed_to_notification">Increases the security when using the app.\n\n1. Prohibits using the unlock method "Automatically." (Devices with this unlock method will be switched to "Notification")\n\n2. When using shortcuts, the requirement for biometric authentication is forcibly enabled (The exception is if "Biometric Unlock" is disabled in the settings)</string>
+    <string name="biometrics_is_not_configured_or_is_unavailable">Biometrics is not configured or is unavailable.</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="show_less">Show less</string>
+    <string name="read_more">Read more</string>
+    <string name="customization">Customization</string>
+    <string name="theme">Theme</string>
+    <string name="choose_a_theme">Choose a theme</string>
+    <string name="system">System</string>
+    <string name="random">Random</string>
+    <string name="colors">Colors</string>
+</resources>

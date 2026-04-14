@@ -1,0 +1,246 @@
+package com.xxmrk888ytxx.portal.di.module
+
+import android.content.Context
+import com.xxmrk888ytxx.mainscreen.contract.SettingsProvider
+import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
+import com.xxmrk888ytxx.portal.data.BiometricAuthStateProviderImpl
+import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
+import com.xxmrk888ytxx.portal.data.BiometricEnvironmentEventHandlerImpl
+import com.xxmrk888ytxx.portal.data.BiometricRequestManager
+import com.xxmrk888ytxx.portal.data.BluetoothDeviceRepositoryImpl
+import com.xxmrk888ytxx.portal.data.BluetoothManagerImpl
+import com.xxmrk888ytxx.portal.data.BluetoothPortalApiImpl
+import com.xxmrk888ytxx.portal.data.BluetoothUnlockServiceManager
+import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
+import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
+import com.xxmrk888ytxx.portal.data.DeviceSettingsRepositoryImpl
+import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
+import com.xxmrk888ytxx.portal.data.LinkManagerImpl
+import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
+import com.xxmrk888ytxx.portal.data.PermissionManagerImpl
+import com.xxmrk888ytxx.portal.data.ProvideDeviceNameByClientIdImpl
+import com.xxmrk888ytxx.portal.data.QRScannerManagerImpl
+import com.xxmrk888ytxx.portal.data.SecureStorageImpl
+import com.xxmrk888ytxx.portal.data.SettingsRepositoryImpl
+import com.xxmrk888ytxx.portal.data.ShortcutManagerImpl
+import com.xxmrk888ytxx.portal.data.ShortcutRepositoryImpl
+import com.xxmrk888ytxx.portal.data.UnlockMessageSenderImpl
+import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
+import com.xxmrk888ytxx.portal.data.UnlockRequestManagerImpl
+import com.xxmrk888ytxx.portal.data.WOLManagerImpl
+import com.xxmrk888ytxx.portal.data.WOLServiceManagerImpl
+import com.xxmrk888ytxx.portal.data.WifiDeviceRepositoryImpl
+import com.xxmrk888ytxx.portal.data.WifiPortalApiImpl
+import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
+import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
+import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
+import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
+import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.BiometricEnvironmentEventHandler
+import com.xxmrk888ytxx.portal.domain.BiometricRequestController
+import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
+import com.xxmrk888ytxx.portal.domain.BluetoothManager
+import com.xxmrk888ytxx.portal.domain.BluetoothPortalApi
+import com.xxmrk888ytxx.portal.domain.CertificateManager
+import com.xxmrk888ytxx.portal.domain.DeviceRepository
+import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
+import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
+import com.xxmrk888ytxx.portal.domain.LinkManager
+import com.xxmrk888ytxx.portal.domain.MdnsManager
+import com.xxmrk888ytxx.portal.domain.PermissionManager
+import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
+import com.xxmrk888ytxx.portal.domain.QRScannerManager
+import com.xxmrk888ytxx.portal.domain.SecureStorage
+import com.xxmrk888ytxx.portal.domain.SettingsRepository
+import com.xxmrk888ytxx.portal.domain.ShortcutManager
+import com.xxmrk888ytxx.portal.domain.ShortcutRepository
+import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
+import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
+import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
+import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
+import com.xxmrk888ytxx.portal.domain.WOLManager
+import com.xxmrk888ytxx.portal.domain.WOLServiceManager
+import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
+import com.xxmrk888ytxx.portal.domain.WifiPortalApi
+import com.xxmrk888ytxx.portal.providedContract.mainScreen.SettingsProviderImpl
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+
+@Module
+interface DomainModule {
+
+    @Binds
+    fun bindsCertificateManager(
+        certificateManagerImpl: CertificateManagerImpl
+    ) : CertificateManager
+
+    @Binds
+    @AppScope
+    fun bindsSecureStorage(
+        secureStorageImpl: SecureStorageImpl
+    ) : SecureStorage
+
+    @Binds
+    fun bindsWifiDeviceRepository(
+        wifiDeviceRepositoryImpl: WifiDeviceRepositoryImpl
+    ) : WifiDeviceRepository
+
+    @Binds
+    fun bindsPortalApi(
+        portalApiImpl: WifiPortalApiImpl
+    ) : WifiPortalApi
+
+    @Binds
+    fun bindsDeviceUnlockManager(
+        deviceUnlockManagerImpl: DeviceUnlockManagerImpl
+    ) : DeviceUnlockManager
+
+    @Binds
+    @AppScope
+    fun bindsDeviceSettingsRepository(
+        deviceSettingsRepositoryImpl: DeviceSettingsRepositoryImpl
+    ) : DeviceSettingsRepository
+
+    @Binds
+    @AppScope
+    fun bindsAwaitUnlockRequestManager(
+        awaitUnlockRequestManagerImpl: AwaitUnlockRequestManagerImpl
+    ) : AwaitUnlockRequestManager
+
+    @Binds
+    @AppScope
+    fun bindsUnlockRequestHandlerImpl(
+        unlockRequestHandlerImpl: UnlockRequestHandlerImpl
+    ) : UnlockRequestHandler
+
+    @Binds
+    @AppScope
+    fun bindsMdnsManager(
+        mdnsManagerImpl: MdnsManagerImpl
+    ) : MdnsManager
+
+    @Binds
+    @AppScope
+    fun bindsBiometricRequestController(biometricRequestManager: BiometricRequestManager) : BiometricRequestController
+
+    @Binds
+    @AppScope
+    fun bindsBiometricActivityResultReceiver(biometricRequestManager: BiometricRequestManager) : BiometricActivityResultReceiver
+
+    @Binds
+    fun bindsBiometricDialogController(
+        biometricDialogControllerImpl: BiometricDialogControllerImpl
+    ) : BiometricDialogController
+
+    @Binds
+    fun bindsUnlockScreenManager(
+        unlockScreenManagerImpl: UnlockRequestManagerImpl
+    ) : UnlockRequestManager
+
+    @Binds
+    fun bindsShortcutManager(
+        shortcutManagerImpl: ShortcutManagerImpl
+    ) : ShortcutManager
+
+    @Binds
+    fun bindsShortcutRepository(
+        shortcutRepositoryImpl: ShortcutRepositoryImpl
+    ) : ShortcutRepository
+
+    @Binds
+    fun bindsQRScannerManager(
+        qrScannerManagerImpl: QRScannerManagerImpl
+    ) : QRScannerManager
+
+    @Binds
+    fun bindsPermissionManager(
+        permissionManagerImpl: PermissionManagerImpl
+    ) : PermissionManager
+
+    @Binds
+    @AppScope
+    fun bindsBluetoothManager(
+        bluetoothManagerImpl: BluetoothManagerImpl
+    ) : BluetoothManager
+
+    @Binds
+    fun bindsBluetoothPortalApi(
+        bluetoothPortalApi: BluetoothPortalApiImpl
+    ) : BluetoothPortalApi
+
+    @Binds
+    fun bindsBluetoothDeviceRepository(
+        bluetoothDeviceRepositoryImpl: BluetoothDeviceRepositoryImpl
+    ) : BluetoothDeviceRepository
+
+    @Binds
+    fun bindsUnlockMessageSender(
+        unlockMessageSenderImpl: UnlockMessageSenderImpl
+    ) : UnlockMessageSender
+
+    @Binds
+    fun bindsProvideDeviceNameByClientId(
+        provideDeviceNameByClientIdImpl: ProvideDeviceNameByClientIdImpl
+    ) : ProvideDeviceNameByClientId
+
+    @Binds
+    fun bindsSettingsRepository(
+        settingsRepositoryImpl: SettingsRepositoryImpl
+    ) : SettingsRepository
+
+    @Binds
+    @AppScope
+    fun bindsBiometricEnvironmentEventHandler(
+        biometricEnvironmentEventHandlerImpl: BiometricEnvironmentEventHandlerImpl
+    ) : BiometricEnvironmentEventHandler
+
+    @Binds
+    @AppScope
+    fun bindsDeviceRepository(
+        deviceRepositoryImpl: DeviceRepositoryImpl
+    ) : DeviceRepository
+
+    @Binds
+    @AppScope
+    fun bindsBiometricAuthStateProvider(
+        biometricAuthStateProviderImpl: BiometricAuthStateProviderImpl
+    ) : BiometricAuthStateProvider
+
+    @Binds
+    fun bindsLinkManager(
+        linkManagerImpl: LinkManagerImpl
+    ) : LinkManager
+
+    @Binds
+    fun bindsWOLManager(
+        wolManagerImpl: WOLManagerImpl
+    ) : WOLManager
+
+    @Binds
+    fun bindsWOLServiceManager(
+        wolServiceManagerImpl: WOLServiceManagerImpl
+    ) : WOLServiceManager
+
+    @Binds
+    fun bindsSettingsProvider(
+        settingsProviderImpl: SettingsProviderImpl
+    ) : SettingsProvider
+
+    companion object {
+        @Provides
+        @AppScope
+        @com.xxmrk888ytxx.portal.di.qualifier.WifiUnlockServiceManagerQualifier
+        fun providesWifiUnlockServiceManager(
+            context: Context
+        ) : UnlockServiceManager = WifiUnlockServiceManager(context)
+
+        @Provides
+        @AppScope
+        @com.xxmrk888ytxx.portal.di.qualifier.BluetoothUnlockServiceManagerQualifier
+        fun providesBluetoothUnlockServiceManager(
+            context: Context
+        ) : UnlockServiceManager = BluetoothUnlockServiceManager(context)
+    }
+}

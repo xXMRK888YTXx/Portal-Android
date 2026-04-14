@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="protocol_selection">Выбор протокола</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="wifi_description">Подключение по локальной сети. Убедитесь, что ваш ПК и устройство находятся в одной сети Wi-Fi.</string>
+    <string name="bluetooth_description">Требуется Bluetooth-модуль на ПК. Работает только когда устройства находятся близко друг к другу.</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="configuring_a_wi_fi_connection">Настройка Wi-Fi подключения</string>
+    <string name="enter_the_details_specified_on_the_pc">Введите данные, указанные на ПК</string>
+    <string name="ip_address">IP-адрес</string>
+    <string name="_6_digit_code">6-значный код</string>
+    <string name="unable_to_establish_connection">Не удалось установить соединение</string>
+    <string name="successfully_connected">Успешно подключено</string>
+    <string name="the_device_is_configured_and_ready_for_operation">Устройство настроено и готово к работе.</string>
+    <string name="next">Далее</string>
+    <string name="finish">Готово</string>
+    <string name="device_name">Имя устройства</string>
+    <string name="for_example_my_pc_name_pcname_username">Например: Мой ПК, ИМЯ_ПК/ИМЯ_ПОЛЬЗОВАТЕЛЯ</string>
+    <string name="something_went_wrong">Что-то пошло не так.</string>
+    <string name="scan_qr_code">Сканировать QR-код</string>
+    <string name="cancelled_by_the_user">Отменено пользователем</string>
+    <string name="the_qr_code_scanner_has_not_been_loaded">Сканер QR-кодов не был загружен</string>
+    <string name="an_error_occurred_during_scanning">Произошла ошибка при сканировании</string>
+    <string name="configuring_a_bluetooth_connection">Настройка Bluetooth-подключения</string>
+    <string name="enter_the_6_digit_code_and_select_a_paired_device">Введите 6-значный код и выберите сопряженное устройство</string>
+    <string name="unknown_device">Неизвестное устройство</string>
+    <string name="can_t_find_your_pc_pair_in_settings">Не можете найти свой ПК? Выполните сопряжение в настройках</string>
+    <string name="pair_a_device_in_settings">Выполнить сопряжение в настройках</string>
+    <string name="paired_devices">Сопряженные устройства</string>
+    <string name="no_paired_devices_found_please_pair_a_device_in_system_settings">Сопряженные устройства не найдены. Пожалуйста, выполните сопряжение в настройках системы.</string>
+    <string name="bluetooth_is_not_supported_on_this_device">Bluetooth не поддерживается на этом устройстве.</string>
+    <string name="permission_denied_please_grant_bluetooth_access_in_app_settings">В разрешении отказано. Пожалуйста, предоставьте доступ к Bluetooth в настройках приложения.</string>
+    <string name="bluetooth_is_disabled_please_enable_it_to_scan_for_devices">Bluetooth отключен. Пожалуйста, включите его для поиска устройств.</string>
+    <string name="grant">Предоставить</string>
+    <string name="enable">Включить</string>
+    <string name="unable_to_connect_to_the">"Не удалось подключиться к "</string>
+</resources>

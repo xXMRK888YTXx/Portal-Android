@@ -1,0 +1,27 @@
+package com.xxmrk888ytxx.mainscreen.model
+
+sealed interface DialogState {
+    object Hidden : DialogState
+
+    data class EnterMacAddressDialog(
+        val device: Device,
+        val enteredMac: String = "",
+        val isValidateMacAddress: Boolean = false
+    ) : DialogState
+
+    data class WALRequestDialog(
+        val device: Device,
+        val isTryToSendUnlockRequestEnabled: Boolean = true
+    ) : DialogState
+
+    data class ShortcutDialog(
+        val device: Device,
+        val isRequiredBiometricUnlock: Boolean = false,
+        val isWolEnabled: Boolean = false,
+        val isBiometricUnlockAvailable: Boolean,
+        val isWOLAvailable: Boolean,
+        val isWOLVisible: Boolean,
+        val isUnsafeUnlockTypesDisabled: Boolean
+    ) : DialogState
+}
+

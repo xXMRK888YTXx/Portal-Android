@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_to_portal">Welcome to Portal</string>
+    <string name="app_open_description">Tired of entering a password every time your computer goes to sleep? Portal takes the hassle out of it by turning your smartphone into a smart wireless key.\n\nYou can unlock your PC in advance as you walk up to your desk, or configure it to send a request straight to your phone. A single touch to the biometric sensor, and you\'re in. Fast, secure, and with zero extra steps.</string>
+    <string name="i_agree_to_the">"I agree to the "</string>
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="free_and_open_source">Free and Open Source</string>
+    <string name="portal_is_a_completely_open_source_project_gpl_3_0_no_hidden_in_app_purchases_paid_limitations_or_annoying_ads_the_source_code_and_developer_contacts_are_waiting_for_you_below">Portal is a completely open-source project (GPL-3.0). No hidden in-app purchases, paid limitations, or annoying ads. The source code and developer contacts are waiting for you below.</string>
+    <string name="source_code">Source Code</string>
+    <string name="portal_mobile_client">Portal Mobile Client</string>
+    <string name="android_application_source_code">Android application source code</string>
+    <string name="portal_desktop_client">Portal Desktop Client</string>
+    <string name="pc_client_source_code">PC client source code</string>
+    <string name="developers_team">Developers Team</string>
+    <string name="xxmrk888ytxx">xXMRK888YTXx</string>
+    <string name="android_developer">Android Developer</string>
+    <string name="xxkoksmanxx">xXKoksManXx</string>
+    <string name="pc_developer">PC Developer</string>
+    <string name="for_the_app_to_work_correctly_you_must_provide_the_following_permissions_you_have_the_right_to_refuse_to_grant_all_or_some_permissions_but_in_this_case_some_functions_of_the_application_may_not_be_available">For the app to work correctly, you must provide the following permissions. You have the right to refuse to grant all or some permissions, but in this case, some functions of the application may not be available.</string>
+    <string name="notifications">Notifications</string>
+    <string name="it_is_used_to_display_pc_unlock_notifications_and_background_work">It is used to display PC unlock notifications and background work.</string>
+    <string name="nearby_devices">Nearby Devices</string>
+    <string name="this_permission_is_required_by_the_app_if_you_use_bluetooth_to_unlock_your_device">This permission is required by the app if you use Bluetooth to unlock your device.</string>
+    <string name="display_over_other_apps">Display Over Other Apps</string>
+    <string name="this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app">This permission is required to display device unlock prompts on top of all windows. This allows you to instantly grant or deny access without unlocking your phone or opening the app.</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started</string>
+    <string name="and">" and "</string>
+    <string name="required_permissions">Required Permissions</string>
+    <string name="granted">Granted</string>
+    <string name="allow">Allow</string>
+    <string name="permission_to_ignore_battery_optimizations">Permission to ignore battery optimizations</string>
+    <string name="to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app">To ensure all features work correctly in the background, please disable battery optimization for this app.</string>
+</resources>

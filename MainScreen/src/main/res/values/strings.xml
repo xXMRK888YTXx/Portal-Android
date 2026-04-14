@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="devices">Devices</string>
+    <string name="no_devices_added">No devices added</string>
+    <string name="add_a_new_device_to_get_started">Add a new device to get started.</string>
+    <string name="add_device">Add device</string>
+    <string name="device_unlocked">Device unlocked</string>
+    <string name="failed_to_unlock_device">Failed to unlock device</string>
+    <string name="create_shortcut">Create Shortcut</string>
+    <string name="use_biometric_authentication">Use biometric authentication</string>
+    <string name="create">Create</string>
+    <string name="grant">Grant</string>
+    <string name="grant_nearby_devices_permission">Grant \"Nearby Devices\" permission.</string>
+    <string name="this_permission_is_required_by_the_app_if_you_use_bluetooth_to_unlock_your_device">This permission is required by the app if you use Bluetooth to unlock your device.</string>
+    <string name="grant_notification_permission">Grant \"Notification\" permission.</string>
+    <string name="the_app_requires_this_permission_to_send_notifications_regarding_unlock_requests_as_well_as_to_function_correctly_in_the_background_and_to_indicate_that_it_is_running">The app requires this permission to send notifications regarding unlock requests, as well as to function correctly in the background and to indicate that it is running.</string>
+    <string name="grant_grant_display_over_other_apps_permission">Grant \"Grant Display over other apps\" permission.</string>
+    <string name="this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app">This permission is required to display device unlock prompts on top of all windows. This allows you to instantly grant or deny access without unlocking your phone or opening the app.</string>
+    <string name="wi_fi" translatable="false">Wi-Fi</string>
+    <string name="bluetooth" translatable="false">Bluetooth</string>
+    <string name="unlock">Unlock</string>
+    <string name="options">Options</string>
+    <string name="tap_to_unlock">Tap to unlock</string>
+    <string name="an_error_occurred_go_to_options_for_details">An error occurred. Go to \"Options\" for details</string>
+    <string name="your_home_screen_launcher_doesn_t_support_shortcuts">Your home screen launcher doesn\'t support shortcuts.</string>
+    <string name="failed_to_create_shortcut_please_try_again">Failed to create shortcut. Please try again.</string>
+    <string name="ok">OK</string>
+    <string name="we_have_changed_the_security_settings_all_devices_have_been_removed">We have changed the security settings. All paired devices have been removed.</string>
+    <string name="changes_have_been_detected_in_the_biometric_data_all_paired_devices_have_been_removed">Changes in biometrics were detected. All paired devices have been removed.</string>
+    <string name="send_wake_up_on_lan_request">Send Wake up on LAN Request</string>
+    <string name="confirm">Confirm</string>
+    <string name="mac_address">Mac Address</string>
+    <string name="enter_mac_address">Enter Mac Address</string>
+    <string name="mac_address_saved">Mac address saved</string>
+    <string name="send_a_wal_request">Send a WAL Request</string>
+    <string name="send_unlock_requests">Send unlock requests</string>
+    <string name="the_application_will_attempt_to_unlock_your_pc_within_3_minutes">The application will attempt to unlock your PC within 3 minutes.</string>
+    <string name="send">Send</string>
+    <string name="cancel">Cancel</string>
+    <string name="wol_request_sent">WOL request sent</string>
+    <string name="error_during_sending_the_wol_request">Error during sending the WOL request</string>
+    <string name="to_send_a_request_you_will_need_to_pass_a_biometrics_check">To send a request, you will need to pass a biometrics check.</string>
+    <string name="biometrics_is_not_enabled_in_the_app_settings">Biometrics is not enabled in the app settings</string>
+    <string name="the_device_s_mac_address_is_not_specified">The device\'s MAC address is not specified</string>
+    <string name="this_parameter_cannot_be_controlled_the_inhibit_insecure_unlock_methods_setting_is_enabled">This parameter cannot be controlled, the \"Inhibit insecure unlock methods\" setting is enabled</string>
+    <string name="permission_to_ignore_battery_optimizations">Permission to ignore battery optimizations</string>
+    <string name="to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app">To ensure all features work correctly in the background, please disable battery optimization for this app.</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
+</resources>

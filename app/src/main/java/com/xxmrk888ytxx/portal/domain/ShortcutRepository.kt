@@ -1,0 +1,12 @@
+package com.xxmrk888ytxx.portal.domain
+
+import com.xxmrk888ytxx.portal.data.model.Shortcut
+
+interface ShortcutRepository {
+    suspend fun registerShortcut(shortcut: Shortcut)
+    suspend fun removeShortcut(shortcutId: String)
+    suspend fun getShortcutById(shortcutId: String): Shortcut?
+    suspend fun getShortcutsByClientId(clientId: String): List<Shortcut>
+    suspend fun getShortcutWithInsecureUnlock(): List<Shortcut>
+    suspend fun updateIsRequiredBiometricUnlock(shortcutId: String, newValue: Boolean)
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="devices">Устройства</string>
+    <string name="no_devices_added">Нет добавленных устройств</string>
+    <string name="add_a_new_device_to_get_started">Добавьте новое устройство, чтобы начать.</string>
+    <string name="add_device">Добавить устройство</string>
+    <string name="device_unlocked">Устройство разблокировано</string>
+    <string name="failed_to_unlock_device">Не удалось разблокировать устройство</string>
+    <string name="create_shortcut">Создать ярлык</string>
+    <string name="use_biometric_authentication">Использовать биометрическую аутентификацию</string>
+    <string name="create">Создать</string>
+    <string name="grant">Предоставить</string>
+    <string name="grant_nearby_devices_permission">Предоставьте разрешение \"Устройства поблизости\".</string>
+    <string name="this_permission_is_required_by_the_app_if_you_use_bluetooth_to_unlock_your_device">Это разрешение требуется приложению, если вы используете Bluetooth для разблокировки устройства.</string>
+    <string name="grant_notification_permission">Предоставьте разрешение \"Уведомления\".</string>
+    <string name="the_app_requires_this_permission_to_send_notifications_regarding_unlock_requests_as_well_as_to_function_correctly_in_the_background_and_to_indicate_that_it_is_running">Приложению требуется это разрешение для отправки уведомлений о запросах на разблокировку, а также для корректной работы в фоновом режиме и индикации того, что оно запущено.</string>
+    <string name="grant_grant_display_over_other_apps_permission">Предоставьте разрешение \"Отображение поверх других приложений\".</string>
+    <string name="this_permission_is_required_to_display_device_unlock_prompts_on_top_of_all_windows_this_allows_you_to_instantly_grant_or_deny_access_without_unlocking_your_phone_or_opening_the_app">Это разрешение необходимо для отображения запросов на разблокировку поверх всех окон. Это позволяет мгновенно разрешать или запрещать доступ, не разблокируя телефон и не открывая приложение.</string>
+    <string name="wi_fi" translatable="false">Wi-Fi</string>
+    <string name="bluetooth" translatable="false">Bluetooth</string>
+    <string name="unlock">Разблокировать</string>
+    <string name="options">Опции</string>
+    <string name="tap_to_unlock">Нажмите для разблокировки</string>
+    <string name="an_error_occurred_go_to_options_for_details">Произошла ошибка. Перейдите в \"Опции\" для получения подробностей</string>
+    <string name="your_home_screen_launcher_doesn_t_support_shortcuts">Ваш лаунчер домашнего экрана не поддерживает ярлыки.</string>
+    <string name="failed_to_create_shortcut_please_try_again">Не удалось создать ярлык. Пожалуйста, попробуйте снова.</string>
+    <string name="ok">ОК</string>
+    <string name="we_have_changed_the_security_settings_all_devices_have_been_removed">Настройки безопасности были изменены. Все привязанные устройства удалены.</string>
+    <string name="changes_have_been_detected_in_the_biometric_data_all_paired_devices_have_been_removed">Обнаружены изменения в биометрических данных. Все привязанные устройства удалены.</string>
+    <string name="send_wake_up_on_lan_request">Отправить запрос Wake-on-LAN</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="mac_address">MAC-адрес</string>
+    <string name="enter_mac_address">Введите MAC-адрес</string>
+    <string name="mac_address_saved">MAC-адрес сохранен</string>
+    <string name="send_a_wal_request">Отправить WOL-запрос</string>
+    <string name="send_unlock_requests">Отправлять запросы на разблокировку</string>
+    <string name="the_application_will_attempt_to_unlock_your_pc_within_3_minutes">Приложение будет пытаться разблокировать ваш ПК в течение 3 минут.</string>
+    <string name="send">Отправить</string>
+    <string name="cancel">Отмена</string>
+    <string name="wol_request_sent">WOL-запрос отправлен</string>
+    <string name="error_during_sending_the_wol_request">Ошибка при отправке WOL-запроса</string>
+    <string name="to_send_a_request_you_will_need_to_pass_a_biometrics_check">Для отправки запроса потребуется пройти биометрическую проверку.</string>
+    <string name="biometrics_is_not_enabled_in_the_app_settings">Биометрия не включена в настройках приложения</string>
+    <string name="the_device_s_mac_address_is_not_specified">Не указан MAC-адрес устройства</string>
+    <string name="this_parameter_cannot_be_controlled_the_inhibit_insecure_unlock_methods_setting_is_enabled">Этот параметр недоступен для изменения, включена настройка \"Запретить небезопасные методы разблокировки\"</string>
+    <string name="permission_to_ignore_battery_optimizations">Разрешение на игнорирование оптимизации батареи</string>
+    <string name="to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app">Для корректной работы всех функций в фоновом режиме отключите оптимизацию батареи для этого приложения.</string>
+    <string name="show_less">Показать меньше</string>
+    <string name="show_more">Показать больше</string>
+</resources>

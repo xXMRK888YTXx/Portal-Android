@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="device_not_found">Device not found</string>
+    <string name="device_id">Device ID</string>
+    <string name="device_name">Device Name</string>
+    <string name="device_type">Device Type</string>
+    <string name="host">Host</string>
+    <string name="client_fingerprint">Client Fingerprint</string>
+    <string name="server_fingerprint">Server Fingerprint</string>
+    <string name="remove_device">Remove device</string>
+    <string name="await_unlock_requests">Await unlock requests</string>
+    <string name="await_unlock_requests_description">Waits for unlock requests from the PC in the background (unlock type 2)</string>
+    <string name="search_ip_dynamically">Search IP dynamically</string>
+    <string name="search_ip_dynamically_description">Before sending a request, it attempts to find the computer\'s IP address. This slows down the unlocking process slightly. This is useful if your IP address may change within your local network. May not work or may not work correctly on some networks, depending on your router settings.</string>
+    <string name="save">Save</string>
+    <string name="edit_host">Edit Host</string>
+    <string name="wifi">Wifi</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="mac_address">MAC address</string>
+    <string name="unlock_only_when_unlocked">Unlock only when phone is unlocked</string>
+    <string name="unlock_only_when_unlocked_description">The PC will only be unlocked if the phone is already unlocked</string>
+    <string name="show_unlock_request_only_when_unlocked">Show unlock request only when phone is unlocked</string>
+    <string name="show_unlock_request_only_when_unlocked_description">The unlock request will only be shown if the phone is already unlocked</string>
+    <string name="automatically">Automatically</string>
+    <string name="notification">Notification</string>
+    <string name="confirmation_screen">Confirmation screen</string>
+    <string name="unlock_method">Unlock method</string>
+    <string name="remove_device_bottom_sheet">Remove Device?</string>
+    <string name="are_you_sure_you_want_to_remove_this_device_this_action_cannot_be_undone">Are you sure you want to remove this device? This action cannot be undone.</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove">Remove</string>
+    <string name="pairing_required">Pairing required</string>
+    <string name="pairing_required_description">Your PC is not paired with your phone. To use unlock via Bluetooth, please pair the device in the system settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="device_error_hint">An error occurred. Go to Options for details</string>
+    <string name="tap_to_unlock">Tap to unlock</string>
+    <string name="wake_on_lan_mac_address">Wake on LAN Mac Address</string>
+    <string name="not_specified">Not specified</string>
+</resources>

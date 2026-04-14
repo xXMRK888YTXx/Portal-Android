@@ -1,7 +1,15 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.portal.android.compose.feature)
 }
 
-android {
+extensions.configure<LibraryExtension> {
     namespace = "com.xxmrk888ytxx.onboardingscreen"
+}
+
+dependencies {
+    implementation(libs.coil.compose)
+    implementation(libs.okhttp)
+    implementation(libs.androidx.ui)
 }

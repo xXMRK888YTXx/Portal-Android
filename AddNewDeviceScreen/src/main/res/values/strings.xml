@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="protocol_selection">Protocol Selection</string>
+    <string name="wifi">WiFi</string>
+    <string name="wifi_description">Connects via local network. Ensure your PC and device are on the same Wi-Fi.</string>
+    <string name="bluetooth_description">Requires a Bluetooth module on your PC. Works only when devices are close to each other.</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="configuring_a_wi_fi_connection">Configuring a Wi-Fi connection</string>
+    <string name="enter_the_details_specified_on_the_pc">Enter the details specified on the PC</string>
+    <string name="ip_address">IP Address</string>
+    <string name="_192_168_x_x" translatable="false">192.168.X.X</string>
+    <string name="_6_digit_code">6-Digit Code</string>
+    <string name="_000000" translatable="false">000000</string>
+    <string name="unable_to_establish_connection">Unable to establish connection</string>
+    <string name="successfully_connected">Successfully connected</string>
+    <string name="the_device_is_configured_and_ready_for_operation">The device is configured and ready for operation.</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="device_name">Device name</string>
+    <string name="for_example_my_pc_name_pcname_username">For example: My PC name, PCNAME/USERNAME</string>
+    <string name="something_went_wrong">Something went wrong.</string>
+    <string name="scan_qr_code">Scan QR code</string>
+    <string name="cancelled_by_the_user">Cancelled by the user</string>
+    <string name="the_qr_code_scanner_has_not_been_loaded">The QR code scanner has not been loaded</string>
+    <string name="an_error_occurred_during_scanning">An error occurred during scanning</string>
+    <string name="configuring_a_bluetooth_connection">Configuring a Bluetooth connection</string>
+    <string name="enter_the_6_digit_code_and_select_a_paired_device">Enter the 6-digit code and select a paired device</string>
+    <string name="unknown_device">Unknown device</string>
+    <string name="can_t_find_your_pc_pair_in_settings">Can\'t find your PC? Pair in settings</string>
+    <string name="pair_a_device_in_settings">Pair a device in settings</string>
+    <string name="paired_devices">Paired Devices</string>
+    <string name="no_paired_devices_found_please_pair_a_device_in_system_settings">No paired devices found. Please pair a device in system settings.</string>
+    <string name="bluetooth_is_not_supported_on_this_device">Bluetooth is not supported on this device.</string>
+    <string name="permission_denied_please_grant_bluetooth_access_in_app_settings">Permission denied. Please grant Bluetooth access in app settings.</string>
+    <string name="bluetooth_is_disabled_please_enable_it_to_scan_for_devices">Bluetooth is disabled. Please enable it to scan for devices.</string>
+    <string name="grant">Grant</string>
+    <string name="enable">Enable</string>
+    <string name="unable_to_connect_to_the">Unable to connect to the </string>
+</resources>
