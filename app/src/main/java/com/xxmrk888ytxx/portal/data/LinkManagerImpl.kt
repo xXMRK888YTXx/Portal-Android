@@ -36,6 +36,10 @@ class LinkManagerImpl @Inject constructor(
         openLink("https://github.com/KoksMen/Portal-Windows")
     }
 
+    override suspend fun openPCClientDownloadLink() {
+        openLink("https://github.com/KoksMen/Portal-Windows/releases")
+    }
+
     private suspend fun openLink(url: String) =  try {
         val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK

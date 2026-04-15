@@ -38,4 +38,7 @@
     <string name="system">Системная</string>
     <string name="random">Случайная</string>
     <string name="colors">Цвета</string>
+    <string name="pc_client">Клиент для ПК</string>
+    <string name="download_for_pc">Скачать для ПК</string>
+    <string name="install_the_app_on_your_computer_to_pair_your_device">Установите приложение на компьютер и свяжите свои устройства</string>
 </resources>

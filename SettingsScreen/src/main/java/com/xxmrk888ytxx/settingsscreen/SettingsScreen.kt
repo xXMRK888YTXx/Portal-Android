@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -121,6 +122,18 @@ fun SettingsScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
+
+            SettingsSection(stringResource(R.string.pc_client)) {
+                SettingsItem(
+                    title = stringResource(R.string.download_for_pc),
+                    iconRes = R.drawable.portal,
+                    useImageInsteadIcon = true,
+                    subtitle = stringResource(R.string.install_the_app_on_your_computer_to_pair_your_device)
+                ) {
+                   onEvent(SettingsScreenEvent.OnDownloadPcClientClicked)
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Security Section
             SettingsSection(title = stringResource(R.string.security)) {
@@ -386,7 +399,9 @@ fun SelectThemeDialog(
                             }
                             .border(
                                 width = if (isColorSelected) 2.dp else 1.dp,
-                                color = if (isColorSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                color = if (isColorSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
+                                    alpha = 0.1f
+                                ),
                                 shape = CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -499,6 +514,7 @@ fun SettingsItem(
     title: String,
     @DrawableRes iconRes: Int,
     subtitle: String? = null,
+    useImageInsteadIcon: Boolean = false,
     onClick: () -> Unit
 ) {
     Row(
@@ -508,12 +524,20 @@ fun SettingsItem(
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = title,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
-        )
+        if (useImageInsteadIcon) {
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = title,
+                modifier = Modifier.size(24.dp)
+            )
+        } else {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = title,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(24.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 
