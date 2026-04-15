@@ -430,7 +430,7 @@ fun DevicesRemovedBanner(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "All Devices Removed",
+                text = stringResource(R.string.all_devices_removed),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center

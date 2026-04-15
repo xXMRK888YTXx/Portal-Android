@@ -9,7 +9,7 @@
     <string name="server_fingerprint">Отпечаток сервера</string>
     <string name="remove_device">Удалить устройство</string>
     <string name="await_unlock_requests">Ожидать запросы на разблокировку</string>
-    <string name="await_unlock_requests_description">Ожидает запросы на разблокировку от ПК в фоновом режиме (тип разблокировки 2)</string>
+    <string name="await_unlock_requests_description">Ожидает запросы на разблокировку от ПК в фоновом режиме. Убедитесь, что эта функция также включена в приложении на ПК (тип разблокировки 2).</string>
     <string name="search_ip_dynamically">Динамический поиск IP</string>
     <string name="search_ip_dynamically_description">Перед отправкой запроса пытается найти IP-адрес компьютера. Это немного замедляет процесс разблокировки. Полезно, если ваш IP-адрес в локальной сети может меняться. Может не работать или работать некорректно в некоторых сетях в зависимости от настроек вашего роутера.</string>
     <string name="save">Сохранить</string>
@@ -22,7 +22,6 @@
     <string name="show_unlock_request_only_when_unlocked">Показывать запрос только когда телефон разблокирован</string>
     <string name="show_unlock_request_only_when_unlocked_description">Запрос на разблокировку будет показан только если телефон уже разблокирован</string>
     <string name="automatically">Автоматически</string>
-
     <string name="notification">Уведомление</string>
     <string name="confirmation_screen">Экран подтверждения</string>
     <string name="unlock_method">Метод разблокировки</string>

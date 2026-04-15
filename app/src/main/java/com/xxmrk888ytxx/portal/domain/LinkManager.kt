@@ -7,4 +7,5 @@ interface LinkManager {
     suspend fun openPCDeveloperLink()
     suspend fun openAndroidSourceCodeLink()
     suspend fun openPCSourceCodeLink()
+    suspend fun openPCClientDownloadLink()
 }

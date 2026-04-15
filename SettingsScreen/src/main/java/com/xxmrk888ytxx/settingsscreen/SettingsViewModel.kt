@@ -92,6 +92,7 @@ class SettingsViewModel @Inject constructor(
                 SettingsScreenSideEffect.OpenOpenSourceLicenses)
             SettingsScreenEvent.OnThemeClicked -> showSelectThemeDialog()
             is SettingsScreenEvent.OnThemeColorSelected -> changeThemeColor(event.newColor)
+            SettingsScreenEvent.OnDownloadPcClientClicked -> openLink { openLinkContract.openPCClientDownloadLink() }
         }
     }
 

@@ -36,4 +36,5 @@
     <string name="grant">Grant</string>
     <string name="enable">Enable</string>
     <string name="unable_to_connect_to_the">Unable to connect to the </string>
+    <string name="download_pc_client_footnote">Please make sure to download and install the PC client to continue. You can find the download link in the Settings.</string>
 </resources>

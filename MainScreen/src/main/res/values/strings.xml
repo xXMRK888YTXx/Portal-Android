@@ -47,4 +47,5 @@
     <string name="to_ensure_all_features_work_correctly_in_the_background_please_disable_battery_optimization_for_this_app">To ensure all features work correctly in the background, please disable battery optimization for this app.</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
+    <string name="all_devices_removed">All Devices Removed</string>
 </resources>

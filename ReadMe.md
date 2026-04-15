@@ -5,6 +5,9 @@
 
 **Portal** — is a completely **free** and **open-source** smart wireless key that transforms your Android smartphone into a tool for instant computer unlocking. No ads, no tracking, no hidden costs.
 
+> [!WARNING]
+> To use this application, you must install the **PC Client** on your computer. You can find the download link in the section below.
+
 ## 📲 Links & Downloads
 
 | Platform | Link |
@@ -91,6 +94,9 @@ To ensure the authenticity of the application, please verify the build signature
 </div>
 
 **Portal** — это полностью **бесплатный** и **открытый (open-source)** умный беспроводной ключ, который превращает ваш Android-смартфон в инструмент для мгновенной разблокировки компьютера. Без рекламы, без слежки и без скрытых платежей.
+
+> [!WARNING]
+> Для использования приложения необходимо установить **ПК клиент** на ваш компьютер. Ссылка на скачивание находится в разделе ниже.
 
 ## 📲 Ссылки и загрузка
 
