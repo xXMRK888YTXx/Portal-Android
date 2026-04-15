@@ -34,4 +34,5 @@
     <string name="grant">Предоставить</string>
     <string name="enable">Включить</string>
     <string name="unable_to_connect_to_the">"Не удалось подключиться к "</string>
+    <string name="download_pc_client_footnote">Пожалуйста, скачайте и установите ПК-клиент для продолжения. Ссылку на скачивание можно найти в настройках.</string>
 </resources>

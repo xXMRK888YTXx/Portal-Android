@@ -714,6 +714,9 @@ fun SelectTypePage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> U
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
+
+        Spacer(modifier = Modifier.weight(1f))
+
         // WiFi Card
         Card(
             modifier = Modifier
@@ -757,9 +760,8 @@ fun SelectTypePage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> U
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            onClick = selectBluetoothAction,
-
-            ) {
+            onClick = selectBluetoothAction
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -788,6 +790,31 @@ fun SelectTypePage(state: ScreenState, onEvent: (AddNewDeviceScreenUiEvent) -> U
                 }
             }
         }
-    }
 
+        Spacer(modifier = Modifier.weight(1f))
+
+        // PC Client Footnote
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.info),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(R.string.download_pc_client_footnote),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
 }
