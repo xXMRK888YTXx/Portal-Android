@@ -13,6 +13,7 @@ import com.xxmrk888ytxx.mainscreen.contract.SaveWOLMacAddress
 import com.xxmrk888ytxx.mainscreen.contract.SendUnlockRequestContract
 import com.xxmrk888ytxx.mainscreen.contract.SendWOLContract
 import com.xxmrk888ytxx.mainscreen.contract.SettingsProvider
+import com.xxmrk888ytxx.mainscreen.exception.BiometricAuthFailedException
 import com.xxmrk888ytxx.mainscreen.exception.LauncherNotSupportShortcutException
 import com.xxmrk888ytxx.mainscreen.model.Device
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
@@ -143,7 +144,10 @@ class MainScreenViewModel @Inject constructor(
             ).onSuccess {
                 sendToastSideEffect(uiText(R.string.wol_request_sent))
             }.onFailure {
-                sendToastSideEffect(R.string.error_during_sending_the_wol_request.uiText())
+                when(it) {
+                    is BiometricAuthFailedException -> sendToastSideEffect(R.string.biometric_authentication_failed_please_try_again.uiText())
+                    else -> sendToastSideEffect(R.string.error_during_sending_the_wol_request.uiText())
+                }
             }
         }.invokeOnCompletion { isLoading.value = false }
     }

@@ -48,4 +48,5 @@
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
     <string name="all_devices_removed">All Devices Removed</string>
+    <string name="biometric_authentication_failed_please_try_again">Biometric authentication failed. Please try again.</string>
 </resources>
