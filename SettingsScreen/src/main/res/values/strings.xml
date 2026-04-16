@@ -41,4 +41,6 @@
     <string name="pc_client">PC client</string>
     <string name="download_for_pc">Download for PC</string>
     <string name="install_the_app_on_your_computer_to_pair_your_device">Install the app on your computer and pair your device</string>
+    <string name="troubleshooting">Troubleshooting</string>
+    <string name="solutions_for_common_issues">Solutions for common issues</string>
 </resources>

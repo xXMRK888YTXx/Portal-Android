@@ -19,4 +19,5 @@ class OpenLinkContractImpl @Inject constructor(
 
     override suspend fun openAndroidSourceCodeLink() = linkManager.openAndroidSourceCodeLink()
     override suspend fun openPCClientDownloadLink() = linkManager.openPCClientDownloadLink()
+    override suspend fun openTroubleshootingLink() = linkManager.openTroubleshootingLink()
 }

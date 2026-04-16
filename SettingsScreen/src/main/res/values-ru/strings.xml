@@ -41,4 +41,6 @@
     <string name="pc_client">Клиент для ПК</string>
     <string name="download_for_pc">Скачать для ПК</string>
     <string name="install_the_app_on_your_computer_to_pair_your_device">Установите приложение на компьютер и свяжите свои устройства</string>
+    <string name="troubleshooting">Устранение неполадок</string>
+    <string name="solutions_for_common_issues">Решения частых проблем</string>
 </resources>

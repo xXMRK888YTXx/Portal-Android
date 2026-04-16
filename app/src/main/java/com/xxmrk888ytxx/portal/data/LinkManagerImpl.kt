@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
+import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.LinkManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,6 +39,10 @@ class LinkManagerImpl @Inject constructor(
 
     override suspend fun openPCClientDownloadLink() {
         openLink("https://github.com/KoksMen/Portal-Windows/releases")
+    }
+
+    override suspend fun openTroubleshootingLink() {
+        openLink(context.getString(R.string.troubleshooting_link))
     }
 
     private suspend fun openLink(url: String) =  try {
