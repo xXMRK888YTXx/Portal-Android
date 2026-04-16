@@ -199,6 +199,14 @@ fun SettingsScreen(
             // About App Section
             SettingsSection(title = stringResource(R.string.about_app)) {
                 SettingsItem(
+                    title = stringResource(R.string.troubleshooting),
+                    iconRes = R.drawable.troubleshoot,
+                    subtitle = stringResource(R.string.solutions_for_common_issues),
+                    onClick = {
+                        onEvent(SettingsScreenEvent.OpenTroubleshootingLink)
+                    }
+                )
+                SettingsItem(
                     title = stringResource(R.string.terms_of_use),
                     iconRes = R.drawable.ic_terms,
                     onClick = { onEvent(SettingsScreenEvent.OnTermsClicked) }

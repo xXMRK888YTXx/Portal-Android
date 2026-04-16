@@ -21,5 +21,6 @@ sealed interface SettingsScreenEvent : UiEvent {
     data object OpenOpenSourceLicenses : SettingsScreenEvent
     data object OnThemeClicked : SettingsScreenEvent
     data object OnDownloadPcClientClicked : SettingsScreenEvent
+    data object OpenTroubleshootingLink : SettingsScreenEvent
 
 }

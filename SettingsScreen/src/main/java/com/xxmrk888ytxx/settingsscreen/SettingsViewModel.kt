@@ -93,6 +93,7 @@ class SettingsViewModel @Inject constructor(
             SettingsScreenEvent.OnThemeClicked -> showSelectThemeDialog()
             is SettingsScreenEvent.OnThemeColorSelected -> changeThemeColor(event.newColor)
             SettingsScreenEvent.OnDownloadPcClientClicked -> openLink { openLinkContract.openPCClientDownloadLink() }
+            SettingsScreenEvent.OpenTroubleshootingLink -> openLink { openLinkContract.openTroubleshootingLink() }
         }
     }
 

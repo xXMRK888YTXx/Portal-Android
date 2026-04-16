@@ -8,4 +8,5 @@ interface OpenLinkContract {
     suspend fun openPCDeveloperLink()
     suspend fun openAndroidSourceCodeLink()
     suspend fun openPCClientDownloadLink()
+    suspend fun openTroubleshootingLink()
 }
