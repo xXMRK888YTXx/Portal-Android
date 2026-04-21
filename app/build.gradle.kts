@@ -23,8 +23,8 @@ extensions.configure<ApplicationExtension> {
         applicationId = "com.xxmrk888ytxx.portal"
         minSdk = catalogMinSdk
         targetSdk = catalogCompileSdk
-        versionCode = 39
-        versionName = "Eve.6"
+        versionCode = 40
+        versionName = "Eve.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
