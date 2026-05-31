@@ -24,6 +24,10 @@ class ChangeSettingsContractImpl @Inject constructor(
         settingsRepository.updateUnsafeUnlockTypesDisabled(newState)
     }
 
+    override suspend fun updateWatchDogState(isEnabled: Boolean) {
+        settingsRepository.updateWatchDogEnabled(isEnabled)
+    }
+
     override suspend fun updateThemeColor(newColor: Color?) {
         settingsRepository.updateThemeColor(newColor)
     }

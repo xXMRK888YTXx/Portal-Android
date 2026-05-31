@@ -10,4 +10,5 @@ data class PortalSettings(
     val isUnsafeUnlockTypesDisabled: Boolean,
     val isOnboardingPassed: Boolean,
     val themeColor: Color?,
+    val isWatchDogEnabled: Boolean,
 )

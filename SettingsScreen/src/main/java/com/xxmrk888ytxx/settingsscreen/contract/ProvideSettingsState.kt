@@ -9,5 +9,6 @@ interface ProvideSettingsState {
     val isAdditionalPasswordAuthEnabled: Flow<Boolean>
     val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled: Flow<Boolean>
     val isUnsafeUnlockTypesDisabled: Flow<Boolean>
+    val isWatchDogEnabled: Flow<Boolean>
     val themeColor: Flow<Color?>
 }

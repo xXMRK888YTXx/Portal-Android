@@ -99,7 +99,7 @@ class UnlockRequestManagerImpl @Inject constructor(
             }
 
             val intent = createIntentForStartUnlockScreen(deviceId, request.requestId).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
             context.startActivity(intent)
         }
@@ -116,7 +116,9 @@ class UnlockRequestManagerImpl @Inject constructor(
                 return@launch
             }
 
-            val intent = createIntentForStartUnlockScreen(clientId, request.requestId)
+            val intent = createIntentForStartUnlockScreen(clientId, request.requestId).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
             val pendingIntent = PendingIntent.getActivity(
                 context,
                 0,

@@ -46,8 +46,8 @@
             android:exported="false"
             android:noHistory="true"
             android:taskAffinity="com.xxmrk888ytxx.portal.task.UnlockScreenActivity"
-            android:launchMode="singleInstance"
             android:showForAllUsers="true"
+            android:launchMode="singleInstance"
             android:theme="@style/Theme.Portal">
             <intent-filter>
                 <action android:name="com.xxmrk888ytxx.portal.UNLOCK_REQUEST_FROM_PC" />
@@ -96,6 +96,14 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".data.broadcastReceiver.WatchDogReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.ACTION_WATCH_DOG_ALARM" />
             </intent-filter>
         </receiver>
 

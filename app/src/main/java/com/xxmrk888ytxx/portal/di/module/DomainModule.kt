@@ -30,6 +30,8 @@ import com.xxmrk888ytxx.portal.data.UnlockRequestHandlerImpl
 import com.xxmrk888ytxx.portal.data.UnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.WOLManagerImpl
 import com.xxmrk888ytxx.portal.data.WOLServiceManagerImpl
+import com.xxmrk888ytxx.portal.data.WatchDogAlarmControllerImpl
+import com.xxmrk888ytxx.portal.data.WatchDogManagerImpl
 import com.xxmrk888ytxx.portal.data.WifiDeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.WifiPortalApiImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
@@ -61,6 +63,8 @@ import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.UnlockServiceManager
 import com.xxmrk888ytxx.portal.domain.WOLManager
 import com.xxmrk888ytxx.portal.domain.WOLServiceManager
+import com.xxmrk888ytxx.portal.domain.WatchDogAlarmController
+import com.xxmrk888ytxx.portal.domain.WatchDogManager
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SettingsProviderImpl
@@ -228,7 +232,19 @@ interface DomainModule {
         settingsProviderImpl: SettingsProviderImpl
     ) : SettingsProvider
 
+    @Binds
+    fun bindsWatchDogAlarmController(
+        watchDogAlarmControllerImpl: WatchDogAlarmControllerImpl
+    ) : WatchDogAlarmController
+
+    @Binds
+    @AppScope
+    fun bindsWatchDogManager(
+        watchDogManagerImpl: WatchDogManagerImpl
+    ) : WatchDogManager
+
     companion object {
+
         @Provides
         @AppScope
         @com.xxmrk888ytxx.portal.di.qualifier.WifiUnlockServiceManagerQualifier

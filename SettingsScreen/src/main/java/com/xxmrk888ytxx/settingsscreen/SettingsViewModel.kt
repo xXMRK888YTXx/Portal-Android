@@ -37,7 +37,8 @@ class SettingsViewModel @Inject constructor(
         provideSettingsState.isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
         bottomSheetState,
         provideSettingsState.isUnsafeUnlockTypesDisabled,
-        biometricProtectionAvailableStateProvider.isAvailable
+        biometricProtectionAvailableStateProvider.isAvailable,
+        provideSettingsState.isWatchDogEnabled
     ) { flowArray ->
         val isBiometricProtectionEnabled = flowArray[0] as Boolean
         val appVersion = flowArray[1] as String
@@ -46,6 +47,7 @@ class SettingsViewModel @Inject constructor(
         val bottomSheetState = flowArray[4] as BottomSheetState
         val isUnsafeUnlockTypesDisabled = flowArray[5] as Boolean
         val isBiometricAuthAvailable = flowArray[6] as Boolean
+        val isWatchDogEnabled = flowArray[7] as Boolean
 
         ScreenState(
             bottomSheetState = bottomSheetState,
@@ -54,6 +56,7 @@ class SettingsViewModel @Inject constructor(
             isAdditionalPasswordAuthEnabled = isAdditionalPasswordAuthEnabled,
             isRemovePairedClientsIfBiometricEnvironmentChangedEnabled = isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
             isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled,
+            isWatchDogEnabled = isWatchDogEnabled,
             isBiometricAuthAvailable = isBiometricAuthAvailable
         )
     }.stateWhileSubscribed()
@@ -81,6 +84,8 @@ class SettingsViewModel @Inject constructor(
             is SettingsScreenEvent.OnChangeUnsafeUnlockTypesState -> bottomSheetState.value = BottomSheetState.ConfirmSecurityChangesDialog(isForEnablingSetting = event.newState) {
                 changeUnsafeUnlockTypesState(event.newState)
             }
+
+            is SettingsScreenEvent.OnWatchDogStateChanged -> changeWatchDogState(event.newState)
 
             SettingsScreenEvent.OnAndroidDeveloperClick -> openLink { openLinkContract.openAndroidDeveloperLink() }
             SettingsScreenEvent.OnPCDeveloperClicked -> openLink { openLinkContract.openPCDeveloperLink()}
@@ -112,6 +117,10 @@ class SettingsViewModel @Inject constructor(
 
     private fun changeUnsafeUnlockTypesState(newState: Boolean) = viewModelScope.launch {
         changeSettingsContract.updateUnsafeUnlockTypesState(newState)
+    }
+
+    private fun changeWatchDogState(newState: Boolean) = viewModelScope.launch {
+        changeSettingsContract.updateWatchDogState(newState)
     }
 
     private fun changeBiometricAuthState(isEnabled: Boolean) = viewModelScope.launch {

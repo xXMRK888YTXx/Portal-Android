@@ -23,6 +23,8 @@ class ProvideSettingsStateImpl @Inject constructor(
         settingsRepository.portalSettings.map { it.isRemovePairedClientsIfBiometricEnvironmentChangedEnabled }
     override val isUnsafeUnlockTypesDisabled: Flow<Boolean> =
         settingsRepository.portalSettings.map { it.isUnsafeUnlockTypesDisabled }
+    override val isWatchDogEnabled: Flow<Boolean> =
+        settingsRepository.portalSettings.map { it.isWatchDogEnabled }
     override val themeColor: Flow<Color?>
         get() = settingsRepository.portalSettings.map { it.themeColor }
 }
