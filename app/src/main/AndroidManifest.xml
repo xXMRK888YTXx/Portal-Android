@@ -44,9 +44,7 @@
             android:name=".view.unlockScreenActivity.UnlockScreenActivity"
             android:excludeFromRecents="true"
             android:exported="false"
-            android:noHistory="true"
             android:taskAffinity="com.xxmrk888ytxx.portal.task.UnlockScreenActivity"
-            android:launchMode="singleInstance"
             android:showForAllUsers="true"
             android:theme="@style/Theme.Portal">
             <intent-filter>
