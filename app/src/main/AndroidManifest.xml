@@ -44,8 +44,10 @@
             android:name=".view.unlockScreenActivity.UnlockScreenActivity"
             android:excludeFromRecents="true"
             android:exported="false"
+            android:noHistory="true"
             android:taskAffinity="com.xxmrk888ytxx.portal.task.UnlockScreenActivity"
             android:showForAllUsers="true"
+            android:launchMode="singleInstance"
             android:theme="@style/Theme.Portal">
             <intent-filter>
                 <action android:name="com.xxmrk888ytxx.portal.UNLOCK_REQUEST_FROM_PC" />
