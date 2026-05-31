@@ -13,6 +13,7 @@ interface SettingsRepository {
     suspend fun updateUnsafeUnlockTypesDisabled(newState: Boolean)
     suspend fun markOnboardingAsPassed()
     suspend fun updateThemeColor(newColor: Color?)
+    suspend fun updateWatchDogEnabled(isEnabled: Boolean)
 
     companion object {
         const val DEFAULT_VALUE = 0

@@ -7,5 +7,6 @@ interface ChangeSettingsContract {
     suspend fun updateAdditionalPasswordAuthState(isEnabled: Boolean)
     suspend fun updateRemovePairedClientsIfBiometricEnvironmentChangedState(isEnabled: Boolean)
     suspend fun updateUnsafeUnlockTypesState(newState: Boolean)
+    suspend fun updateWatchDogState(isEnabled: Boolean)
     suspend fun updateThemeColor(newColor: Color?)
 }

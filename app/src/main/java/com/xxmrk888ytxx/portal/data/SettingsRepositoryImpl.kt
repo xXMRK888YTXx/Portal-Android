@@ -34,6 +34,7 @@ class SettingsRepositoryImpl @Inject constructor(
         booleanPreferencesKey("isUnsafeUnlockTypesDisabledKey")
     private val isOnboardingPassedKey = booleanPreferencesKey("is_onboarding_passed")
     private val themeColorKey = longPreferencesKey("theme_color")
+    private val watchDogEnabledKey = booleanPreferencesKey("watch_dog_enabled")
 
 
     override val portalSettings: Flow<PortalSettings> = combine<Any?, PortalSettings>(
@@ -43,7 +44,8 @@ class SettingsRepositoryImpl @Inject constructor(
         preferencesStorage.getProperty(pairedClientsWasRemovedBySecurityChanges, DEFAULT_VALUE),
         preferencesStorage.getProperty(isUnsafeUnlockTypesDisabledKey, false),
         preferencesStorage.getProperty(isOnboardingPassedKey, false),
-        preferencesStorage.getPropertyOrNull(themeColorKey)
+        preferencesStorage.getPropertyOrNull(themeColorKey),
+        preferencesStorage.getProperty(watchDogEnabledKey, false)
     ) { flowArray ->
         val biometricAuthEnabled = flowArray[0] as Boolean
         val additionalPasswordAuthEnabled = flowArray[1] as Boolean
@@ -52,6 +54,7 @@ class SettingsRepositoryImpl @Inject constructor(
         val isUnsafeUnlockTypesDisabled = flowArray[4] as Boolean
         val isOnboardingPassed = flowArray[5] as Boolean
         val themeColor = flowArray[6] as Long?
+        val isWatchDogEnabled = flowArray[7] as Boolean
 
         PortalSettings(
             isBiometricAuthEnabled = biometricAuthEnabled,
@@ -60,7 +63,8 @@ class SettingsRepositoryImpl @Inject constructor(
             pairedClientsWasRemoveBySecurityChangesCode = pairedClientsWasRemovedBySecurityChanges,
             isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled,
             isOnboardingPassed = isOnboardingPassed,
-            themeColor = if (themeColor == null) null else Color(value = themeColor.toULong())
+            themeColor = if (themeColor == null) null else Color(value = themeColor.toULong()),
+            isWatchDogEnabled = isWatchDogEnabled
         )
     }
 
@@ -121,5 +125,9 @@ class SettingsRepositoryImpl @Inject constructor(
             return@withContext
         }
         preferencesStorage.writeProperty(themeColorKey, newColor.value.toLong())
+    }
+
+    override suspend fun updateWatchDogEnabled(isEnabled: Boolean) = withContext(Dispatchers.IO) {
+        preferencesStorage.writeProperty(watchDogEnabledKey, isEnabled)
     }
 }

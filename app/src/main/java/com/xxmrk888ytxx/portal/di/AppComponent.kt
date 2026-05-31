@@ -22,6 +22,7 @@ import com.xxmrk888ytxx.portal.di.module.ServiceBindsModule
 import com.xxmrk888ytxx.portal.di.module.SettingsScreenModule
 import com.xxmrk888ytxx.portal.di.module.UnlockServiceModule
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
+import com.xxmrk888ytxx.portal.domain.WatchDogManager
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Provider
@@ -52,6 +53,7 @@ interface AppComponent {
     val biometricEnvironmentObserver: BiometricEnvironmentObserver
     val awaitUnlockRequestManager: AwaitUnlockRequestManager
     val unsafeUnlockTypesStateObserver: UnsafeUnlockTypesStateObserver
+    val watchDogManager: WatchDogManager
 
     @Component.Factory
     interface Factory {

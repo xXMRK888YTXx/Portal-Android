@@ -43,4 +43,8 @@
     <string name="install_the_app_on_your_computer_to_pair_your_device">Install the app on your computer and pair your device</string>
     <string name="troubleshooting">Troubleshooting</string>
     <string name="solutions_for_common_issues">Solutions for common issues</string>
+    <string name="watch_dog">WatchDog</string>
+    <string name="watch_dog_description">
+        Helps the app stay online and quickly respond to device unlocking. Every 30 seconds, the system checks the app\'s status and, if it has been closed, automatically restarts its background services.\n\nIt is recommended to enable this feature only if you experience issues with the app running in the background, which is especially common on devices with aggressive background process management, such as Xiaomi, Huawei, Realme, or OnePlus. If everything works stably, there is no need to activate it. Please note that due to built-in Android optimization mechanisms, the check may trigger with slight delays, and the continuous operation of this service may slightly increase battery consumption.
+    </string>
 </resources>

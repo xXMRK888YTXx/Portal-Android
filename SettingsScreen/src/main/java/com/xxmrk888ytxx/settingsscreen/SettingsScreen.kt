@@ -195,6 +195,27 @@ fun SettingsScreen(
             }
             Spacer(modifier = Modifier.height(24.dp))
 
+            SettingsSection(stringResource(R.string.troubleshooting)) {
+                SettingsItem(
+                    title = stringResource(R.string.solutions_for_common_issues),
+                    iconRes = R.drawable.troubleshoot,
+                    onClick = {
+                        onEvent(SettingsScreenEvent.OpenTroubleshootingLink)
+                    }
+                )
+
+                SettingsSwitchItem(
+                    title = stringResource(R.string.watch_dog),
+                    subtitle = stringResource(R.string.watch_dog_description),
+                    iconRes = R.drawable.visibility,
+                    checked = screenState.isWatchDogEnabled,
+                    isExpandable = true,
+                    onCheckedChange = { isChecked ->
+                        onEvent(SettingsScreenEvent.OnWatchDogStateChanged(isChecked))
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
 
             // About App Section
             SettingsSection(title = stringResource(R.string.about_app)) {

@@ -7,5 +7,6 @@ data class ScreenState(
     val isAdditionalPasswordAuthEnabled: Boolean = false,
     val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled: Boolean = false,
     val isUnsafeUnlockTypesDisabled: Boolean = false,
+    val isWatchDogEnabled: Boolean = false,
     val isBiometricAuthAvailable: Boolean = false
 )

@@ -97,6 +97,14 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".data.broadcastReceiver.WatchDogReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.ACTION_WATCH_DOG_ALARM" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="barcode_ui" />

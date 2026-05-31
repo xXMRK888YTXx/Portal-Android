@@ -9,6 +9,7 @@ sealed interface SettingsScreenEvent : UiEvent {
     data class OnAdditionalPasswordAuthStateChanged(val newState: Boolean) : SettingsScreenEvent
     data class OnRemovePairedClientsIfBiometricEnvironmentStateChanged(val newState: Boolean) : SettingsScreenEvent
     data class OnChangeUnsafeUnlockTypesState(val newState: Boolean) : SettingsScreenEvent
+    data class OnWatchDogStateChanged(val newState: Boolean) : SettingsScreenEvent
     class ConfirmSecurityChanges(val actionAfterConfirm: () -> Unit) : SettingsScreenEvent
     data class OnThemeColorSelected(val newColor: Color?): SettingsScreenEvent
     data object HideBottomSheet : SettingsScreenEvent
