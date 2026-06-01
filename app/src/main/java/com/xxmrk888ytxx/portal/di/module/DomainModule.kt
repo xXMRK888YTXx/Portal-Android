@@ -71,6 +71,9 @@ import com.xxmrk888ytxx.portal.providedContract.mainScreen.SettingsProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 @Module
 interface DomainModule {
@@ -244,6 +247,10 @@ interface DomainModule {
     ) : WatchDogManager
 
     companion object {
+
+        @Provides
+        @AppScope
+        fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
         @Provides
         @AppScope

@@ -20,7 +20,7 @@ import com.xxmrk888ytxx.portal.utils.getParsableExtraCompat
 import com.xxmrk888ytxx.portal.view.model.UnlockScreenUiEvent
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +39,7 @@ class UnlockScreenViewModel @Inject constructor(
     private val provideDeviceNameByClientId: ProvideDeviceNameByClientId,
     private val settingsRepository: SettingsRepository,
     private val unlockRequestManager: UnlockRequestManager,
+    private val applicationScope: CoroutineScope
 ) : PortalViewModel<Unit, UnlockScreenUiEvent>(Unit), Navigator,
     SideEffectSender<UnlockScreenSideEffect> {
 
@@ -168,18 +169,19 @@ class UnlockScreenViewModel @Inject constructor(
         return true
     }
 
-    @Suppress("CoroutineContextWithJob")
     private fun sendCancelEventAndDismissScreen() {
         if (isEventSent.value) return
         isEventSent.value = true
-        viewModelScope.launch(NonCancellable) {
+        applicationScope.launch {
             unlockScreenData?.let { unlockData ->
                 unlockMessageSender.sendMessage(
                     unlockData.clientId,
                     UnlockServiceMessage.Canceled(unlockData.requestId)
                 )
             }
-        }.invokeOnCompletion { dismissScreen() }
+        }.invokeOnCompletion {
+            dismissScreen()
+        }
     }
 
     fun onStop() = sendCancelEventAndDismissScreen()

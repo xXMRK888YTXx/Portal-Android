@@ -157,7 +157,7 @@ object AndroidLogger : Logger {
 
         val newEntry = _lastLogId.value to "[ $timeString ] $message\n"
         _lastLogId.value += 1
-        _logs.value = listOf(newEntry) + (_logs.value ?: emptyList())
+        _logs.value = listOf(newEntry) + _logs.value
     }
 
 }
