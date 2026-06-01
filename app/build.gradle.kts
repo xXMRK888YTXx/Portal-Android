@@ -11,6 +11,7 @@ plugins {
 val catalogJavaVersion = libs.versions.jvm.target.get()
 val catalogCompileSdk = libs.versions.compile.sdk.get().toInt()
 val catalogMinSdk = libs.versions.min.sdk.get().toInt()
+val catalogTargetSdk = libs.versions.target.sdk.get().toInt()
 
 
 extensions.configure<ApplicationExtension> {
@@ -22,7 +23,7 @@ extensions.configure<ApplicationExtension> {
     defaultConfig {
         applicationId = "com.xxmrk888ytxx.portal"
         minSdk = catalogMinSdk
-        targetSdk = catalogCompileSdk
+        targetSdk = catalogTargetSdk
         versionCode = 42
         versionName = "Eve.8"
 
