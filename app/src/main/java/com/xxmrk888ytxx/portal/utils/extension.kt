@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,7 +43,7 @@ inline fun <STATE, EVENT : UiEvent, PVM : PortalViewModel<STATE, EVENT>> ScreenC
     portalViewModelFactory: Provider<PVM>
 ) {
     val viewModel: PVM = viewModel { portalViewModelFactory.get() }
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     content(state, viewModel::handleEvent)
 }
 
@@ -53,7 +53,7 @@ inline fun <STATE, EVENT : UiEvent, PVM> ScreenContent(
     portalViewModelFactory: Provider<PVM>
 ) where PVM : PortalViewModel<STATE, EVENT>, PVM : SideEffectSender<SideEffect> {
     val viewModel: PVM = viewModel { portalViewModelFactory.get() }
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     content(state, viewModel::handleEvent, viewModel.effect)
 }
 
@@ -63,7 +63,7 @@ inline fun <STATE, EVENT : UiEvent, reified PVM> ScreenContent(
     crossinline portalViewModelFactory: () -> PVM
 ) where PVM : PortalViewModel<STATE, EVENT>, PVM : SideEffectSender<SideEffect> {
     val viewModel: PVM = viewModel { portalViewModelFactory.invoke() }
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     content(state, viewModel::handleEvent, viewModel.effect)
 }
 

@@ -328,7 +328,7 @@ fun DeviceInfoState(
                 editIconContentDescription = stringResource(R.string.edit_host)
             )
 
-            val wolMac = (screenState.device as? Device.WifiDevice)?.wolMacAddress
+            val wolMac = screenState.device.wolMacAddress
             val formattedMac = remember(wolMac) { wolMac?.formatToMacAddress() }
 
             val displayMac = wolMac?.formatToMacAddress() ?: stringResource(R.string.not_specified)
