@@ -4,6 +4,7 @@ import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
 import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
 import com.xxmrk888ytxx.portal.domain.WOLServiceManager
+import com.xxmrk888ytxx.portal.domain.WearDeviceSyncManager
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
@@ -15,7 +16,8 @@ class WearCommandHandler @Inject constructor(
     private val bluetoothDeviceRepository: BluetoothDeviceRepository,
     private val deviceUnlockManager: DeviceUnlockManager,
     private val wolServiceManager: WOLServiceManager,
-    private val decisionCoordinator: IncomingUnlockDecisionCoordinator
+    private val decisionCoordinator: IncomingUnlockDecisionCoordinator,
+    private val wearDeviceSyncManager: WearDeviceSyncManager
 ) {
     suspend fun handleMessage(path: String, data: ByteArray) {
         val body = data.decodeToString()
@@ -34,6 +36,8 @@ class WearCommandHandler @Inject constructor(
                 val decision = json.decodeFromString<WearDecisionPayload>(body)
                 decisionCoordinator.resolve(decision.decisionId, decision.decision)
             }
+
+            WearDataLayerProtocol.SYNC_DEVICES_REQUEST_PATH -> wearDeviceSyncManager.syncNow()
         }
     }
 

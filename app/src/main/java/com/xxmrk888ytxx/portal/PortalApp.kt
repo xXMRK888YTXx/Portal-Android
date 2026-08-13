@@ -19,7 +19,7 @@ class PortalApp : Application() {
         appComponent.biometricEnvironmentObserver.startObserve()
         appComponent.awaitUnlockRequestManager.restoreUnlockState()
         appComponent.watchDogManager.startObserve()
-        appComponent.wearProfileSyncManager.startObserve()
+        appComponent.wearDeviceSyncManager.startObserve()
         appComponent.unsafeUnlockTypesStateObserver
     }
 }

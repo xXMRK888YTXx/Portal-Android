@@ -1,24 +1,19 @@
 package com.xxmrk888ytxx.portal.presentation.mainActivity
 
 import com.xxmrk888ytxx.portal.domain.WearPermissionState
-import com.xxmrk888ytxx.portal.domain.model.IncomingUnlockRequest
-import com.xxmrk888ytxx.portal.domain.model.WearProfile
+import com.xxmrk888ytxx.portal.domain.model.Device
 
 data class MainScreenState(
-    val profiles: List<WearProfile> = emptyList(),
-    val selectedProfile: WearProfile? = null,
-    val incomingRequest: IncomingUnlockRequest? = null,
+    val selectedDevice: Device? = null,
     val permissions: WearPermissionState = WearPermissionState(
-        canPostNotifications = false,
-        canDrawOverlays = false
+        canPostNotifications = false
     ),
-    val showRequestsOnLockedScreen: Boolean = false,
     val screen: WearScreen = WearScreen.Main,
-    val message: String? = null
 )
 
 enum class WearScreen {
     Main,
+    DeviceActions,
     Settings,
     IncomingRequest
 }

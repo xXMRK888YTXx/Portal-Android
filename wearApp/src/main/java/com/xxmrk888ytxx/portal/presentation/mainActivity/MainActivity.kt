@@ -1,91 +1,202 @@
 package com.xxmrk888ytxx.portal.presentation.mainActivity
 
+import android.Manifest
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
-import androidx.wear.compose.foundation.lazy.items
-import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.AppScaffold
-import androidx.wear.compose.material3.Button
-import androidx.wear.compose.material3.Card
-import androidx.wear.compose.material3.EdgeButton
-import androidx.wear.compose.material3.ListHeader
-import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.ScreenScaffold
-import androidx.wear.compose.material3.SwitchButton
-import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.TextButton
-import com.xxmrk888ytxx.portal.BuildConfig
-import com.xxmrk888ytxx.portal.domain.model.WearProfile
-import com.xxmrk888ytxx.portal.domain.model.WearTransport
+import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.domain.model.Device
+import com.xxmrk888ytxx.portal.domain.model.IncomingUnlockRequest
+import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsScreen
+import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsSideEffect
+import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsViewModel
+import com.xxmrk888ytxx.portal.presentation.deviceList.DeviceListEvent
+import com.xxmrk888ytxx.portal.presentation.deviceList.DeviceListScreen
+import com.xxmrk888ytxx.portal.presentation.deviceList.DeviceListSideEffect
+import com.xxmrk888ytxx.portal.presentation.deviceList.DeviceListViewModel
+import com.xxmrk888ytxx.portal.presentation.incomingRequest.IncomingRequestScreen
+import com.xxmrk888ytxx.portal.presentation.incomingRequest.IncomingRequestSideEffect
+import com.xxmrk888ytxx.portal.presentation.incomingRequest.IncomingRequestViewModel
+import com.xxmrk888ytxx.portal.presentation.permissionGate.PermissionGateScreen
+import com.xxmrk888ytxx.portal.presentation.settings.SettingsScreen
+import com.xxmrk888ytxx.portal.presentation.settings.SettingsSideEffect
+import com.xxmrk888ytxx.portal.presentation.settings.SettingsViewModel
 import com.xxmrk888ytxx.portal.presentation.theme.PortalTheme
 import javax.inject.Inject
-import kotlin.math.abs
 
 class MainActivity @Inject constructor(
-    private val viewModelFactory: MainActivityViewModel.Factory
+    private val viewModelFactory: MainActivityViewModel.Factory,
+    private val deviceListViewModelFactory: DeviceListViewModel.Factory,
+    private val deviceActionsViewModelFactory: DeviceActionsViewModel.Factory,
+    private val settingsViewModelFactory: SettingsViewModel.Factory,
+    private val incomingRequestViewModelFactory: IncomingRequestViewModel.Factory
 ) : ComponentActivity() {
 
     private val viewModel by viewModels<MainActivityViewModel> { viewModelFactory }
+    private val deviceListViewModel by viewModels<DeviceListViewModel> { deviceListViewModelFactory }
+    private val deviceActionsViewModel by viewModels<DeviceActionsViewModel> { deviceActionsViewModelFactory }
+    private val settingsViewModel by viewModels<SettingsViewModel> { settingsViewModelFactory }
+    private val incomingRequestViewModel by viewModels<IncomingRequestViewModel> {
+        incomingRequestViewModelFactory
+    }
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        viewModel.handleEvent(MainActivityEvent.RefreshPermissions)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (intent?.action == ACTION_OPEN_REQUEST) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                setShowWhenLocked(true)
+                setTurnScreenOn(true)
+            }
+            viewModel.handleEvent(MainActivityEvent.ShowIncomingRequest)
+        }
+
         setContent {
             val state by viewModel.state.collectAsStateWithLifecycle()
+            val devices by deviceListViewModel.devices.collectAsStateWithLifecycle()
+            val isPhoneConnected by settingsViewModel.isPhoneConnected.collectAsStateWithLifecycle()
+            val incomingRequest by incomingRequestViewModel.request.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                viewModel.sideEffect.collect { effect ->
+                    when (effect) {
+                        NavigationSideEffect.OpenNotificationSettings ->
+                            openNotificationSettings()
+
+                        is NavigationSideEffect.ShowMessage ->
+                            Toast.makeText(this@MainActivity, effect.message, Toast.LENGTH_SHORT)
+                                .show()
+                    }
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                deviceListViewModel.sideEffect.collect { effect ->
+                    when (effect) {
+                        DeviceListSideEffect.OpenSettings -> {
+                            viewModel.handleEvent(MainActivityEvent.ShowSettings)
+                        }
+
+                        is DeviceListSideEffect.OpenDeviceActions -> {
+                            viewModel.handleEvent(
+                                MainActivityEvent.ShowDeviceActions(effect.device)
+                            )
+                        }
+
+                        DeviceListSideEffect.ShowRefreshError -> {
+                            viewModel.handleEvent(
+                                MainActivityEvent.ShowMessage(
+                                    getString(R.string.failed_to_refresh_devices)
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                deviceActionsViewModel.sideEffect.collect { effect ->
+                    when (effect) {
+                        DeviceActionsSideEffect.NavigateBack -> {
+                            viewModel.handleEvent(MainActivityEvent.ShowDevices)
+                        }
+
+                        DeviceActionsSideEffect.ShowCommandSent -> {
+                            viewModel.handleEvent(
+                                MainActivityEvent.ShowMessage(getString(R.string.command_sent))
+                            )
+                        }
+
+                        DeviceActionsSideEffect.ShowCommandError -> {
+                            viewModel.handleEvent(
+                                MainActivityEvent.ShowMessage(
+                                    getString(R.string.failed_to_send_command)
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                settingsViewModel.sideEffect.collect { effect ->
+                    when (effect) {
+                        SettingsSideEffect.NavigateBack -> {
+                            viewModel.handleEvent(MainActivityEvent.ShowDevices)
+                        }
+
+                        SettingsSideEffect.OpenNotificationSettings -> {
+                            viewModel.handleEvent(MainActivityEvent.OpenNotificationSettings)
+                        }
+                    }
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                incomingRequestViewModel.sideEffect.collect { effect ->
+                    when (effect) {
+                        IncomingRequestSideEffect.NavigateBack -> {
+                            viewModel.handleEvent(MainActivityEvent.ShowDevices)
+                        }
+
+                        IncomingRequestSideEffect.ShowDecisionError -> {
+                            viewModel.handleEvent(
+                                MainActivityEvent.ShowMessage(
+                                    getString(R.string.failed_to_send_decision)
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
             PortalTheme {
                 WearApp(
                     state = state,
-                    onEvent = viewModel::handleEvent
+                    devices = devices,
+                    isPhoneConnected = isPhoneConnected,
+                    incomingRequest = incomingRequest,
+                    deviceListViewModel = deviceListViewModel,
+                    deviceActionsViewModel = deviceActionsViewModel,
+                    settingsViewModel = settingsViewModel,
+                    incomingRequestViewModel = incomingRequestViewModel,
+                    onMainEvent = viewModel::handleEvent
                 )
-            }
-
-            LaunchedEffect(state.message) {
-                state.message?.let {
-                    Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
-                    viewModel.handleEvent(MainScreenEvent.ClearMessage)
-                }
-            }
-        }
-
-        if (intent?.action == ACTION_OPEN_REQUEST) {
-            intent.getStringExtra(EXTRA_DECISION_ID)?.let {
-                viewModel.handleEvent(MainScreenEvent.OpenIncomingRequest(it))
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.handleEvent(MainScreenEvent.OnResume)
+        viewModel.handleEvent(MainActivityEvent.RefreshPermissions)
+        deviceListViewModel.handleEvent(DeviceListEvent.SilentRefreshDevices)
+    }
+
+    private fun openNotificationSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            startActivity(
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                }
+            )
+        }
     }
 
     companion object {
@@ -94,319 +205,42 @@ class MainActivity @Inject constructor(
     }
 }
 
-@Composable
+@androidx.compose.runtime.Composable
 private fun WearApp(
     state: MainScreenState,
-    onEvent: (MainScreenEvent) -> Unit
+    devices: List<Device>,
+    isPhoneConnected: Boolean?,
+    incomingRequest: IncomingUnlockRequest?,
+    deviceListViewModel: DeviceListViewModel,
+    deviceActionsViewModel: DeviceActionsViewModel,
+    settingsViewModel: SettingsViewModel,
+    incomingRequestViewModel: IncomingRequestViewModel,
+    onMainEvent: (MainActivityEvent) -> Unit
 ) {
     AppScaffold {
         when {
-            !state.permissions.hasAnyPermission -> PermissionGate(state, onEvent)
-            state.screen == WearScreen.Settings -> SettingsScreen(state, onEvent)
-            state.screen == WearScreen.IncomingRequest -> IncomingRequestScreen(state, onEvent)
-            state.selectedProfile != null -> ProfileActionsScreen(state.selectedProfile, onEvent)
-            else -> ProfilesScreen(state, onEvent)
-        }
-    }
-}
-
-@Composable
-private fun PermissionGate(
-    state: MainScreenState,
-    onEvent: (MainScreenEvent) -> Unit
-) {
-    val listState = rememberTransformingLazyColumnState()
-    ScreenScaffold(scrollState = listState) { contentPadding ->
-        TransformingLazyColumn(
-            state = listState,
-            contentPadding = contentPadding
-        ) {
-            item {
-                ListHeader { Text("Permissions") }
-            }
-            item {
-                Text(
-                    text = "Allow notifications or display over other apps to use Portal on the watch.",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            item {
-                Button(
-                    onClick = { onEvent(MainScreenEvent.OpenNotificationSettings) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Notifications")
-                }
-            }
-            item {
-                Button(
-                    onClick = { onEvent(MainScreenEvent.OpenOverlaySettings) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Overlay")
-                }
-            }
-            item {
-                Text(
-                    text = "Notifications: ${if (state.permissions.canPostNotifications) "on" else "off"}\nOverlay: ${if (state.permissions.canDrawOverlays) "on" else "off"}",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ProfilesScreen(
-    state: MainScreenState,
-    onEvent: (MainScreenEvent) -> Unit
-) {
-    val listState = rememberTransformingLazyColumnState()
-    ScreenScaffold(
-        scrollState = listState,
-        edgeButton = {
-            EdgeButton(onClick = { onEvent(MainScreenEvent.OpenSettings) }) {
-                Text("Settings")
-            }
-        }
-    ) { contentPadding ->
-        TransformingLazyColumn(
-            state = listState,
-            contentPadding = contentPadding
-        ) {
-            item {
-                ListHeader { Text("PCs") }
-            }
-            if (state.profiles.isEmpty()) {
-                item {
-                    Text(
-                        text = "No synced PCs",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            } else {
-                items(state.profiles) { profile ->
-                    Card(
-                        onClick = { onEvent(MainScreenEvent.SelectProfile(profile)) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(Modifier.padding(12.dp)) {
-                            Text(profile.name)
-                            Text(
-                                text = when (profile.transport) {
-                                    WearTransport.WIFI -> "Wi-Fi"
-                                    WearTransport.BLUETOOTH -> "Bluetooth"
-                                },
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ProfileActionsScreen(
-    profile: WearProfile,
-    onEvent: (MainScreenEvent) -> Unit
-) {
-    val listState = rememberTransformingLazyColumnState()
-    ScreenScaffold(
-        scrollState = listState,
-        edgeButton = {
-            EdgeButton(onClick = { onEvent(MainScreenEvent.BackToMain) }) {
-                Text("Back")
-            }
-        }
-    ) { contentPadding ->
-        TransformingLazyColumn(
-            state = listState,
-            contentPadding = contentPadding
-        ) {
-            item {
-                ListHeader { Text(profile.name) }
-            }
-            item {
-                Button(
-                    onClick = { onEvent(MainScreenEvent.Unlock(profile.clientId)) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Unlock")
-                }
-            }
-            if (profile.transport == WearTransport.WIFI && profile.isWakeOnLanAvailable) {
-                item {
-                    Button(
-                        onClick = { onEvent(MainScreenEvent.WakeOnLanUnlock(profile.clientId)) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Wake and unlock")
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SettingsScreen(
-    state: MainScreenState,
-    onEvent: (MainScreenEvent) -> Unit
-) {
-    val listState = rememberTransformingLazyColumnState()
-    ScreenScaffold(
-        scrollState = listState,
-        edgeButton = {
-            EdgeButton(onClick = { onEvent(MainScreenEvent.BackToMain) }) {
-                Text("Back")
-            }
-        }
-    ) { contentPadding ->
-        TransformingLazyColumn(
-            state = listState,
-            contentPadding = contentPadding
-        ) {
-            item { ListHeader { Text("Settings") } }
-            item {
-                SwitchButton(
-                    checked = state.showRequestsOnLockedScreen,
-                    onCheckedChange = {
-                        onEvent(MainScreenEvent.SetShowRequestsOnLockedScreen(it))
-                    },
-                    label = { Text("Show on locked screen") },
-                    secondaryLabel = {
-                        Text("For incoming PC requests")
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            item {
-                TextButton(
-                    onClick = { onEvent(MainScreenEvent.OpenNotificationSettings) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Notifications: ${if (state.permissions.canPostNotifications) "on" else "off"}")
-                }
-            }
-            item {
-                TextButton(
-                    onClick = { onEvent(MainScreenEvent.OpenOverlaySettings) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Overlay: ${if (state.permissions.canDrawOverlays) "on" else "off"}")
-                }
-            }
-            item {
-                Text(
-                    text = "Phone: ${if (state.profiles.isEmpty()) "no profiles" else "synced"}",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            item {
-                Text(
-                    text = "Version ${BuildConfig.VERSION_NAME}",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun IncomingRequestScreen(
-    state: MainScreenState,
-    onEvent: (MainScreenEvent) -> Unit
-) {
-    val request = state.incomingRequest
-    if (request == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Request finished", textAlign = TextAlign.Center)
-        }
-        return
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = if (request.isCompleted) "Request finished" else request.deviceName,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(18.dp))
-        if (!request.isCompleted) {
-            DecisionSlider(
-                onCancel = { onEvent(MainScreenEvent.CancelIncomingRequest) },
-                onUnlock = { onEvent(MainScreenEvent.AllowIncomingRequest) }
+            !state.permissions.canEnterApp -> PermissionGateScreen(state, onMainEvent)
+            state.screen == WearScreen.Settings -> SettingsScreen(
+                state = state,
+                isPhoneConnected = isPhoneConnected,
+                onEvent = settingsViewModel::handleEvent
             )
-        } else {
-            Button(onClick = { onEvent(MainScreenEvent.BackToMain) }) {
-                Text("Close")
-            }
-        }
-    }
-}
 
-@Composable
-private fun DecisionSlider(
-    onCancel: () -> Unit,
-    onUnlock: () -> Unit
-) {
-    var dragOffset by remember { mutableFloatStateOf(0f) }
-    val threshold = with(LocalDensity.current) { 52.dp.toPx() }
+            state.screen == WearScreen.IncomingRequest -> IncomingRequestScreen(
+                request = incomingRequest,
+                onEvent = incomingRequestViewModel::handleEvent
+            )
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        when {
-                            dragOffset > threshold -> onUnlock()
-                            dragOffset < -threshold -> onCancel()
-                        }
-                        dragOffset = 0f
-                    }
-                ) { _, dragAmount ->
-                    dragOffset += dragAmount
-                }
-            },
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text("X", color = MaterialTheme.colorScheme.error)
-        Box(
-            modifier = Modifier
-                .size(56.dp)
-                .clip(CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = when {
-                    dragOffset > 0 -> ">"
-                    dragOffset < 0 -> "<"
-                    else -> "Slide"
-                },
-                textAlign = TextAlign.Center
+            state.screen == WearScreen.DeviceActions && state.selectedDevice != null ->
+                DeviceActionsScreen(
+                    device = state.selectedDevice,
+                    onEvent = deviceActionsViewModel::handleEvent
+                )
+
+            else -> DeviceListScreen(
+                devices = devices,
+                onEvent = deviceListViewModel::handleEvent
             )
         }
-        Text("OK", color = MaterialTheme.colorScheme.primary)
     }
-
-    Text(
-        text = if (abs(dragOffset) < 1f) "Slide to decide" else "",
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
 }

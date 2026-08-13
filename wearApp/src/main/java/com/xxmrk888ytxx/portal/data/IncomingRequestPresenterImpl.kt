@@ -1,6 +1,5 @@
 package com.xxmrk888ytxx.portal.data
 
-import android.app.KeyguardManager
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -9,11 +8,9 @@ import android.os.Build
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.getSystemService
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.IncomingRequestPresenter
 import com.xxmrk888ytxx.portal.domain.WearPermissionChecker
-import com.xxmrk888ytxx.portal.domain.WearSettingsRepository
 import com.xxmrk888ytxx.portal.domain.model.IncomingUnlockRequest
 import com.xxmrk888ytxx.portal.presentation.mainActivity.MainActivity
 import javax.inject.Inject
@@ -21,29 +18,35 @@ import kotlin.math.abs
 
 class IncomingRequestPresenterImpl @Inject constructor(
     private val context: Context,
-    private val permissionChecker: WearPermissionChecker,
-    private val settingsRepository: WearSettingsRepository
+    private val permissionChecker: WearPermissionChecker
 ) : IncomingRequestPresenter {
-
-    private val keyguardManager: KeyguardManager by lazy {
-        context.getSystemService<KeyguardManager>()!!
-    }
 
     private val notificationManager = NotificationManagerCompat.from(context)
 
     override fun present(request: IncomingUnlockRequest) {
         ensureNotificationChannel()
         val permissionState = permissionChecker.getState()
-        val isLocked = keyguardManager.isKeyguardLocked
-        val shouldTryOpenScreen = permissionState.canDrawOverlays &&
-                (!isLocked || settingsRepository.showRequestsOnLockedScreen.value)
-
-        if (shouldTryOpenScreen && tryOpenRequestScreen(request.decisionId)) {
+        if (!permissionState.canPostNotifications) {
             return
         }
 
-        if (permissionState.canPostNotifications) {
-            showNotification(request)
+        val requestPendingIntent = createRequestPendingIntent(request.decisionId)
+        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.unlock_request_title, request.deviceName))
+            .setContentText(context.getString(R.string.tap_to_open_request))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setAutoCancel(true)
+            .setContentIntent(requestPendingIntent)
+
+        try {
+            notificationManager.notify(
+                abs(request.decisionId.hashCode()),
+                notificationBuilder.build()
+            )
+        } catch (_: SecurityException) {
+            // Permission can be revoked between the explicit check and notify().
         }
     }
 
@@ -51,36 +54,16 @@ class IncomingRequestPresenterImpl @Inject constructor(
         notificationManager.cancel(abs(decisionId.hashCode()))
     }
 
-    private fun tryOpenRequestScreen(decisionId: String): Boolean = runCatching {
-        context.startActivity(createOpenRequestIntent(decisionId).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        })
-    }.isSuccess
-
-    private fun showNotification(request: IncomingUnlockRequest) {
-        val pendingIntent = PendingIntent.getActivity(
+    private fun createRequestPendingIntent(decisionId: String): PendingIntent {
+        return PendingIntent.getActivity(
             context,
-            abs(request.decisionId.hashCode()),
-            createOpenRequestIntent(request.decisionId),
+            abs(decisionId.hashCode()),
+            Intent(context, MainActivity::class.java).apply {
+                action = MainActivity.ACTION_OPEN_REQUEST
+                putExtra(MainActivity.EXTRA_DECISION_ID, decisionId)
+            },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(context.getString(R.string.unlock_request_title, request.deviceName))
-            .setContentText(context.getString(R.string.tap_to_open_request))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .build()
-        notificationManager.notify(abs(request.decisionId.hashCode()), notification)
-    }
-
-    private fun createOpenRequestIntent(decisionId: String): Intent {
-        return Intent(context, MainActivity::class.java).apply {
-            action = MainActivity.ACTION_OPEN_REQUEST
-            putExtra(MainActivity.EXTRA_DECISION_ID, decisionId)
-        }
     }
 
     private fun ensureNotificationChannel() {

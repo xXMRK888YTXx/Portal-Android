@@ -36,8 +36,8 @@ import com.xxmrk888ytxx.portal.data.WatchDogManagerImpl
 import com.xxmrk888ytxx.portal.data.WifiDeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.WifiPortalApiImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
+import com.xxmrk888ytxx.portal.data.wear.WearDeviceSyncManagerImpl
 import com.xxmrk888ytxx.portal.data.wear.WearPhoneGatewayImpl
-import com.xxmrk888ytxx.portal.data.wear.WearProfileSyncManagerImpl
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
@@ -69,8 +69,8 @@ import com.xxmrk888ytxx.portal.domain.WOLManager
 import com.xxmrk888ytxx.portal.domain.WOLServiceManager
 import com.xxmrk888ytxx.portal.domain.WatchDogAlarmController
 import com.xxmrk888ytxx.portal.domain.WatchDogManager
+import com.xxmrk888ytxx.portal.domain.WearDeviceSyncManager
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
-import com.xxmrk888ytxx.portal.domain.WearProfileSyncManager
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SettingsProviderImpl
@@ -260,9 +260,9 @@ interface DomainModule {
 
     @Binds
     @AppScope
-    fun bindsWearProfileSyncManager(
-        wearProfileSyncManagerImpl: WearProfileSyncManagerImpl
-    ): WearProfileSyncManager
+    fun bindsWearDeviceSyncManager(
+        wearDeviceSyncManagerImpl: WearDeviceSyncManagerImpl
+    ): WearDeviceSyncManager
 
     @Binds
     @AppScope

@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.portal.domain
 
-interface WearProfileSyncManager {
+interface WearDeviceSyncManager {
     fun startObserve()
+    suspend fun syncNow()
 }

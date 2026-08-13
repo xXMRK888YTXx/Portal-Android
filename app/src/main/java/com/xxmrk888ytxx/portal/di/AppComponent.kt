@@ -23,7 +23,7 @@ import com.xxmrk888ytxx.portal.di.module.SettingsScreenModule
 import com.xxmrk888ytxx.portal.di.module.UnlockServiceModule
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.WatchDogManager
-import com.xxmrk888ytxx.portal.domain.WearProfileSyncManager
+import com.xxmrk888ytxx.portal.domain.WearDeviceSyncManager
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Provider
@@ -55,7 +55,7 @@ interface AppComponent {
     val awaitUnlockRequestManager: AwaitUnlockRequestManager
     val unsafeUnlockTypesStateObserver: UnsafeUnlockTypesStateObserver
     val watchDogManager: WatchDogManager
-    val wearProfileSyncManager: WearProfileSyncManager
+    val wearDeviceSyncManager: WearDeviceSyncManager
 
     @Component.Factory
     interface Factory {

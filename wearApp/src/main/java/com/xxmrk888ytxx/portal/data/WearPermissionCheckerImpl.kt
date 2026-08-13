@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.xxmrk888ytxx.portal.domain.WearPermissionChecker
 import com.xxmrk888ytxx.portal.domain.WearPermissionState
@@ -21,8 +20,7 @@ class WearPermissionCheckerImpl @Inject constructor(
                 ) == PackageManager.PERMISSION_GRANTED
 
         return WearPermissionState(
-            canPostNotifications = canPostNotifications,
-            canDrawOverlays = Settings.canDrawOverlays(context)
+            canPostNotifications = canPostNotifications
         )
     }
 }

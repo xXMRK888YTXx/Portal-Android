@@ -11,23 +11,25 @@ object WearDataLayerProtocol {
     const val INCOMING_REQUEST_PATH = "/portal/request/incoming"
     const val DECISION_PATH = "/portal/request/decision"
     const val FINAL_STATUS_PATH = "/portal/request/final"
+    const val SYNC_DEVICES_REQUEST_PATH = "/portal/devices/sync_request"
 }
 
 @Serializable
-data class WearProfilesPayload(
-    val profiles: List<WearProfilePayload>
+data class WearDevicesPayload(
+    val revision: Long = 0L,
+    val devices: List<WearDevicePayload>
 )
 
 @Serializable
-data class WearProfilePayload(
+data class WearDevicePayload(
     val clientId: String,
     val name: String,
-    val transport: WearTransportPayload,
+    val transport: WearDeviceTransportPayload,
     val isWakeOnLanAvailable: Boolean
 )
 
 @Serializable
-enum class WearTransportPayload {
+enum class WearDeviceTransportPayload {
     WIFI,
     BLUETOOTH
 }

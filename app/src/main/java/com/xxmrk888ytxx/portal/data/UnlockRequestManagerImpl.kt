@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
 
 class UnlockRequestManagerImpl @Inject constructor(
     private val context: Context,
@@ -178,7 +179,7 @@ class UnlockRequestManagerImpl @Inject constructor(
     }
 
     private suspend fun waitScreenUnlock(): Boolean {
-        return withTimeoutOrNull(AWAIT_SCREEN_UNLOCK_TIMEOUT) {
+        return withTimeoutOrNull(AWAIT_SCREEN_UNLOCK_TIMEOUT.milliseconds) {
             while (isActive) {
                 if (!keyguardManager.isKeyguardLocked) return@withTimeoutOrNull true
                 delay(1500)
@@ -194,6 +195,16 @@ class UnlockRequestManagerImpl @Inject constructor(
         ) {
             importance = IMPORTANCE_HIGH
         }
+
+        unlockScope.launch {
+            decisionCoordinator.finalStatus.collect { status ->
+                status.clientId?.let(::cancelNotification)
+            }
+        }
+    }
+
+    private fun cancelNotification(clientId: String) {
+        notificationManager.cancel(abs(clientId.hashCode()))
     }
 
     companion object {

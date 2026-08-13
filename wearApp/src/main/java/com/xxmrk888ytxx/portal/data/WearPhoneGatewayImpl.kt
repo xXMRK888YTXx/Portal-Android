@@ -38,6 +38,14 @@ class WearPhoneGatewayImpl @Inject constructor(
         )
     }
 
+    override suspend fun requestDeviceSync() {
+        send(WearDataLayerProtocol.SYNC_DEVICES_REQUEST_PATH, ByteArray(0))
+    }
+
+    override suspend fun isPhoneAvailable(): Boolean = withContext(Dispatchers.IO) {
+        Tasks.await(nodeClient.connectedNodes).isNotEmpty()
+    }
+
     private suspend fun send(path: String, data: ByteArray) = withContext(Dispatchers.IO) {
         val nodes = Tasks.await(nodeClient.connectedNodes)
         val phoneNode = nodes.firstOrNull() ?: error("Phone is unavailable")

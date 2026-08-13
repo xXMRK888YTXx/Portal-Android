@@ -6,4 +6,6 @@ interface WearPhoneGateway {
     suspend fun sendUnlockCommand(clientId: String)
     suspend fun sendWakeOnLanUnlockCommand(clientId: String)
     suspend fun sendDecision(decisionId: String, decision: WearDecisionPayloadValue)
+    suspend fun requestDeviceSync()
+    suspend fun isPhoneAvailable(): Boolean
 }
