@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.ApplicationExtension
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -14,7 +12,7 @@ val catalogMinSdk = libs.versions.min.sdk.get().toInt()
 val catalogTargetSdk = libs.versions.target.sdk.get().toInt()
 
 
-extensions.configure<ApplicationExtension> {
+android {
     namespace = "com.xxmrk888ytxx.portal"
     compileSdk {
         version = release(catalogCompileSdk)

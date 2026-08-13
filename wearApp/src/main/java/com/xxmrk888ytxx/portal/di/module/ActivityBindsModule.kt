@@ -1,0 +1,16 @@
+package com.xxmrk888ytxx.portal.di.module
+
+import android.app.Activity
+import com.xxmrk888ytxx.portal.di.key.ActivityKey
+import com.xxmrk888ytxx.portal.presentation.mainActivity.MainActivity
+import dagger.Binds
+import dagger.Module
+import dagger.multibindings.IntoMap
+
+@Module
+interface ActivityBindsModule {
+    @Binds
+    @IntoMap
+    @ActivityKey(MainActivity::class)
+    fun bindMainActivityToActivityForMultiBinding(activity: MainActivity): Activity
+}

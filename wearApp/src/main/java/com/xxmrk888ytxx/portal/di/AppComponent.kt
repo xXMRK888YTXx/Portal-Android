@@ -1,0 +1,27 @@
+package com.xxmrk888ytxx.portal.di
+
+import android.app.Activity
+import android.content.Context
+import com.xxmrk888ytxx.portal.di.module.ActivityBindsModule
+import com.xxmrk888ytxx.portal.di.scope.AppScope
+import dagger.BindsInstance
+import dagger.Component
+import javax.inject.Provider
+
+@Component(
+    modules = [
+        ActivityBindsModule::class
+    ]
+)
+@AppScope
+interface AppComponent {
+
+    val activityProviderMap: Map<Class<out Activity>, @JvmSuppressWildcards Provider<Activity>>
+//    val serviceProviderMap: Map<Class<out Service>, @JvmSuppressWildcards Provider<Service>>
+//    val broadcastReceiverProviderMap: Map<Class<out BroadcastReceiver>, @JvmSuppressWildcards Provider<BroadcastReceiver>>
+
+    @Component.Factory
+    interface Factory {
+        fun create(@BindsInstance context: Context): AppComponent
+    }
+}

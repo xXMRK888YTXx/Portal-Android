@@ -1,0 +1,65 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+}
+
+val catalogJavaVersion = libs.versions.jvm.target.get()
+val catalogCompileSdk = libs.versions.compile.sdk.get().toInt()
+val catalogMinSdk = libs.versions.min.sdk.get().toInt()
+val catalogTargetSdk = libs.versions.target.sdk.get().toInt()
+
+android {
+    namespace = "com.xxmrk888ytxx.portal"
+    compileSdk {
+        version = release(catalogCompileSdk)
+    }
+
+    defaultConfig {
+        applicationId = "com.xxmrk888ytxx.portal"
+        minSdk = catalogMinSdk
+        targetSdk = catalogTargetSdk
+        versionCode = 1
+        versionName = "1.0"
+
+    }
+
+    buildTypes {
+        release {
+            optimization {
+                enable = false
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.valueOf("VERSION_$catalogJavaVersion")
+        targetCompatibility = JavaVersion.valueOf("VERSION_$catalogJavaVersion")
+    }
+    useLibrary("wear-sdk")
+    buildFeatures {
+        compose = true
+    }
+}
+
+dependencies {
+    implementation(projects.coreCompose)
+
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.splashScreen)
+    implementation(libs.androidx.wear.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.play.services.wearable)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
+    //Dagger
+    ksp(libs.dagger.compiler)
+}

@@ -43,6 +43,11 @@ splashscreen = "1.2.0"
 bouncycastle = "1.85"
 room = "3.0.1"
 ui = "1.11.4"
+playServicesWearable = "20.0.1"
+composeMaterial3 = "1.6.2"
+composeFoundation = "1.6.2"
+composeUiTooling = "1.6.2"
+wearToolingPreview = "1.0.0"
 
 
 
@@ -107,6 +112,11 @@ room-runtime = { module = "androidx.room3:room3-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room3:room3-compiler", version.ref = "room" }
 slf4j-android = { module = "org.slf4j:slf4j-android", version.ref = "slf4jAndroid" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "composeMaterial3" }
+androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
+compose-ui-tooling = { group = "androidx.wear.compose", name = "compose-ui-tooling", version.ref = "composeUiTooling" }
+androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
 
 
 
