@@ -8,12 +8,10 @@ plugins {
 extensions.configure<LibraryExtension>  {
     namespace = "com.xxmrk888ytxx.database"
 }
-room { schemaDirectory("$projectDir/schemas") }
+room3 { schemaDirectory("$projectDir/schemas") }
 
 
 dependencies {
-    api(libs.room.ktx)
     api(libs.room.runtime)
-
     ksp(libs.room.compiler)
 }

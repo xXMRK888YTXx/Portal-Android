@@ -1,7 +1,7 @@
 package com.xxmrk888ytxx.database.dao
 
-import androidx.room.Dao
-import androidx.room.Query
+import androidx.room3.Dao
+import androidx.room3.Query
 import com.xxmrk888ytxx.database.entry.BluetoothDeviceEntry
 import kotlinx.coroutines.flow.Flow
 

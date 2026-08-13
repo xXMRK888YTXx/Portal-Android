@@ -1,17 +1,17 @@
 package com.xxmrk888ytxx.database.typeConverter
 
-import androidx.room.TypeConverter
+import androidx.room3.ColumnTypeConverter
 import com.xxmrk888ytxx.database.model.UnlockMethod
 
 
 class UnlockMethodConverter {
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun fromUnlockMethod(value: UnlockMethod): Int {
         return value.id
     }
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun toUnlockMethod(value: Int): UnlockMethod =
         UnlockMethod.entries.firstOrNull { it.id == value } ?: UnlockMethod.NOTIFICATION
 }

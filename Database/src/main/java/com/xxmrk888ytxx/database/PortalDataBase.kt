@@ -1,10 +1,10 @@
 package com.xxmrk888ytxx.database
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room3.ColumnTypeConverters
+import androidx.room3.Database
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
 import com.xxmrk888ytxx.database.dao.BluetoothDeviceDao
 import com.xxmrk888ytxx.database.dao.DeviceDao
 import com.xxmrk888ytxx.database.dao.DeviceSettingsDao
@@ -21,7 +21,7 @@ import com.xxmrk888ytxx.database.typeConverter.UnlockMethodConverter
     version = 1,
     entities = [DeviceEntry::class, WifiDeviceEntry::class, BluetoothDeviceEntry::class, DeviceSettingsEntry::class, ShortcutEntry::class]
 )
-@TypeConverters(UnlockMethodConverter::class)
+@ColumnTypeConverters(UnlockMethodConverter::class)
 abstract class PortalDataBase : RoomDatabase() {
     abstract val deviceDao: DeviceDao
     abstract val deviceSettingsDao: DeviceSettingsDao
