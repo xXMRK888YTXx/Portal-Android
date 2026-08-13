@@ -27,7 +27,8 @@ data class DeviceSettingsEntry(
     @ColumnInfo("awaitUnlockRequests") val awaitUnlockRequests: Boolean = true,
     @ColumnInfo("searchIpDynamically") val searchIpDynamically: Boolean = false,
     @ColumnInfo("unlockMethod") val unlockMethod: UnlockMethod = UnlockMethod.NOTIFICATION,
-    @ColumnInfo("unlockOnlyWhenScreenUnlocked") val unlockOnlyWhenScreenUnlocked: Boolean = false
+    @ColumnInfo("unlockOnlyWhenScreenUnlocked") val unlockOnlyWhenScreenUnlocked: Boolean = false,
+    @ColumnInfo("forwardUnlockRequestsToWear") val forwardUnlockRequestsToWear: Boolean = false
 ) {
     internal companion object {
         const val TABLE_NAME = "DeviceSettingsTable"

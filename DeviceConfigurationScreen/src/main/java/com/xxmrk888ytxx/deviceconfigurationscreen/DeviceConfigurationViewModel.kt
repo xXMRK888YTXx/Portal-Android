@@ -96,6 +96,10 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
                 event.newValue
             )
 
+            is DeviceConfigurationUiEvent.OnForwardUnlockRequestsToWearChanged -> changeForwardUnlockRequestsToWearState(
+                event.newValue
+            )
+
             is DeviceConfigurationUiEvent.OnDeviceNameChanged -> changeDeviceName(event.newName)
             is DeviceConfigurationUiEvent.HideRemoveDialog -> hideDeletionDialog()
             is DeviceConfigurationUiEvent.ShowRemoveDialog -> showDeletionDialog()
@@ -118,6 +122,10 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
 
     private fun changeUnlockOnlyWhenScreenUnlockedState(newValue: Boolean) = viewModelScope.launch {
         changeDeviceSettingsContract.updateUnlockOnlyWhenScreenUnlockedState(clientId, newValue)
+    }
+
+    private fun changeForwardUnlockRequestsToWearState(newValue: Boolean) = viewModelScope.launch {
+        changeDeviceSettingsContract.updateForwardUnlockRequestsToWearState(clientId, newValue)
     }
 
     private fun changeUnlockMethodState(newMethod: UnlockMethod) = viewModelScope.launch {

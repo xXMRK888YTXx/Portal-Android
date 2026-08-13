@@ -395,6 +395,15 @@ fun DeviceInfoState(
             }
         )
 
+        SwitchSettingCard(
+            title = stringResource(R.string.forward_unlock_requests_to_wear),
+            description = stringResource(R.string.forward_unlock_requests_to_wear_description),
+            isChecked = screenState.device.forwardUnlockRequestsToWear,
+            onCheckedChange = {
+                onEvent(DeviceConfigurationUiEvent.OnForwardUnlockRequestsToWearChanged(it))
+            }
+        )
+
         if (screenState.device is Device.WifiDevice) {
             SwitchSettingCard(
                 title = stringResource(R.string.search_ip_dynamically),

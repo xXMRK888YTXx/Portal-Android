@@ -27,6 +27,9 @@ interface DeviceSettingsDao {
     @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET unlockOnlyWhenScreenUnlocked = :newValue WHERE clientId = :deviceId")
     suspend fun updateUnlockOnlyWhenScreenUnlockedState(deviceId: String, newValue: Boolean)
 
+    @Query("UPDATE ${DeviceSettingsEntry.TABLE_NAME} SET forwardUnlockRequestsToWear = :newValue WHERE clientId = :deviceId")
+    suspend fun updateForwardUnlockRequestsToWearState(deviceId: String, newValue: Boolean)
+
     @Query("SELECT * FROM ${DeviceSettingsEntry.TABLE_NAME} WHERE unlockMethod == $AUTOMATIC_METHOD_ID")
     suspend fun getAllDevicesWithNotSecureUnlockMethod(): List<DeviceSettingsEntry>
 }

@@ -89,6 +89,8 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.play.services.code.scanner)
+    implementation(libs.play.services.wearable)
+    implementation(libs.kotlin.serialization.json)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

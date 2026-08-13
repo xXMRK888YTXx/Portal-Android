@@ -11,5 +11,6 @@ interface DeviceSettingsRepository {
     suspend fun updateSearchIpDynamically(deviceId: String,newValue: Boolean)
     suspend fun updateUnlockMethod(deviceId: String, newMethod: UnlockMethod)
     suspend fun updateUnlockOnlyWhenScreenUnlockedState(deviceId: String, newValue: Boolean)
+    suspend fun updateForwardUnlockRequestsToWearState(deviceId: String, newValue: Boolean)
     suspend fun getAllDevicesWithNotSecureUnlockMethod(): List<DeviceSettings>
 }

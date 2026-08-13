@@ -6,20 +6,23 @@ interface UnlockRequestManager {
     fun automaticUnlock(
         clientId: String,
         showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
-        request: UnlockServiceRequest
+        request: UnlockServiceRequest,
+        decisionId: String? = null
     )
 
     fun showUnlockScreen(
         clientId: String,
         deviceName: String,
         showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
-        request: UnlockServiceRequest
+        request: UnlockServiceRequest,
+        decisionId: String? = null
     )
 
     fun sendNotification(
         clientId: String,
         deviceName: String,
         request: UnlockServiceRequest,
-        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
+        decisionId: String? = null
     )
 }

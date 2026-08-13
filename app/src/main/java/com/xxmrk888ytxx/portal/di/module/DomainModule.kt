@@ -16,6 +16,7 @@ import com.xxmrk888ytxx.portal.data.CertificateManagerImpl
 import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceSettingsRepositoryImpl
 import com.xxmrk888ytxx.portal.data.DeviceUnlockManagerImpl
+import com.xxmrk888ytxx.portal.data.IncomingUnlockDecisionCoordinatorImpl
 import com.xxmrk888ytxx.portal.data.LinkManagerImpl
 import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
 import com.xxmrk888ytxx.portal.data.PermissionManagerImpl
@@ -35,6 +36,8 @@ import com.xxmrk888ytxx.portal.data.WatchDogManagerImpl
 import com.xxmrk888ytxx.portal.data.WifiDeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.WifiPortalApiImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
+import com.xxmrk888ytxx.portal.data.wear.WearPhoneGatewayImpl
+import com.xxmrk888ytxx.portal.data.wear.WearProfileSyncManagerImpl
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
@@ -48,6 +51,7 @@ import com.xxmrk888ytxx.portal.domain.CertificateManager
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.DeviceUnlockManager
+import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
 import com.xxmrk888ytxx.portal.domain.LinkManager
 import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
@@ -65,6 +69,8 @@ import com.xxmrk888ytxx.portal.domain.WOLManager
 import com.xxmrk888ytxx.portal.domain.WOLServiceManager
 import com.xxmrk888ytxx.portal.domain.WatchDogAlarmController
 import com.xxmrk888ytxx.portal.domain.WatchDogManager
+import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
+import com.xxmrk888ytxx.portal.domain.WearProfileSyncManager
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
 import com.xxmrk888ytxx.portal.providedContract.mainScreen.SettingsProviderImpl
@@ -245,6 +251,24 @@ interface DomainModule {
     fun bindsWatchDogManager(
         watchDogManagerImpl: WatchDogManagerImpl
     ) : WatchDogManager
+
+    @Binds
+    @AppScope
+    fun bindsWearPhoneGateway(
+        wearPhoneGatewayImpl: WearPhoneGatewayImpl
+    ): WearPhoneGateway
+
+    @Binds
+    @AppScope
+    fun bindsWearProfileSyncManager(
+        wearProfileSyncManagerImpl: WearProfileSyncManagerImpl
+    ): WearProfileSyncManager
+
+    @Binds
+    @AppScope
+    fun bindsIncomingUnlockDecisionCoordinator(
+        incomingUnlockDecisionCoordinatorImpl: IncomingUnlockDecisionCoordinatorImpl
+    ): IncomingUnlockDecisionCoordinator
 
     companion object {
 

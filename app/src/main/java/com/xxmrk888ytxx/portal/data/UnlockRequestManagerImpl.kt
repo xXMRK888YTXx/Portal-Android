@@ -11,6 +11,8 @@ import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.data.wear.WearDecisionPayloadValue
+import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
 import com.xxmrk888ytxx.portal.domain.PermissionManager
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
@@ -33,6 +35,7 @@ class UnlockRequestManagerImpl @Inject constructor(
     private val context: Context,
     private val permissionManager: PermissionManager,
     private val unlockMessageSender: UnlockMessageSender,
+    private val decisionCoordinator: IncomingUnlockDecisionCoordinator,
 ) : UnlockRequestManager {
 
     private val unlockScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -48,7 +51,8 @@ class UnlockRequestManagerImpl @Inject constructor(
     override fun automaticUnlock(
         clientId: String,
         showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
-        request: UnlockServiceRequest
+        request: UnlockServiceRequest,
+        decisionId: String?
     ) {
         unlockScope.launch {
 
@@ -56,10 +60,14 @@ class UnlockRequestManagerImpl @Inject constructor(
                 return@launch
             }
 
-            unlockMessageSender.sendMessage(
-                clientId = clientId,
-                message = UnlockServiceMessage.Unlock(request.requestId)
-            )
+            if (decisionId != null) {
+                decisionCoordinator.resolve(decisionId, WearDecisionPayloadValue.UNLOCK)
+            } else {
+                unlockMessageSender.sendMessage(
+                    clientId = clientId,
+                    message = UnlockServiceMessage.Unlock(request.requestId)
+                )
+            }
         }
     }
 
@@ -67,21 +75,24 @@ class UnlockRequestManagerImpl @Inject constructor(
         clientId: String,
         deviceName: String,
         showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
-        request: UnlockServiceRequest
+        request: UnlockServiceRequest,
+        decisionId: String?
     ) {
         fastDebugLog("showScreenImpl")
         when {
             permissionManager.isShowSystemAlertPermissionGranted -> showActivity(
                 clientId,
                 request,
-                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
+                decisionId
             ).also { fastDebugLog("showActivity") }
 
             permissionManager.isNotificationPermissionGranted -> sendNotification(
                 clientId,
                 deviceName,
                 request,
-                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
+                decisionId
             ).also { fastDebugLog("sendNotification") }
 
             else -> fastDebugLog("showUnlockScreen canceled because isShowSystemAlertPermissionGranted and isNotificationPermissionGranted permission is not granted")
@@ -91,14 +102,16 @@ class UnlockRequestManagerImpl @Inject constructor(
     private fun showActivity(
         deviceId: String,
         request: UnlockServiceRequest,
-        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
+        decisionId: String?
     ) {
         unlockScope.launch {
             if (showUnlockScreenOrUnlockOnlyWhenScreenUnlocked && !waitScreenUnlock()) {
                 return@launch
             }
 
-            val intent = createIntentForStartUnlockScreen(deviceId, request.requestId).apply {
+            val intent =
+                createIntentForStartUnlockScreen(deviceId, request.requestId, decisionId).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
             context.startActivity(intent)
@@ -109,14 +122,16 @@ class UnlockRequestManagerImpl @Inject constructor(
         clientId: String,
         deviceName: String,
         request: UnlockServiceRequest,
-        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
+        decisionId: String?
     ) {
         unlockScope.launch {
             if (showUnlockScreenOrUnlockOnlyWhenScreenUnlocked && !waitScreenUnlock()) {
                 return@launch
             }
 
-            val intent = createIntentForStartUnlockScreen(clientId, request.requestId).apply {
+            val intent =
+                createIntentForStartUnlockScreen(clientId, request.requestId, decisionId).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
             val pendingIntent = PendingIntent.getActivity(
@@ -147,14 +162,16 @@ class UnlockRequestManagerImpl @Inject constructor(
 
     private fun createIntentForStartUnlockScreen(
         deviceId: String,
-        requestId: String?
+        requestId: String?,
+        decisionId: String?
     ): Intent {
         return Intent(context, UnlockScreenActivity::class.java).apply {
             action = UnlockScreenActivity.UNLOCK_REQUEST_FROM_PC_ACTION
             putExtra(
                 EXTRA_UNLOCK_SCREEN_DATA, UnlockScreenData(
                     clientId = deviceId,
-                    requestId = requestId
+                    requestId = requestId,
+                    decisionId = decisionId
                 )
             )
         }

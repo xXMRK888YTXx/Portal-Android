@@ -3,8 +3,10 @@ package com.xxmrk888ytxx.portal.data
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
+import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
 import com.xxmrk888ytxx.portal.domain.UnlockRequestHandler
 import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
+import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.model.UnlockMethod
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
@@ -17,7 +19,9 @@ class UnlockRequestHandlerImpl @Inject constructor(
     private val unlockRequestManager: UnlockRequestManager,
     private val wifiDeviceRepository: WifiDeviceRepository,
     private val bluetoothDeviceRepository: BluetoothDeviceRepository,
-    private val deviceSettingsRepository: DeviceSettingsRepository
+    private val deviceSettingsRepository: DeviceSettingsRepository,
+    private val decisionCoordinator: IncomingUnlockDecisionCoordinator,
+    private val wearPhoneGateway: WearPhoneGateway
 ) : UnlockRequestHandler {
 
     private val _handledRequestsId = MutableStateFlow(emptySet<String>())
@@ -39,24 +43,40 @@ class UnlockRequestHandlerImpl @Inject constructor(
         val bluetoothDevice = bluetoothDeviceRepository.getDeviceById(clientId).first()
         val deviceName = wifiDevice?.deviceName ?: bluetoothDevice?.name ?: return
         val settings = deviceSettingsRepository.getDeviceSettingsByDeviceId(clientId).first() ?: return
+        val decisionId = decisionCoordinator.register(clientId, request.requestId)
+
+        if (settings.forwardUnlockRequestsToWear) {
+            runCatching {
+                wearPhoneGateway.sendIncomingUnlockRequest(
+                    decisionId = decisionId,
+                    clientId = clientId,
+                    deviceName = deviceName
+                )
+            }.onFailure {
+                fastDebugLog("Failed to forward unlock request to Wear OS: ${it.message}")
+            }
+        }
 
         when(settings.unlockMethod) {
             UnlockMethod.Automatic -> unlockRequestManager.automaticUnlock(
                 clientId = clientId,
                 showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = settings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
-                request = request
+                request = request,
+                decisionId = decisionId
             )
             UnlockMethod.ConfirmationScreen -> unlockRequestManager.showUnlockScreen(
                 clientId = clientId,
                 deviceName = deviceName,
                 showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = settings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
-                request = request
+                request = request,
+                decisionId = decisionId
             )
             UnlockMethod.Notification -> unlockRequestManager.sendNotification(
                 clientId = clientId,
                 deviceName = deviceName,
                 showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = settings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
-                request = request
+                request = request,
+                decisionId = decisionId
             )
         }
     }

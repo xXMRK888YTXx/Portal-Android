@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.di.module
 import android.app.Service
 import com.xxmrk888ytxx.portal.data.service.UnlockFromShortcutService
 import com.xxmrk888ytxx.portal.data.service.WOLUnlockService
+import com.xxmrk888ytxx.portal.data.service.WearPhoneListenerService
 import com.xxmrk888ytxx.portal.di.key.ServiceKey
 import com.xxmrk888ytxx.unlockservice.bluetoothService.BluetoothUnlockService
 import com.xxmrk888ytxx.unlockservice.wifiService.WifiUnlockService
@@ -32,4 +33,11 @@ interface ServiceBindsModule {
     @IntoMap
     @ServiceKey(WOLUnlockService::class)
     fun bindsWOLUnlockServiceToServiceForMultiBinding(wolUnlockService: WOLUnlockService): Service
+
+    @Binds
+    @IntoMap
+    @ServiceKey(WearPhoneListenerService::class)
+    fun bindsWearPhoneListenerServiceToServiceForMultiBinding(
+        wearPhoneListenerService: WearPhoneListenerService
+    ): Service
 }

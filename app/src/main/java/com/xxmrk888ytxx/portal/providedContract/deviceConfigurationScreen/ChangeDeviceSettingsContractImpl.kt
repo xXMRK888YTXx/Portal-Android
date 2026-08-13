@@ -42,6 +42,13 @@ class ChangeDeviceSettingsContractImpl @Inject constructor(
         deviceSettingsRepository.updateUnlockOnlyWhenScreenUnlockedState(clientId, newValue)
     }
 
+    override suspend fun updateForwardUnlockRequestsToWearState(
+        clientId: String,
+        newValue: Boolean
+    ) {
+        deviceSettingsRepository.updateForwardUnlockRequestsToWearState(clientId, newValue)
+    }
+
     override suspend fun updateHost(newHost: String, clientId: String) = saveCall {
         //Only for wifi devices
         wifiDeviceRepository.updateHost(clientId, newHost)

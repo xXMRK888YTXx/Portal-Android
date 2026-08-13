@@ -45,7 +45,8 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     searchIpDynamically = deviceSettings.searchIpDynamically,
                     unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(),
                     wolMacAddress = wifiDevice.wolMacAddress?.filter { it != ':' },
-                    showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = deviceSettings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
+                    showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = deviceSettings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
+                    forwardUnlockRequestsToWear = deviceSettings.forwardUnlockRequestsToWear
                 )
 
                 bluetoothDevice != null -> Device.BluetoothDevice(
@@ -55,7 +56,8 @@ class ProvideDeviceInfoContractImpl @Inject constructor(
                     awaitUnlockRequests = deviceSettings.awaitUnlockRequests,
                     unlockMethod = deviceSettings.unlockMethod.toDeviceConfigurationUnlockMethod(),
                     isPaired = pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) ?: true, // If pairedDeviceMacAddresses?.contains(bluetoothDevice.macAddress) == null its mean permission not grated
-                    showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = deviceSettings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
+                    showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = deviceSettings.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
+                    forwardUnlockRequestsToWear = deviceSettings.forwardUnlockRequestsToWear
                 )
 
                 else -> throw DeviceNotFoundException(clientId)

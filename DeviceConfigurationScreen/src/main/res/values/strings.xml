@@ -35,4 +35,6 @@
     <string name="tap_to_unlock">Tap to unlock</string>
     <string name="wake_on_lan_mac_address">Wake on LAN Mac Address</string>
     <string name="not_specified">Not specified</string>
+    <string name="forward_unlock_requests_to_wear">Forward requests to Wear OS</string>
+    <string name="forward_unlock_requests_to_wear_description">When this PC asks for unlock confirmation, also show the request on your watch.</string>
 </resources>

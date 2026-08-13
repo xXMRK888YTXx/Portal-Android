@@ -7,6 +7,7 @@ sealed class Device(
     open val awaitUnlockRequests: Boolean,
     open val unlockMethod: UnlockMethod,
     open val showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
+    open val forwardUnlockRequestsToWear: Boolean,
 ) {
     data class WifiDevice(
         override val clientId: String,
@@ -18,13 +19,15 @@ sealed class Device(
         val searchIpDynamically: Boolean,
         override val unlockMethod: UnlockMethod,
         val wolMacAddress: String?,
-        override val showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean
+        override val showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
+        override val forwardUnlockRequestsToWear: Boolean
     ) : Device(
         clientId,
         deviceName,
         awaitUnlockRequests,
         unlockMethod,
-        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
+        forwardUnlockRequestsToWear
     )
 
     data class BluetoothDevice(
@@ -34,12 +37,14 @@ sealed class Device(
         override val awaitUnlockRequests: Boolean,
         override val unlockMethod: UnlockMethod,
         val isPaired: Boolean,
-        override val showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean
+        override val showUnlockScreenOrUnlockOnlyWhenScreenUnlocked: Boolean,
+        override val forwardUnlockRequestsToWear: Boolean
     ) : Device(
         clientId,
         deviceName,
         awaitUnlockRequests,
         unlockMethod,
-        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked
+        showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
+        forwardUnlockRequestsToWear
     )
 }

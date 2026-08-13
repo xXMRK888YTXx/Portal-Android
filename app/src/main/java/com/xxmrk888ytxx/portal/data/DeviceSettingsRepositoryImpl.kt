@@ -61,6 +61,13 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
         deviceSettingsDao.updateUnlockOnlyWhenScreenUnlockedState(deviceId, newValue)
     }
 
+    override suspend fun updateForwardUnlockRequestsToWearState(
+        deviceId: String,
+        newValue: Boolean
+    ) = withContext(Dispatchers.IO) {
+        deviceSettingsDao.updateForwardUnlockRequestsToWearState(deviceId, newValue)
+    }
+
     override suspend fun getAllDevicesWithNotSecureUnlockMethod(): List<DeviceSettings> = withContext(Dispatchers.IO) {
         deviceSettingsDao.getAllDevicesWithNotSecureUnlockMethod().map { it.toDomainModel() }.also {
             fastDebugLog("getAllDevicesWithNotSecureUnlockMethod $it")
@@ -73,7 +80,8 @@ class DeviceSettingsRepositoryImpl @Inject constructor(
             awaitUnlockRequests = awaitUnlockRequests,
             searchIpDynamically = searchIpDynamically,
             unlockMethod = unlockMethod.toDomainModel(),
-            showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = unlockOnlyWhenScreenUnlocked
+            showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = unlockOnlyWhenScreenUnlocked,
+            forwardUnlockRequestsToWear = forwardUnlockRequestsToWear
         )
     }
 

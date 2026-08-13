@@ -5,6 +5,9 @@ import androidx.room3.ColumnTypeConverters
 import androidx.room3.Database
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
+import androidx.room3.migration.Migration
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.xxmrk888ytxx.database.dao.BluetoothDeviceDao
 import com.xxmrk888ytxx.database.dao.DeviceDao
 import com.xxmrk888ytxx.database.dao.DeviceSettingsDao
@@ -18,7 +21,7 @@ import com.xxmrk888ytxx.database.entry.WifiDeviceEntry
 import com.xxmrk888ytxx.database.typeConverter.UnlockMethodConverter
 
 @Database(
-    version = 1,
+    version = 2,
     entities = [DeviceEntry::class, WifiDeviceEntry::class, BluetoothDeviceEntry::class, DeviceSettingsEntry::class, ShortcutEntry::class]
 )
 @ColumnTypeConverters(UnlockMethodConverter::class)
@@ -32,7 +35,16 @@ abstract class PortalDataBase : RoomDatabase() {
     companion object {
         fun createDatabase(context: Context): PortalDataBase {
             return Room.databaseBuilder(context, PortalDataBase::class.java, "database.db")
+                .addMigrations(MIGRATION_1_2)
                 .build()
+        }
+
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override suspend fun migrate(connection: SQLiteConnection) {
+                connection.execSQL(
+                    "ALTER TABLE ${DeviceSettingsEntry.TABLE_NAME} ADD COLUMN forwardUnlockRequestsToWear INTEGER NOT NULL DEFAULT 0"
+                )
+            }
         }
     }
 }

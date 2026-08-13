@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Portal</string>
     <string name="hello_world">Hello, %1$s!</string>
+    <string name="unlock_request_title">%1$s wants to unlock</string>
+    <string name="tap_to_open_request">Tap to open the request</string>
+    <string name="unlock_requests_channel">Unlock requests</string>
 </resources>
