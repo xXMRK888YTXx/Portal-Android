@@ -51,6 +51,12 @@ extensions.configure<ApplicationExtension> {
         sourceCompatibility = JavaVersion.valueOf("VERSION_$catalogJavaVersion")
         targetCompatibility = JavaVersion.valueOf("VERSION_$catalogJavaVersion")
     }
+    packaging {
+        resources {
+            merges += "/META-INF/LICENSE.md"
+            merges += "/META-INF/NOTICE.md"
+        }
+    }
     buildFeatures {
         compose = true
         buildConfig = true
