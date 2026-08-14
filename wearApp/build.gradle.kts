@@ -22,7 +22,7 @@ android {
         applicationId = catalogApplicationId
         minSdk = catalogMinSdk
         targetSdk = catalogTargetSdk
-        versionCode = 1
+        versionCode = 47
         versionName = catalogVersionName
 
     }
