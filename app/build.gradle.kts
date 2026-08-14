@@ -10,20 +10,22 @@ val catalogJavaVersion = libs.versions.jvm.target.get()
 val catalogCompileSdk = libs.versions.compile.sdk.get().toInt()
 val catalogMinSdk = libs.versions.min.sdk.get().toInt()
 val catalogTargetSdk = libs.versions.target.sdk.get().toInt()
+val catalogVersionName = libs.versions.version.name.get()
+val catalogApplicationId = libs.versions.application.id.get()
 
 
 android {
-    namespace = "com.xxmrk888ytxx.portal"
+    namespace = catalogApplicationId
     compileSdk {
         version = release(catalogCompileSdk)
     }
 
     defaultConfig {
-        applicationId = "com.xxmrk888ytxx.portal"
+        applicationId = catalogApplicationId
         minSdk = catalogMinSdk
         targetSdk = catalogTargetSdk
         versionCode = 45
-        versionName = "Eve.8.1"
+        versionName = catalogVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

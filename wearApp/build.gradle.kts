@@ -9,24 +9,27 @@ val catalogJavaVersion = libs.versions.jvm.target.get()
 val catalogCompileSdk = libs.versions.compile.sdk.get().toInt()
 val catalogMinSdk = libs.versions.min.sdk.get().toInt()
 val catalogTargetSdk = libs.versions.target.sdk.get().toInt()
+val catalogVersionName = libs.versions.version.name.get()
+val catalogApplicationId = libs.versions.application.id.get()
 
 android {
-    namespace = "com.xxmrk888ytxx.portal"
+    namespace = catalogApplicationId
     compileSdk {
         version = release(catalogCompileSdk)
     }
 
     defaultConfig {
-        applicationId = "com.xxmrk888ytxx.portal"
+        applicationId = catalogApplicationId
         minSdk = catalogMinSdk
         targetSdk = catalogTargetSdk
         versionCode = 1
-        versionName = "1.0"
+        versionName = catalogVersionName
 
     }
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("debug")
             optimization {
                 enable = false
             }
@@ -60,6 +63,7 @@ dependencies {
     implementation(libs.kotlin.serialization.json)
     implementation(libs.androidx.wear.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.compose.ui.tooling)
     implementation(libs.play.services.wearable)
     androidTestImplementation(platform(libs.androidx.compose.bom))
