@@ -24,7 +24,7 @@ android {
         applicationId = catalogApplicationId
         minSdk = catalogMinSdk
         targetSdk = catalogTargetSdk
-        versionCode = 45
+        versionCode = 46
         versionName = catalogVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
