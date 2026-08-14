@@ -31,5 +31,7 @@
     <string name="phone_connection_status">Phone: %1$s</string>
     <string name="connected">connected</string>
     <string name="disconnected">disconnected</string>
+    <string name="phone_connection">Phone connection</string>
+    <string name="change">Change</string>
     <string name="checking">checking</string>
 </resources>
