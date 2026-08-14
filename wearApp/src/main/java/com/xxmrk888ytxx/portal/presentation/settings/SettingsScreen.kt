@@ -130,7 +130,7 @@ fun SettingsScreen(
                 Text(
                     text = stringResource(
                         R.string.version_name,
-                        BuildConfig.VERSION_NAME
+                        "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
                     ),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
