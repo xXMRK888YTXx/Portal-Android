@@ -7,6 +7,6 @@ private val handler by lazy {
     Handler(Looper.getMainLooper())
 }
 
-fun runOnUiThread(action:() -> Unit) : Unit {
+fun runOnUiThread(action:() -> Unit) {
     handler.post(action)
 }

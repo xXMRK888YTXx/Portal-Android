@@ -64,17 +64,17 @@ android {
 }
 
 dependencies {
-    implementation(projects.coreCompose)
-    implementation(projects.onboardingScreen)
-    implementation(projects.preferencesStorage)
-    implementation(projects.mainScreen)
-    implementation(projects.addNewDeviceScreen)
-    implementation(projects.database)
-    implementation(projects.deviceConfigurationScreen)
-    implementation(projects.unlockService)
-    implementation(projects.biometricAuthentication.compose)
-    implementation(projects.logsScreen)
-    implementation(projects.settingsScreen)
+    implementation(projects.core.compose)
+    implementation(projects.feature.onboarding)
+    implementation(projects.common.preferencesStorage)
+    implementation(projects.feature.main)
+    implementation(projects.feature.addDevice)
+    implementation(projects.core.database)
+    implementation(projects.feature.deviceConfiguration)
+    implementation(projects.core.unlockService)
+    implementation(projects.common.biometric.compose)
+    implementation(projects.feature.logs)
+    implementation(projects.feature.settings)
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)

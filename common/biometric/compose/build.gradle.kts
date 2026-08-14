@@ -7,5 +7,5 @@ android {
 }
 
 dependencies {
-    api(projects.biometricAuthentication)
+    api(projects.common.biometric)
 }

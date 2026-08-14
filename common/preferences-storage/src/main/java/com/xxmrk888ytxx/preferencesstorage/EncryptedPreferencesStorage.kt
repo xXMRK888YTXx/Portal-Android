@@ -3,7 +3,7 @@ package com.xxmrk888ytxx.preferencesstorage
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.flow.Flow
 
-abstract class EncryptedPreferencesStorage() {
+abstract class EncryptedPreferencesStorage {
 
 
     /**

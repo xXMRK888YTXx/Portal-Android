@@ -47,8 +47,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.coreCompose)
-    implementation(projects.preferencesStorage)
+    implementation(projects.core.compose)
+    implementation(projects.common.preferencesStorage)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.core.ktx)

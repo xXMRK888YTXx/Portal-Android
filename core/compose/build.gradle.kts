@@ -14,7 +14,7 @@ extensions.configure<LibraryExtension> {
 }
 
 dependencies {
-    api(project(":CoreAndroid"))
+    api(project(":core:android"))
     api(platform(libs.androidx.compose.bom))
     api(libs.androidx.compose.ui)
     api(libs.androidx.compose.graphics)
