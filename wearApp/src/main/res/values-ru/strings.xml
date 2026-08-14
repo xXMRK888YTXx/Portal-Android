@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Portal</string>
+    <string name="hello_world">Привет, %1$s!</string>
+    <string name="unlock_request_title">%1$s хочет разблокировать</string>
+    <string name="tap_to_open_request">Нажмите, чтобы открыть запрос</string>
+    <string name="unlock_requests_channel">Запросы на разблокировку</string>
+    <string name="permissions_title">Разрешения</string>
+    <string name="notification_permission_required">Разрешите уведомления, чтобы использовать Portal на часах.</string>
+    <string name="notifications">Уведомления</string>
+    <string name="enabled">включены</string>
+    <string name="disabled">отключены</string>
+    <string name="permission_status_notifications">Уведомления: %1$s</string>
+    <string name="settings">Настройки</string>
+    <string name="devices">Устройства</string>
+    <string name="refresh_devices">Обновить устройства</string>
+    <string name="failed_to_refresh_devices">Не удалось обновить устройства</string>
+    <string name="no_synced_devices">Нет синхронизированных устройств</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="back">Назад</string>
+    <string name="unlock">Разблокировать</string>
+    <string name="wake_and_unlock">Разбудить и разблокировать</string>
+    <string name="command_sent">Команда отправлена</string>
+    <string name="failed_to_send_command">Не удалось отправить команду</string>
+    <string name="failed_to_send_decision">Не удалось отправить решение</string>
+    <string name="version_name">Версия %1$s</string>
+    <string name="request_finished">Запрос завершён</string>
+    <string name="close">Закрыть</string>
+    <string name="cancel_icon">&#x2715;</string>
+    <string name="confirm_icon">&#x2713;</string>
+    <string name="phone_connection_status">Телефон: %1$s</string>
+    <string name="connected">подключён</string>
+    <string name="disconnected">отключён</string>
+    <string name="phone_connection">Подключение к телефону</string>
+    <string name="change">Изменить</string>
+    <string name="checking">проверка</string>
+</resources>

@@ -36,4 +36,6 @@
     <string name="tap_to_unlock">Нажмите для разблокировки</string>
     <string name="wake_on_lan_mac_address">MAC-адрес для Wake-on-LAN</string>
     <string name="not_specified">Не указан</string>
+    <string name="forward_unlock_requests_to_wear">Пересылать запросы на разблокировку в Wear OS</string>
+    <string name="forward_unlock_requests_to_wear_description">Когда этот ПК запрашивает подтверждение разблокировки, также показывать запрос на ваших часах.</string>
 </resources>

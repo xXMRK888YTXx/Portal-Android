@@ -48,5 +48,5 @@
     <string name="show_less">Показать меньше</string>
     <string name="show_more">Показать больше</string>
     <string name="all_devices_removed">Все устройства удалены</string>
-    <string name="biometric_authentication_failed_please_try_again">Biometric authentication failed. Please try again.</string>
+    <string name="biometric_authentication_failed_please_try_again">Не удалось пройти биометрическую аутентификацию. Попробуйте ещё раз.</string>
 </resources>
