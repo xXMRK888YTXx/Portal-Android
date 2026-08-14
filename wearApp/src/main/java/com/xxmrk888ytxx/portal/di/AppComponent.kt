@@ -11,6 +11,9 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Provider
 
+/**
+ * App-scoped Dagger graph for the Wear OS application.
+ */
 @Component(
     modules = [
         ActivityBindsModule::class,

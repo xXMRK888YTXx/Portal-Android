@@ -12,6 +12,12 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+/**
+ * DataStore-backed storage for the pending incoming unlock request.
+ *
+ * The request is persisted so a notification tap after process recreation can still open the same
+ * decision screen or show that the request was already completed.
+ */
 class IncomingRequestRepositoryImpl @Inject constructor(
     private val preferencesStorage: PreferencesStorage,
     private val json: Json,

@@ -29,6 +29,12 @@ import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.model.Device
 import com.xxmrk888ytxx.portal.domain.model.DeviceTransport
 
+/**
+ * Displays PC profiles synced from the phone.
+ *
+ * All user actions are emitted as [DeviceListEvent]; this Composable does not call ViewModel or
+ * navigation methods directly.
+ */
 @Composable
 fun DeviceListScreen(
     devices: List<Device>,

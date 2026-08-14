@@ -7,6 +7,12 @@ import android.content.Intent
 import androidx.core.app.AppComponentFactory
 import javax.inject.Provider
 
+/**
+ * Android component factory that lets Dagger create Wear OS activities and services.
+ *
+ * The manifest points to this factory so constructor-injected components can be resolved from
+ * [PortalApp.appComponent].
+ */
 class PortalComponentFactory : AppComponentFactory() {
 
     private lateinit var portalApplication: PortalApp

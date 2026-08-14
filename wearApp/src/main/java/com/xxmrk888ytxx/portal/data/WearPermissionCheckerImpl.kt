@@ -9,6 +9,12 @@ import com.xxmrk888ytxx.portal.domain.WearPermissionChecker
 import com.xxmrk888ytxx.portal.domain.WearPermissionState
 import javax.inject.Inject
 
+/**
+ * Android permission reader for Wear OS.
+ *
+ * Only notification permission is checked because incoming background requests are notification
+ * based. Overlay and full-screen intent permissions are deliberately excluded.
+ */
 class WearPermissionCheckerImpl @Inject constructor(
     private val context: Context
 ) : WearPermissionChecker {

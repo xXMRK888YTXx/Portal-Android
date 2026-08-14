@@ -19,6 +19,12 @@ import com.xxmrk888ytxx.portal.domain.model.IncomingUnlockRequest
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+/**
+ * Entry point for Data Layer events delivered to the watch.
+ *
+ * Handles device list sync, incoming unlock requests, and final request status. Business state is
+ * delegated to repositories so UI can observe it independently from service lifetime.
+ */
 class WearPortalListenerService @Inject constructor(
     private val json: Json,
     private val deviceRepository: DeviceRepository,
@@ -55,7 +61,7 @@ class WearPortalListenerService @Inject constructor(
     override fun onMessageReceived(messageEvent: MessageEvent) {
         val body = messageEvent.data.decodeToString()
         when (messageEvent.path) {
-            WearDataLayerProtocol.INCOMING_REQUEST_PATH -> {
+            WearDataLayerProtocol.INCOMING_UNLOCK_REQUEST_PATH -> {
                 val payload = json.decodeFromString<WearIncomingUnlockPayload>(body)
                 val request = IncomingUnlockRequest(
                     decisionId = payload.decisionId,

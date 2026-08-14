@@ -23,6 +23,12 @@ import androidx.wear.compose.material3.Text
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.model.IncomingUnlockRequest
 
+/**
+ * Incoming unlock request UI with explicit cancel and confirm buttons.
+ *
+ * This is opened from both normal app navigation and notification taps. User actions are emitted as
+ * [IncomingRequestEvent].
+ */
 @Composable
 fun IncomingRequestScreen(
     request: IncomingUnlockRequest?,

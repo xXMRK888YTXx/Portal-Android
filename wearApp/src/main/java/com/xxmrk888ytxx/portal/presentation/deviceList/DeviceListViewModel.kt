@@ -16,6 +16,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
+/**
+ * MVI ViewModel for the synced device list.
+ *
+ * It observes cached devices and sends a phone sync request when the user refreshes the list.
+ */
 class DeviceListViewModel @Inject constructor(
     deviceRepository: DeviceRepository,
     private val wearPhoneGateway: WearPhoneGateway

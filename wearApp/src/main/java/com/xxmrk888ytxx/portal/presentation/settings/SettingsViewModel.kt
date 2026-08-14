@@ -14,6 +14,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
+/**
+ * MVI ViewModel for Wear OS settings.
+ *
+ * Settings currently expose notification permission status, phone connection status, and app
+ * version. Permission UI is opened by the activity in response to side effects.
+ */
 class SettingsViewModel @Inject constructor(
     private val wearPhoneGateway: WearPhoneGateway
 ) : ViewModel() {

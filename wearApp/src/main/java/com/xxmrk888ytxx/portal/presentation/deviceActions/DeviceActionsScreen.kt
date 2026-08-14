@@ -16,6 +16,11 @@ import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.model.Device
 import com.xxmrk888ytxx.portal.domain.model.DeviceTransport
 
+/**
+ * Shows actions for a selected synced device.
+ *
+ * The screen only emits [DeviceActionsEvent]. The phone performs the actual unlock operation.
+ */
 @Composable
 fun DeviceActionsScreen(
     device: Device,

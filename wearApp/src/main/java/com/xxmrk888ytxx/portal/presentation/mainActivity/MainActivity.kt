@@ -34,6 +34,12 @@ import com.xxmrk888ytxx.portal.presentation.settings.SettingsViewModel
 import com.xxmrk888ytxx.portal.presentation.theme.PortalTheme
 import javax.inject.Inject
 
+/**
+ * Single Activity host for the Wear OS app.
+ *
+ * The activity wires ViewModel state and side effects to Composables. It intentionally keeps
+ * Android-only actions, such as launching notification permission UI, outside screen Composables.
+ */
 class MainActivity @Inject constructor(
     private val viewModelFactory: MainActivityViewModel.Factory,
     private val deviceListViewModelFactory: DeviceListViewModel.Factory,

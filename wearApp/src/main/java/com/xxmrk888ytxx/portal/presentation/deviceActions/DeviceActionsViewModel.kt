@@ -11,6 +11,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
+/**
+ * MVI ViewModel for commands available for a selected device.
+ *
+ * It delegates unlock and Wake-on-LAN unlock commands to the paired phone and reports the result as
+ * side effects for the activity host to display.
+ */
 class DeviceActionsViewModel @Inject constructor(
     private val wearPhoneGateway: WearPhoneGateway
 ) : ViewModel() {

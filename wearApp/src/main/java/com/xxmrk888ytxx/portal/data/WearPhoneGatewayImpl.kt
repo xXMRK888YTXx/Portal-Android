@@ -9,6 +9,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+/**
+ * Wearable MessageClient implementation of [WearPhoneGateway].
+ *
+ * Commands are sent to the first connected phone node. Commands are not queued: if the phone is not
+ * connected, the caller receives an error immediately.
+ */
 class WearPhoneGatewayImpl @Inject constructor(
     context: Context,
     private val json: Json
@@ -33,7 +39,7 @@ class WearPhoneGatewayImpl @Inject constructor(
 
     override suspend fun sendDecision(decisionId: String, decision: WearDecisionPayloadValue) {
         send(
-            WearDataLayerProtocol.DECISION_PATH,
+            WearDataLayerProtocol.UNLOCK_REQUEST_DECISION_PATH,
             json.encodeToString(WearDecisionPayload(decisionId, decision)).encodeToByteArray()
         )
     }

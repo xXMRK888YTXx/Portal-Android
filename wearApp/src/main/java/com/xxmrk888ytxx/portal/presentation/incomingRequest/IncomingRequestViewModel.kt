@@ -15,6 +15,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
+/**
+ * MVI ViewModel for incoming unlock requests shown on the watch.
+ *
+ * It observes the locally stored pending request and sends cancel/unlock decisions back to the
+ * phone. The phone decides whether this is the first accepted decision for the request.
+ */
 class IncomingRequestViewModel @Inject constructor(
     private val incomingRequestRepository: IncomingRequestRepository,
     private val wearPhoneGateway: WearPhoneGateway

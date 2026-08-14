@@ -17,6 +17,11 @@ import com.xxmrk888ytxx.portal.BuildConfig
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.presentation.mainActivity.MainScreenState
 
+/**
+ * Wear OS settings UI.
+ *
+ * It emits [SettingsEvent] for navigation, permission actions, and phone connection refresh.
+ */
 @Composable
 fun SettingsScreen(
     state: MainScreenState,

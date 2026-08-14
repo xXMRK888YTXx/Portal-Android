@@ -15,6 +15,12 @@ import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.presentation.mainActivity.MainActivityEvent
 import com.xxmrk888ytxx.portal.presentation.mainActivity.MainScreenState
 
+/**
+ * Blocks access to the main Wear OS UI until notification permission is granted.
+ *
+ * Notifications are required because incoming requests on inactive watches are delivered through
+ * notification-only UX.
+ */
 @Composable
 fun PermissionGateScreen(
     state: MainScreenState,

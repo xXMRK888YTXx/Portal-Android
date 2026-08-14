@@ -12,6 +12,12 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+/**
+ * DataStore-backed implementation of [DeviceRepository].
+ *
+ * It stores only the serialized metadata snapshot received from the phone. Updates are immediately
+ * reflected in memory and then persisted asynchronously.
+ */
 class DeviceRepositoryImpl @Inject constructor(
     private val preferencesStorage: PreferencesStorage,
     private val json: Json,

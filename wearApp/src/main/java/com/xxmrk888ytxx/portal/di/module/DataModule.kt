@@ -21,6 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 
+/**
+ * Dagger bindings and providers for Wear OS data/domain services.
+ */
 @Module
 interface DataModule {
 

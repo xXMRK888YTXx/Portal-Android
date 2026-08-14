@@ -14,6 +14,12 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import javax.inject.Provider
 
+/**
+ * MVI host ViewModel for the Wear OS activity.
+ *
+ * It owns top-level navigation state and app-level side effects. Feature screens communicate with
+ * it through events or their own side effects rather than calling navigation methods directly.
+ */
 class MainActivityViewModel @Inject constructor(
     private val permissionChecker: WearPermissionChecker
 ) : ViewModel() {

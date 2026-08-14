@@ -7,6 +7,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 
+/**
+ * Multibindings used by [com.xxmrk888ytxx.portal.PortalComponentFactory] to create services.
+ */
 @Module
 interface ServiceBindsModule {
     @Binds

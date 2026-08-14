@@ -16,6 +16,12 @@ import com.xxmrk888ytxx.portal.presentation.mainActivity.MainActivity
 import javax.inject.Inject
 import kotlin.math.abs
 
+/**
+ * Notification-only presenter for incoming unlock requests on Wear OS.
+ *
+ * Full-screen intents are intentionally not used. The notification opens [MainActivity] with the
+ * pending request id so the same Composable is used from foreground and notification flows.
+ */
 class IncomingRequestPresenterImpl @Inject constructor(
     private val context: Context,
     private val permissionChecker: WearPermissionChecker
