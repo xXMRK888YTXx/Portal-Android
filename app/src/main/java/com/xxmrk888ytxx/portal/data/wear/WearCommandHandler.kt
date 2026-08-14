@@ -44,12 +44,12 @@ class WearCommandHandler @Inject constructor(
     private suspend fun unlock(clientId: String) {
         val wifiDevice = wifiDeviceRepository.getDeviceById(clientId).first()
         if (wifiDevice != null) {
-            deviceUnlockManager.unlockWifiDevice(wifiDevice).getOrThrow()
+            deviceUnlockManager.unlockWifiDevice(wifiDevice)
             return
         }
 
         val bluetoothDevice = bluetoothDeviceRepository.getDeviceById(clientId).first()
             ?: error("Device with clientId = $clientId not found")
-        deviceUnlockManager.unlockBluetoothDevice(bluetoothDevice).getOrThrow()
+        deviceUnlockManager.unlockBluetoothDevice(bluetoothDevice)
     }
 }
