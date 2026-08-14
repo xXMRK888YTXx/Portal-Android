@@ -12,6 +12,7 @@ val catalogMinSdk = libs.versions.min.sdk.get().toInt()
 val catalogTargetSdk = libs.versions.target.sdk.get().toInt()
 val catalogVersionName = libs.versions.version.name.get()
 val catalogApplicationId = libs.versions.application.id.get()
+val catalogVersionCode = libs.versions.app.version.code.get().toInt()
 
 
 android {
@@ -24,7 +25,7 @@ android {
         applicationId = catalogApplicationId
         minSdk = catalogMinSdk
         targetSdk = catalogTargetSdk
-        versionCode = 46
+        versionCode = catalogVersionCode
         versionName = catalogVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

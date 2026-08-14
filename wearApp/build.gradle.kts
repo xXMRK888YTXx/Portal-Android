@@ -11,6 +11,7 @@ val catalogMinSdk = libs.versions.min.sdk.get().toInt()
 val catalogTargetSdk = libs.versions.target.sdk.get().toInt()
 val catalogVersionName = libs.versions.version.name.get()
 val catalogApplicationId = libs.versions.application.id.get()
+val catalogVersionCode = libs.versions.wearos.version.code.get().toInt()
 
 android {
     namespace = catalogApplicationId
@@ -22,7 +23,7 @@ android {
         applicationId = catalogApplicationId
         minSdk = catalogMinSdk
         targetSdk = catalogTargetSdk
-        versionCode = 47
+        versionCode = catalogVersionCode
         versionName = catalogVersionName
 
     }
