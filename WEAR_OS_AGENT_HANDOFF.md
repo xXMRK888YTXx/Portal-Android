@@ -1,125 +1,114 @@
 # Wear OS unlock feature handoff
 
-This repository currently contains an in-progress Wear OS companion app in `wearApp`.
-The user asked not to run compilation/tests unless explicitly requested.
+This repository contains the Wear OS companion app in `wearApp` and the phone-side backend in `app`
+and core modules.
+The user asked **not to run compilation/tests** (`./gradlew build`, etc.) unless explicitly
+requested.
 
-## Current user intent
+---
 
-The Wear OS app lets a user unlock a PC through the paired phone and receive incoming PC unlock
-requests on the watch.
+## Current Product & Architecture Decisions
 
-Important recent product decision:
+1. **Background Request Delivery on Wear OS**:
+    - `SYSTEM_ALERT_WINDOW` is not allowed on Wear OS.
+    - `USE_FULL_SCREEN_INTENT` is unreliable on inactive watches.
+    - Incoming requests are delivered via **high-priority notification**.
+    - Notifications contain quick-action buttons (**Allow** and **Deny**) to resolve requests
+      directly from the notification tray without opening the full screen.
+    - Tapping the notification body opens the dedicated `IncomingRequestActivity`.
 
-- `SYSTEM_ALERT_WINDOW` is not allowed for Wear OS.
-- `USE_FULL_SCREEN_INTENT` also did not work reliably for inactive watches.
-- Therefore incoming requests on inactive/background watches should be handled by a high-priority
-  notification only.
-- Tapping the notification opens the same incoming request screen.
-- The incoming request screen must use two buttons, not a slider:
-    - `✕` cancels.
-    - `✓` confirms unlock.
+2. **Decoupled Incoming Request Activity**:
+    - Incoming requests on Wear OS run in their own dedicated `IncomingRequestActivity` (
+      `noHistory="true"`, `excludeFromRecents="true"`, `showWhenLocked="true"`, isolated
+      `taskAffinity`).
+    - `MainActivity` is dedicated exclusively to app navigation (device list, device actions,
+      settings, permission gate).
 
-## Key behavior
+3. **First Decision Wins & Multi-node Sync**:
+    - Coordinated via `IncomingUnlockDecisionCoordinatorImpl` on the phone.
+    - Resolves the first decision (phone or watch), marks it complete, sends single unlock/cancel
+      command to PC, and broadcasts final status via Wear Data Layer.
+    - Cancels notifications and dismisses open screens across both devices simultaneously.
 
-### Phone request → watch
+4. **Security & Secrets Isolation**:
+    - Secrets, passwords, certificates, and IP/MAC addresses stay exclusively on the phone.
+    - The watch receives only metadata (`clientId`, `name`, `transport`, `isWakeOnLanAvailable`).
 
-When a PC sends an unlock request to the phone:
+---
 
-1. Phone registers/uses a `decisionId` via `IncomingUnlockDecisionCoordinator`.
-2. Phone shows its normal UI/notification.
-3. If profile setting allows forwarding to Wear, phone sends an incoming request message to the
-   watch.
-4. Watch stores the pending request and posts a notification.
-5. Notification opens `wearApp` incoming request screen.
+## Key Components & Architecture
 
-### First decision wins
+### Phone Side (`app/`, `core/`)
 
-`app/src/main/java/com/xxmrk888ytxx/portal/data/IncomingUnlockDecisionCoordinatorImpl.kt`
-centralizes decisions:
+- `app/.../data/UnlockRequestHandlerImpl.kt`: Creates `decisionId` and forwards unlock requests to
+  Wear OS.
+- `app/.../data/IncomingUnlockDecisionCoordinatorImpl.kt`:
+    - Central decision deduplication.
+    - Bounded LRU history (`MAX_COMPLETED_HISTORY = 100`) and 5-minute TTL expiration for pending
+      requests to prevent memory leaks.
+    - Exposes `finalStatus` as `SharedFlow(replay = 0, extraBufferCapacity = 64)` to prevent stale
+      replay to new subscribers.
+- `app/.../data/UnlockRequestManagerImpl.kt`: Manages phone notifications and cancels them on final
+  status.
+- `app/.../view/unlockScreenActivity/UnlockScreenActivity.kt` & `UnlockScreenViewModel.kt`:
+    - Dismisses phone unlock screen on incoming watch decision.
+    - Implements `onNewIntent` to handle subsequent requests safely, canceling previous status
+      observation jobs.
+- `app/.../data/wear/*`: Wear Data Layer protocol, sync manager, phone gateway, and node validation
+  using non-blocking `kotlinx.coroutines.tasks.await()`.
+- `core/database/PortalDataBase.kt`:
+    - Room database (version 3) with `MIGRATION_1_2` and `MIGRATION_2_3`.
+    - `ShortcutEntry` indexed on `clientId` foreign key to prevent SQLite full table scans.
+- `app/.../providedContract/settingsScreen/ProvideSettingsStateImpl.kt`: Exposes version as
+  `1.0.0-debug (1)` in debug and `1.0.0 (1)` in release.
 
-- first decision sends exactly one unlock/cancel message to the PC;
-- later decisions for the same `decisionId` are treated as already completed;
-- final status is sent to watches through Wear Data Layer;
-- phone-side `finalStatus` also carries `clientId` so local phone notifications can be canceled.
+### Watch Side (`wearApp/`)
 
-### Closing stale UI/notifications
+- `wearApp/.../presentation/incomingRequest/IncomingRequestActivity.kt`: Separate Activity for
+  incoming unlock requests with `AppScaffold(timeText = { TimeText() })`.
+- `wearApp/.../presentation/incomingRequest/IncomingRequestScreen.kt`: Cancel/Unlock UI with
+  localized `contentDescription`s (`allow`, `deny`) and `TextOverflow.Ellipsis`.
+- `wearApp/.../data/broadcastReceiver/WearNotificationActionReceiver.kt`: Handles background
+  Allow/Deny notification actions and dispatches decisions to phone.
+- `wearApp/.../data/IncomingRequestPresenterImpl.kt`: Builds high-priority notifications with
+  Allow/Deny action buttons and content intent pointing to `IncomingRequestActivity`.
+- `wearApp/.../data/service/WearPortalListenerService.kt`: Receives profile sync, incoming unlock
+  requests, and final statuses.
+- `wearApp/.../presentation/mainActivity/MainActivity.kt`: Hosts app navigation via
+  `SwipeDismissableNavHost` and `rememberSwipeDismissableNavController()`.
+- `wearApp/.../presentation/deviceList/DeviceListScreen.kt`: Device list with
+  `TransformingLazyColumn`, `SurfaceTransformation`, transport icons (`ic_wifi`, `ic_bluetooth`),
+  and `TextOverflow.Ellipsis`.
+- `wearApp/.../presentation/deviceActions/DeviceActionsScreen.kt`: Uses `ListHeader` (preventing
+  button overlap), transport info in `secondaryLabel`, and a dimmed `CircularProgressIndicator`
+  overlay during command execution.
+- `wearApp/.../presentation/permissionGate/PermissionGateScreen.kt`: Redesigned permission screen
+  with hero notification icon, clear title/description, and direct CTA button.
+- `wearApp/.../presentation/settings/SettingsScreen.kt`: Settings screen with action icons (
+  `ic_notifications`, `ic_phone`), high-contrast status colors (`StatusConnectedColor`,
+  `StatusDisconnectedColor`, `StatusCheckingColor`), and version footer.
+- `wearApp/.../presentation/theme/Color.kt`: High-contrast status colors for dark Wear OS surfaces.
 
-Expected behavior after the latest fix:
+---
 
-- If phone confirms/cancels first:
-    - watch receives `FINAL_STATUS_PATH`;
-    - watch cancels its notification in `IncomingRequestPresenter.cancel(decisionId)`;
-    - watch screen marks the request completed.
-- If watch confirms/cancels first:
-    - phone coordinator resolves the request;
-    - phone unlock screen dismisses via `decisionCoordinator.finalStatus`;
-    - phone unlock notification is canceled by `UnlockRequestManagerImpl`.
+## Wear OS Quality & UI Guidelines Implemented
 
-## Important files
+- **Time Display**: `timeText = { TimeText() }` in `AppScaffold` across all activities.
+- **Swipe Dismiss Navigation**: `SwipeDismissableNavHost` used for edge swipe-to-back gestures and
+  smooth transitions.
+- **Round Display Scaling**: `SurfaceTransformation(transformationSpec)` and
+  `.transformedHeight(this, transformationSpec)` applied to cards, buttons, and headers in
+  `TransformingLazyColumn`.
+- **Rotary Input**: Linked automatically via `ScreenScaffold(scrollState = listState)`.
+- **Accessibility**: Explicit localized `contentDescription`s on all icon buttons for TalkBack.
+- **Text Overflow Protection**: `maxLines = 2` and `TextOverflow.Ellipsis` on device names across
+  all screens.
 
-Phone side:
+---
 
-- `app/src/main/java/com/xxmrk888ytxx/portal/data/UnlockRequestHandlerImpl.kt`
-    - creates/registers `decisionId`;
-    - forwards requests to Wear.
-- `app/src/main/java/com/xxmrk888ytxx/portal/data/IncomingUnlockDecisionCoordinatorImpl.kt`
-    - deduplicates decisions;
-    - sends final status to Wear;
-    - emits phone-side final status.
-- `app/src/main/java/com/xxmrk888ytxx/portal/domain/IncomingUnlockDecisionCoordinator.kt`
-    - coordinator contract and `IncomingUnlockFinalStatus`.
-- `app/src/main/java/com/xxmrk888ytxx/portal/data/UnlockRequestManagerImpl.kt`
-    - shows phone activity/notification;
-    - now cancels phone notification when final status contains `clientId`.
-- `app/src/main/java/com/xxmrk888ytxx/portal/view/unlockScreenActivity/UnlockScreenViewModel.kt`
-    - dismisses phone unlock screen when final status with matching `decisionId` appears.
-- `app/src/main/java/com/xxmrk888ytxx/portal/data/wear/*`
-    - Wear Data Layer protocol, sync manager, phone gateway and command handler.
+## Important Guidelines for Future Agents
 
-Watch side:
-
-- `wearApp/src/main/AndroidManifest.xml`
-    - uses `POST_NOTIFICATIONS`;
-    - does not use `SYSTEM_ALERT_WINDOW` or `USE_FULL_SCREEN_INTENT`.
-- `wearApp/src/main/java/com/xxmrk888ytxx/portal/data/IncomingRequestPresenterImpl.kt`
-    - posts/cancels watch incoming request notifications;
-    - no full-screen intent.
-- `wearApp/src/main/java/com/xxmrk888ytxx/portal/data/service/WearPortalListenerService.kt`
-    - receives profile sync, incoming requests and final status.
--
-`wearApp/src/main/java/com/xxmrk888ytxx/portal/presentation/incomingRequest/IncomingRequestScreen.kt`
-    - incoming request screen with two buttons (`✕` / `✓`).
--
-`wearApp/src/main/java/com/xxmrk888ytxx/portal/presentation/permissionGate/PermissionGateScreen.kt`
-    - blocks app until notification permission is available.
-- `wearApp/src/main/java/com/xxmrk888ytxx/portal/presentation/settings/SettingsScreen.kt`
-    - shows notification permission status, phone connection status and app version.
-
-## Naming / architecture notes
-
-- Watch-side synced PCs are named `Device`, not `WearProfile`.
-- `wearApp` is intended to stay monomodule, MVI-ish, Dagger DI.
-- Wear presentation screens should follow the main app MVI style:
-    - `*Screen.kt` accepts state/data and `onEvent: (ScreenEvent) -> Unit`;
-    - screen Composables must not call ViewModel/navigator methods directly;
-    - each screen ViewModel exposes `handleEvent(event)` and emits side effects for
-      navigation/toasts.
-- Watch-side persistence uses `PreferencesStorage`/DataStore, not native `SharedPreferences`.
-- Do not reintroduce `@Synchronized`; use coroutines primitives such as `Mutex`.
-
-## Static checks already used
-
-These were run without compiling:
-
-```powershell
-rg "FullScreen|full_screen|USE_FULL_SCREEN|canUseFullScreenIntent|openFullScreenIntentSettings|OpenFullScreenIntentSettings|DecisionSlider|slide_|showRequestsOnLockedScreen|WearSettingsRepository|WearSettingsRepositoryImpl|SYSTEM_ALERT_WINDOW|setFullScreenIntent" wearApp/src/main -n
-git diff --check
-```
-
-`git diff --check` only reported CRLF warnings from Git, not whitespace errors.
-
-## Do not assume
-
-- Do not assume compilation is green; user repeatedly asked not to compile unless they say so.
-- Do not assume full-screen presentation on inactive Wear OS devices is available.
-- Do not move secrets/network details to the watch. Watch profile sync should remain metadata-only.
+- Do not re-add `SYSTEM_ALERT_WINDOW` or full-screen intent on Wear OS.
+- Do not move network credentials or keys to the watch; watch profiles must remain metadata-only.
+- Maintain MVI architecture for all Wear screens: `*Screen.kt` accepts state and
+  `onEvent: (ScreenEvent) -> Unit` and does not call ViewModels directly.
