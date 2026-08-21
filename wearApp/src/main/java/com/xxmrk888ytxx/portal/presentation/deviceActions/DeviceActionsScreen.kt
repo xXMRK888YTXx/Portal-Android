@@ -3,15 +3,9 @@ package com.xxmrk888ytxx.portal.presentation.deviceActions
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +22,7 @@ import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.Icon
-import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
@@ -71,41 +65,12 @@ fun DeviceActionsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                            .transformedHeight(this, transformationSpec),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    ListHeader(
+                        transformation = SurfaceTransformation(transformationSpec),
+                        modifier = Modifier.transformedHeight(this, transformationSpec)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    when (device.transport) {
-                                        DeviceTransport.WIFI -> R.drawable.ic_wifi
-                                        DeviceTransport.BLUETOOTH -> R.drawable.ic_bluetooth
-                                    }
-                                ),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                text = when (device.transport) {
-                                    DeviceTransport.WIFI -> stringResource(R.string.wifi)
-                                    DeviceTransport.BLUETOOTH -> stringResource(R.string.bluetooth)
-                                },
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        Spacer(Modifier.height(4.dp))
                         Text(
                             text = device.name,
-                            style = MaterialTheme.typography.titleMedium,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             textAlign = TextAlign.Center
