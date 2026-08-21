@@ -10,7 +10,10 @@ import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.lazy.rememberTransformationSpec
+import androidx.wear.compose.material3.lazy.transformedHeight
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.presentation.mainActivity.MainActivityEvent
 import com.xxmrk888ytxx.portal.presentation.mainActivity.MainScreenState
@@ -27,20 +30,37 @@ fun PermissionGateScreen(
     onEvent: (MainActivityEvent) -> Unit
 ) {
     val listState = rememberTransformingLazyColumnState()
+    val transformationSpec = rememberTransformationSpec()
+
     ScreenScaffold(scrollState = listState) { contentPadding ->
-        TransformingLazyColumn(state = listState, contentPadding = contentPadding) {
-            item { ListHeader { Text(stringResource(R.string.permissions_title)) } }
+        TransformingLazyColumn(
+            state = listState,
+            contentPadding = contentPadding
+        ) {
+            item {
+                ListHeader(
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier.transformedHeight(this, transformationSpec)
+                ) {
+                    Text(stringResource(R.string.permissions_title))
+                }
+            }
             item {
                 Text(
                     text = stringResource(R.string.notification_permission_required),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
                 )
             }
             item {
                 Button(
                     onClick = { onEvent(MainActivityEvent.OpenNotificationSettings) },
-                    modifier = Modifier.fillMaxWidth()
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
                 ) {
                     Text(stringResource(R.string.notifications))
                 }
@@ -56,7 +76,9 @@ fun PermissionGateScreen(
                         }
                     ),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
                 )
             }
         }

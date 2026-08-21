@@ -64,7 +64,9 @@ fun IncomingRequestScreen(
                 currentRequest.deviceName
             },
             style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
         )
         Spacer(Modifier.height(18.dp))
         if (!currentRequest.isCompleted) {

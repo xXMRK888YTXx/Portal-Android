@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.Button
@@ -50,13 +52,21 @@ fun DeviceActionsScreen(
         }
     ) { contentPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
-            TransformingLazyColumn(state = listState, contentPadding = contentPadding) {
+            TransformingLazyColumn(
+                state = listState,
+                contentPadding = contentPadding
+            ) {
                 item {
                     ListHeader(
                         transformation = SurfaceTransformation(transformationSpec),
                         modifier = Modifier.transformedHeight(this, transformationSpec)
                     ) {
-                        Text(device.name)
+                        Text(
+                            text = device.name,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
                 item {
