@@ -36,4 +36,7 @@
     <string name="checking">проверка</string>
     <string name="allow">Разрешить</string>
     <string name="deny">Отклонить</string>
+    <string name="permission_notifications_title">Включите уведомления</string>
+    <string name="permission_notifications_desc">Разрешите уведомления, чтобы получать запросы на разблокировку ПК на часах</string>
+    <string name="grant_permission">Разрешить уведомления</string>
 </resources>

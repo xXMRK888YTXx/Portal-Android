@@ -36,4 +36,7 @@
     <string name="checking">checking</string>
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
+    <string name="permission_notifications_title">Notifications required</string>
+    <string name="permission_notifications_desc">Allow notifications to receive PC unlock requests on your watch</string>
+    <string name="grant_permission">Allow notifications</string>
 </resources>
