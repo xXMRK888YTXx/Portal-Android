@@ -1,7 +1,7 @@
 package com.xxmrk888ytxx.portal.data
 
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
-import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.di.scope.AppScope
 import com.xxmrk888ytxx.portal.domain.BiometricEnvironmentEventHandler
 import com.xxmrk888ytxx.portal.domain.SecureStorage
 import com.xxmrk888ytxx.portal.domain.SettingsRepository

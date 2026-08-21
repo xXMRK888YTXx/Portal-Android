@@ -6,7 +6,7 @@ import com.xxmrk888ytxx.biometricauthentication.create
 import com.xxmrk888ytxx.database.PortalDataBase
 import com.xxmrk888ytxx.database.dao.BluetoothDeviceDao
 import com.xxmrk888ytxx.database.dao.WifiDeviceDao
-import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.di.scope.AppScope
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
 import dagger.Module
 import dagger.Provides

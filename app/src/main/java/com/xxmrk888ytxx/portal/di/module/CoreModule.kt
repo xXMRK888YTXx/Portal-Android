@@ -5,7 +5,7 @@ import com.xxmrk888ytxx.coreandroid.AndroidLogger
 import com.xxmrk888ytxx.coreandroid.BaseToastManager
 import com.xxmrk888ytxx.coreandroid.Logger
 import com.xxmrk888ytxx.coreandroid.ToastManager
-import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.di.scope.AppScope
 import dagger.Module
 import dagger.Provides
 

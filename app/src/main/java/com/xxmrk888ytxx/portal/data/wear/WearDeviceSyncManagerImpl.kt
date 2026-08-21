@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
-import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
+import com.xxmrk888ytxx.portal.di.scope.AppScope
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
 import com.xxmrk888ytxx.portal.domain.WearDeviceSyncManager
