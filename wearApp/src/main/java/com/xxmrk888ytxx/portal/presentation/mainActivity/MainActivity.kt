@@ -16,7 +16,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.AppScaffold
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.model.Device
-import com.xxmrk888ytxx.portal.domain.model.IncomingUnlockRequest
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsScreen
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsSideEffect
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsViewModel
@@ -24,9 +23,6 @@ import com.xxmrk888ytxx.portal.presentation.deviceList.DeviceListEvent
 import com.xxmrk888ytxx.portal.presentation.deviceList.DeviceListScreen
 import com.xxmrk888ytxx.portal.presentation.deviceList.DeviceListSideEffect
 import com.xxmrk888ytxx.portal.presentation.deviceList.DeviceListViewModel
-import com.xxmrk888ytxx.portal.presentation.incomingRequest.IncomingRequestScreen
-import com.xxmrk888ytxx.portal.presentation.incomingRequest.IncomingRequestSideEffect
-import com.xxmrk888ytxx.portal.presentation.incomingRequest.IncomingRequestViewModel
 import com.xxmrk888ytxx.portal.presentation.permissionGate.PermissionGateScreen
 import com.xxmrk888ytxx.portal.presentation.settings.SettingsScreen
 import com.xxmrk888ytxx.portal.presentation.settings.SettingsSideEffect
@@ -35,26 +31,22 @@ import com.xxmrk888ytxx.portal.presentation.theme.PortalTheme
 import javax.inject.Inject
 
 /**
- * Single Activity host for the Wear OS app.
+ * Single Activity host for the main Wear OS application navigation.
  *
- * The activity wires ViewModel state and side effects to Composables. It intentionally keeps
- * Android-only actions, such as launching notification permission UI, outside screen Composables.
+ * Incoming requests are hosted separately in [com.xxmrk888ytxx.portal.presentation.incomingRequest.IncomingRequestActivity].
  */
 class MainActivity @Inject constructor(
     private val viewModelFactory: MainActivityViewModel.Factory,
     private val deviceListViewModelFactory: DeviceListViewModel.Factory,
     private val deviceActionsViewModelFactory: DeviceActionsViewModel.Factory,
-    private val settingsViewModelFactory: SettingsViewModel.Factory,
-    private val incomingRequestViewModelFactory: IncomingRequestViewModel.Factory
+    private val settingsViewModelFactory: SettingsViewModel.Factory
 ) : ComponentActivity() {
 
     private val viewModel by viewModels<MainActivityViewModel> { viewModelFactory }
     private val deviceListViewModel by viewModels<DeviceListViewModel> { deviceListViewModelFactory }
     private val deviceActionsViewModel by viewModels<DeviceActionsViewModel> { deviceActionsViewModelFactory }
     private val settingsViewModel by viewModels<SettingsViewModel> { settingsViewModelFactory }
-    private val incomingRequestViewModel by viewModels<IncomingRequestViewModel> {
-        incomingRequestViewModelFactory
-    }
+
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) {
@@ -64,19 +56,10 @@ class MainActivity @Inject constructor(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (intent?.action == ACTION_OPEN_REQUEST) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                setShowWhenLocked(true)
-                setTurnScreenOn(true)
-            }
-            viewModel.handleEvent(MainActivityEvent.ShowIncomingRequest)
-        }
-
         setContent {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val devices by deviceListViewModel.devices.collectAsStateWithLifecycle()
             val isPhoneConnected by settingsViewModel.isPhoneConnected.collectAsStateWithLifecycle()
-            val incomingRequest by incomingRequestViewModel.request.collectAsStateWithLifecycle()
 
             LaunchedEffect(Unit) {
                 viewModel.sideEffect.collect { effect ->
@@ -153,38 +136,23 @@ class MainActivity @Inject constructor(
                 }
             }
 
-            LaunchedEffect(Unit) {
-                incomingRequestViewModel.sideEffect.collect { effect ->
-                    when (effect) {
-                        IncomingRequestSideEffect.NavigateBack -> {
-                            viewModel.handleEvent(MainActivityEvent.ShowDevices)
-                        }
-
-                        IncomingRequestSideEffect.ShowDecisionError -> {
-                            viewModel.handleEvent(
-                                MainActivityEvent.ShowMessage(
-                                    getString(R.string.failed_to_send_decision)
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-
             PortalTheme {
                 WearApp(
                     state = state,
                     devices = devices,
                     isPhoneConnected = isPhoneConnected,
-                    incomingRequest = incomingRequest,
                     deviceListViewModel = deviceListViewModel,
                     deviceActionsViewModel = deviceActionsViewModel,
                     settingsViewModel = settingsViewModel,
-                    incomingRequestViewModel = incomingRequestViewModel,
                     onMainEvent = viewModel::handleEvent
                 )
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 
     override fun onResume() {
@@ -206,11 +174,6 @@ class MainActivity @Inject constructor(
             }
         }
     }
-
-    companion object {
-        const val ACTION_OPEN_REQUEST = "com.xxmrk888ytxx.portal.wear.OPEN_REQUEST"
-        const val EXTRA_DECISION_ID = "decisionId"
-    }
 }
 
 @androidx.compose.runtime.Composable
@@ -218,11 +181,9 @@ private fun WearApp(
     state: MainScreenState,
     devices: List<Device>,
     isPhoneConnected: Boolean?,
-    incomingRequest: IncomingUnlockRequest?,
     deviceListViewModel: DeviceListViewModel,
     deviceActionsViewModel: DeviceActionsViewModel,
     settingsViewModel: SettingsViewModel,
-    incomingRequestViewModel: IncomingRequestViewModel,
     onMainEvent: (MainActivityEvent) -> Unit
 ) {
     AppScaffold {
@@ -232,11 +193,6 @@ private fun WearApp(
                 state = state,
                 isPhoneConnected = isPhoneConnected,
                 onEvent = settingsViewModel::handleEvent
-            )
-
-            state.screen == WearScreen.IncomingRequest -> IncomingRequestScreen(
-                request = incomingRequest,
-                onEvent = incomingRequestViewModel::handleEvent
             )
 
             state.screen == WearScreen.DeviceActions && state.selectedDevice != null ->

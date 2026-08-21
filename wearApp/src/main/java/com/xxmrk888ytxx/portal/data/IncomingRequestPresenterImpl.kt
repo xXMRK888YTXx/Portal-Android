@@ -13,7 +13,7 @@ import com.xxmrk888ytxx.portal.data.broadcastReceiver.WearNotificationActionRece
 import com.xxmrk888ytxx.portal.domain.IncomingRequestPresenter
 import com.xxmrk888ytxx.portal.domain.WearPermissionChecker
 import com.xxmrk888ytxx.portal.domain.model.IncomingUnlockRequest
-import com.xxmrk888ytxx.portal.presentation.mainActivity.MainActivity
+import com.xxmrk888ytxx.portal.presentation.incomingRequest.IncomingRequestActivity
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -21,7 +21,7 @@ import kotlin.math.abs
  * Presenter for incoming unlock requests on Wear OS.
  *
  * Provides notification with Allow and Deny actions, while tapping the notification body
- * opens [MainActivity] to display the request details screen.
+ * opens [IncomingRequestActivity] to display the request details screen.
  */
 class IncomingRequestPresenterImpl @Inject constructor(
     private val context: Context,
@@ -90,9 +90,8 @@ class IncomingRequestPresenterImpl @Inject constructor(
         return PendingIntent.getActivity(
             context,
             abs(decisionId.hashCode()) * 10,
-            Intent(context, MainActivity::class.java).apply {
-                action = MainActivity.ACTION_OPEN_REQUEST
-                putExtra(MainActivity.EXTRA_DECISION_ID, decisionId)
+            Intent(context, IncomingRequestActivity::class.java).apply {
+                putExtra(IncomingRequestActivity.EXTRA_DECISION_ID, decisionId)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

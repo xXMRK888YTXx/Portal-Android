@@ -23,6 +23,5 @@ data class MainScreenState(
 enum class WearScreen {
     Main,
     DeviceActions,
-    Settings,
-    IncomingRequest
+    Settings
 }

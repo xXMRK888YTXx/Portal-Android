@@ -29,7 +29,7 @@ class MainActivityViewModel @Inject constructor(
     )
     val state: StateFlow<MainScreenState> = _state.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<NavigationSideEffect>(extraBufferCapacity = 4)
+    private val _sideEffect = MutableSharedFlow<NavigationSideEffect>(extraBufferCapacity = 64)
     val sideEffect: SharedFlow<NavigationSideEffect> = _sideEffect.asSharedFlow()
 
     fun handleEvent(event: MainActivityEvent) {
@@ -38,7 +38,6 @@ class MainActivityViewModel @Inject constructor(
             MainActivityEvent.ShowDevices -> showDevices()
             is MainActivityEvent.ShowDeviceActions -> showDeviceActions(event.device)
             MainActivityEvent.ShowSettings -> showSettings()
-            MainActivityEvent.ShowIncomingRequest -> showIncomingRequest()
             MainActivityEvent.OpenNotificationSettings -> openNotificationSettings()
             is MainActivityEvent.ShowMessage -> showMessage(event.message)
         }
@@ -58,10 +57,6 @@ class MainActivityViewModel @Inject constructor(
 
     private fun showSettings() {
         _state.update { it.copy(screen = WearScreen.Settings) }
-    }
-
-    private fun showIncomingRequest() {
-        _state.update { it.copy(screen = WearScreen.IncomingRequest) }
     }
 
     private fun openNotificationSettings() {

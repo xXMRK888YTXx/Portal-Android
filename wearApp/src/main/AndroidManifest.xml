@@ -39,6 +39,14 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".presentation.incomingRequest.IncomingRequestActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:noHistory="true"
+            android:taskAffinity="com.xxmrk888ytxx.portal.task.IncomingRequestActivity"
+            android:theme="@android:style/Theme.DeviceDefault" />
+
         <service
             android:name=".data.service.WearPortalListenerService"
             android:exported="true">
