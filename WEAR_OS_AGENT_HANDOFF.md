@@ -103,6 +103,19 @@ requested.
 - **Accessibility**: Explicit localized `contentDescription`s on all icon buttons for TalkBack.
 - **Text Overflow Protection**: `maxLines = 2` and `TextOverflow.Ellipsis` on device names across
   all screens.
+- **Material 3 Confirmations**: Standard `Toast` replaced with `SuccessConfirmation` and
+  `FailureConfirmation` dialogs from `androidx.wear.compose.material3`.
+
+---
+
+## Release Build & R8 Protection
+
+- **Resource Shrinking Protection**: `app/src/main/res/raw/keep.xml` and
+  `wearApp/src/main/res/raw/keep.xml` protect `@array/android_wear_capabilities` (
+  `portal_phone_app`, `portal_watch_app`) from being stripped by `isShrinkResources = true`.
+- **ProGuard / R8 Rules**: `app/proguard-rules.pro` and `wearApp/proguard-rules.pro` preserve
+  `kotlinx.serialization` serializers, `@Serializable` models in
+  `com.xxmrk888ytxx.portal.data.wear.**`, and Google Play Services Wearable components.
 
 ---
 
