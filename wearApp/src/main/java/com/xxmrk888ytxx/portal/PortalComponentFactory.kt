@@ -3,12 +3,13 @@ package com.xxmrk888ytxx.portal
 import android.app.Activity
 import android.app.Application
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Intent
 import androidx.core.app.AppComponentFactory
 import javax.inject.Provider
 
 /**
- * Android component factory that lets Dagger create Wear OS activities and services.
+ * Android component factory that lets Dagger create Wear OS activities, services, and receivers.
  *
  * The manifest points to this factory so constructor-injected components can be resolved from
  * [PortalApp.appComponent].
@@ -26,11 +27,11 @@ class PortalComponentFactory : AppComponentFactory() {
         portalApplication.appComponent.serviceProviderMap
             .mapKeys { (key, _) -> key.name }
     }
-//
-//    private val broadcastReceiverProviders: Map<String, Provider<BroadcastReceiver>> by lazy {
-//        portalApplication.appComponent.broadcastReceiverProviderMap
-//            .mapKeys { (key, _) -> key.name }
-//    }
+
+    private val broadcastReceiverProviders: Map<String, Provider<BroadcastReceiver>> by lazy {
+        portalApplication.appComponent.broadcastReceiverProviderMap
+            .mapKeys { (key, _) -> key.name }
+    }
 
     override fun instantiateApplicationCompat(
         cl: ClassLoader,
@@ -56,12 +57,16 @@ class PortalComponentFactory : AppComponentFactory() {
         intent: Intent?
     ): Service =
         serviceProviders[className]?.get() ?: super.instantiateServiceCompat(cl, className, intent)
-//
-//    override fun instantiateReceiverCompat(
-//        cl: ClassLoader,
-//        className: String,
-//        intent: Intent?
-//    ): BroadcastReceiver {
-//        return broadcastReceiverProviders[className]?.get() ?: super.instantiateReceiverCompat(cl, className, intent)
-//    }
+
+    override fun instantiateReceiverCompat(
+        cl: ClassLoader,
+        className: String,
+        intent: Intent?
+    ): BroadcastReceiver {
+        return broadcastReceiverProviders[className]?.get() ?: super.instantiateReceiverCompat(
+            cl,
+            className,
+            intent
+        )
+    }
 }

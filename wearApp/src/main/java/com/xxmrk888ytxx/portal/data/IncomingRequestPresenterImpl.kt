@@ -9,6 +9,7 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.data.broadcastReceiver.WearNotificationActionReceiver
 import com.xxmrk888ytxx.portal.domain.IncomingRequestPresenter
 import com.xxmrk888ytxx.portal.domain.WearPermissionChecker
 import com.xxmrk888ytxx.portal.domain.model.IncomingUnlockRequest
@@ -17,10 +18,10 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 /**
- * Notification-only presenter for incoming unlock requests on Wear OS.
+ * Presenter for incoming unlock requests on Wear OS.
  *
- * Full-screen intents are intentionally not used. The notification opens [MainActivity] with the
- * pending request id so the same Composable is used from foreground and notification flows.
+ * Provides notification with Allow and Deny actions, while tapping the notification body
+ * opens [MainActivity] to display the request details screen.
  */
 class IncomingRequestPresenterImpl @Inject constructor(
     private val context: Context,
@@ -37,6 +38,29 @@ class IncomingRequestPresenterImpl @Inject constructor(
         }
 
         val requestPendingIntent = createRequestPendingIntent(request.decisionId)
+        val allowPendingIntent = createActionPendingIntent(
+            decisionId = request.decisionId,
+            action = WearNotificationActionReceiver.ACTION_ALLOW,
+            requestCodeOffset = 1
+        )
+        val denyPendingIntent = createActionPendingIntent(
+            decisionId = request.decisionId,
+            action = WearNotificationActionReceiver.ACTION_DENY,
+            requestCodeOffset = 2
+        )
+
+        val allowAction = NotificationCompat.Action.Builder(
+            R.drawable.check,
+            context.getString(R.string.allow),
+            allowPendingIntent
+        ).build()
+
+        val denyAction = NotificationCompat.Action.Builder(
+            R.drawable.close,
+            context.getString(R.string.deny),
+            denyPendingIntent
+        ).build()
+
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(context.getString(R.string.unlock_request_title, request.deviceName))
@@ -45,6 +69,8 @@ class IncomingRequestPresenterImpl @Inject constructor(
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(true)
             .setContentIntent(requestPendingIntent)
+            .addAction(denyAction)
+            .addAction(allowAction)
 
         try {
             notificationManager.notify(
@@ -63,10 +89,26 @@ class IncomingRequestPresenterImpl @Inject constructor(
     private fun createRequestPendingIntent(decisionId: String): PendingIntent {
         return PendingIntent.getActivity(
             context,
-            abs(decisionId.hashCode()),
+            abs(decisionId.hashCode()) * 10,
             Intent(context, MainActivity::class.java).apply {
                 action = MainActivity.ACTION_OPEN_REQUEST
                 putExtra(MainActivity.EXTRA_DECISION_ID, decisionId)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    private fun createActionPendingIntent(
+        decisionId: String,
+        action: String,
+        requestCodeOffset: Int
+    ): PendingIntent {
+        return PendingIntent.getBroadcast(
+            context,
+            abs(decisionId.hashCode()) * 10 + requestCodeOffset,
+            Intent(context, WearNotificationActionReceiver::class.java).apply {
+                this.action = action
+                putExtra(WearNotificationActionReceiver.EXTRA_DECISION_ID, decisionId)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

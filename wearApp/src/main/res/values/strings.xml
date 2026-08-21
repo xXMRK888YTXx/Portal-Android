@@ -34,4 +34,6 @@
     <string name="phone_connection">Phone connection</string>
     <string name="change">Change</string>
     <string name="checking">checking</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
 </resources>

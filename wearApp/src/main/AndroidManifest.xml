@@ -52,6 +52,15 @@
                     android:scheme="wear" />
             </intent-filter>
         </service>
+
+        <receiver
+            android:name=".data.broadcastReceiver.WearNotificationActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.wear.ACTION_ALLOW" />
+                <action android:name="com.xxmrk888ytxx.portal.wear.ACTION_DENY" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

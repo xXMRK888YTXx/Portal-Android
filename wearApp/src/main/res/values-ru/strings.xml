@@ -34,4 +34,6 @@
     <string name="phone_connection">Подключение к телефону</string>
     <string name="change">Изменить</string>
     <string name="checking">проверка</string>
+    <string name="allow">Разрешить</string>
+    <string name="deny">Отклонить</string>
 </resources>
