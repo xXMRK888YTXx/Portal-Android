@@ -1,11 +1,16 @@
 package com.xxmrk888ytxx.portal.presentation.settings
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -14,6 +19,7 @@ import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.EdgeButton
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
@@ -84,15 +90,27 @@ fun SettingsScreen(
                             ButtonDefaults.minimumVerticalListContentPadding
                         ),
                     transformation = SurfaceTransformation(transformationSpec),
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_notifications),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
                     label = {
                         Text(stringResource(R.string.notifications))
                     },
                     secondaryLabel = {
                         Text(
-                            if (state.permissions.canPostNotifications) {
+                            text = if (state.permissions.canPostNotifications) {
                                 stringResource(R.string.enabled)
                             } else {
                                 stringResource(R.string.disabled)
+                            },
+                            color = if (state.permissions.canPostNotifications) {
+                                com.xxmrk888ytxx.portal.presentation.theme.StatusConnectedColor
+                            } else {
+                                com.xxmrk888ytxx.portal.presentation.theme.StatusDisconnectedColor
                             }
                         )
                     }
@@ -111,15 +129,27 @@ fun SettingsScreen(
                             ButtonDefaults.minimumVerticalListContentPadding
                         ),
                     transformation = SurfaceTransformation(transformationSpec),
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_phone),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
                     label = {
                         Text(stringResource(R.string.phone_connection))
                     },
                     secondaryLabel = {
                         Text(
-                            when (isPhoneConnected) {
+                            text = when (isPhoneConnected) {
                                 true -> stringResource(R.string.connected)
                                 false -> stringResource(R.string.disconnected)
                                 null -> stringResource(R.string.checking)
+                            },
+                            color = when (isPhoneConnected) {
+                                true -> com.xxmrk888ytxx.portal.presentation.theme.StatusConnectedColor
+                                false -> com.xxmrk888ytxx.portal.presentation.theme.StatusDisconnectedColor
+                                null -> com.xxmrk888ytxx.portal.presentation.theme.StatusCheckingColor
                             }
                         )
                     }
@@ -127,18 +157,29 @@ fun SettingsScreen(
             }
 
             item {
-                Text(
-                    text = stringResource(
-                        R.string.version_name,
-                        "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
-                    ),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
+                        .padding(top = 12.dp, bottom = 4.dp)
+                        .transformedHeight(this, transformationSpec),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = stringResource(
+                            R.string.version_name,
+                            "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+                        ),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
