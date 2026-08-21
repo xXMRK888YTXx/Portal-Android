@@ -124,7 +124,7 @@ class DeviceConfigurationViewModel @AssistedInject internal constructor(
         changeDeviceSettingsContract.updateUnlockOnlyWhenScreenUnlockedState(clientId, newValue)
     }
 
-    private fun changeForwardUnlockRequestsToWearState(newValue: Boolean) = viewModelScope.launch {
+    private fun changeForwardUnlockRequestsToWearState(newValue: Boolean) = withLoading {
         changeDeviceSettingsContract.updateForwardUnlockRequestsToWearState(clientId, newValue)
     }
 
