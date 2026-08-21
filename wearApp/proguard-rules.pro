@@ -1,10 +1,3 @@
-# BouncyCastle
--keep class org.bouncycastle.** { *; }
--dontwarn org.bouncycastle.**
--keep class javax.crypto.** { *; }
--keep class org.bouncycastle.jcajce.provider.** { *; }
--keep class org.bouncycastle.jce.provider.BouncyCastleProvider { *; }
-
 # kotlinx.serialization
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.SerializationKt
@@ -39,13 +32,9 @@
     <methods>;
 }
 
-# Keep all data models exchanged over Network, Database, and Wear Data Layer
--keep class com.xxmrk888ytxx.portal.data.model.** { *; }
--keep class com.xxmrk888ytxx.portal.data.wear.** { *; }
+# Keep Wear Data Layer Protocol models and services
+-keep class com.xxmrk888ytxx.portal.data.** { *; }
 -keep class com.xxmrk888ytxx.portal.domain.model.** { *; }
-
-# Google Play Services Wearable and Services/Receivers
 -keep class com.google.android.gms.wearable.** { *; }
--keep class com.xxmrk888ytxx.portal.data.service.WearPhoneListenerService { *; }
--keep class com.xxmrk888ytxx.portal.data.service.** { *; }
+-keep class com.xxmrk888ytxx.portal.data.service.WearPortalListenerService { *; }
 -keep class com.xxmrk888ytxx.portal.data.broadcastReceiver.** { *; }
