@@ -10,7 +10,10 @@ import com.xxmrk888ytxx.database.entry.ShortcutEntry.Companion.TABLE_NAME
 
 @Entity(
     tableName = TABLE_NAME,
-    indices = [Index("shortcutId", unique = true)],
+    indices = [
+        Index("shortcutId", unique = true),
+        Index("clientId")
+    ],
     foreignKeys = [
         ForeignKey(
             entity = DeviceEntry::class,

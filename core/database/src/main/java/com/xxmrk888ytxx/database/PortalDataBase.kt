@@ -21,7 +21,7 @@ import com.xxmrk888ytxx.database.entry.WifiDeviceEntry
 import com.xxmrk888ytxx.database.typeConverter.UnlockMethodConverter
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [DeviceEntry::class, WifiDeviceEntry::class, BluetoothDeviceEntry::class, DeviceSettingsEntry::class, ShortcutEntry::class]
 )
 @ColumnTypeConverters(UnlockMethodConverter::class)
@@ -35,7 +35,7 @@ abstract class PortalDataBase : RoomDatabase() {
     companion object {
         fun createDatabase(context: Context): PortalDataBase {
             return Room.databaseBuilder(context, PortalDataBase::class.java, "database.db")
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
         }
 
@@ -43,6 +43,14 @@ abstract class PortalDataBase : RoomDatabase() {
             override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     "ALTER TABLE ${DeviceSettingsEntry.TABLE_NAME} ADD COLUMN forwardUnlockRequestsToWear INTEGER NOT NULL DEFAULT 0"
+                )
+            }
+        }
+
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override suspend fun migrate(connection: SQLiteConnection) {
+                connection.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_ShortcutEntry_clientId ON ${ShortcutEntry.TABLE_NAME} (clientId)"
                 )
             }
         }
