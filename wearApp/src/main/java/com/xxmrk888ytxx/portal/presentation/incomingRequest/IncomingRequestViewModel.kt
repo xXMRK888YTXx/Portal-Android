@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.presentation.incomingRequest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.data.WearDecisionPayloadValue
 import com.xxmrk888ytxx.portal.domain.IncomingRequestRepository
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
@@ -47,14 +48,22 @@ class IncomingRequestViewModel @Inject constructor(
     }
 
     private fun resolve(decision: WearDecisionPayloadValue) {
-        val current = request.value ?: return
+        val current = request.value ?: run {
+            fastDebugLog("Watch: Cannot resolve decision, current request is null")
+            return
+        }
         viewModelScope.launch {
+            fastDebugLog("Watch: Sending decision $decision for decisionId: ${current.decisionId}")
             runCatching { wearPhoneGateway.sendDecision(current.decisionId, decision) }
                 .onSuccess {
+                    fastDebugLog("Watch: Decision $decision sent successfully for decisionId: ${current.decisionId}")
                     incomingRequestRepository.clear(current.decisionId)
                     _sideEffect.tryEmit(IncomingRequestSideEffect.NavigateBack)
                 }
-                .onFailure { _sideEffect.tryEmit(IncomingRequestSideEffect.ShowDecisionError) }
+                .onFailure {
+                    fastDebugLog("Watch: Failed to send decision for decisionId ${current.decisionId}: ${it.message}")
+                    _sideEffect.tryEmit(IncomingRequestSideEffect.ShowDecisionError)
+                }
         }
     }
 

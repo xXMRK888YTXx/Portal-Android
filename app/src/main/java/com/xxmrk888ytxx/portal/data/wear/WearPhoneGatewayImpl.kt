@@ -2,7 +2,9 @@ package com.xxmrk888ytxx.portal.data.wear
 
 import android.content.Context
 import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,7 +17,7 @@ class WearPhoneGatewayImpl @Inject constructor(
 ) : WearPhoneGateway {
 
     private val messageClient = Wearable.getMessageClient(context)
-    private val nodeClient = Wearable.getNodeClient(context)
+    private val capabilityClient = Wearable.getCapabilityClient(context)
 
     override suspend fun sendIncomingUnlockRequest(
         decisionId: String,
@@ -27,7 +29,8 @@ class WearPhoneGatewayImpl @Inject constructor(
             clientId = clientId,
             deviceName = deviceName
         )
-        sendToAllReachableNodes(
+        fastDebugLog("Phone: Sending incoming unlock request to watch: device=$deviceName, decisionId=$decisionId")
+        sendToAllReachableWatchNodes(
             WearDataLayerProtocol.INCOMING_REQUEST_PATH,
             json.encodeToString(payload).encodeToByteArray()
         )
@@ -35,16 +38,30 @@ class WearPhoneGatewayImpl @Inject constructor(
 
     override suspend fun sendFinalStatus(decisionId: String, status: WearFinalStatusPayloadValue) {
         val payload = WearFinalStatusPayload(decisionId, status)
-        sendToAllReachableNodes(
+        fastDebugLog("Phone: Sending final status to watch: decisionId=$decisionId, status=$status")
+        sendToAllReachableWatchNodes(
             WearDataLayerProtocol.FINAL_STATUS_PATH,
             json.encodeToString(payload).encodeToByteArray()
         )
     }
 
-    private suspend fun sendToAllReachableNodes(path: String, data: ByteArray) {
+    private suspend fun sendToAllReachableWatchNodes(path: String, data: ByteArray) {
         withContext(Dispatchers.IO) {
-            Tasks.await(nodeClient.connectedNodes).forEach { node ->
-                Tasks.await(messageClient.sendMessage(node.id, path, data))
+            runCatching {
+                val capabilityInfo = Tasks.await(
+                    capabilityClient.getCapability(
+                        WearDataLayerProtocol.CAPABILITY_WATCH_APP,
+                        CapabilityClient.FILTER_REACHABLE
+                    )
+                )
+
+                fastDebugLog("Phone: Found ${capabilityInfo.nodes.size} watch node(s) with capability ${WearDataLayerProtocol.CAPABILITY_WATCH_APP}: ${capabilityInfo.nodes.map { "${it.displayName}(${it.id})" }}")
+                capabilityInfo.nodes.forEach { node ->
+                    val messageId = Tasks.await(messageClient.sendMessage(node.id, path, data))
+                    fastDebugLog("Phone: Sent message on path $path to ${node.displayName} (${node.id}), messageId: $messageId")
+                }
+            }.onFailure {
+                fastDebugLog("Phone: Error sending message on path $path: ${it.message}")
             }
         }
     }

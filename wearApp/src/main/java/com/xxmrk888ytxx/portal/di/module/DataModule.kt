@@ -4,12 +4,14 @@ import android.content.Context
 import com.xxmrk888ytxx.portal.data.DeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.IncomingRequestPresenterImpl
 import com.xxmrk888ytxx.portal.data.IncomingRequestRepositoryImpl
+import com.xxmrk888ytxx.portal.data.WearNodeValidatorImpl
 import com.xxmrk888ytxx.portal.data.WearPermissionCheckerImpl
 import com.xxmrk888ytxx.portal.data.WearPhoneGatewayImpl
 import com.xxmrk888ytxx.portal.di.scope.AppScope
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.IncomingRequestPresenter
 import com.xxmrk888ytxx.portal.domain.IncomingRequestRepository
+import com.xxmrk888ytxx.portal.domain.WearNodeValidator
 import com.xxmrk888ytxx.portal.domain.WearPermissionChecker
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
@@ -48,6 +50,12 @@ interface DataModule {
     fun bindsWearPhoneGateway(
         wearPhoneGatewayImpl: WearPhoneGatewayImpl
     ): WearPhoneGateway
+
+    @Binds
+    @AppScope
+    fun bindsWearNodeValidator(
+        wearNodeValidatorImpl: WearNodeValidatorImpl
+    ): WearNodeValidator
 
     @Binds
     fun bindsIncomingRequestPresenter(

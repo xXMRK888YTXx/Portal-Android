@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.presentation.deviceActions
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,10 +32,12 @@ class DeviceActionsViewModel @Inject constructor(
             }
 
             is DeviceActionsEvent.Unlock -> {
+                fastDebugLog("Watch: DeviceActionsEvent.Unlock clicked for clientId: ${event.clientId}")
                 send { wearPhoneGateway.sendUnlockCommand(event.clientId) }
             }
 
             is DeviceActionsEvent.WakeOnLanUnlock -> {
+                fastDebugLog("Watch: DeviceActionsEvent.WakeOnLanUnlock clicked for clientId: ${event.clientId}")
                 send { wearPhoneGateway.sendWakeOnLanUnlockCommand(event.clientId) }
             }
         }
@@ -43,8 +46,14 @@ class DeviceActionsViewModel @Inject constructor(
     private fun send(block: suspend () -> Unit) {
         viewModelScope.launch {
             runCatching { block() }
-                .onSuccess { _sideEffect.tryEmit(DeviceActionsSideEffect.ShowCommandSent) }
-                .onFailure { _sideEffect.tryEmit(DeviceActionsSideEffect.ShowCommandError) }
+                .onSuccess {
+                    fastDebugLog("Watch: Device action command sent successfully")
+                    _sideEffect.tryEmit(DeviceActionsSideEffect.ShowCommandSent)
+                }
+                .onFailure {
+                    fastDebugLog("Watch: Failed to send device action command: ${it.message}")
+                    _sideEffect.tryEmit(DeviceActionsSideEffect.ShowCommandError)
+                }
         }
     }
 

@@ -35,6 +35,9 @@ import kotlinx.serialization.Serializable
  * duplicate decisions from multiple surfaces from being applied twice.
  */
 object WearDataLayerProtocol {
+    const val CAPABILITY_PHONE_APP = "portal_phone_app"
+    const val CAPABILITY_WATCH_APP = "portal_watch_app"
+
     const val PROFILES_PATH = "/portal/profiles"
     const val PROFILE_PAYLOAD_KEY = "payload"
 

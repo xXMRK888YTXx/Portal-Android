@@ -31,6 +31,9 @@ import kotlinx.serialization.Serializable
  * certificates, network addresses, and MAC addresses stay on the phone.
  */
 object WearDataLayerProtocol {
+    const val CAPABILITY_PHONE_APP = "portal_phone_app"
+    const val CAPABILITY_WATCH_APP = "portal_watch_app"
+
     const val PROFILES_PATH = "/portal/profiles"
     const val PROFILE_PAYLOAD_KEY = "payload"
 

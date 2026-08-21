@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.presentation.deviceList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.DeviceRepository
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import com.xxmrk888ytxx.portal.domain.model.Device
@@ -52,8 +53,13 @@ class DeviceListViewModel @Inject constructor(
 
     private fun refresh(showError: Boolean) {
         viewModelScope.launch {
+            fastDebugLog("Watch: Triggering device sync request (showError=$showError)")
             runCatching { wearPhoneGateway.requestDeviceSync() }
+                .onSuccess {
+                    fastDebugLog("Watch: Device sync request sent successfully")
+                }
                 .onFailure {
+                    fastDebugLog("Watch: Failed to send device sync request: ${it.message}")
                     if (showError) {
                         _sideEffect.tryEmit(DeviceListSideEffect.ShowRefreshError)
                     }

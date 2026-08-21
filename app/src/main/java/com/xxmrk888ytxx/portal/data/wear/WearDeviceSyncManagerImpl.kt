@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.data.wear
 import android.content.Context
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
+import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.domain.BluetoothDeviceRepository
 import com.xxmrk888ytxx.portal.domain.DeviceSettingsRepository
@@ -32,6 +33,7 @@ class WearDeviceSyncManagerImpl @Inject constructor(
 
     override fun startObserve() {
         applicationScope.launch {
+            fastDebugLog("Phone: Starting Wear device sync observer")
             combine(
                 wifiDeviceRepository.devices,
                 bluetoothDeviceRepository.devices,
@@ -40,11 +42,15 @@ class WearDeviceSyncManagerImpl @Inject constructor(
                 createPayload(wifiDevices, bluetoothDevices)
             }
                 .distinctUntilChanged()
-                .collect { publish(it) }
+                .collect {
+                    fastDebugLog("Phone: Devices updated, publishing ${it.devices.size} devices to Wear DataClient")
+                    publish(it)
+                }
         }
     }
 
     override suspend fun syncNow() {
+        fastDebugLog("Phone: syncNow() requested from Wear")
         publish(
             createPayload(
                 wifiDeviceRepository.devices.first(),
@@ -86,5 +92,6 @@ class WearDeviceSyncManagerImpl @Inject constructor(
             )
         }.asPutDataRequest().setUrgent()
         dataClient.putDataItem(request)
+        fastDebugLog("Phone: Published device payload to Wear DataLayer with revision: ${payload.revision}")
     }
 }

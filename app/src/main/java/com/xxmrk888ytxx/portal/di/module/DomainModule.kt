@@ -37,6 +37,7 @@ import com.xxmrk888ytxx.portal.data.WifiDeviceRepositoryImpl
 import com.xxmrk888ytxx.portal.data.WifiPortalApiImpl
 import com.xxmrk888ytxx.portal.data.WifiUnlockServiceManager
 import com.xxmrk888ytxx.portal.data.wear.WearDeviceSyncManagerImpl
+import com.xxmrk888ytxx.portal.data.wear.WearNodeValidatorImpl
 import com.xxmrk888ytxx.portal.data.wear.WearPhoneGatewayImpl
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
@@ -70,6 +71,7 @@ import com.xxmrk888ytxx.portal.domain.WOLServiceManager
 import com.xxmrk888ytxx.portal.domain.WatchDogAlarmController
 import com.xxmrk888ytxx.portal.domain.WatchDogManager
 import com.xxmrk888ytxx.portal.domain.WearDeviceSyncManager
+import com.xxmrk888ytxx.portal.domain.WearNodeValidator
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import com.xxmrk888ytxx.portal.domain.WifiDeviceRepository
 import com.xxmrk888ytxx.portal.domain.WifiPortalApi
@@ -257,6 +259,12 @@ interface DomainModule {
     fun bindsWearPhoneGateway(
         wearPhoneGatewayImpl: WearPhoneGatewayImpl
     ): WearPhoneGateway
+
+    @Binds
+    @AppScope
+    fun bindsWearNodeValidator(
+        wearNodeValidatorImpl: WearNodeValidatorImpl
+    ): WearNodeValidator
 
     @Binds
     @AppScope
