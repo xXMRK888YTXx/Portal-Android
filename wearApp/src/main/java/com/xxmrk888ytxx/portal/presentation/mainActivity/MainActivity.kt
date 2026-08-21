@@ -5,13 +5,15 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.TimeText
@@ -19,6 +21,8 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.presentation.component.WearConfirmationOverlay
+import com.xxmrk888ytxx.portal.presentation.component.WearConfirmationType
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsScreen
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsSideEffect
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsViewModel
@@ -65,6 +69,7 @@ class MainActivity @Inject constructor(
             val isPhoneConnected by settingsViewModel.isPhoneConnected.collectAsStateWithLifecycle()
             val isActionLoading by deviceActionsViewModel.isLoading.collectAsStateWithLifecycle()
             val navController = rememberSwipeDismissableNavController()
+            var confirmationData by remember { mutableStateOf<WearConfirmationData?>(null) }
 
             LaunchedEffect(Unit) {
                 viewModel.sideEffect.collect { effect ->
@@ -73,8 +78,10 @@ class MainActivity @Inject constructor(
                             openNotificationSettings()
 
                         is NavigationSideEffect.ShowMessage ->
-                            Toast.makeText(this@MainActivity, effect.message, Toast.LENGTH_SHORT)
-                                .show()
+                            confirmationData = WearConfirmationData(
+                                type = WearConfirmationType.SUCCESS,
+                                message = effect.message
+                            )
                     }
                 }
             }
@@ -94,10 +101,9 @@ class MainActivity @Inject constructor(
                         }
 
                         DeviceListSideEffect.ShowRefreshError -> {
-                            viewModel.handleEvent(
-                                MainActivityEvent.ShowMessage(
-                                    getString(R.string.failed_to_refresh_devices)
-                                )
+                            confirmationData = WearConfirmationData(
+                                type = WearConfirmationType.FAILURE,
+                                message = getString(R.string.failed_to_refresh_devices)
                             )
                         }
                     }
@@ -112,16 +118,16 @@ class MainActivity @Inject constructor(
                         }
 
                         DeviceActionsSideEffect.ShowCommandSent -> {
-                            viewModel.handleEvent(
-                                MainActivityEvent.ShowMessage(getString(R.string.command_sent))
+                            confirmationData = WearConfirmationData(
+                                type = WearConfirmationType.SUCCESS,
+                                message = getString(R.string.command_sent)
                             )
                         }
 
                         DeviceActionsSideEffect.ShowCommandError -> {
-                            viewModel.handleEvent(
-                                MainActivityEvent.ShowMessage(
-                                    getString(R.string.failed_to_send_command)
-                                )
+                            confirmationData = WearConfirmationData(
+                                type = WearConfirmationType.FAILURE,
+                                message = getString(R.string.failed_to_send_command)
                             )
                         }
                     }
@@ -184,6 +190,15 @@ class MainActivity @Inject constructor(
                             )
                         }
                     }
+
+                    confirmationData?.let { data ->
+                        WearConfirmationOverlay(
+                            visible = true,
+                            message = data.message,
+                            type = data.type,
+                            onDismissRequest = { confirmationData = null }
+                        )
+                    }
                 }
             }
         }
@@ -214,6 +229,11 @@ class MainActivity @Inject constructor(
         }
     }
 }
+
+data class WearConfirmationData(
+    val type: WearConfirmationType,
+    val message: String
+)
 
 object WearRoutes {
     const val PERMISSION_GATE = "permission_gate"

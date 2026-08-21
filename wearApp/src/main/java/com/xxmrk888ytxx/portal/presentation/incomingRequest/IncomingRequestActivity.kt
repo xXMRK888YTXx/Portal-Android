@@ -1,17 +1,23 @@
 package com.xxmrk888ytxx.portal.presentation.incomingRequest
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.TimeText
 import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.presentation.component.WearConfirmationOverlay
+import com.xxmrk888ytxx.portal.presentation.component.WearConfirmationType
 import com.xxmrk888ytxx.portal.presentation.theme.PortalTheme
 import javax.inject.Inject
 
@@ -25,22 +31,21 @@ class IncomingRequestActivity @Inject constructor(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setShowWhenLocked(true)
-        setTurnScreenOn(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
 
         setContent {
             val incomingRequest by incomingRequestViewModel.request.collectAsStateWithLifecycle()
+            var showFailureConfirmation by remember { mutableStateOf(false) }
 
             LaunchedEffect(Unit) {
                 incomingRequestViewModel.sideEffect.collect { effect ->
                     when (effect) {
                         IncomingRequestSideEffect.NavigateBack -> finish()
                         IncomingRequestSideEffect.ShowDecisionError -> {
-                            Toast.makeText(
-                                this@IncomingRequestActivity,
-                                getString(R.string.failed_to_send_decision),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            showFailureConfirmation = true
                         }
                     }
                 }
@@ -54,6 +59,13 @@ class IncomingRequestActivity @Inject constructor(
                         request = incomingRequest,
                         onEvent = incomingRequestViewModel::handleEvent
                     )
+
+                    WearConfirmationOverlay(
+                        visible = showFailureConfirmation,
+                        message = stringResource(R.string.failed_to_send_decision),
+                        type = WearConfirmationType.FAILURE,
+                        onDismissRequest = { showFailureConfirmation = false }
+                    )
                 }
             }
         }
@@ -62,8 +74,10 @@ class IncomingRequestActivity @Inject constructor(
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        setShowWhenLocked(true)
-        setTurnScreenOn(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
     }
 
     companion object {
