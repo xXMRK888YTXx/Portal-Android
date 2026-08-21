@@ -1,12 +1,12 @@
 package com.xxmrk888ytxx.portal.data.wear
 
 import android.content.Context
-import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -48,16 +48,14 @@ class WearPhoneGatewayImpl @Inject constructor(
     private suspend fun sendToAllReachableWatchNodes(path: String, data: ByteArray) {
         withContext(Dispatchers.IO) {
             runCatching {
-                val capabilityInfo = Tasks.await(
-                    capabilityClient.getCapability(
-                        WearDataLayerProtocol.CAPABILITY_WATCH_APP,
-                        CapabilityClient.FILTER_REACHABLE
-                    )
-                )
+                val capabilityInfo = capabilityClient.getCapability(
+                    WearDataLayerProtocol.CAPABILITY_WATCH_APP,
+                    CapabilityClient.FILTER_REACHABLE
+                ).await()
 
                 fastDebugLog("Phone: Found ${capabilityInfo.nodes.size} watch node(s) with capability ${WearDataLayerProtocol.CAPABILITY_WATCH_APP}: ${capabilityInfo.nodes.map { "${it.displayName}(${it.id})" }}")
                 capabilityInfo.nodes.forEach { node ->
-                    val messageId = Tasks.await(messageClient.sendMessage(node.id, path, data))
+                    val messageId = messageClient.sendMessage(node.id, path, data).await()
                     fastDebugLog("Phone: Sent message on path $path to ${node.displayName} (${node.id}), messageId: $messageId")
                 }
             }.onFailure {

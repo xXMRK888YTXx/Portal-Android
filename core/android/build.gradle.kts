@@ -20,6 +20,7 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel.ktx)
     api(libs.dagger.core)
     api(libs.coroutines.android)
+    api(libs.coroutines.play.services)
     api(libs.kotlinx.collections.immutable)
     api(libs.kotlin.serialization.core)
 }

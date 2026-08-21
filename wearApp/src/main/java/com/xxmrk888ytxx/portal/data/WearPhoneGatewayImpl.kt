@@ -1,12 +1,12 @@
 package com.xxmrk888ytxx.portal.data
 
 import android.content.Context
-import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -56,12 +56,10 @@ class WearPhoneGatewayImpl @Inject constructor(
 
     override suspend fun isPhoneAvailable(): Boolean = withContext(Dispatchers.IO) {
         runCatching {
-            val capabilityInfo = Tasks.await(
-                capabilityClient.getCapability(
-                    WearDataLayerProtocol.CAPABILITY_PHONE_APP,
-                    CapabilityClient.FILTER_REACHABLE
-                )
-            )
+            val capabilityInfo = capabilityClient.getCapability(
+                WearDataLayerProtocol.CAPABILITY_PHONE_APP,
+                CapabilityClient.FILTER_REACHABLE
+            ).await()
             val available = capabilityInfo.nodes.isNotEmpty()
             fastDebugLog("Watch: isPhoneAvailable: $available (nodes: ${capabilityInfo.nodes.map { it.displayName }})")
             available
@@ -70,12 +68,10 @@ class WearPhoneGatewayImpl @Inject constructor(
 
     private suspend fun send(path: String, data: ByteArray) = withContext(Dispatchers.IO) {
         fastDebugLog("Watch: Finding target phone node for path: $path...")
-        val capabilityInfo = Tasks.await(
-            capabilityClient.getCapability(
-                WearDataLayerProtocol.CAPABILITY_PHONE_APP,
-                CapabilityClient.FILTER_REACHABLE
-            )
-        )
+        val capabilityInfo = capabilityClient.getCapability(
+            WearDataLayerProtocol.CAPABILITY_PHONE_APP,
+            CapabilityClient.FILTER_REACHABLE
+        ).await()
 
         val phoneNode = capabilityInfo.nodes.firstOrNull { it.isNearby }
             ?: capabilityInfo.nodes.firstOrNull()
@@ -85,7 +81,7 @@ class WearPhoneGatewayImpl @Inject constructor(
             }
 
         fastDebugLog("Watch: Sending message to phone node: ${phoneNode.displayName} (${phoneNode.id}) on path: $path (${data.size} bytes)")
-        val messageId = Tasks.await(messageClient.sendMessage(phoneNode.id, path, data))
+        val messageId = messageClient.sendMessage(phoneNode.id, path, data).await()
         fastDebugLog("Watch: Successfully sent message to ${phoneNode.id} on path: $path (messageId: $messageId)")
     }
 }
