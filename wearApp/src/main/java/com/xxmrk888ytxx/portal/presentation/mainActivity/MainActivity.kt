@@ -14,8 +14,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.TimeText
+import androidx.wear.compose.navigation.SwipeDismissableNavHost
+import androidx.wear.compose.navigation.composable
+import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.xxmrk888ytxx.portal.R
-import com.xxmrk888ytxx.portal.domain.model.Device
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsScreen
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsSideEffect
 import com.xxmrk888ytxx.portal.presentation.deviceActions.DeviceActionsViewModel
@@ -60,6 +63,8 @@ class MainActivity @Inject constructor(
             val state by viewModel.state.collectAsStateWithLifecycle()
             val devices by deviceListViewModel.devices.collectAsStateWithLifecycle()
             val isPhoneConnected by settingsViewModel.isPhoneConnected.collectAsStateWithLifecycle()
+            val isActionLoading by deviceActionsViewModel.isLoading.collectAsStateWithLifecycle()
+            val navController = rememberSwipeDismissableNavController()
 
             LaunchedEffect(Unit) {
                 viewModel.sideEffect.collect { effect ->
@@ -78,13 +83,14 @@ class MainActivity @Inject constructor(
                 deviceListViewModel.sideEffect.collect { effect ->
                     when (effect) {
                         DeviceListSideEffect.OpenSettings -> {
-                            viewModel.handleEvent(MainActivityEvent.ShowSettings)
+                            navController.navigate(WearRoutes.SETTINGS)
                         }
 
                         is DeviceListSideEffect.OpenDeviceActions -> {
                             viewModel.handleEvent(
                                 MainActivityEvent.ShowDeviceActions(effect.device)
                             )
+                            navController.navigate(WearRoutes.DEVICE_ACTIONS)
                         }
 
                         DeviceListSideEffect.ShowRefreshError -> {
@@ -102,7 +108,7 @@ class MainActivity @Inject constructor(
                 deviceActionsViewModel.sideEffect.collect { effect ->
                     when (effect) {
                         DeviceActionsSideEffect.NavigateBack -> {
-                            viewModel.handleEvent(MainActivityEvent.ShowDevices)
+                            navController.popBackStack()
                         }
 
                         DeviceActionsSideEffect.ShowCommandSent -> {
@@ -126,7 +132,7 @@ class MainActivity @Inject constructor(
                 settingsViewModel.sideEffect.collect { effect ->
                     when (effect) {
                         SettingsSideEffect.NavigateBack -> {
-                            viewModel.handleEvent(MainActivityEvent.ShowDevices)
+                            navController.popBackStack()
                         }
 
                         SettingsSideEffect.OpenNotificationSettings -> {
@@ -137,15 +143,48 @@ class MainActivity @Inject constructor(
             }
 
             PortalTheme {
-                WearApp(
-                    state = state,
-                    devices = devices,
-                    isPhoneConnected = isPhoneConnected,
-                    deviceListViewModel = deviceListViewModel,
-                    deviceActionsViewModel = deviceActionsViewModel,
-                    settingsViewModel = settingsViewModel,
-                    onMainEvent = viewModel::handleEvent
-                )
+                AppScaffold(
+                    timeText = { TimeText() }
+                ) {
+                    SwipeDismissableNavHost(
+                        navController = navController,
+                        startDestination = if (!state.permissions.canEnterApp) {
+                            WearRoutes.PERMISSION_GATE
+                        } else {
+                            WearRoutes.DEVICE_LIST
+                        }
+                    ) {
+                        composable(WearRoutes.PERMISSION_GATE) {
+                            PermissionGateScreen(state, viewModel::handleEvent)
+                        }
+
+                        composable(WearRoutes.DEVICE_LIST) {
+                            DeviceListScreen(
+                                devices = devices,
+                                onEvent = deviceListViewModel::handleEvent
+                            )
+                        }
+
+                        composable(WearRoutes.DEVICE_ACTIONS) {
+                            val selectedDevice = state.selectedDevice
+                            if (selectedDevice != null) {
+                                DeviceActionsScreen(
+                                    device = selectedDevice,
+                                    isLoading = isActionLoading,
+                                    onEvent = deviceActionsViewModel::handleEvent
+                                )
+                            }
+                        }
+
+                        composable(WearRoutes.SETTINGS) {
+                            SettingsScreen(
+                                state = state,
+                                isPhoneConnected = isPhoneConnected,
+                                onEvent = settingsViewModel::handleEvent
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -176,35 +215,9 @@ class MainActivity @Inject constructor(
     }
 }
 
-@androidx.compose.runtime.Composable
-private fun WearApp(
-    state: MainScreenState,
-    devices: List<Device>,
-    isPhoneConnected: Boolean?,
-    deviceListViewModel: DeviceListViewModel,
-    deviceActionsViewModel: DeviceActionsViewModel,
-    settingsViewModel: SettingsViewModel,
-    onMainEvent: (MainActivityEvent) -> Unit
-) {
-    AppScaffold {
-        when {
-            !state.permissions.canEnterApp -> PermissionGateScreen(state, onMainEvent)
-            state.screen == WearScreen.Settings -> SettingsScreen(
-                state = state,
-                isPhoneConnected = isPhoneConnected,
-                onEvent = settingsViewModel::handleEvent
-            )
-
-            state.screen == WearScreen.DeviceActions && state.selectedDevice != null ->
-                DeviceActionsScreen(
-                    device = state.selectedDevice,
-                    onEvent = deviceActionsViewModel::handleEvent
-                )
-
-            else -> DeviceListScreen(
-                devices = devices,
-                onEvent = deviceListViewModel::handleEvent
-            )
-        }
-    }
+object WearRoutes {
+    const val PERMISSION_GATE = "permission_gate"
+    const val DEVICE_LIST = "device_list"
+    const val DEVICE_ACTIONS = "device_actions"
+    const val SETTINGS = "settings"
 }

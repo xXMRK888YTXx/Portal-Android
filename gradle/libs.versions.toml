@@ -123,6 +123,7 @@ compose-material3 = { group = "androidx.wear.compose", name = "compose-material3
 androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
 compose-ui-tooling = { group = "androidx.wear.compose", name = "compose-ui-tooling", version.ref = "composeUiTooling" }
 androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
+wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeMaterial3" }
 
 
 

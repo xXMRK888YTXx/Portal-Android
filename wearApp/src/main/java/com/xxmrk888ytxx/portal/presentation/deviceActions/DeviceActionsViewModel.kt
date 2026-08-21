@@ -6,8 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.WearPhoneGateway
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
@@ -22,7 +25,10 @@ class DeviceActionsViewModel @Inject constructor(
     private val wearPhoneGateway: WearPhoneGateway
 ) : ViewModel() {
 
-    private val _sideEffect = MutableSharedFlow<DeviceActionsSideEffect>(extraBufferCapacity = 4)
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<DeviceActionsSideEffect>(extraBufferCapacity = 64)
     val sideEffect: SharedFlow<DeviceActionsSideEffect> = _sideEffect.asSharedFlow()
 
     fun handleEvent(event: DeviceActionsEvent) {
@@ -32,11 +38,13 @@ class DeviceActionsViewModel @Inject constructor(
             }
 
             is DeviceActionsEvent.Unlock -> {
+                if (_isLoading.value) return
                 fastDebugLog("Watch: DeviceActionsEvent.Unlock clicked for clientId: ${event.clientId}")
                 send { wearPhoneGateway.sendUnlockCommand(event.clientId) }
             }
 
             is DeviceActionsEvent.WakeOnLanUnlock -> {
+                if (_isLoading.value) return
                 fastDebugLog("Watch: DeviceActionsEvent.WakeOnLanUnlock clicked for clientId: ${event.clientId}")
                 send { wearPhoneGateway.sendWakeOnLanUnlockCommand(event.clientId) }
             }
@@ -45,15 +53,20 @@ class DeviceActionsViewModel @Inject constructor(
 
     private fun send(block: suspend () -> Unit) {
         viewModelScope.launch {
-            runCatching { block() }
-                .onSuccess {
-                    fastDebugLog("Watch: Device action command sent successfully")
-                    _sideEffect.tryEmit(DeviceActionsSideEffect.ShowCommandSent)
-                }
-                .onFailure {
-                    fastDebugLog("Watch: Failed to send device action command: ${it.message}")
-                    _sideEffect.tryEmit(DeviceActionsSideEffect.ShowCommandError)
-                }
+            _isLoading.value = true
+            try {
+                runCatching { block() }
+                    .onSuccess {
+                        fastDebugLog("Watch: Device action command sent successfully")
+                        _sideEffect.tryEmit(DeviceActionsSideEffect.ShowCommandSent)
+                    }
+                    .onFailure {
+                        fastDebugLog("Watch: Failed to send device action command: ${it.message}")
+                        _sideEffect.tryEmit(DeviceActionsSideEffect.ShowCommandError)
+                    }
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 

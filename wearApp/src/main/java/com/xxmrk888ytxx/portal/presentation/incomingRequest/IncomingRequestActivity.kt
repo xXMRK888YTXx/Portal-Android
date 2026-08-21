@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.TimeText
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.presentation.theme.PortalTheme
 import javax.inject.Inject
@@ -46,7 +47,9 @@ class IncomingRequestActivity @Inject constructor(
             }
 
             PortalTheme {
-                AppScaffold {
+                AppScaffold(
+                    timeText = { TimeText() }
+                ) {
                     IncomingRequestScreen(
                         request = incomingRequest,
                         onEvent = incomingRequestViewModel::handleEvent

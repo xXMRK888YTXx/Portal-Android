@@ -1,17 +1,10 @@
 package com.xxmrk888ytxx.portal.presentation.deviceList
 
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,8 +16,11 @@ import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TextButton
+import androidx.wear.compose.material3.lazy.rememberTransformationSpec
+import androidx.wear.compose.material3.lazy.transformedHeight
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.model.Device
 import com.xxmrk888ytxx.portal.domain.model.DeviceTransport
@@ -41,8 +37,7 @@ fun DeviceListScreen(
     onEvent: (DeviceListEvent) -> Unit
 ) {
     val listState = rememberTransformingLazyColumnState()
-    var refreshDrag by remember { mutableFloatStateOf(0f) }
-    val refreshThreshold = with(LocalDensity.current) { 56.dp.toPx() }
+    val transformationSpec = rememberTransformationSpec()
 
     ScreenScaffold(
         scrollState = listState,
@@ -54,26 +49,22 @@ fun DeviceListScreen(
     ) { contentPadding ->
         TransformingLazyColumn(
             state = listState,
-            contentPadding = contentPadding,
-            modifier = Modifier.pointerInput(Unit) {
-                detectVerticalDragGestures(
-                    onDragEnd = {
-                        if (refreshDrag > refreshThreshold) {
-                            onEvent(DeviceListEvent.RefreshDevices)
-                        }
-                        refreshDrag = 0f
-                    },
-                    onDragCancel = { refreshDrag = 0f }
-                ) { _, dragAmount ->
-                    if (dragAmount > 0) refreshDrag += dragAmount
+            contentPadding = contentPadding
+        ) {
+            item {
+                ListHeader(
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier.transformedHeight(this, transformationSpec)
+                ) {
+                    Text(stringResource(R.string.devices))
                 }
             }
-        ) {
-            item { ListHeader { Text(stringResource(R.string.devices)) } }
             item {
                 TextButton(
                     onClick = { onEvent(DeviceListEvent.RefreshDevices) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
                 ) {
                     Text(stringResource(R.string.refresh_devices))
                 }
@@ -83,14 +74,19 @@ fun DeviceListScreen(
                     Text(
                         text = stringResource(R.string.no_synced_devices),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .transformedHeight(this, transformationSpec)
                     )
                 }
             } else {
                 items(devices) { device ->
                     Card(
                         onClick = { onEvent(DeviceListEvent.SelectDevice(device)) },
-                        modifier = Modifier.fillMaxWidth()
+                        transformation = SurfaceTransformation(transformationSpec),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .transformedHeight(this, transformationSpec)
                     ) {
                         Column(Modifier.padding(12.dp)) {
                             Text(device.name)

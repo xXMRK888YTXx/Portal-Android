@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.kotlin.serialization.json)
     implementation(libs.androidx.wear.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.wear.compose.navigation)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.compose.ui.tooling)
     implementation(libs.play.services.wearable)

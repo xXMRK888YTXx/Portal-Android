@@ -84,7 +84,7 @@ fun IncomingRequestScreen(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.close),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.deny),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -99,7 +99,7 @@ fun IncomingRequestScreen(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.check),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.allow),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
