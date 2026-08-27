@@ -155,6 +155,6 @@ class IncomingUnlockDecisionCoordinatorImpl @Inject constructor(
 
     companion object {
         private const val MAX_COMPLETED_HISTORY = 100
-        private const val REQUEST_TTL_MS = 300_000L // 5 minutes
+        private const val REQUEST_TTL_MS = 3 * 60 * 60 * 1000L // 3 hours
     }
 }
