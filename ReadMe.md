@@ -39,7 +39,8 @@ The application operates in three global modes:
 Messages and unlock commands are delivered through:
 -   **Bluetooth (RFCOMM):** A direct, stable connection between your phone and PC.
 -   **WiFi (WebSockets):** High-speed communication over your local network.
-    -   *Includes **Wake-on-LAN (WOL)** support to "wake up" your PC over WiFi before sending the unlock command.*
+- *Includes **Wake-on-LAN (WOL)** support to "wake up" your PC over WiFi before sending the unlock
+  command.*
 - **Wear Data Layer:** Instant local synchronization between your Android smartphone and Wear OS
   smartwatch.
 
