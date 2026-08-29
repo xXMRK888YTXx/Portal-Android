@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.ApplicationExtension
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -12,20 +10,23 @@ val catalogJavaVersion = libs.versions.jvm.target.get()
 val catalogCompileSdk = libs.versions.compile.sdk.get().toInt()
 val catalogMinSdk = libs.versions.min.sdk.get().toInt()
 val catalogTargetSdk = libs.versions.target.sdk.get().toInt()
+val catalogVersionName = libs.versions.version.name.get()
+val catalogApplicationId = libs.versions.application.id.get()
+val catalogVersionCode = libs.versions.app.version.code.get().toInt()
 
 
-extensions.configure<ApplicationExtension> {
-    namespace = "com.xxmrk888ytxx.portal"
+android {
+    namespace = catalogApplicationId
     compileSdk {
         version = release(catalogCompileSdk)
     }
 
     defaultConfig {
-        applicationId = "com.xxmrk888ytxx.portal"
+        applicationId = catalogApplicationId
         minSdk = catalogMinSdk
         targetSdk = catalogTargetSdk
-        versionCode = 45
-        versionName = "Eve.8.1"
+        versionCode = catalogVersionCode
+        versionName = catalogVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,6 +52,12 @@ extensions.configure<ApplicationExtension> {
         sourceCompatibility = JavaVersion.valueOf("VERSION_$catalogJavaVersion")
         targetCompatibility = JavaVersion.valueOf("VERSION_$catalogJavaVersion")
     }
+    packaging {
+        resources {
+            merges += "/META-INF/LICENSE.md"
+            merges += "/META-INF/NOTICE.md"
+        }
+    }
     buildFeatures {
         compose = true
         buildConfig = true
@@ -58,17 +65,17 @@ extensions.configure<ApplicationExtension> {
 }
 
 dependencies {
-    implementation(projects.coreCompose)
-    implementation(projects.onboardingScreen)
-    implementation(projects.preferencesStorage)
-    implementation(projects.mainScreen)
-    implementation(projects.addNewDeviceScreen)
-    implementation(projects.database)
-    implementation(projects.deviceConfigurationScreen)
-    implementation(projects.unlockService)
-    implementation(projects.biometricAuthentication.compose)
-    implementation(projects.logsScreen)
-    implementation(projects.settingsScreen)
+    implementation(projects.core.compose)
+    implementation(projects.feature.onboarding)
+    implementation(projects.common.preferencesStorage)
+    implementation(projects.feature.main)
+    implementation(projects.feature.addDevice)
+    implementation(projects.core.database)
+    implementation(projects.feature.deviceConfiguration)
+    implementation(projects.core.unlockService)
+    implementation(projects.common.biometric.compose)
+    implementation(projects.feature.logs)
+    implementation(projects.feature.settings)
 
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.navigation3.ui)
@@ -85,6 +92,8 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.play.services.code.scanner)
+    implementation(libs.play.services.wearable)
+    implementation(libs.kotlin.serialization.json)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

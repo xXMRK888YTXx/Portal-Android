@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.PortalViewModel
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
+import com.xxmrk888ytxx.portal.data.wear.WearDecisionPayloadValue
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
+import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
 import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
@@ -39,7 +41,8 @@ class UnlockScreenViewModel @Inject constructor(
     private val provideDeviceNameByClientId: ProvideDeviceNameByClientId,
     private val settingsRepository: SettingsRepository,
     private val unlockRequestManager: UnlockRequestManager,
-    private val applicationScope: CoroutineScope
+    private val applicationScope: CoroutineScope,
+    private val decisionCoordinator: IncomingUnlockDecisionCoordinator
 ) : PortalViewModel<Unit, UnlockScreenUiEvent>(Unit), Navigator,
     SideEffectSender<UnlockScreenSideEffect> {
 
@@ -96,7 +99,8 @@ class UnlockScreenViewModel @Inject constructor(
                 clientId = unlockScreenData.clientId,
                 deviceName = provideDeviceNameByClientId.provideName(unlockScreenData.clientId) ?: return@launch,
                 request = UnlockServiceRequest.Auth(unlockScreenData.requestId),
-                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = false
+                showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = false,
+                decisionId = unlockScreenData.decisionId
             )
             dismissScreen()
         }
@@ -121,10 +125,17 @@ class UnlockScreenViewModel @Inject constructor(
         if (isEventSent.value) return
         isEventSent.value = true
         viewModelScope.launch {
-            unlockMessageSender.sendMessage(
-                unlockScreenData.clientId,
-                UnlockServiceMessage.Unlock(requestId = unlockScreenData.requestId)
-            )
+            if (unlockScreenData.decisionId != null) {
+                decisionCoordinator.resolve(
+                    unlockScreenData.decisionId,
+                    WearDecisionPayloadValue.UNLOCK
+                )
+            } else {
+                unlockMessageSender.sendMessage(
+                    unlockScreenData.clientId,
+                    UnlockServiceMessage.Unlock(requestId = unlockScreenData.requestId)
+                )
+            }
         }.invokeOnCompletion { dismissScreen() }
     }
 
@@ -166,6 +177,16 @@ class UnlockScreenViewModel @Inject constructor(
             _deviceName.value =
                 provideDeviceNameByClientId.provideName(intentUnlockScreenData.clientId) ?: ""
         }
+        intentUnlockScreenData.decisionId?.let { decisionId ->
+            viewModelScope.launch {
+                decisionCoordinator.finalStatus.collect { status ->
+                    if (status.decisionId == decisionId) {
+                        isEventSent.value = true
+                        dismissScreen()
+                    }
+                }
+            }
+        }
         return true
     }
 
@@ -174,10 +195,17 @@ class UnlockScreenViewModel @Inject constructor(
         isEventSent.value = true
         applicationScope.launch {
             unlockScreenData?.let { unlockData ->
-                unlockMessageSender.sendMessage(
-                    unlockData.clientId,
-                    UnlockServiceMessage.Canceled(unlockData.requestId)
-                )
+                if (unlockData.decisionId != null) {
+                    decisionCoordinator.resolve(
+                        unlockData.decisionId,
+                        WearDecisionPayloadValue.CANCEL
+                    )
+                } else {
+                    unlockMessageSender.sendMessage(
+                        unlockData.clientId,
+                        UnlockServiceMessage.Canceled(unlockData.requestId)
+                    )
+                }
             }
         }.invokeOnCompletion {
             dismissScreen()

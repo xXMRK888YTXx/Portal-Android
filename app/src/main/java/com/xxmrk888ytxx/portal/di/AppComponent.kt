@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
-import com.xxmrk888ytxx.mydictionary.DI.scope.AppScope
 import com.xxmrk888ytxx.portal.data.BiometricEnvironmentObserver
 import com.xxmrk888ytxx.portal.data.UnsafeUnlockTypesStateObserver
 import com.xxmrk888ytxx.portal.di.module.ActivityBindsModule
@@ -21,8 +20,10 @@ import com.xxmrk888ytxx.portal.di.module.OnboardingScreenModule
 import com.xxmrk888ytxx.portal.di.module.ServiceBindsModule
 import com.xxmrk888ytxx.portal.di.module.SettingsScreenModule
 import com.xxmrk888ytxx.portal.di.module.UnlockServiceModule
+import com.xxmrk888ytxx.portal.di.scope.AppScope
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.WatchDogManager
+import com.xxmrk888ytxx.portal.domain.WearDeviceSyncManager
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Provider
@@ -54,6 +55,7 @@ interface AppComponent {
     val awaitUnlockRequestManager: AwaitUnlockRequestManager
     val unsafeUnlockTypesStateObserver: UnsafeUnlockTypesStateObserver
     val watchDogManager: WatchDogManager
+    val wearDeviceSyncManager: WearDeviceSyncManager
 
     @Component.Factory
     interface Factory {

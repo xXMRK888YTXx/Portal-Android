@@ -13,7 +13,11 @@ class ProvideSettingsStateImpl @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ProvideSettingsState {
     override val appVersion: Flow<String> = flowOf(
-        "${BuildConfig.VERSION_NAME}-${BuildConfig.BUILD_TYPE} (${BuildConfig.VERSION_CODE})"
+        if (BuildConfig.DEBUG) {
+            "${BuildConfig.VERSION_NAME}-${BuildConfig.BUILD_TYPE} (${BuildConfig.VERSION_CODE})"
+        } else {
+            "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+        }
     )
     override val isBiometricProtectionEnabled: Flow<Boolean> =
         settingsRepository.portalSettings.map { it.isBiometricAuthEnabled }

@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.mydictionary.DI.scope
+package com.xxmrk888ytxx.portal.di.scope
 
 import javax.inject.Scope
 

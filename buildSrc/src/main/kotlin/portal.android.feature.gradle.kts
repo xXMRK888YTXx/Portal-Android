@@ -6,6 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":CoreAndroid"))
+    implementation(project(":core:android"))
     ksp(libs.dagger.compiler)
 }
