@@ -1,16 +1,14 @@
-# Wear OS unlock feature handoff
+# Wear OS Companion Module Guidelines (`wearApp`)
 
-This repository contains the Wear OS companion app in `wearApp` and the phone-side backend in `app`
-and core modules.
-The user asked **not to run compilation/tests** (`./gradlew build`, etc.) unless explicitly
-requested.
+This module contains the Wear OS companion app for Portal, built with Jetpack Compose for Wear OS (
+Material 3) and MVI architecture.
 
 ---
 
-## Current Product & Architecture Decisions
+## 1. Product & Architecture Decisions
 
 1. **Background Request Delivery on Wear OS**:
-    - `SYSTEM_ALERT_WINDOW` is not allowed on Wear OS.
+    - `SYSTEM_ALERT_WINDOW` is **not allowed** on Wear OS. Do not re-add it.
     - `USE_FULL_SCREEN_INTENT` is unreliable on inactive watches.
     - Incoming requests are delivered via **high-priority notification**.
     - Notifications contain quick-action buttons (**Allow** and **Deny**) to resolve requests
@@ -36,33 +34,7 @@ requested.
 
 ---
 
-## Key Components & Architecture
-
-### Phone Side (`app/`, `core/`)
-
-- `app/.../data/UnlockRequestHandlerImpl.kt`: Creates `decisionId` and forwards unlock requests to
-  Wear OS.
-- `app/.../data/IncomingUnlockDecisionCoordinatorImpl.kt`:
-    - Central decision deduplication.
-    - Bounded LRU history (`MAX_COMPLETED_HISTORY = 100`) and 5-minute TTL expiration for pending
-      requests to prevent memory leaks.
-    - Exposes `finalStatus` as `SharedFlow(replay = 0, extraBufferCapacity = 64)` to prevent stale
-      replay to new subscribers.
-- `app/.../data/UnlockRequestManagerImpl.kt`: Manages phone notifications and cancels them on final
-  status.
-- `app/.../view/unlockScreenActivity/UnlockScreenActivity.kt` & `UnlockScreenViewModel.kt`:
-    - Dismisses phone unlock screen on incoming watch decision.
-    - Implements `onNewIntent` to handle subsequent requests safely, canceling previous status
-      observation jobs.
-- `app/.../data/wear/*`: Wear Data Layer protocol, sync manager, phone gateway, and node validation
-  using non-blocking `kotlinx.coroutines.tasks.await()`.
-- `core/database/PortalDataBase.kt`:
-    - Room database (version 3) with `MIGRATION_1_2` and `MIGRATION_2_3`.
-    - `ShortcutEntry` indexed on `clientId` foreign key to prevent SQLite full table scans.
-- `app/.../providedContract/settingsScreen/ProvideSettingsStateImpl.kt`: Exposes version as
-  `1.0.0-debug (1)` in debug and `1.0.0 (1)` in release.
-
-### Watch Side (`wearApp/`)
+## 2. Key Components & Architecture
 
 - `wearApp/.../presentation/incomingRequest/IncomingRequestActivity.kt`: Separate Activity for
   incoming unlock requests with `AppScaffold(timeText = { TimeText() })`.
@@ -91,7 +63,7 @@ requested.
 
 ---
 
-## Wear OS Quality & UI Guidelines Implemented
+## 3. Wear OS Quality & UI Guidelines
 
 - **Time Display**: `timeText = { TimeText() }` in `AppScaffold` across all activities.
 - **Swipe Dismiss Navigation**: `SwipeDismissableNavHost` used for edge swipe-to-back gestures and
@@ -108,20 +80,21 @@ requested.
 
 ---
 
-## Release Build & R8 Protection
+## 4. Release Build & R8 Protection
 
-- **Resource Shrinking Protection**: `app/src/main/res/raw/keep.xml` and
-  `wearApp/src/main/res/raw/keep.xml` protect `@array/android_wear_capabilities` (
-  `portal_phone_app`, `portal_watch_app`) from being stripped by `isShrinkResources = true`.
-- **ProGuard / R8 Rules**: `app/proguard-rules.pro` and `wearApp/proguard-rules.pro` preserve
-  `kotlinx.serialization` serializers, `@Serializable` models in
-  `com.xxmrk888ytxx.portal.data.wear.**`, and Google Play Services Wearable components.
+- **Resource Shrinking Protection**: `wearApp/src/main/res/raw/keep.xml` protects
+  `@array/android_wear_capabilities` (`portal_phone_app`, `portal_watch_app`) from being stripped by
+  `isShrinkResources = true`.
+- **ProGuard / R8 Rules**: `wearApp/proguard-rules.pro` preserves `kotlinx.serialization`
+  serializers, `@Serializable` models in `com.xxmrk888ytxx.portal.data.wear.**`, and Google Play
+  Services Wearable components.
 
 ---
 
-## Important Guidelines for Future Agents
+## 5. Architectural Constraints for Agents
 
-- Do not re-add `SYSTEM_ALERT_WINDOW` or full-screen intent on Wear OS.
-- Do not move network credentials or keys to the watch; watch profiles must remain metadata-only.
-- Maintain MVI architecture for all Wear screens: `*Screen.kt` accepts state and
-  `onEvent: (ScreenEvent) -> Unit` and does not call ViewModels directly.
+- **MVI Architecture**: Maintain MVI architecture for all Wear screens: `*Screen.kt` accepts state
+  and `onEvent: (ScreenEvent) -> Unit` and must not call ViewModels directly.
+- **No Full-Screen Overlays**: Do not re-add `SYSTEM_ALERT_WINDOW` or full-screen intent on Wear OS.
+- **Metadata Only**: Do not move network credentials or keys to the watch; watch profiles must
+  remain metadata-only.
