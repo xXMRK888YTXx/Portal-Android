@@ -62,6 +62,7 @@ Messages and unlock commands are delivered through:
 
 ## 📸 Screenshots
 
+### Android
 <div align="center">
   <img src="Screenshots/0.png" width="200">
   <img src="Screenshots/1.jpg" width="200">
@@ -73,6 +74,17 @@ Messages and unlock commands are delivered through:
   <img src="Screenshots/2.jpg" width="200">
   <img src="Screenshots/3.jpg" width="200">
   <img src="Screenshots/4.jpg" width="200">
+</div>
+
+<br>
+
+### Wear OS
+
+<div align="center">
+  <img src="Screenshots/wearos/0.png" width="180">
+  <img src="Screenshots/wearos/1.png" width="180">
+  <img src="Screenshots/wearos/2.png" width="180">
+  <img src="Screenshots/wearos/3.png" width="180">
 </div>
 
 ---
@@ -171,6 +183,7 @@ To ensure the authenticity of the application, please verify the build signature
 
 ## 📸 Скриншоты
 
+### Android
 <div align="center">
   <img src="Screenshots/0.png" width="200">
   <img src="Screenshots/1.jpg" width="200">
@@ -182,6 +195,17 @@ To ensure the authenticity of the application, please verify the build signature
   <img src="Screenshots/2.jpg" width="200">
   <img src="Screenshots/3.jpg" width="200">
   <img src="Screenshots/4.jpg" width="200">
+</div>
+
+<br>
+
+### Wear OS
+
+<div align="center">
+  <img src="Screenshots/wearos/0.png" width="180">
+  <img src="Screenshots/wearos/1.png" width="180">
+  <img src="Screenshots/wearos/2.png" width="180">
+  <img src="Screenshots/wearos/3.png" width="180">
 </div>
 
 ## 🛠 Технологии и архитектура
