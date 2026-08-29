@@ -63,7 +63,7 @@ Messages and unlock commands are delivered through:
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="Screenshots/0.jpg" width="200">
+  <img src="Screenshots/0.png" width="200">
   <img src="Screenshots/1.jpg" width="200">
 </div>
 
@@ -172,7 +172,7 @@ To ensure the authenticity of the application, please verify the build signature
 ## 📸 Скриншоты
 
 <div align="center">
-  <img src="Screenshots/0.jpg" width="200">
+  <img src="Screenshots/0.png" width="200">
   <img src="Screenshots/1.jpg" width="200">
 </div>
 
