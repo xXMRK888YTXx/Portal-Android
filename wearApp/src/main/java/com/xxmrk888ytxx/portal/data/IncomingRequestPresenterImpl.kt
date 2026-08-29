@@ -69,8 +69,8 @@ class IncomingRequestPresenterImpl @Inject constructor(
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(true)
             .setContentIntent(requestPendingIntent)
-            .addAction(denyAction)
             .addAction(allowAction)
+            .addAction(denyAction)
 
         try {
             notificationManager.notify(
