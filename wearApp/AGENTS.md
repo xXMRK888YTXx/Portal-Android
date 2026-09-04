@@ -55,7 +55,7 @@ Material 3) and MVI architecture.
   button overlap), transport info in `secondaryLabel`, and a dimmed `CircularProgressIndicator`
   overlay during command execution.
 - `wearApp/.../presentation/permissionGate/PermissionGateScreen.kt`: Redesigned permission screen
-  with hero notification icon, clear title/description, and direct CTA button.
+  with hero notification icon, clear title/description, and an edge-hugging `EdgeButton`.
 - `wearApp/.../presentation/settings/SettingsScreen.kt`: Settings screen with action icons (
   `ic_notifications`, `ic_phone`), high-contrast status colors (`StatusConnectedColor`,
   `StatusDisconnectedColor`, `StatusCheckingColor`), and version footer.

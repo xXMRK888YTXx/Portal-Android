@@ -18,11 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
-import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
-import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
@@ -33,7 +32,7 @@ import com.xxmrk888ytxx.portal.presentation.mainActivity.MainScreenState
 /**
  * Modern, user-friendly permission gate screen for Wear OS.
  *
- * Prompts user with clear context and a direct call-to-action button to grant notification permission.
+ * Prompts user with clear context and an edge-hugging call-to-action button to grant notification permission.
  */
 @Composable
 fun PermissionGateScreen(
@@ -43,7 +42,19 @@ fun PermissionGateScreen(
     val listState = rememberTransformingLazyColumnState()
     val transformationSpec = rememberTransformationSpec()
 
-    ScreenScaffold(scrollState = listState) { contentPadding ->
+    ScreenScaffold(
+        scrollState = listState,
+        edgeButton = {
+            EdgeButton(
+                onClick = { onEvent(MainActivityEvent.OpenNotificationSettings) }
+            ) {
+                Text(
+                    text = stringResource(R.string.grant_permission),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    ) { contentPadding ->
         TransformingLazyColumn(
             state = listState,
             contentPadding = contentPadding,
@@ -78,7 +89,7 @@ fun PermissionGateScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 14.dp)
                         .transformedHeight(this, transformationSpec)
                 )
             }
@@ -95,29 +106,9 @@ fun PermissionGateScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 16.dp)
                         .transformedHeight(this, transformationSpec)
                 )
-            }
-
-            item {
-                Spacer(Modifier.height(12.dp))
-            }
-
-            item {
-                Button(
-                    onClick = { onEvent(MainActivityEvent.OpenNotificationSettings) },
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .transformedHeight(this, transformationSpec)
-                ) {
-                    Text(
-                        text = stringResource(R.string.grant_permission),
-                        textAlign = TextAlign.Center
-                    )
-                }
             }
         }
     }

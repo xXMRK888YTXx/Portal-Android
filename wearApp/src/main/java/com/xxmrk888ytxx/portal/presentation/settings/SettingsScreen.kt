@@ -160,7 +160,7 @@ fun SettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp, bottom = 4.dp)
+                        .padding(start = 14.dp, end = 14.dp, top = 12.dp, bottom = 4.dp)
                         .transformedHeight(this, transformationSpec),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
