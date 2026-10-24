@@ -67,6 +67,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -131,9 +132,10 @@ fun SettingsScreen(
             SettingsSection(stringResource(R.string.pc_client)) {
                 SettingsItem(
                     title = stringResource(R.string.download_for_pc),
-                    iconRes = R.drawable.portal,
+                    iconRes = AppIcon.DEFAULT.previewRes,
                     useImageInsteadIcon = true,
-                    subtitle = stringResource(R.string.install_the_app_on_your_computer_to_pair_your_device)
+                    subtitle = stringResource(R.string.install_the_app_on_your_computer_to_pair_your_device),
+                    size = 32.dp
                 ) {
                    onEvent(SettingsScreenEvent.OnDownloadPcClientClicked)
                 }
@@ -202,7 +204,9 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(R.string.app_icon),
                     subtitle = stringResource(currentAppIcon.titleRes),
-                    iconRes = R.drawable.portal
+                    iconRes = currentAppIcon.previewRes,
+                    useImageInsteadIcon = true,
+                    size = 32.dp
                 ) {
                     onEvent(SettingsScreenEvent.OnAppIconClicked)
                 }
@@ -616,6 +620,7 @@ fun SettingsItem(
     @DrawableRes iconRes: Int,
     subtitle: String? = null,
     useImageInsteadIcon: Boolean = false,
+    size: Dp = 24.dp,
     onClick: () -> Unit
 ) {
     Row(
@@ -629,14 +634,17 @@ fun SettingsItem(
             Image(
                 painter = painterResource(id = iconRes),
                 contentDescription = title,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier
+                    .size(size)
+                    .clip(RoundedCornerShape(6.dp)),
+                contentScale = ContentScale.Fit
             )
         } else {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = title,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(size)
             )
         }
 
