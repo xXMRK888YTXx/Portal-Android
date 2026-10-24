@@ -22,7 +22,7 @@ sealed interface SettingsScreenEvent : UiEvent {
     data object OpenOpenSourceLicenses : SettingsScreenEvent
     data object OnThemeClicked : SettingsScreenEvent
     data object OnAppIconClicked : SettingsScreenEvent
-    data class OnAppIconSelected(val newIconId: String) : SettingsScreenEvent
+    data class OnAppIconSelected(val newIcon: AppIcon) : SettingsScreenEvent
     data object OnUnlockScreenStyleClicked : SettingsScreenEvent
     data class OnUnlockScreenStyleSelected(val newStyleId: String) : SettingsScreenEvent
     data object OnDownloadPcClientClicked : SettingsScreenEvent

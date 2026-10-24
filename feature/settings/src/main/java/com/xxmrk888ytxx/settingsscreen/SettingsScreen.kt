@@ -77,12 +77,12 @@ import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.theme.AppSeedColors
 import com.xxmrk888ytxx.settingsscreen.model.AppIcon
-import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
 import com.xxmrk888ytxx.settingsscreen.model.ScreenState
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent.ConfirmSecurityChanges
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenSideEffect
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -197,7 +197,7 @@ fun SettingsScreen(
                     onEvent(SettingsScreenEvent.OnThemeClicked)
                 }
 
-                val currentAppIcon = AppIcon.fromId(screenState.currentAppIconId)
+                val currentAppIcon = screenState.currentAppIcon
                 SettingsItem(
                     title = stringResource(R.string.app_icon),
                     subtitle = stringResource(currentAppIcon.titleRes),
@@ -327,7 +327,7 @@ fun SettingsScreen(
             selectedColor = screenState.bottomSheetState.selectedThemeColor
         )
         is BottomSheetState.SelectAppIconDialog -> SelectAppIconDialog(
-            currentIconId = screenState.bottomSheetState.currentIconId,
+            currentIcon = screenState.bottomSheetState.currentIcon,
             onDismiss = { onEvent(SettingsScreenEvent.HideBottomSheet) },
             onIconSelected = { onEvent(SettingsScreenEvent.OnAppIconSelected(it)) }
         )
@@ -844,9 +844,9 @@ fun ConfirmSecurityChangesDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectAppIconDialog(
-    currentIconId: String,
+    currentIcon: AppIcon,
     onDismiss: () -> Unit,
-    onIconSelected: (String) -> Unit
+    onIconSelected: (AppIcon) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
@@ -873,7 +873,7 @@ fun SelectAppIconDialog(
             Spacer(modifier = Modifier.height(20.dp))
 
             AppIcon.entries.forEach { icon ->
-                val isSelected = icon.id == currentIconId
+                val isSelected = icon == currentIcon
                 val containerColor = if (isSelected) {
                     MaterialTheme.colorScheme.secondaryContainer
                 } else {
@@ -891,7 +891,7 @@ fun SelectAppIconDialog(
                         .padding(vertical = 6.dp)
                         .clip(RoundedCornerShape(20.dp))
                         .clickable {
-                            onIconSelected(icon.id)
+                            onIconSelected(icon)
                         },
                     shape = RoundedCornerShape(20.dp),
                     color = containerColor,

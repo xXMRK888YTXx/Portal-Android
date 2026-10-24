@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.portal.BuildConfig
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.settingsscreen.contract.ProvideSettingsState
+import com.xxmrk888ytxx.settingsscreen.model.AppIcon
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -31,8 +32,8 @@ class ProvideSettingsStateImpl @Inject constructor(
         settingsRepository.portalSettings.map { it.isWatchDogEnabled }
     override val themeColor: Flow<Color?>
         get() = settingsRepository.portalSettings.map { it.themeColor }
-    override val appIconId: Flow<String> =
-        settingsRepository.portalSettings.map { it.appIconId }
+    override val appIcon: Flow<AppIcon> =
+        settingsRepository.portalSettings.map { it.appIcon }
     override val unlockScreenStyle: Flow<String> =
         settingsRepository.portalSettings.map { it.unlockScreenStyle }
 }

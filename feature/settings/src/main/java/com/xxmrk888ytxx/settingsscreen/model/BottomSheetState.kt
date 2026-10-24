@@ -15,7 +15,7 @@ sealed interface BottomSheetState {
     ) : BottomSheetState
 
     data class SelectAppIconDialog(
-        val currentIconId: String = AppIcon.DEFAULT.id
+        val currentIcon: AppIcon = AppIcon.DEFAULT
     ) : BottomSheetState
 
     data class SelectUnlockScreenStyleDialog(

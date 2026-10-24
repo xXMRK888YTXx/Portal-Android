@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.settingsscreen.contract
 
 import androidx.compose.ui.graphics.Color
+import com.xxmrk888ytxx.settingsscreen.model.AppIcon
 import kotlinx.coroutines.flow.Flow
 
 interface ProvideSettingsState {
@@ -11,6 +12,6 @@ interface ProvideSettingsState {
     val isUnsafeUnlockTypesDisabled: Flow<Boolean>
     val isWatchDogEnabled: Flow<Boolean>
     val themeColor: Flow<Color?>
-    val appIconId: Flow<String>
+    val appIcon: Flow<AppIcon>
     val unlockScreenStyle: Flow<String>
 }

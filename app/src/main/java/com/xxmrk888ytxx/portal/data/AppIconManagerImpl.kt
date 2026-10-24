@@ -5,29 +5,19 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.portal.domain.AppIconManager
+import com.xxmrk888ytxx.settingsscreen.model.AppIcon
 import javax.inject.Inject
 
 class AppIconManagerImpl @Inject constructor(
     private val context: Context
 ) : AppIconManager {
 
-    private val aliasSuffixes = mapOf(
-        "default" to "MainActivityDefault",
-        "tactical" to "MainActivityTactical",
-        "minimal" to "MainActivityMinimal",
-        "soft" to "MainActivitySoft",
-        "anime_1" to "MainActivityAnime1",
-        "anime_2" to "MainActivityAnime2",
-        "classic" to "MainActivityClassic"
-    )
-
-    override fun setAppIcon(iconId: String) {
+    override fun setAppIcon(icon: AppIcon) {
         val packageManager = context.packageManager
         val packageName = context.packageName
-        val targetSuffix = aliasSuffixes[iconId] ?: aliasSuffixes["default"]!!
-        val targetAlias = "$packageName.$targetSuffix"
+        val targetAlias = "$packageName.${icon.aliasSuffix}"
 
-        fastDebugLog("Changing app icon to $iconId (target alias: $targetAlias)")
+        fastDebugLog("Changing app icon to ${icon.name} (target alias: $targetAlias)")
 
         // 1. Enable target alias FIRST so there is never a state where no launcher component is active
         val targetComponent = ComponentName(packageName, targetAlias)
@@ -52,10 +42,10 @@ class AppIconManagerImpl @Inject constructor(
         }
 
         // 2. Disable all other aliases SECOND
-        aliasSuffixes.values.forEach { suffix ->
-            val aliasName = "$packageName.$suffix"
-            if (aliasName == targetAlias) return@forEach
+        AppIcon.entries.forEach { appIcon ->
+            if (appIcon == icon) return@forEach
 
+            val aliasName = "$packageName.${appIcon.aliasSuffix}"
             val component = ComponentName(packageName, aliasName)
             try {
                 val currentState = packageManager.getComponentEnabledSetting(component)

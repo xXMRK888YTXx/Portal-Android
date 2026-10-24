@@ -13,6 +13,7 @@ import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.DEFAULT_VALUE
 import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.REMOVED_BY_SECURITY_SETTINGS_CHANGES
 import com.xxmrk888ytxx.portal.domain.model.PortalSettings
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
+import com.xxmrk888ytxx.settingsscreen.model.AppIcon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -51,7 +52,7 @@ class SettingsRepositoryImpl @Inject constructor(
         preferencesStorage.getProperty(isOnboardingPassedKey, false),
         preferencesStorage.getPropertyOrNull(themeColorKey),
         preferencesStorage.getProperty(watchDogEnabledKey, false),
-        preferencesStorage.getProperty(appIconKey, "default"),
+        preferencesStorage.getProperty(appIconKey, AppIcon.DEFAULT.id),
         preferencesStorage.getProperty(unlockScreenStyleKey, "classic")
     ) { flowArray ->
         val biometricAuthEnabled = flowArray[0] as Boolean
@@ -74,7 +75,7 @@ class SettingsRepositoryImpl @Inject constructor(
             isOnboardingPassed = isOnboardingPassed,
             themeColor = if (themeColor == null) null else Color(value = themeColor.toULong()),
             isWatchDogEnabled = isWatchDogEnabled,
-            appIconId = appIconId,
+            appIcon = AppIcon.fromId(appIconId),
             unlockScreenStyle = unlockScreenStyle
         )
     }
@@ -142,9 +143,9 @@ class SettingsRepositoryImpl @Inject constructor(
         preferencesStorage.writeProperty(watchDogEnabledKey, isEnabled)
     }
 
-    override suspend fun updateAppIconId(iconId: String) = withContext(Dispatchers.IO) {
-        preferencesStorage.writeProperty(appIconKey, iconId)
-        appIconManager.setAppIcon(iconId)
+    override suspend fun updateAppIcon(icon: AppIcon) = withContext(Dispatchers.IO) {
+        preferencesStorage.writeProperty(appIconKey, icon.id)
+        appIconManager.setAppIcon(icon)
     }
 
     override suspend fun updateUnlockScreenStyle(styleId: String) = withContext(Dispatchers.IO) {
