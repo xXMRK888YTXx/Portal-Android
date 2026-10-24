@@ -2,7 +2,7 @@ package com.xxmrk888ytxx.portal.domain
 
 import com.xxmrk888ytxx.portal.domain.model.DeviceType
 
-interface ProvideDeviceNameByClientId {
+interface ProvideDeviceInfoByClientId {
     suspend fun provideName(clientId: String): String?
     suspend fun provideType(clientId: String): DeviceType?
 }

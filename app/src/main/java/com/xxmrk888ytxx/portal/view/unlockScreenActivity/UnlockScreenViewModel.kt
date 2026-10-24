@@ -11,7 +11,7 @@ import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
 import com.xxmrk888ytxx.portal.data.wear.WearDecisionPayloadValue
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
-import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
+import com.xxmrk888ytxx.portal.domain.ProvideDeviceInfoByClientId
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
@@ -40,7 +40,7 @@ import javax.inject.Provider
 class UnlockScreenViewModel @Inject constructor(
     private val biometricDialogController: BiometricDialogController,
     private val unlockMessageSender: UnlockMessageSender,
-    private val provideDeviceNameByClientId: ProvideDeviceNameByClientId,
+    private val provideDeviceInfoByClientId: ProvideDeviceInfoByClientId,
     private val settingsRepository: SettingsRepository,
     private val unlockRequestManager: UnlockRequestManager,
     private val applicationScope: CoroutineScope,
@@ -106,7 +106,8 @@ class UnlockScreenViewModel @Inject constructor(
         viewModelScope.launch {
             unlockRequestManager.sendNotification(
                 clientId = unlockScreenData.clientId,
-                deviceName = provideDeviceNameByClientId.provideName(unlockScreenData.clientId) ?: return@launch,
+                deviceName = provideDeviceInfoByClientId.provideName(unlockScreenData.clientId)
+                    ?: return@launch,
                 request = UnlockServiceRequest.Auth(unlockScreenData.requestId),
                 showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = false,
                 decisionId = unlockScreenData.decisionId
@@ -184,9 +185,9 @@ class UnlockScreenViewModel @Inject constructor(
         unlockScreenData = intentUnlockScreenData
         viewModelScope.launch {
             _deviceName.value =
-                provideDeviceNameByClientId.provideName(intentUnlockScreenData.clientId) ?: ""
+                provideDeviceInfoByClientId.provideName(intentUnlockScreenData.clientId) ?: ""
             _connectionType.value =
-                provideDeviceNameByClientId.provideType(intentUnlockScreenData.clientId)
+                provideDeviceInfoByClientId.provideType(intentUnlockScreenData.clientId)
         }
         intentUnlockScreenData.decisionId?.let { decisionId ->
             viewModelScope.launch {
