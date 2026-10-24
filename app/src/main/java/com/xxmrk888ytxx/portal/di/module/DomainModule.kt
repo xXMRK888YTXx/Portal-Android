@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.di.module
 
 import android.content.Context
 import com.xxmrk888ytxx.mainscreen.contract.SettingsProvider
+import com.xxmrk888ytxx.portal.data.AppIconManagerImpl
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BiometricAuthStateProviderImpl
 import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
@@ -41,6 +42,7 @@ import com.xxmrk888ytxx.portal.data.wear.WearPhoneGatewayImpl
 import com.xxmrk888ytxx.portal.di.scope.AppScope
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
+import com.xxmrk888ytxx.portal.domain.AppIconManager
 import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.BiometricEnvironmentEventHandler
@@ -204,6 +206,12 @@ interface DomainModule {
     fun bindsSettingsRepository(
         settingsRepositoryImpl: SettingsRepositoryImpl
     ) : SettingsRepository
+
+    @Binds
+    @AppScope
+    fun bindsAppIconManager(
+        appIconManagerImpl: AppIconManagerImpl
+    ) : AppIconManager
 
     @Binds
     @AppScope

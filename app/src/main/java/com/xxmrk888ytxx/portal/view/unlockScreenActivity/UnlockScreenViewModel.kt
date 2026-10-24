@@ -66,6 +66,9 @@ class UnlockScreenViewModel @Inject constructor(
     val themeColor =
         settingsRepository.portalSettings.map { it.themeColor }.stateWhileSubscribed(null)
 
+    val unlockScreenStyle: StateFlow<String> =
+        settingsRepository.portalSettings.map { it.unlockScreenStyle }.stateWhileSubscribed("fullscreen")
+
     private fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
         biometricDialogController.sendRequest(
             activity = activity,

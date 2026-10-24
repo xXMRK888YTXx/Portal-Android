@@ -38,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -67,6 +68,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
@@ -74,6 +76,8 @@ import com.xxmrk888ytxx.coreandroid.AvatarLink
 import com.xxmrk888ytxx.coreandroid.mvi.SideEffect
 import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.theme.AppSeedColors
+import com.xxmrk888ytxx.settingsscreen.model.AppIcon
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
 import com.xxmrk888ytxx.settingsscreen.model.ScreenState
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent
@@ -192,6 +196,24 @@ fun SettingsScreen(
                 ) {
                     onEvent(SettingsScreenEvent.OnThemeClicked)
                 }
+
+                val currentAppIcon = AppIcon.fromId(screenState.currentAppIconId)
+                SettingsItem(
+                    title = stringResource(R.string.app_icon),
+                    subtitle = stringResource(currentAppIcon.titleRes),
+                    iconRes = R.drawable.portal
+                ) {
+                    onEvent(SettingsScreenEvent.OnAppIconClicked)
+                }
+
+                val currentUnlockScreenStyle = UnlockScreenStyle.fromId(screenState.unlockScreenStyle)
+                SettingsItem(
+                    title = stringResource(R.string.unlock_screen_style),
+                    subtitle = stringResource(currentUnlockScreenStyle.titleRes),
+                    iconRes = R.drawable.lock_open
+                ) {
+                    onEvent(SettingsScreenEvent.OnUnlockScreenStyleClicked)
+                }
             }
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -304,6 +326,16 @@ fun SettingsScreen(
             },
             selectedColor = screenState.bottomSheetState.selectedThemeColor
         )
+        is BottomSheetState.SelectAppIconDialog -> SelectAppIconDialog(
+            currentIconId = screenState.bottomSheetState.currentIconId,
+            onDismiss = { onEvent(SettingsScreenEvent.HideBottomSheet) },
+            onIconSelected = { onEvent(SettingsScreenEvent.OnAppIconSelected(it)) }
+        )
+        is BottomSheetState.SelectUnlockScreenStyleDialog -> SelectUnlockScreenStyleDialog(
+            currentStyleId = screenState.bottomSheetState.currentStyleId,
+            onDismiss = { onEvent(SettingsScreenEvent.HideBottomSheet) },
+            onStyleSelected = { onEvent(SettingsScreenEvent.OnUnlockScreenStyleSelected(it)) }
+        )
     }
 }
 
@@ -337,10 +369,10 @@ fun SelectThemeDialog(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Standard Options: System and Random
+            // Standard Options: System, Default (Portal), and Random
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // System Button
                 val isSystemSelected = selectedColor == null
@@ -353,7 +385,7 @@ fun SelectThemeDialog(
                         onDismiss()
                     },
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(12.dp),
+                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 10.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = systemContainerColor,
                         contentColor = systemContentColor
@@ -363,10 +395,45 @@ fun SelectThemeDialog(
                     Icon(
                         painter = painterResource(R.drawable.android),
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = stringResource(R.string.system))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.system),
+                        maxLines = 1,
+                        fontSize = 12.sp
+                    )
+                }
+
+                // Standard / Default Portal Theme Button
+                val isStandardSelected = selectedColor == AppSeedColors.DeepAmethyst
+                val standardContainerColor = if (isStandardSelected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
+                val standardContentColor = if (isStandardSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.primary
+
+                OutlinedButton(
+                    onClick = {
+                        onThemeSelected(AppSeedColors.DeepAmethyst)
+                        onDismiss()
+                    },
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = standardContainerColor,
+                        contentColor = standardContentColor
+                    ),
+                    border = if (isStandardSelected) null else ButtonDefaults.outlinedButtonBorder()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.portal),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.standard),
+                        maxLines = 1,
+                        fontSize = 12.sp
+                    )
                 }
 
                 // Random Button
@@ -380,7 +447,7 @@ fun SelectThemeDialog(
                         onDismiss()
                     },
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(12.dp),
+                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 10.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = randomContainerColor,
                         contentColor = randomContentColor
@@ -390,10 +457,14 @@ fun SelectThemeDialog(
                     Icon(
                         painter = painterResource(R.drawable.shuffle),
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = stringResource(R.string.random))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.random),
+                        maxLines = 1,
+                        fontSize = 12.sp
+                    )
                 }
             }
 
@@ -765,6 +836,242 @@ fun ConfirmSecurityChangesDialog(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(R.string.cancel))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectAppIconDialog(
+    currentIconId: String,
+    onDismiss: () -> Unit,
+    onIconSelected: (String) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scrollState = rememberScrollState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.choose_app_icon),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            AppIcon.entries.forEach { icon ->
+                val isSelected = icon.id == currentIconId
+                val containerColor = if (isSelected) {
+                    MaterialTheme.colorScheme.secondaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                }
+                val borderColor = if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    Color.Transparent
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable {
+                            onIconSelected(icon.id)
+                        },
+                    shape = RoundedCornerShape(20.dp),
+                    color = containerColor,
+                    border = androidx.compose.foundation.BorderStroke(if (isSelected) 2.dp else 1.dp, borderColor)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            modifier = Modifier.size(56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            color = Color.White,
+                            shadowElevation = 2.dp,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x1F000000))
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(icon.previewRes),
+                                    contentDescription = stringResource(icon.titleRes),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(4.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(icon.titleRes),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                                color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = stringResource(icon.descriptionRes),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        if (isSelected) {
+                            Icon(
+                                painter = painterResource(R.drawable.check),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectUnlockScreenStyleDialog(
+    currentStyleId: String,
+    onDismiss: () -> Unit,
+    onStyleSelected: (String) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scrollState = rememberScrollState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.choose_unlock_screen_style),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            UnlockScreenStyle.entries.forEach { style ->
+                val isSelected = style.id == currentStyleId
+                val containerColor = if (isSelected) {
+                    MaterialTheme.colorScheme.secondaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                }
+                val borderColor = if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    Color.Transparent
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable {
+                            onStyleSelected(style.id)
+                        },
+                    shape = RoundedCornerShape(20.dp),
+                    color = containerColor,
+                    border = androidx.compose.foundation.BorderStroke(if (isSelected) 2.dp else 1.dp, borderColor)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            modifier = Modifier.size(48.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        when (style) {
+                                            UnlockScreenStyle.CLASSIC -> R.drawable.portal
+                                            UnlockScreenStyle.FULLSCREEN -> R.drawable.lock_open
+                                            UnlockScreenStyle.BOTTOM_SHEET -> R.drawable.desktop
+                                        }
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(style.titleRes),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = stringResource(style.descRes),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        RadioButton(
+                            selected = isSelected,
+                            onClick = { onStyleSelected(style.id) }
+                        )
+                    }
+                }
             }
         }
     }

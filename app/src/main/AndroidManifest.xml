@@ -33,14 +33,114 @@
         <activity
             android:name=".view.mainActivity.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Portal">
+            android:theme="@style/Theme.Portal" />
+
+        <!-- Primary App Icon (Main - Default) -->
+        <activity-alias
+            android:name=".MainActivityDefault"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".view.mainActivity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
 
+        <!-- Tactical App Icon -->
+        <activity-alias
+            android:name=".MainActivityTactical"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_tactical"
+            android:roundIcon="@mipmap/ic_launcher_tactical_round"
+            android:label="@string/app_name"
+            android:targetActivity=".view.mainActivity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Minimal App Icon -->
+        <activity-alias
+            android:name=".MainActivityMinimal"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_minimal"
+            android:roundIcon="@mipmap/ic_launcher_minimal_round"
+            android:label="@string/app_name"
+            android:targetActivity=".view.mainActivity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Soft App Icon -->
+        <activity-alias
+            android:name=".MainActivitySoft"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_soft"
+            android:roundIcon="@mipmap/ic_launcher_soft_round"
+            android:label="@string/app_name"
+            android:targetActivity=".view.mainActivity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Anime 1 App Icon -->
+        <activity-alias
+            android:name=".MainActivityAnime1"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_anime1"
+            android:roundIcon="@mipmap/ic_launcher_anime1_round"
+            android:label="@string/app_name"
+            android:targetActivity=".view.mainActivity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Anime 2 App Icon -->
+        <activity-alias
+            android:name=".MainActivityAnime2"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_anime2"
+            android:roundIcon="@mipmap/ic_launcher_anime2_round"
+            android:label="@string/app_name"
+            android:targetActivity=".view.mainActivity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Classic App Icon (Portal Lock) -->
+        <activity-alias
+            android:name=".MainActivityClassic"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_classic"
+            android:roundIcon="@mipmap/ic_launcher_classic_round"
+            android:label="@string/app_name"
+            android:targetActivity=".view.mainActivity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Classic / Standard Fullscreen Unlock Screen (Theme.Portal: 100% full screen, occludes background, minimizes videos) -->
         <activity
             android:name=".view.unlockScreenActivity.UnlockScreenActivity"
             android:excludeFromRecents="true"
@@ -50,6 +150,22 @@
             android:showForAllUsers="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.Portal">
+            <intent-filter>
+                <action android:name="com.xxmrk888ytxx.portal.UNLOCK_REQUEST_FROM_PC" />
+            </intent-filter>
+        </activity>
+
+        <!-- Floating / Adaptive Unlock Screen (Theme.Portal.UnlockScreen: floating dialog, does not minimize videos) -->
+        <activity
+            android:name=".view.unlockScreenActivity.FloatingUnlockScreenActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:noHistory="true"
+            android:taskAffinity="com.xxmrk888ytxx.portal.task.FloatingUnlockScreenActivity"
+            android:showForAllUsers="true"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:theme="@style/Theme.Portal.UnlockScreen">
             <intent-filter>
                 <action android:name="com.xxmrk888ytxx.portal.UNLOCK_REQUEST_FROM_PC" />
             </intent-filter>

@@ -14,10 +14,12 @@ import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.data.wear.WearDecisionPayloadValue
 import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
 import com.xxmrk888ytxx.portal.domain.PermissionManager
+import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
+import com.xxmrk888ytxx.portal.view.unlockScreenActivity.FloatingUnlockScreenActivity
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity.Companion.EXTRA_UNLOCK_SCREEN_DATA
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
@@ -25,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -37,6 +40,7 @@ class UnlockRequestManagerImpl @Inject constructor(
     private val permissionManager: PermissionManager,
     private val unlockMessageSender: UnlockMessageSender,
     private val decisionCoordinator: IncomingUnlockDecisionCoordinator,
+    private val settingsRepository: SettingsRepository,
 ) : UnlockRequestManager {
 
     private val unlockScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -161,12 +165,18 @@ class UnlockRequestManagerImpl @Inject constructor(
         }
     }
 
-    private fun createIntentForStartUnlockScreen(
+    private suspend fun createIntentForStartUnlockScreen(
         deviceId: String,
         requestId: String?,
         decisionId: String?
     ): Intent {
-        return Intent(context, UnlockScreenActivity::class.java).apply {
+        val style = settingsRepository.portalSettings.first().unlockScreenStyle
+        val targetClass = if (style == "classic") {
+            UnlockScreenActivity::class.java
+        } else {
+            FloatingUnlockScreenActivity::class.java
+        }
+        return Intent(context, targetClass).apply {
             action = UnlockScreenActivity.UNLOCK_REQUEST_FROM_PC_ACTION
             putExtra(
                 EXTRA_UNLOCK_SCREEN_DATA, UnlockScreenData(

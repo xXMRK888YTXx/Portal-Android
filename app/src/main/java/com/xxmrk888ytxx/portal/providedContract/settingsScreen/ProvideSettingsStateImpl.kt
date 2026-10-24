@@ -31,4 +31,8 @@ class ProvideSettingsStateImpl @Inject constructor(
         settingsRepository.portalSettings.map { it.isWatchDogEnabled }
     override val themeColor: Flow<Color?>
         get() = settingsRepository.portalSettings.map { it.themeColor }
+    override val appIconId: Flow<String> =
+        settingsRepository.portalSettings.map { it.appIconId }
+    override val unlockScreenStyle: Flow<String> =
+        settingsRepository.portalSettings.map { it.unlockScreenStyle }
 }

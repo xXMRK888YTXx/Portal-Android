@@ -31,4 +31,12 @@ class ChangeSettingsContractImpl @Inject constructor(
     override suspend fun updateThemeColor(newColor: Color?) {
         settingsRepository.updateThemeColor(newColor)
     }
+
+    override suspend fun updateAppIcon(iconId: String) {
+        settingsRepository.updateAppIconId(iconId)
+    }
+
+    override suspend fun updateUnlockScreenStyle(styleId: String) {
+        settingsRepository.updateUnlockScreenStyle(styleId)
+    }
 }

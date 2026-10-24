@@ -14,6 +14,8 @@ interface SettingsRepository {
     suspend fun markOnboardingAsPassed()
     suspend fun updateThemeColor(newColor: Color?)
     suspend fun updateWatchDogEnabled(isEnabled: Boolean)
+    suspend fun updateAppIconId(iconId: String)
+    suspend fun updateUnlockScreenStyle(styleId: String)
 
     companion object {
         const val DEFAULT_VALUE = 0
