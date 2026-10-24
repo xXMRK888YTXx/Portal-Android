@@ -84,6 +84,7 @@ import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent.ConfirmSecurity
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenSideEffect
 import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.flow.Flow
+import com.xxmrk888ytxx.corecompose.R as ComposeR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -210,7 +211,7 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(R.string.unlock_screen_style),
                     subtitle = stringResource(currentUnlockScreenStyle.titleRes),
-                    iconRes = R.drawable.lock_open
+                    iconRes = ComposeR.drawable.lock_open
                 ) {
                     onEvent(SettingsScreenEvent.OnUnlockScreenStyleClicked)
                 }
@@ -1036,7 +1037,7 @@ fun SelectUnlockScreenStyleDialog(
                                     painter = painterResource(
                                         when (style) {
                                             UnlockScreenStyle.CLASSIC -> R.drawable.portal
-                                            UnlockScreenStyle.FULLSCREEN -> R.drawable.lock_open
+                                            UnlockScreenStyle.FULLSCREEN -> ComposeR.drawable.lock_open
                                             UnlockScreenStyle.BOTTOM_SHEET -> R.drawable.desktop
                                         }
                                     ),

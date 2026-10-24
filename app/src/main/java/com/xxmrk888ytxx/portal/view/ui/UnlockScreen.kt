@@ -57,6 +57,7 @@ import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.model.DeviceType
 import com.xxmrk888ytxx.portal.view.model.UnlockScreenUiEvent
 import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
+import com.xxmrk888ytxx.corecompose.R as ComposeR
 
 @Composable
 fun UnlockScreen(
@@ -213,7 +214,7 @@ private fun ClassicUnlockContent(
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
-                            painter = painterResource(id = R.drawable.lock_open),
+                            painter = painterResource(id = ComposeR.drawable.lock_open),
                             contentDescription = null,
                             modifier = Modifier.size(32.dp),
                             tint = MaterialTheme.colorScheme.primary
@@ -270,7 +271,7 @@ private fun ClassicUnlockContent(
                     ) {
                         Icon(
                             painter = painterResource(
-                                id = if (isBluetooth) R.drawable.bluetooth else R.drawable.wifi
+                                id = if (isBluetooth) ComposeR.drawable.bluetooth else ComposeR.drawable.wifi
                             ),
                             contentDescription = null,
                             modifier = Modifier.size(15.dp),
@@ -509,7 +510,7 @@ private fun FullscreenUnlockContentPortrait(
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
-                                painter = painterResource(id = R.drawable.lock_open),
+                                painter = painterResource(id = ComposeR.drawable.lock_open),
                                 contentDescription = null,
                                 modifier = Modifier.size(32.dp),
                                 tint = MaterialTheme.colorScheme.primary
@@ -564,7 +565,7 @@ private fun FullscreenUnlockContentPortrait(
                         ) {
                             Icon(
                                 painter = painterResource(
-                                    id = if (isBluetooth) R.drawable.bluetooth else R.drawable.wifi
+                                    id = if (isBluetooth) ComposeR.drawable.bluetooth else ComposeR.drawable.wifi
                                 ),
                                 contentDescription = null,
                                 modifier = Modifier.size(15.dp),
@@ -785,7 +786,7 @@ private fun FullscreenUnlockContentLandscape(
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
-                                painter = painterResource(id = R.drawable.lock_open),
+                                painter = painterResource(id = ComposeR.drawable.lock_open),
                                 contentDescription = null,
                                 modifier = Modifier.size(26.dp),
                                 tint = MaterialTheme.colorScheme.primary
@@ -821,7 +822,7 @@ private fun FullscreenUnlockContentLandscape(
                         ) {
                             Icon(
                                 painter = painterResource(
-                                    id = if (isBluetooth) R.drawable.bluetooth else R.drawable.wifi
+                                    id = if (isBluetooth) ComposeR.drawable.bluetooth else ComposeR.drawable.wifi
                                 ),
                                 contentDescription = null,
                                 modifier = Modifier.size(13.dp),
@@ -1096,7 +1097,7 @@ private fun CompactUnlockModalPortrait(
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
-                                painter = painterResource(id = R.drawable.lock_open),
+                                painter = painterResource(id = ComposeR.drawable.lock_open),
                                 contentDescription = null,
                                 modifier = Modifier.size(26.dp),
                                 tint = MaterialTheme.colorScheme.primary
@@ -1151,7 +1152,7 @@ private fun CompactUnlockModalPortrait(
                         ) {
                             Icon(
                                 painter = painterResource(
-                                    id = if (isBluetooth) R.drawable.bluetooth else R.drawable.wifi
+                                    id = if (isBluetooth) ComposeR.drawable.bluetooth else ComposeR.drawable.wifi
                                 ),
                                 contentDescription = null,
                                 modifier = Modifier.size(14.dp),
@@ -1360,7 +1361,7 @@ private fun CompactUnlockModalLandscape(
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.lock_open),
+                                        painter = painterResource(id = ComposeR.drawable.lock_open),
                                         contentDescription = null,
                                         modifier = Modifier.size(22.dp),
                                         tint = MaterialTheme.colorScheme.primary
@@ -1396,7 +1397,7 @@ private fun CompactUnlockModalLandscape(
                                 ) {
                                     Icon(
                                         painter = painterResource(
-                                            id = if (isBluetooth) R.drawable.bluetooth else R.drawable.wifi
+                                            id = if (isBluetooth) ComposeR.drawable.bluetooth else ComposeR.drawable.wifi
                                         ),
                                         contentDescription = null,
                                         modifier = Modifier.size(12.dp),

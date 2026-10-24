@@ -15,7 +15,6 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,22 +37,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -72,10 +66,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -84,7 +80,6 @@ import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.MacAddressTransformation
 import com.xxmrk888ytxx.corecompose.uiText.asString
 import com.xxmrk888ytxx.mainscreen.model.Device
-import com.xxmrk888ytxx.mainscreen.model.DeviceAction
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.mainscreen.model.DevicesRemovedBannerState
 import com.xxmrk888ytxx.mainscreen.model.DialogState
@@ -109,6 +104,7 @@ import com.xxmrk888ytxx.mainscreen.model.Permission
 import com.xxmrk888ytxx.mainscreen.model.PermissionBannerItem
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import kotlinx.coroutines.flow.Flow
+import com.xxmrk888ytxx.corecompose.R as ComposeR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -747,7 +743,7 @@ private fun DeviceItem(
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.more_vert),
+                            painter = painterResource(ComposeR.drawable.more_vert),
                             contentDescription = null,
                             modifier = Modifier.size(20.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant

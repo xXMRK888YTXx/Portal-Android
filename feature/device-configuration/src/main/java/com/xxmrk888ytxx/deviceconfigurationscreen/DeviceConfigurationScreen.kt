@@ -83,6 +83,7 @@ import com.xxmrk888ytxx.deviceconfigurationscreen.model.DeviceConfigurationUiEve
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.ScreenState
 import com.xxmrk888ytxx.deviceconfigurationscreen.model.UnlockMethod
 import kotlinx.coroutines.flow.Flow
+import com.xxmrk888ytxx.corecompose.R as ComposeR
 
 private enum class IdentifierType {
     SHA_256,
@@ -203,7 +204,7 @@ fun DeviceInfoState(
         // 2. Security & mTLS / Device Identification Card
         val isWifi = screenState.device is Device.WifiDevice
         SectionTitle(
-            icon = R.drawable.verified_user,
+            icon = ComposeR.drawable.verified_user,
             title = if (isWifi) {
                 stringResource(R.string.security_and_mtls)
             } else {
@@ -221,7 +222,7 @@ fun DeviceInfoState(
 
         // 3. Unlock Scenario Card
         SectionTitle(
-            icon = R.drawable.touch_app,
+            icon = ComposeR.drawable.touch_app,
             title = stringResource(R.string.unlock_scenario)
         )
 
@@ -233,7 +234,7 @@ fun DeviceInfoState(
 
         // 4. Authorization & Connection Parameters Card
         SectionTitle(
-            icon = R.drawable.hub,
+            icon = ComposeR.drawable.hub,
             title = stringResource(R.string.authorization_and_connection_parameters)
         )
 
@@ -255,7 +256,7 @@ fun DeviceInfoState(
 
         // 5. Danger Zone Card
         SectionTitle(
-            icon = R.drawable.link_off,
+            icon = ComposeR.drawable.link_off,
             title = stringResource(R.string.danger_zone),
             isError = true
         )
@@ -406,7 +407,7 @@ private fun DeviceParametersCard(
                 ) {
                     Icon(
                         painter = painterResource(
-                            if (device is Device.WifiDevice) R.drawable.router else R.drawable.bluetooth
+                            if (device is Device.WifiDevice) ComposeR.drawable.router else ComposeR.drawable.bluetooth
                         ),
                         contentDescription = null,
                         modifier = Modifier.size(26.dp),
@@ -556,7 +557,7 @@ private fun ParameterRow(
                     modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.content_copy),
+                        painter = painterResource(ComposeR.drawable.content_copy),
                         contentDescription = stringResource(R.string.copy_ip),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp)
@@ -609,7 +610,7 @@ private fun SecurityAndMtlsCard(
                 val serverDisplayFp = serverFp.truncateFingerprint()
 
                 SecurityIdentifierItemCard(
-                    icon = R.drawable.key,
+                    icon = ComposeR.drawable.key,
                     title = serverTitle,
                     tag = stringResource(R.string.sha_256),
                     displayValue = serverDisplayFp,
@@ -632,7 +633,7 @@ private fun SecurityAndMtlsCard(
                 val clientDisplayFp = clientFp.truncateFingerprint()
 
                 SecurityIdentifierItemCard(
-                    icon = R.drawable.smartphone,
+                    icon = ComposeR.drawable.smartphone,
                     title = clientTitle,
                     tag = stringResource(R.string.sha_256),
                     displayValue = clientDisplayFp,
@@ -655,7 +656,7 @@ private fun SecurityAndMtlsCard(
             val uuidDisplay = device.clientId.truncateUuid()
 
             SecurityIdentifierItemCard(
-                icon = R.drawable.fingerprint,
+                icon = ComposeR.drawable.fingerprint,
                 title = uuidTitle,
                 tag = stringResource(R.string.uuid_v4),
                 displayValue = uuidDisplay,
@@ -777,7 +778,7 @@ private fun SecurityIdentifierItemCard(
                     modifier = Modifier.size(34.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.info),
+                        painter = painterResource(ComposeR.drawable.info),
                         contentDescription = stringResource(R.string.certificate_details),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp)
@@ -790,7 +791,7 @@ private fun SecurityIdentifierItemCard(
                         modifier = Modifier.size(34.dp)
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.content_copy),
+                            painter = painterResource(ComposeR.drawable.content_copy),
                             contentDescription = stringResource(R.string.copy_fingerprint),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(16.dp)
@@ -814,7 +815,7 @@ private fun UnlockScenarioCard(
     ) {
         // Option 1: Confirmation Screen
         UnlockScenarioOption(
-            icon = R.drawable.smartphone,
+            icon = ComposeR.drawable.smartphone,
             title = stringResource(R.string.confirmation_screen),
             subtitle = stringResource(R.string.confirmation_screen_desc),
             isSelected = currentMethod is UnlockMethod.ConfirmationScreen,
@@ -825,7 +826,7 @@ private fun UnlockScenarioCard(
         // Option 2: Interactive Notification
         val isNotificationEnabled = !isUnsafeUnlockMethodsDisabled || !UnlockMethod.Notification.isUnsafe
         UnlockScenarioOption(
-            icon = R.drawable.notifications_active,
+            icon = ComposeR.drawable.notifications_active,
             title = stringResource(R.string.notification),
             subtitle = stringResource(R.string.interactive_notification_desc),
             isSelected = currentMethod is UnlockMethod.Notification,
@@ -836,7 +837,7 @@ private fun UnlockScenarioCard(
         // Option 3: Automatic
         val isAutoEnabled = !isUnsafeUnlockMethodsDisabled || !UnlockMethod.Automatic.isUnsafe
         UnlockScenarioOption(
-            icon = R.drawable.bolt,
+            icon = ComposeR.drawable.bolt,
             title = stringResource(R.string.automatically),
             subtitle = stringResource(R.string.auto_unlock_desc),
             isSelected = currentMethod is UnlockMethod.Automatic,
@@ -961,7 +962,7 @@ private fun AuthorizationParametersCard(
             }
 
             SwitchItemRow(
-                icon = R.drawable.fingerprint,
+                icon = ComposeR.drawable.fingerprint,
                 title = title,
                 description = description,
                 isChecked = device.showUnlockScreenOrUnlockOnlyWhenScreenUnlocked,
@@ -976,7 +977,7 @@ private fun AuthorizationParametersCard(
 
             // Toggle 2: Await Unlock Requests
             SwitchItemRow(
-                icon = R.drawable.memory,
+                icon = ComposeR.drawable.memory,
                 title = stringResource(R.string.await_unlock_requests),
                 description = stringResource(R.string.await_unlock_requests_description),
                 isChecked = device.awaitUnlockRequests,
@@ -991,7 +992,7 @@ private fun AuthorizationParametersCard(
 
             // Toggle 3: Sync with Wear OS
             SwitchItemRow(
-                icon = R.drawable.watch,
+                icon = ComposeR.drawable.watch,
                 title = stringResource(R.string.forward_unlock_requests_to_wear),
                 description = stringResource(R.string.forward_unlock_requests_to_wear_description),
                 isChecked = device.forwardUnlockRequestsToWear,
@@ -1007,7 +1008,7 @@ private fun AuthorizationParametersCard(
                 )
 
                 SwitchItemRow(
-                    icon = R.drawable.router,
+                    icon = ComposeR.drawable.router,
                     title = stringResource(R.string.search_ip_dynamically),
                     description = stringResource(R.string.search_ip_dynamically_description),
                     isChecked = device.searchIpDynamically,
@@ -1107,7 +1108,7 @@ private fun DangerZoneCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.link_off),
+                    painter = painterResource(ComposeR.drawable.link_off),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.onErrorContainer
@@ -1237,7 +1238,7 @@ private fun CertificateDetailBottomSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.verified_user),
+                            painter = painterResource(ComposeR.drawable.verified_user),
                             contentDescription = null,
                             modifier = Modifier.size(22.dp),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
@@ -1346,7 +1347,7 @@ private fun CertificateDetailBottomSheet(
                     )
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.content_copy),
+                        painter = painterResource(ComposeR.drawable.content_copy),
                         contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )
