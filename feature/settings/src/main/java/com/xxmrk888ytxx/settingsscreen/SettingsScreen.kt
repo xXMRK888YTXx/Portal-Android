@@ -193,8 +193,15 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
             SettingsSection(stringResource(R.string.customization)) {
+                val themeSubtitle = when (screenState.themeColor) {
+                    null -> stringResource(R.string.system)
+                    AppSeedColors.DeepAmethyst -> stringResource(R.string.standard)
+                    Color.Unspecified -> stringResource(R.string.random)
+                    else -> stringResource(R.string.custom_color)
+                }
                 SettingsItem(
                     title = stringResource(R.string.theme),
+                    subtitle = themeSubtitle,
                     iconRes = R.drawable.palette
                 ) {
                     onEvent(SettingsScreenEvent.OnThemeClicked)
@@ -205,8 +212,7 @@ fun SettingsScreen(
                     title = stringResource(R.string.app_icon),
                     subtitle = stringResource(currentAppIcon.titleRes),
                     iconRes = currentAppIcon.previewRes,
-                    useImageInsteadIcon = true,
-                    size = 32.dp
+                    useImageInsteadIcon = true
                 ) {
                     onEvent(SettingsScreenEvent.OnAppIconClicked)
                 }
@@ -570,13 +576,13 @@ fun GithubProfileItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(start = 10.dp, end = 16.dp, top = 10.dp, bottom = 10.dp),
+            .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val placeholder = painterResource(id = R.drawable.ic_developer)
 
         Box(
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(32.dp),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
@@ -620,7 +626,7 @@ fun SettingsItem(
     @DrawableRes iconRes: Int,
     subtitle: String? = null,
     useImageInsteadIcon: Boolean = false,
-    size: Dp = 24.dp,
+    size: Dp = if (useImageInsteadIcon) 32.dp else 24.dp,
     onClick: () -> Unit
 ) {
     Row(
@@ -630,22 +636,27 @@ fun SettingsItem(
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (useImageInsteadIcon) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = title,
-                modifier = Modifier
-                    .size(size)
-                    .clip(RoundedCornerShape(6.dp)),
-                contentScale = ContentScale.Fit
-            )
-        } else {
-            Icon(
-                painter = painterResource(id = iconRes),
-                contentDescription = title,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(size)
-            )
+        Box(
+            modifier = Modifier.size(32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (useImageInsteadIcon) {
+                Image(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = title,
+                    modifier = Modifier
+                        .size(size)
+                        .clip(RoundedCornerShape(6.dp)),
+                    contentScale = ContentScale.Fit
+                )
+            } else {
+                Icon(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = title,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(size)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -702,12 +713,17 @@ fun SettingsSwitchItem(
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
-            modifier = Modifier.size(24.dp)
-        )
+        Box(
+            modifier = Modifier.size(32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
+                modifier = Modifier.size(24.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 

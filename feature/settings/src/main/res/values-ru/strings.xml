@@ -35,6 +35,7 @@
     <string name="choose_a_theme">Выберите тему</string>
     <string name="system">Системная</string>
     <string name="random">Случайная</string>
+    <string name="custom_color">Пользовательская</string>
     <string name="colors">Цвета</string>
     <string name="pc_client">Клиент для ПК</string>
     <string name="download_for_pc">Скачать для ПК</string>

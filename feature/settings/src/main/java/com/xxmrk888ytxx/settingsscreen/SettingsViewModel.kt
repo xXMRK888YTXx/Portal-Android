@@ -32,7 +32,7 @@ class SettingsViewModel @Inject constructor(
 
     private val bottomSheetState = MutableStateFlow<BottomSheetState>(BottomSheetState.None)
 
-    override val state: StateFlow<ScreenState> = combine<Any, ScreenState>(
+    override val state: StateFlow<ScreenState> = combine<Any?, ScreenState>(
         provideSettingsState.isBiometricProtectionEnabled,
         provideSettingsState.appVersion,
         provideSettingsState.isAdditionalPasswordAuthEnabled,
@@ -42,7 +42,8 @@ class SettingsViewModel @Inject constructor(
         biometricProtectionAvailableStateProvider.isAvailable,
         provideSettingsState.isWatchDogEnabled,
         provideSettingsState.appIcon,
-        provideSettingsState.unlockScreenStyle
+        provideSettingsState.unlockScreenStyle,
+        provideSettingsState.themeColor
     ) { flowArray ->
         val isBiometricProtectionEnabled = flowArray[0] as Boolean
         val appVersion = flowArray[1] as String
@@ -55,6 +56,9 @@ class SettingsViewModel @Inject constructor(
         val currentAppIcon = flowArray[8] as AppIcon
         val unlockScreenStyle = flowArray[9] as UnlockScreenStyle
 
+        @Suppress("UNCHECKED_CAST")
+        val themeColor = flowArray[10] as Color?
+
         ScreenState(
             bottomSheetState = bottomSheetState,
             isBiometricProtectionEnabled = isBiometricProtectionEnabled,
@@ -65,7 +69,8 @@ class SettingsViewModel @Inject constructor(
             isWatchDogEnabled = isWatchDogEnabled,
             isBiometricAuthAvailable = isBiometricAuthAvailable,
             currentAppIcon = currentAppIcon,
-            unlockScreenStyle = unlockScreenStyle
+            unlockScreenStyle = unlockScreenStyle,
+            themeColor = themeColor
         )
     }.stateWhileSubscribed()
 

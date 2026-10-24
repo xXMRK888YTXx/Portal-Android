@@ -37,6 +37,7 @@
     <string name="choose_a_theme">Choose a theme</string>
     <string name="system">System</string>
     <string name="random">Random</string>
+    <string name="custom_color">Custom</string>
     <string name="colors">Colors</string>
     <string name="pc_client">PC client</string>
     <string name="download_for_pc">Download for PC</string>
