@@ -93,9 +93,12 @@ class MainActivity @Inject constructor(
             toastManager = toastManager,
             themeColor = activityViewModel.themeColor
         ) {
+            val isScreenReady by activityViewModel.isScreenReady.collectAsState()
             val startScreen by activityViewModel.startScreen.collectAsState()
 
-            val backStack = rememberNavBackStack(startScreen)
+            if (!isScreenReady || startScreen == null) return@setContentWithThemeAndProviders
+
+            val backStack = rememberNavBackStack(startScreen!!)
 
             LaunchedEffect(backStack) {
                 activityViewModel.backStack = backStack

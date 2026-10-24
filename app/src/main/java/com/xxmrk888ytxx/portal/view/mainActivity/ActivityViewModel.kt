@@ -15,12 +15,9 @@ import com.xxmrk888ytxx.portal.domain.BluetoothManager
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.view.mainActivity.model.MainActivitySideEffect
 import com.xxmrk888ytxx.portal.view.model.Screen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,11 +29,9 @@ class ActivityViewModel @Inject constructor(
     private val biometricAuthStateProvider: BiometricAuthStateProvider,
 ) : SideEffectPortalViewModel<Unit, UiEvent>(Unit), Navigator {
 
-    private val prepareScreenScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-
     var backStack: NavBackStack<NavKey>? = null
 
-    private val _startScreen = MutableStateFlow<Screen>(Screen.OnboardingScreen)
+    private val _startScreen = MutableStateFlow<Screen?>(null)
     val startScreen = _startScreen.asStateFlow()
 
     private val _isScreenReady = MutableStateFlow(false)
@@ -45,17 +40,16 @@ class ActivityViewModel @Inject constructor(
 
     val themeColor = settingsRepository.portalSettings.map { it.themeColor }.stateWhileSubscribed(null)
 
+    init {
+        prepareScreen()
+    }
 
     fun prepareScreen() {
         if (_isScreenReady.value) return
-        prepareScreenScope.launch {
-            settingsRepository.portalSettings.map { it.isOnboardingPassed }.collect { isPassed ->
-                if (isPassed) {
-                    _startScreen.value = Screen.MainScreen
-                }
-                _isScreenReady.value = true
-                prepareScreenScope.cancel()
-            }
+        viewModelScope.launch {
+            val isPassed = settingsRepository.portalSettings.map { it.isOnboardingPassed }.first()
+            _startScreen.value = if (isPassed) Screen.MainScreen else Screen.OnboardingScreen
+            _isScreenReady.value = true
         }
     }
 
