@@ -56,13 +56,14 @@ import androidx.fragment.app.FragmentActivity
 import com.xxmrk888ytxx.portal.R
 import com.xxmrk888ytxx.portal.domain.model.DeviceType
 import com.xxmrk888ytxx.portal.view.model.UnlockScreenUiEvent
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 
 @Composable
 fun UnlockScreen(
     modifier: Modifier,
     deviceName: String,
     connectionType: DeviceType? = null,
-    unlockScreenStyle: String = "fullscreen",
+    unlockScreenStyle: UnlockScreenStyle = UnlockScreenStyle.FULLSCREEN,
     onEvent: (UnlockScreenUiEvent) -> Unit
 ) {
     val activity = LocalActivity.current
@@ -77,7 +78,7 @@ fun UnlockScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     when (unlockScreenStyle) {
-        "classic" -> {
+        UnlockScreenStyle.CLASSIC -> {
             ClassicUnlockContent(
                 modifier = modifier,
                 deviceName = deviceName,
@@ -86,7 +87,8 @@ fun UnlockScreen(
                 onEvent = onEvent
             )
         }
-        "bottom_sheet" -> {
+
+        UnlockScreenStyle.BOTTOM_SHEET -> {
             if (isLandscape) {
                 CompactUnlockModalLandscape(
                     modifier = modifier,
@@ -105,7 +107,8 @@ fun UnlockScreen(
                 )
             }
         }
-        else -> {
+
+        UnlockScreenStyle.FULLSCREEN -> {
             if (isLandscape) {
                 FullscreenUnlockContentLandscape(
                     modifier = modifier,

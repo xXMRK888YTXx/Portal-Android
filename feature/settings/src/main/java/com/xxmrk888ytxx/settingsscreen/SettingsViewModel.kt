@@ -13,6 +13,7 @@ import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
 import com.xxmrk888ytxx.settingsscreen.model.ScreenState
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenSideEffect
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -52,7 +53,7 @@ class SettingsViewModel @Inject constructor(
         val isBiometricAuthAvailable = flowArray[6] as Boolean
         val isWatchDogEnabled = flowArray[7] as Boolean
         val currentAppIcon = flowArray[8] as AppIcon
-        val unlockScreenStyle = flowArray[9] as String
+        val unlockScreenStyle = flowArray[9] as UnlockScreenStyle
 
         ScreenState(
             bottomSheetState = bottomSheetState,
@@ -107,7 +108,7 @@ class SettingsViewModel @Inject constructor(
             SettingsScreenEvent.OnAppIconClicked -> showSelectAppIconDialog()
             is SettingsScreenEvent.OnAppIconSelected -> changeAppIcon(event.newIcon)
             SettingsScreenEvent.OnUnlockScreenStyleClicked -> showSelectUnlockScreenStyleDialog()
-            is SettingsScreenEvent.OnUnlockScreenStyleSelected -> changeUnlockScreenStyle(event.newStyleId)
+            is SettingsScreenEvent.OnUnlockScreenStyleSelected -> changeUnlockScreenStyle(event.newStyle)
             SettingsScreenEvent.OnDownloadPcClientClicked -> openLink { openLinkContract.openPCClientDownloadLink() }
             SettingsScreenEvent.OpenTroubleshootingLink -> openLink { openLinkContract.openTroubleshootingLink() }
         }
@@ -131,8 +132,8 @@ class SettingsViewModel @Inject constructor(
         bottomSheetState.value = BottomSheetState.SelectUnlockScreenStyleDialog(provideSettingsState.unlockScreenStyle.first())
     }
 
-    private fun changeUnlockScreenStyle(styleId: String) = viewModelScope.launch {
-        changeSettingsContract.updateUnlockScreenStyle(styleId)
+    private fun changeUnlockScreenStyle(style: UnlockScreenStyle) = viewModelScope.launch {
+        changeSettingsContract.updateUnlockScreenStyle(style)
         bottomSheetState.value = BottomSheetState.None
     }
 

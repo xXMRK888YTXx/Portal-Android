@@ -14,6 +14,7 @@ import com.xxmrk888ytxx.portal.domain.SettingsRepository.Companion.REMOVED_BY_SE
 import com.xxmrk888ytxx.portal.domain.model.PortalSettings
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
 import com.xxmrk888ytxx.settingsscreen.model.AppIcon
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -53,7 +54,7 @@ class SettingsRepositoryImpl @Inject constructor(
         preferencesStorage.getPropertyOrNull(themeColorKey),
         preferencesStorage.getProperty(watchDogEnabledKey, false),
         preferencesStorage.getProperty(appIconKey, AppIcon.DEFAULT.id),
-        preferencesStorage.getProperty(unlockScreenStyleKey, "classic")
+        preferencesStorage.getProperty(unlockScreenStyleKey, UnlockScreenStyle.CLASSIC.id)
     ) { flowArray ->
         val biometricAuthEnabled = flowArray[0] as Boolean
         val additionalPasswordAuthEnabled = flowArray[1] as Boolean
@@ -64,7 +65,7 @@ class SettingsRepositoryImpl @Inject constructor(
         val themeColor = flowArray[6] as Long?
         val isWatchDogEnabled = flowArray[7] as Boolean
         val appIconId = flowArray[8] as String
-        val unlockScreenStyle = flowArray[9] as String
+        val unlockScreenStyleId = flowArray[9] as String
 
         PortalSettings(
             isBiometricAuthEnabled = biometricAuthEnabled,
@@ -76,7 +77,7 @@ class SettingsRepositoryImpl @Inject constructor(
             themeColor = if (themeColor == null) null else Color(value = themeColor.toULong()),
             isWatchDogEnabled = isWatchDogEnabled,
             appIcon = AppIcon.fromId(appIconId),
-            unlockScreenStyle = unlockScreenStyle
+            unlockScreenStyle = UnlockScreenStyle.fromId(unlockScreenStyleId)
         )
     }
 
@@ -148,7 +149,8 @@ class SettingsRepositoryImpl @Inject constructor(
         appIconManager.setAppIcon(icon)
     }
 
-    override suspend fun updateUnlockScreenStyle(styleId: String) = withContext(Dispatchers.IO) {
-        preferencesStorage.writeProperty(unlockScreenStyleKey, styleId)
+    override suspend fun updateUnlockScreenStyle(style: UnlockScreenStyle) =
+        withContext(Dispatchers.IO) {
+            preferencesStorage.writeProperty(unlockScreenStyleKey, style.id)
     }
 }

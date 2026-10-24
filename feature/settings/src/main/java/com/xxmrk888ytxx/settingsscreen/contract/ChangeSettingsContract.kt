@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.settingsscreen.contract
 
 import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.settingsscreen.model.AppIcon
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 
 interface ChangeSettingsContract {
     suspend fun updateBiometricProtectionState(isEnabled: Boolean)
@@ -11,5 +12,5 @@ interface ChangeSettingsContract {
     suspend fun updateWatchDogState(isEnabled: Boolean)
     suspend fun updateThemeColor(newColor: Color?)
     suspend fun updateAppIcon(icon: AppIcon)
-    suspend fun updateUnlockScreenStyle(styleId: String)
+    suspend fun updateUnlockScreenStyle(style: UnlockScreenStyle)
 }

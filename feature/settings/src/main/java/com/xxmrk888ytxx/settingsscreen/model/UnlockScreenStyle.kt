@@ -25,7 +25,7 @@ enum class UnlockScreenStyle(
     );
 
     companion object {
-        fun fromId(id: String): UnlockScreenStyle =
+        fun fromId(id: String?): UnlockScreenStyle =
             entries.find { it.id == id } ?: CLASSIC
     }
 }

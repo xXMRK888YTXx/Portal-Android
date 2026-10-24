@@ -10,5 +10,5 @@ data class ScreenState(
     val isWatchDogEnabled: Boolean = false,
     val isBiometricAuthAvailable: Boolean = false,
     val currentAppIcon: AppIcon = AppIcon.DEFAULT,
-    val unlockScreenStyle: String = UnlockScreenStyle.FULLSCREEN.id
+    val unlockScreenStyle: UnlockScreenStyle = UnlockScreenStyle.FULLSCREEN
 )

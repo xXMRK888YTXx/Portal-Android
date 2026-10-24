@@ -1,9 +1,6 @@
 package com.xxmrk888ytxx.portal.view.unlockScreenActivity
 
-import android.graphics.Color as AndroidColor
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +19,7 @@ import com.xxmrk888ytxx.coreandroid.fastDebugLog
 import com.xxmrk888ytxx.corecompose.theme.setContentWithThemeAndProviders
 import com.xxmrk888ytxx.portal.view.ui.UnlockScreen
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import javax.inject.Inject
 
 open class UnlockScreenActivity @Inject constructor(
@@ -72,7 +70,7 @@ open class UnlockScreenActivity @Inject constructor(
                     onEvent = unlockScreenViewModel::handleEvent,
                     deviceName = deviceName,
                     connectionType = connectionType,
-                    unlockScreenStyle = if (isFloating) unlockScreenStyle else "classic"
+                    unlockScreenStyle = if (isFloating) unlockScreenStyle else UnlockScreenStyle.CLASSIC
                 )
             }
         }

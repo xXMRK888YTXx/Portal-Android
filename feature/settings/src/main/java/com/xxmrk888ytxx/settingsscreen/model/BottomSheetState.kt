@@ -19,6 +19,6 @@ sealed interface BottomSheetState {
     ) : BottomSheetState
 
     data class SelectUnlockScreenStyleDialog(
-        val currentStyleId: String = UnlockScreenStyle.FULLSCREEN.id
+        val currentStyle: UnlockScreenStyle = UnlockScreenStyle.FULLSCREEN
     ) : BottomSheetState
 }

@@ -23,6 +23,7 @@ import com.xxmrk888ytxx.portal.view.unlockScreenActivity.FloatingUnlockScreenAct
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity.Companion.EXTRA_UNLOCK_SCREEN_DATA
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -171,7 +172,7 @@ class UnlockRequestManagerImpl @Inject constructor(
         decisionId: String?
     ): Intent {
         val style = settingsRepository.portalSettings.first().unlockScreenStyle
-        val targetClass = if (style == "classic") {
+        val targetClass = if (style == UnlockScreenStyle.CLASSIC) {
             UnlockScreenActivity::class.java
         } else {
             FloatingUnlockScreenActivity::class.java

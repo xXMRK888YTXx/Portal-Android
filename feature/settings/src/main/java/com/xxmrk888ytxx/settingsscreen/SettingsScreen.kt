@@ -206,7 +206,7 @@ fun SettingsScreen(
                     onEvent(SettingsScreenEvent.OnAppIconClicked)
                 }
 
-                val currentUnlockScreenStyle = UnlockScreenStyle.fromId(screenState.unlockScreenStyle)
+                val currentUnlockScreenStyle = screenState.unlockScreenStyle
                 SettingsItem(
                     title = stringResource(R.string.unlock_screen_style),
                     subtitle = stringResource(currentUnlockScreenStyle.titleRes),
@@ -332,7 +332,7 @@ fun SettingsScreen(
             onIconSelected = { onEvent(SettingsScreenEvent.OnAppIconSelected(it)) }
         )
         is BottomSheetState.SelectUnlockScreenStyleDialog -> SelectUnlockScreenStyleDialog(
-            currentStyleId = screenState.bottomSheetState.currentStyleId,
+            currentStyle = screenState.bottomSheetState.currentStyle,
             onDismiss = { onEvent(SettingsScreenEvent.HideBottomSheet) },
             onStyleSelected = { onEvent(SettingsScreenEvent.OnUnlockScreenStyleSelected(it)) }
         )
@@ -964,9 +964,9 @@ fun SelectAppIconDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectUnlockScreenStyleDialog(
-    currentStyleId: String,
+    currentStyle: UnlockScreenStyle,
     onDismiss: () -> Unit,
-    onStyleSelected: (String) -> Unit
+    onStyleSelected: (UnlockScreenStyle) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
@@ -993,7 +993,7 @@ fun SelectUnlockScreenStyleDialog(
             Spacer(modifier = Modifier.height(20.dp))
 
             UnlockScreenStyle.entries.forEach { style ->
-                val isSelected = style.id == currentStyleId
+                val isSelected = style == currentStyle
                 val containerColor = if (isSelected) {
                     MaterialTheme.colorScheme.secondaryContainer
                 } else {
@@ -1011,7 +1011,7 @@ fun SelectUnlockScreenStyleDialog(
                         .padding(vertical = 6.dp)
                         .clip(RoundedCornerShape(20.dp))
                         .clickable {
-                            onStyleSelected(style.id)
+                            onStyleSelected(style)
                         },
                     shape = RoundedCornerShape(20.dp),
                     color = containerColor,
@@ -1068,7 +1068,7 @@ fun SelectUnlockScreenStyleDialog(
 
                         RadioButton(
                             selected = isSelected,
-                            onClick = { onStyleSelected(style.id) }
+                            onClick = { onStyleSelected(style) }
                         )
                     }
                 }

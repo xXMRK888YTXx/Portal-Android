@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.portal.domain
 import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.portal.domain.model.PortalSettings
 import com.xxmrk888ytxx.settingsscreen.model.AppIcon
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
@@ -16,7 +17,7 @@ interface SettingsRepository {
     suspend fun updateThemeColor(newColor: Color?)
     suspend fun updateWatchDogEnabled(isEnabled: Boolean)
     suspend fun updateAppIcon(icon: AppIcon)
-    suspend fun updateUnlockScreenStyle(styleId: String)
+    suspend fun updateUnlockScreenStyle(style: UnlockScreenStyle)
 
     companion object {
         const val DEFAULT_VALUE = 0

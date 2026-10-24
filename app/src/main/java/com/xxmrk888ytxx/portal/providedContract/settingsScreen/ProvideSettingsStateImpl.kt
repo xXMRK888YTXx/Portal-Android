@@ -5,6 +5,7 @@ import com.xxmrk888ytxx.portal.BuildConfig
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.settingsscreen.contract.ProvideSettingsState
 import com.xxmrk888ytxx.settingsscreen.model.AppIcon
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -34,6 +35,6 @@ class ProvideSettingsStateImpl @Inject constructor(
         get() = settingsRepository.portalSettings.map { it.themeColor }
     override val appIcon: Flow<AppIcon> =
         settingsRepository.portalSettings.map { it.appIcon }
-    override val unlockScreenStyle: Flow<String> =
+    override val unlockScreenStyle: Flow<UnlockScreenStyle> =
         settingsRepository.portalSettings.map { it.unlockScreenStyle }
 }

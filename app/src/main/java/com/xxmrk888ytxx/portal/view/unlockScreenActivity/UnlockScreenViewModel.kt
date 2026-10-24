@@ -23,6 +23,7 @@ import com.xxmrk888ytxx.portal.utils.getParsableExtraCompat
 import com.xxmrk888ytxx.portal.view.model.UnlockScreenUiEvent
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -66,8 +67,9 @@ class UnlockScreenViewModel @Inject constructor(
     val themeColor =
         settingsRepository.portalSettings.map { it.themeColor }.stateWhileSubscribed(null)
 
-    val unlockScreenStyle: StateFlow<String> =
-        settingsRepository.portalSettings.map { it.unlockScreenStyle }.stateWhileSubscribed("fullscreen")
+    val unlockScreenStyle: StateFlow<UnlockScreenStyle> =
+        settingsRepository.portalSettings.map { it.unlockScreenStyle }
+            .stateWhileSubscribed(UnlockScreenStyle.CLASSIC)
 
     private fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
         biometricDialogController.sendRequest(
