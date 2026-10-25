@@ -19,6 +19,34 @@ download link in the section below.
 | **Android & Wear OS (GitHub Releases)** |            [Download APK](https://github.com/xXMRK888YTXx/Portal-Android/releases)             |
 |         **PC Client (Windows)**         |            [Download PC Client](https://github.com/KoksMen/Portal-Windows/releases)            |
 
+## 📸 Screenshots
+
+### Android
+
+<div align="center">
+  <img src="Screenshots/0.jpg" width="200">
+  <img src="Screenshots/1.jpg" width="200">
+</div>
+
+<br>
+
+<div align="center">
+  <img src="Screenshots/2.jpg" width="200">
+  <img src="Screenshots/3.jpg" width="200">
+  <img src="Screenshots/4.jpg" width="200">
+</div>
+
+<br>
+
+### Wear OS
+
+<div align="center">
+  <img src="Screenshots/wearos/0.png" width="180">
+  <img src="Screenshots/wearos/1.png" width="180">
+  <img src="Screenshots/wearos/2.png" width="180">
+  <img src="Screenshots/wearos/3.png" width="180">
+</div>
+
 ## ❤️ Support the Project
 
 If you find Portal useful, consider supporting the developers:
@@ -65,34 +93,6 @@ Messages and unlock commands are delivered through:
 - **🛡️ Privacy First & Secrets Isolation:** No cloud servers — all communication stays within your
   local environment. Network credentials and keys strictly remain on your phone; the watch receives
   metadata only.
-
-## 📸 Screenshots
-
-### Android
-
-<div align="center">
-  <img src="Screenshots/0.jpg" width="200">
-  <img src="Screenshots/1.jpg" width="200">
-</div>
-
-<br>
-
-<div align="center">
-  <img src="Screenshots/2.jpg" width="200">
-  <img src="Screenshots/3.jpg" width="200">
-  <img src="Screenshots/4.jpg" width="200">
-</div>
-
-<br>
-
-### Wear OS
-
-<div align="center">
-  <img src="Screenshots/wearos/0.png" width="180">
-  <img src="Screenshots/wearos/1.png" width="180">
-  <img src="Screenshots/wearos/2.png" width="180">
-  <img src="Screenshots/wearos/3.png" width="180">
-</div>
 
 ---
 *License: GPL-3.0*
@@ -154,6 +154,34 @@ discouraged unless you fully trust the provider.
 | **Android & Wear OS (GitHub Releases)** |        [Скачать APK](https://github.com/xXMRK888YTXx/Portal-Android/releases)        |
 |         **PC Клиент (Windows)**         |     [Скачать клиент для ПК](https://github.com/KoksMen/Portal-Windows/releases)      |
 
+## 📸 Скриншоты
+
+### Android
+
+<div align="center">
+  <img src="Screenshots/0.jpg" width="200">
+  <img src="Screenshots/1.jpg" width="200">
+</div>
+
+<br>
+
+<div align="center">
+  <img src="Screenshots/2.jpg" width="200">
+  <img src="Screenshots/3.jpg" width="200">
+  <img src="Screenshots/4.jpg" width="200">
+</div>
+
+<br>
+
+### Wear OS
+
+<div align="center">
+  <img src="Screenshots/wearos/0.png" width="180">
+  <img src="Screenshots/wearos/1.png" width="180">
+  <img src="Screenshots/wearos/2.png" width="180">
+  <img src="Screenshots/wearos/3.png" width="180">
+</div>
+
 ## ❤️ Поддержка проекта
 
 Если Portal оказался вам полезен, вы можете поддержать разработчиков:
@@ -199,33 +227,6 @@ discouraged unless you fully trust the provider.
 - **🛡️ Приватность и изоляция секретов:** Никаких облачных серверов — все взаимодействие происходит
   только в вашей локальной среде. Пароли и ключи авторизации хранятся исключительно на телефоне;
   часы получают только метаданные.
-
-## 📸 Скриншоты
-
-### Android
-<div align="center">
-  <img src="Screenshots/0.jpg" width="200">
-  <img src="Screenshots/1.jpg" width="200">
-</div>
-
-<br>
-
-<div align="center">
-  <img src="Screenshots/2.jpg" width="200">
-  <img src="Screenshots/3.jpg" width="200">
-  <img src="Screenshots/4.jpg" width="200">
-</div>
-
-<br>
-
-### Wear OS
-
-<div align="center">
-  <img src="Screenshots/wearos/0.png" width="180">
-  <img src="Screenshots/wearos/1.png" width="180">
-  <img src="Screenshots/wearos/2.png" width="180">
-  <img src="Screenshots/wearos/3.png" width="180">
-</div>
 
 ## 🛠 Технологии и архитектура
 
