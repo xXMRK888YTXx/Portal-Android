@@ -13,7 +13,7 @@ import com.xxmrk888ytxx.portal.data.service.ClientUnlockService
 import com.xxmrk888ytxx.portal.data.service.UnlockFromShortcutService
 import com.xxmrk888ytxx.portal.data.service.model.ClientUnlockServiceParams
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
-import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
+import com.xxmrk888ytxx.portal.domain.ProvideDeviceInfoByClientId
 import com.xxmrk888ytxx.portal.domain.ShortcutRepository
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,7 +26,7 @@ class ShortcutUnlockActivityViewModel @Inject constructor(
     private val shortcutRepository: ShortcutRepository,
     private val biometricDialogController: BiometricDialogController,
     private val toastManager: ToastManager,
-    private val provideDeviceNameByClientId: ProvideDeviceNameByClientId
+    private val provideDeviceInfoByClientId: ProvideDeviceInfoByClientId
 ) : ViewModel(), Navigator {
 
     private val _onFinishEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
@@ -70,7 +70,7 @@ class ShortcutUnlockActivityViewModel @Inject constructor(
 
             when {
                 shortcut.isRequiredBiometricUnlock -> {
-                    val deviceName = provideDeviceNameByClientId.provideName(shortcut.clientId)
+                    val deviceName = provideDeviceInfoByClientId.provideName(shortcut.clientId)
                     biometricDialogController.sendRequest(
                         activity,
                         onEvent = {

@@ -22,4 +22,9 @@
     <string name="unblocking_via_wol">Unblocking via WOL</string>
     <string name="delay">Delay</string>
     <string name="troubleshooting_link">https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Troubleshooting/Troubleshooting-en.md</string>
+    <string name="incoming_request_badge">Incoming Request</string>
+    <string name="unlock_request_desc">The computer is waiting for sign-in confirmation</string>
+    <string name="allow_entry">Allow sign-in</string>
+    <string name="wi_fi" translatable="false">Wi-Fi</string>
+    <string name="bluetooth" translatable="false">Bluetooth</string>
 </resources>

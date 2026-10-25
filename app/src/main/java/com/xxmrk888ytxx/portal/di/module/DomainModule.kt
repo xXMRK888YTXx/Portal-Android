@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.portal.di.module
 
 import android.content.Context
 import com.xxmrk888ytxx.mainscreen.contract.SettingsProvider
+import com.xxmrk888ytxx.portal.data.AppIconManagerImpl
 import com.xxmrk888ytxx.portal.data.AwaitUnlockRequestManagerImpl
 import com.xxmrk888ytxx.portal.data.BiometricAuthStateProviderImpl
 import com.xxmrk888ytxx.portal.data.BiometricDialogControllerImpl
@@ -19,7 +20,7 @@ import com.xxmrk888ytxx.portal.data.IncomingUnlockDecisionCoordinatorImpl
 import com.xxmrk888ytxx.portal.data.LinkManagerImpl
 import com.xxmrk888ytxx.portal.data.MdnsManagerImpl
 import com.xxmrk888ytxx.portal.data.PermissionManagerImpl
-import com.xxmrk888ytxx.portal.data.ProvideDeviceNameByClientIdImpl
+import com.xxmrk888ytxx.portal.data.ProvideDeviceInfoByClientIdImpl
 import com.xxmrk888ytxx.portal.data.QRScannerManagerImpl
 import com.xxmrk888ytxx.portal.data.SecureStorageImpl
 import com.xxmrk888ytxx.portal.data.SettingsRepositoryImpl
@@ -39,6 +40,7 @@ import com.xxmrk888ytxx.portal.data.wear.WearDeviceSyncManagerImpl
 import com.xxmrk888ytxx.portal.data.wear.WearNodeValidatorImpl
 import com.xxmrk888ytxx.portal.data.wear.WearPhoneGatewayImpl
 import com.xxmrk888ytxx.portal.di.scope.AppScope
+import com.xxmrk888ytxx.portal.domain.AppIconManager
 import com.xxmrk888ytxx.portal.domain.AwaitUnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.BiometricActivityResultReceiver
 import com.xxmrk888ytxx.portal.domain.BiometricAuthStateProvider
@@ -56,7 +58,7 @@ import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
 import com.xxmrk888ytxx.portal.domain.LinkManager
 import com.xxmrk888ytxx.portal.domain.MdnsManager
 import com.xxmrk888ytxx.portal.domain.PermissionManager
-import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
+import com.xxmrk888ytxx.portal.domain.ProvideDeviceInfoByClientId
 import com.xxmrk888ytxx.portal.domain.QRScannerManager
 import com.xxmrk888ytxx.portal.domain.SecureStorage
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
@@ -196,14 +198,20 @@ interface DomainModule {
     ) : UnlockMessageSender
 
     @Binds
-    fun bindsProvideDeviceNameByClientId(
-        provideDeviceNameByClientIdImpl: ProvideDeviceNameByClientIdImpl
-    ) : ProvideDeviceNameByClientId
+    fun bindsProvideDeviceInfoByClientId(
+        provideDeviceInfoByClientIdImpl: ProvideDeviceInfoByClientIdImpl
+    ): ProvideDeviceInfoByClientId
 
     @Binds
     fun bindsSettingsRepository(
         settingsRepositoryImpl: SettingsRepositoryImpl
     ) : SettingsRepository
+
+    @Binds
+    @AppScope
+    fun bindsAppIconManager(
+        appIconManagerImpl: AppIconManagerImpl
+    ) : AppIconManager
 
     @Binds
     @AppScope

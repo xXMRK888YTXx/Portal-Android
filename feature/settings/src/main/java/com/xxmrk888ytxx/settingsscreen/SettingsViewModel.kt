@@ -8,10 +8,12 @@ import com.xxmrk888ytxx.settingsscreen.contract.BiometricProtectionAvailableStat
 import com.xxmrk888ytxx.settingsscreen.contract.ChangeSettingsContract
 import com.xxmrk888ytxx.settingsscreen.contract.OpenLinkContract
 import com.xxmrk888ytxx.settingsscreen.contract.ProvideSettingsState
+import com.xxmrk888ytxx.settingsscreen.model.AppIcon
 import com.xxmrk888ytxx.settingsscreen.model.BottomSheetState
 import com.xxmrk888ytxx.settingsscreen.model.ScreenState
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenEvent
 import com.xxmrk888ytxx.settingsscreen.model.SettingsScreenSideEffect
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -30,7 +32,7 @@ class SettingsViewModel @Inject constructor(
 
     private val bottomSheetState = MutableStateFlow<BottomSheetState>(BottomSheetState.None)
 
-    override val state: StateFlow<ScreenState> = combine<Any, ScreenState>(
+    override val state: StateFlow<ScreenState> = combine<Any?, ScreenState>(
         provideSettingsState.isBiometricProtectionEnabled,
         provideSettingsState.appVersion,
         provideSettingsState.isAdditionalPasswordAuthEnabled,
@@ -38,7 +40,10 @@ class SettingsViewModel @Inject constructor(
         bottomSheetState,
         provideSettingsState.isUnsafeUnlockTypesDisabled,
         biometricProtectionAvailableStateProvider.isAvailable,
-        provideSettingsState.isWatchDogEnabled
+        provideSettingsState.isWatchDogEnabled,
+        provideSettingsState.appIcon,
+        provideSettingsState.unlockScreenStyle,
+        provideSettingsState.themeColor
     ) { flowArray ->
         val isBiometricProtectionEnabled = flowArray[0] as Boolean
         val appVersion = flowArray[1] as String
@@ -48,6 +53,11 @@ class SettingsViewModel @Inject constructor(
         val isUnsafeUnlockTypesDisabled = flowArray[5] as Boolean
         val isBiometricAuthAvailable = flowArray[6] as Boolean
         val isWatchDogEnabled = flowArray[7] as Boolean
+        val currentAppIcon = flowArray[8] as AppIcon
+        val unlockScreenStyle = flowArray[9] as UnlockScreenStyle
+
+        @Suppress("UNCHECKED_CAST")
+        val themeColor = flowArray[10] as Color?
 
         ScreenState(
             bottomSheetState = bottomSheetState,
@@ -57,7 +67,10 @@ class SettingsViewModel @Inject constructor(
             isRemovePairedClientsIfBiometricEnvironmentChangedEnabled = isRemovePairedClientsIfBiometricEnvironmentChangedEnabled,
             isUnsafeUnlockTypesDisabled = isUnsafeUnlockTypesDisabled,
             isWatchDogEnabled = isWatchDogEnabled,
-            isBiometricAuthAvailable = isBiometricAuthAvailable
+            isBiometricAuthAvailable = isBiometricAuthAvailable,
+            currentAppIcon = currentAppIcon,
+            unlockScreenStyle = unlockScreenStyle,
+            themeColor = themeColor
         )
     }.stateWhileSubscribed()
 
@@ -97,6 +110,10 @@ class SettingsViewModel @Inject constructor(
                 SettingsScreenSideEffect.OpenOpenSourceLicenses)
             SettingsScreenEvent.OnThemeClicked -> showSelectThemeDialog()
             is SettingsScreenEvent.OnThemeColorSelected -> changeThemeColor(event.newColor)
+            SettingsScreenEvent.OnAppIconClicked -> showSelectAppIconDialog()
+            is SettingsScreenEvent.OnAppIconSelected -> changeAppIcon(event.newIcon)
+            SettingsScreenEvent.OnUnlockScreenStyleClicked -> showSelectUnlockScreenStyleDialog()
+            is SettingsScreenEvent.OnUnlockScreenStyleSelected -> changeUnlockScreenStyle(event.newStyle)
             SettingsScreenEvent.OnDownloadPcClientClicked -> openLink { openLinkContract.openPCClientDownloadLink() }
             SettingsScreenEvent.OpenTroubleshootingLink -> openLink { openLinkContract.openTroubleshootingLink() }
         }
@@ -109,6 +126,25 @@ class SettingsViewModel @Inject constructor(
     private fun showSelectThemeDialog() = viewModelScope.launch {
         fastDebugLog(provideSettingsState.themeColor.first())
         bottomSheetState.value = BottomSheetState.SelectThemeDialog(provideSettingsState.themeColor.first())
+    }
+
+    private fun showSelectAppIconDialog() = viewModelScope.launch {
+        bottomSheetState.value =
+            BottomSheetState.SelectAppIconDialog(provideSettingsState.appIcon.first())
+    }
+
+    private fun showSelectUnlockScreenStyleDialog() = viewModelScope.launch {
+        bottomSheetState.value = BottomSheetState.SelectUnlockScreenStyleDialog(provideSettingsState.unlockScreenStyle.first())
+    }
+
+    private fun changeUnlockScreenStyle(style: UnlockScreenStyle) = viewModelScope.launch {
+        changeSettingsContract.updateUnlockScreenStyle(style)
+        bottomSheetState.value = BottomSheetState.None
+    }
+
+    private fun changeAppIcon(icon: AppIcon) = viewModelScope.launch {
+        changeSettingsContract.updateAppIcon(icon)
+        bottomSheetState.value = BottomSheetState.None
     }
 
     private fun openLink(block: suspend () -> Unit) = viewModelScope.launch {
@@ -137,6 +173,4 @@ class SettingsViewModel @Inject constructor(
                 isEnabled
             )
         }
-
-
 }

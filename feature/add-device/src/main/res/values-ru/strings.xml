@@ -35,4 +35,9 @@
     <string name="enable">Включить</string>
     <string name="unable_to_connect_to_the">"Не удалось подключиться к "</string>
     <string name="download_pc_client_footnote">Пожалуйста, скачайте и установите ПК-клиент для продолжения. Ссылку на скачивание можно найти в настройках.</string>
+    <string name="connect">Подключить</string>
+    <string name="fast_qr_scan_title">Сканировать QR-код</string>
+    <string name="fast_qr_scan_desc">Быстрое сопряжение через монитор ПК</string>
+    <string name="connection_parameters">ПАРАМЕТРЫ ПОДКЛЮЧЕНИЯ</string>
+    <string name="recommended">Рекомендуется</string>
 </resources>

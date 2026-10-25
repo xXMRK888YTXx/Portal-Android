@@ -85,6 +85,7 @@ fun DeviceListScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
                             .transformedHeight(this, transformationSpec)
                     )
                 }

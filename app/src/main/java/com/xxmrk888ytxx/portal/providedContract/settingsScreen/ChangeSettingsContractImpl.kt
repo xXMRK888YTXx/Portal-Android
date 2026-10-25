@@ -3,6 +3,8 @@ package com.xxmrk888ytxx.portal.providedContract.settingsScreen
 import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.settingsscreen.contract.ChangeSettingsContract
+import com.xxmrk888ytxx.settingsscreen.model.AppIcon
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import javax.inject.Inject
 
 class ChangeSettingsContractImpl @Inject constructor(
@@ -30,5 +32,13 @@ class ChangeSettingsContractImpl @Inject constructor(
 
     override suspend fun updateThemeColor(newColor: Color?) {
         settingsRepository.updateThemeColor(newColor)
+    }
+
+    override suspend fun updateAppIcon(icon: AppIcon) {
+        settingsRepository.updateAppIcon(icon)
+    }
+
+    override suspend fun updateUnlockScreenStyle(style: UnlockScreenStyle) {
+        settingsRepository.updateUnlockScreenStyle(style)
     }
 }

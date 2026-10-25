@@ -37,6 +37,7 @@
     <string name="choose_a_theme">Choose a theme</string>
     <string name="system">System</string>
     <string name="random">Random</string>
+    <string name="custom_color">Custom</string>
     <string name="colors">Colors</string>
     <string name="pc_client">PC client</string>
     <string name="download_for_pc">Download for PC</string>
@@ -47,4 +48,30 @@
     <string name="watch_dog_description">
         Helps the app stay online and quickly respond to device unlocking. Every 30 seconds, the system checks the app\'s status and, if it has been closed, automatically restarts its background services.\n\nIt is recommended to enable this feature only if you experience issues with the app running in the background, which is especially common on devices with aggressive background process management, such as Xiaomi, Huawei, Realme, or OnePlus. If everything works stably, there is no need to activate it. Please note that due to built-in Android optimization mechanisms, the check may trigger with slight delays, and the continuous operation of this service may slightly increase battery consumption.
     </string>
+    <string name="app_icon">App Icon</string>
+    <string name="choose_app_icon">Choose App Icon</string>
+    <string name="app_icon_main_title">Portal Girl (Primary)</string>
+    <string name="app_icon_main_desc">Primary Anime Girl illustration</string>
+    <string name="app_icon_tactical_title">Portal Girl (Tactical)</string>
+    <string name="app_icon_tactical_desc">Tactical cybersecurity Anime Girl</string>
+    <string name="app_icon_minimal_title">Portal Girl (Minimalist)</string>
+    <string name="app_icon_minimal_desc">Clean minimalist Anime Girl</string>
+    <string name="app_icon_soft_title">Portal Girl (Soft)</string>
+    <string name="app_icon_soft_desc">Soft aesthetics Anime Girl</string>
+    <string name="app_icon_anime_1_title">Portal Girl (Cyberpunk)</string>
+    <string name="app_icon_anime_1_desc">Cyberpunk Anime Girl illustration</string>
+    <string name="app_icon_anime_2_title">Portal Girl (Bright)</string>
+    <string name="app_icon_anime_2_desc">Bright Anime Girl illustration</string>
+    <string name="app_icon_classic_title">Portal Classic</string>
+    <string name="app_icon_classic_desc">Original Portal lock &amp; shield icon</string>
+    <string name="standard">Standard</string>
+    <string name="unlock_screen_style">Unlock Screen Style</string>
+    <string name="unlock_screen_style_desc">Appearance of the unlock confirmation window</string>
+    <string name="choose_unlock_screen_style">Choose Window Style</string>
+    <string name="unlock_screen_style_classic">Standard Theme</string>
+    <string name="unlock_screen_style_classic_desc">Original full screen (minimizes videos)</string>
+    <string name="unlock_screen_style_fullscreen">Adaptive Window</string>
+    <string name="unlock_screen_style_fullscreen_desc">Floating fullscreen window (does not minimize videos)</string>
+    <string name="unlock_screen_style_compact">Compact Mini-Window</string>
+    <string name="unlock_screen_style_compact_desc">Bottom sheet pop-up overlaying other apps</string>
 </resources>

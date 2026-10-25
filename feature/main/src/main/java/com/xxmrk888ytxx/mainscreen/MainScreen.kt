@@ -15,7 +15,6 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,16 +37,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -66,10 +66,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -78,7 +80,6 @@ import com.xxmrk888ytxx.corecompose.HandleSideEffect
 import com.xxmrk888ytxx.corecompose.MacAddressTransformation
 import com.xxmrk888ytxx.corecompose.uiText.asString
 import com.xxmrk888ytxx.mainscreen.model.Device
-import com.xxmrk888ytxx.mainscreen.model.DeviceAction
 import com.xxmrk888ytxx.mainscreen.model.DeviceType
 import com.xxmrk888ytxx.mainscreen.model.DevicesRemovedBannerState
 import com.xxmrk888ytxx.mainscreen.model.DialogState
@@ -103,6 +104,7 @@ import com.xxmrk888ytxx.mainscreen.model.Permission
 import com.xxmrk888ytxx.mainscreen.model.PermissionBannerItem
 import com.xxmrk888ytxx.mainscreen.model.ScreenState
 import kotlinx.coroutines.flow.Flow
+import com.xxmrk888ytxx.corecompose.R as ComposeR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -147,36 +149,59 @@ fun MainScreen(
     Scaffold(
         Modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onEvent(AddNewDevice) }
-            ) {
-                Icon(painter = painterResource(R.drawable.outline_add), contentDescription = null)
-            }
+            ExtendedFloatingActionButton(
+                onClick = { onEvent(AddNewDevice) },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = RoundedCornerShape(16.dp),
+                icon = {
+                    Icon(
+                        painter = painterResource(R.drawable.outline_add),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                text = {
+                    Text(
+                        text = stringResource(R.string.add_pc),
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+            )
         },
         contentWindowInsets = WindowInsets(),
         topBar = {
             Column(
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(top = 16.dp, start = 20.dp, end = 20.dp, bottom = 12.dp)
             ) {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(R.string.devices),
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.basicMarquee(),
-                            textAlign = TextAlign.Center,
-                            maxLines = 1
-                        )
-                    },
-                    windowInsets = WindowInsets()
+                Text(
+                    text = stringResource(R.string.devices),
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.tap_card_to_unlock),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 AnimatedVisibility(screenState.isLoading) {
                     LinearProgressIndicator(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp)
                     )
                 }
-
             }
         }
     ) { paddingValues ->
@@ -489,12 +514,26 @@ fun DeviceList(
     ) {
         if (wifiDevices.isNotEmpty()) {
             item {
-                Text(
-                    text = stringResource(R.string.wi_fi),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
-                )
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.wifi),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "${stringResource(R.string.wi_fi).uppercase()} (${wifiDevices.size})",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        ),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
             items(
                 items = wifiDevices,
@@ -510,16 +549,30 @@ fun DeviceList(
 
         if (bluetoothDevices.isNotEmpty()) {
             item {
-                Text(
-                    text = stringResource(R.string.bluetooth),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(
                         start = 4.dp,
                         bottom = 4.dp,
                         top = if (wifiDevices.isNotEmpty()) 12.dp else 0.dp
                     )
-                )
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.bluetooth),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "${stringResource(R.string.bluetooth).uppercase()} (${bluetoothDevices.size})",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        ),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
             items(
                 items = bluetoothDevices,
@@ -534,6 +587,7 @@ fun DeviceList(
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DeviceItem(
@@ -543,37 +597,14 @@ private fun DeviceItem(
     modifier: Modifier = Modifier
 ) {
     val hasError = device.isHaveErrorsWithDevice
-
-    // Выделяем цвета отдельно для чистоты кода
     val errorColor = MaterialTheme.colorScheme.error
     val cardBorder = if (hasError) {
-        BorderStroke(1.dp, errorColor)
+        BorderStroke(1.5.dp, errorColor)
     } else {
-        null
+        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
     }
 
-    val actions = remember(isUnlockButtonAvailable, device.clientId) {
-        listOf(
-            DeviceAction(
-                label = R.string.send_wake_up_on_lan_request,
-                icon = R.drawable.lan,
-                id = DeviceAction.WAKE_UP_ON_LAN_ID,
-                onClick = { onEvent(WakeUpOnLANClicked(it)) }
-            ),
-            DeviceAction(
-                label = R.string.options,
-                icon = R.drawable.options,
-                id = DeviceAction.OPTION_ID,
-                onClick = { onEvent(ToDeviceDetailsScreen(device.clientId)) }
-            ),
-            DeviceAction(
-                label = R.string.create_shortcut,
-                icon = R.drawable.shortcut,
-                id = DeviceAction.SHORTCUT_ID,
-                onClick = { onEvent(ShowCreateShortcutModelDialog(device)) }
-            ),
-        )
-    }
+    var menuExpanded by remember { mutableStateOf(false) }
 
     Card(
         onClick = {
@@ -585,24 +616,30 @@ private fun DeviceItem(
         },
         modifier = modifier.fillMaxWidth(),
         enabled = isUnlockButtonAvailable,
-        shape = MaterialTheme.shapes.medium,
-        border = cardBorder, // Применяем обводку здесь
+        shape = RoundedCornerShape(26.dp),
+        border = cardBorder,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8f)
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
         )
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
+            // Squircle icon container
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .size(52.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        if (hasError) MaterialTheme.colorScheme.errorContainer
+                        else MaterialTheme.colorScheme.primaryContainer
+                    ),
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(
@@ -612,102 +649,143 @@ private fun DeviceItem(
                         }
                     ),
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp),
-                    tint = if (hasError) errorColor else MaterialTheme.colorScheme.primary
+                    modifier = Modifier.size(26.dp),
+                    tint = if (hasError) MaterialTheme.colorScheme.onErrorContainer
+                    else MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+
+            // Info column
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = device.deviceName,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = device.host,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = device.deviceName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = device.host,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                if (isUnlockButtonAvailable && !hasError) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                if (hasError) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(top = 2.dp)
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.touch),
+                            painter = painterResource(R.drawable.error),
                             contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.secondary
+                            modifier = Modifier.size(14.dp),
+                            tint = errorColor
+                        )
+                        Text(
+                            text = stringResource(R.string.an_error_occurred_go_to_options_for_details),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = errorColor,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(top = 2.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.lock_open),
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
                             text = stringResource(R.string.tap_to_unlock),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.secondary
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Medium
+                            ),
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
             }
 
-            if (hasError) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+            // Action buttons: Options (settings) and Overflow (three dots)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                IconButton(
+                    onClick = { onEvent(ToDeviceDetailsScreen(device.clientId)) },
+                    modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.error),
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp),
-                        tint = errorColor
-                    )
-                    Text(
-                        text = stringResource(R.string.an_error_occurred_go_to_options_for_details),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = errorColor
+                        painter = painterResource(R.drawable.options),
+                        contentDescription = stringResource(R.string.options),
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Box {
+                    IconButton(
+                        onClick = { menuExpanded = true },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(ComposeR.drawable.more_vert),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
 
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                val actions = remember(device) {
-                    if (device.deviceType != DeviceType.WIFI) actions.filter { it.id != DeviceAction.WAKE_UP_ON_LAN_ID } else actions
-                }
-
-                actions.forEach { action ->
-                    SuggestionChip(
-                        onClick = { action.onClick(device) },
-                        label = {
-                            Text(
-                                text = stringResource(action.label),
-                                style = MaterialTheme.typography.labelMedium
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        if (device.deviceType == DeviceType.WIFI) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.send_wake_up_on_lan_request)) },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.lan),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    onEvent(WakeUpOnLANClicked(device))
+                                }
                             )
-                        },
-                        icon = {
-                            Icon(
-                                painter = painterResource(action.icon),
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        },
-                    )
+                        }
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.create_shortcut)) },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.shortcut),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            },
+                            onClick = {
+                                menuExpanded = false
+                                onEvent(ShowCreateShortcutModelDialog(device))
+                            }
+                        )
+                    }
                 }
             }
         }

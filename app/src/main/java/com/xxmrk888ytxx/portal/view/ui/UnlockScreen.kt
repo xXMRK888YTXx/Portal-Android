@@ -1,39 +1,28 @@
 package com.xxmrk888ytxx.portal.view.ui
 
+import android.content.res.Configuration
 import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.fragment.app.FragmentActivity
-import com.xxmrk888ytxx.portal.R
+import com.xxmrk888ytxx.portal.domain.model.DeviceType
 import com.xxmrk888ytxx.portal.view.model.UnlockScreenUiEvent
+import com.xxmrk888ytxx.portal.view.ui.component.ClassicUnlockContent
+import com.xxmrk888ytxx.portal.view.ui.component.CompactUnlockModalLandscape
+import com.xxmrk888ytxx.portal.view.ui.component.CompactUnlockModalPortrait
+import com.xxmrk888ytxx.portal.view.ui.component.FullscreenUnlockContentLandscape
+import com.xxmrk888ytxx.portal.view.ui.component.FullscreenUnlockContentPortrait
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 
 @Composable
 fun UnlockScreen(
     modifier: Modifier,
     deviceName: String,
+    connectionType: DeviceType? = null,
+    unlockScreenStyle: UnlockScreenStyle = UnlockScreenStyle.FULLSCREEN,
     onEvent: (UnlockScreenUiEvent) -> Unit
 ) {
     val activity = LocalActivity.current
@@ -43,103 +32,58 @@ fun UnlockScreen(
     LaunchedEffect(Unit) {
         onEvent(UnlockScreenUiEvent.Allow(fragmentActivity, false))
     }
-    Surface(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 48.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
 
-            Icon(
-                painter = painterResource(id = R.drawable.security),
-                contentDescription = null,
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.primary
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    when (unlockScreenStyle) {
+        UnlockScreenStyle.CLASSIC -> {
+            ClassicUnlockContent(
+                modifier = modifier,
+                deviceName = deviceName,
+                connectionType = connectionType,
+                fragmentActivity = fragmentActivity,
+                onEvent = onEvent
             )
+        }
 
-            Spacer(modifier = Modifier.height(24.dp))
+        UnlockScreenStyle.BOTTOM_SHEET -> {
+            if (isLandscape) {
+                CompactUnlockModalLandscape(
+                    modifier = modifier,
+                    deviceName = deviceName,
+                    connectionType = connectionType,
+                    fragmentActivity = fragmentActivity,
+                    onEvent = onEvent
+                )
+            } else {
+                CompactUnlockModalPortrait(
+                    modifier = modifier,
+                    deviceName = deviceName,
+                    connectionType = connectionType,
+                    fragmentActivity = fragmentActivity,
+                    onEvent = onEvent
+                )
+            }
+        }
 
-            Text(
-                text = stringResource(R.string.unlock_request),
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = stringResource(R.string.an_authorization_request_was_sent_from),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-
-            Text(
-                text = deviceName,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 0.5.sp
-                ),
-                modifier = Modifier.padding(top = 4.dp)
-            )
-
-            Spacer(modifier = Modifier.weight(1.2f))
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                OutlinedButton(
-                    onClick = { onEvent(UnlockScreenUiEvent.Delay) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    Text(
-                        text = stringResource(R.string.delay),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                OutlinedButton(
-                    onClick = { onEvent(UnlockScreenUiEvent.Deny) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    Text(
-                        text = stringResource(R.string.deny),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-
-                Button(
-                    onClick = { onEvent(UnlockScreenUiEvent.Allow(
-                        fragmentActivity = fragmentActivity,
-                        isSentByUser = true
-                    )) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    Text(
-                        text = stringResource(R.string.allow),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
+        UnlockScreenStyle.FULLSCREEN -> {
+            if (isLandscape) {
+                FullscreenUnlockContentLandscape(
+                    modifier = modifier,
+                    deviceName = deviceName,
+                    connectionType = connectionType,
+                    fragmentActivity = fragmentActivity,
+                    onEvent = onEvent
+                )
+            } else {
+                FullscreenUnlockContentPortrait(
+                    modifier = modifier,
+                    deviceName = deviceName,
+                    connectionType = connectionType,
+                    fragmentActivity = fragmentActivity,
+                    onEvent = onEvent
+                )
             }
         }
     }

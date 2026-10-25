@@ -11,17 +11,19 @@ import com.xxmrk888ytxx.coreandroid.mvi.SideEffectSender
 import com.xxmrk888ytxx.portal.data.wear.WearDecisionPayloadValue
 import com.xxmrk888ytxx.portal.domain.BiometricDialogController
 import com.xxmrk888ytxx.portal.domain.IncomingUnlockDecisionCoordinator
-import com.xxmrk888ytxx.portal.domain.ProvideDeviceNameByClientId
+import com.xxmrk888ytxx.portal.domain.ProvideDeviceInfoByClientId
 import com.xxmrk888ytxx.portal.domain.SettingsRepository
 import com.xxmrk888ytxx.portal.domain.UnlockMessageSender
 import com.xxmrk888ytxx.portal.domain.UnlockRequestManager
 import com.xxmrk888ytxx.portal.domain.model.BiometricDialogEvent
+import com.xxmrk888ytxx.portal.domain.model.DeviceType
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceMessage
 import com.xxmrk888ytxx.portal.domain.model.UnlockServiceRequest
 import com.xxmrk888ytxx.portal.utils.getParsableExtraCompat
 import com.xxmrk888ytxx.portal.view.model.UnlockScreenUiEvent
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenData
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.model.UnlockScreenSideEffect
+import com.xxmrk888ytxx.settingsscreen.model.UnlockScreenStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,7 +40,7 @@ import javax.inject.Provider
 class UnlockScreenViewModel @Inject constructor(
     private val biometricDialogController: BiometricDialogController,
     private val unlockMessageSender: UnlockMessageSender,
-    private val provideDeviceNameByClientId: ProvideDeviceNameByClientId,
+    private val provideDeviceInfoByClientId: ProvideDeviceInfoByClientId,
     private val settingsRepository: SettingsRepository,
     private val unlockRequestManager: UnlockRequestManager,
     private val applicationScope: CoroutineScope,
@@ -59,8 +61,15 @@ class UnlockScreenViewModel @Inject constructor(
     private val _deviceName = MutableStateFlow("")
     val deviceName: StateFlow<String> = _deviceName.asStateFlow()
 
+    private val _connectionType = MutableStateFlow<DeviceType?>(null)
+    val connectionType: StateFlow<DeviceType?> = _connectionType.asStateFlow()
+
     val themeColor =
         settingsRepository.portalSettings.map { it.themeColor }.stateWhileSubscribed(null)
+
+    val unlockScreenStyle: StateFlow<UnlockScreenStyle> =
+        settingsRepository.portalSettings.map { it.unlockScreenStyle }
+            .stateWhileSubscribed(UnlockScreenStyle.CLASSIC)
 
     private fun requestBiometricAuth(activity: FragmentActivity) = viewModelScope.launch {
         biometricDialogController.sendRequest(
@@ -97,7 +106,8 @@ class UnlockScreenViewModel @Inject constructor(
         viewModelScope.launch {
             unlockRequestManager.sendNotification(
                 clientId = unlockScreenData.clientId,
-                deviceName = provideDeviceNameByClientId.provideName(unlockScreenData.clientId) ?: return@launch,
+                deviceName = provideDeviceInfoByClientId.provideName(unlockScreenData.clientId)
+                    ?: return@launch,
                 request = UnlockServiceRequest.Auth(unlockScreenData.requestId),
                 showUnlockScreenOrUnlockOnlyWhenScreenUnlocked = false,
                 decisionId = unlockScreenData.decisionId
@@ -175,7 +185,9 @@ class UnlockScreenViewModel @Inject constructor(
         unlockScreenData = intentUnlockScreenData
         viewModelScope.launch {
             _deviceName.value =
-                provideDeviceNameByClientId.provideName(intentUnlockScreenData.clientId) ?: ""
+                provideDeviceInfoByClientId.provideName(intentUnlockScreenData.clientId) ?: ""
+            _connectionType.value =
+                provideDeviceInfoByClientId.provideType(intentUnlockScreenData.clientId)
         }
         intentUnlockScreenData.decisionId?.let { decisionId ->
             viewModelScope.launch {

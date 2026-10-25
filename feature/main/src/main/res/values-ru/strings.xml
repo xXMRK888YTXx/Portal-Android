@@ -49,4 +49,8 @@
     <string name="show_more">Показать больше</string>
     <string name="all_devices_removed">Все устройства удалены</string>
     <string name="biometric_authentication_failed_please_try_again">Не удалось пройти биометрическую аутентификацию. Попробуйте ещё раз.</string>
+    <string name="tap_card_to_unlock">Нажмите на карточку для мгновенной разблокировки</string>
+    <string name="add_pc">Добавить ПК</string>
+    <string name="unlocking_device">Разблокировка %1$s…</string>
+    <string name="signal_sent_successfully">Сигнал успешно передан</string>
 </resources>

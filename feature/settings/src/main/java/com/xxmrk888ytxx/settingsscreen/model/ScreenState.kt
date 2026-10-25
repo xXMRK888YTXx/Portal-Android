@@ -1,5 +1,7 @@
 package com.xxmrk888ytxx.settingsscreen.model
 
+import androidx.compose.ui.graphics.Color
+
 data class ScreenState(
     val bottomSheetState: BottomSheetState = BottomSheetState.None,
     val isBiometricProtectionEnabled: Boolean = false,
@@ -8,5 +10,8 @@ data class ScreenState(
     val isRemovePairedClientsIfBiometricEnvironmentChangedEnabled: Boolean = false,
     val isUnsafeUnlockTypesDisabled: Boolean = false,
     val isWatchDogEnabled: Boolean = false,
-    val isBiometricAuthAvailable: Boolean = false
+    val isBiometricAuthAvailable: Boolean = false,
+    val currentAppIcon: AppIcon = AppIcon.DEFAULT,
+    val unlockScreenStyle: UnlockScreenStyle = UnlockScreenStyle.FULLSCREEN,
+    val themeColor: Color? = null
 )

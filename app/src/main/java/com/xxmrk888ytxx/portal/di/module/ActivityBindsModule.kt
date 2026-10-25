@@ -4,6 +4,7 @@ import android.app.Activity
 import com.xxmrk888ytxx.portal.di.key.ActivityKey
 import com.xxmrk888ytxx.portal.view.mainActivity.MainActivity
 import com.xxmrk888ytxx.portal.view.shortcutUnlockActivity.ShortcutUnlockActivity
+import com.xxmrk888ytxx.portal.view.unlockScreenActivity.FloatingUnlockScreenActivity
 import com.xxmrk888ytxx.portal.view.unlockScreenActivity.UnlockScreenActivity
 import dagger.Binds
 import dagger.Module
@@ -20,6 +21,11 @@ interface ActivityBindsModule {
     @IntoMap
     @ActivityKey(UnlockScreenActivity::class)
     fun bindUnlockScreenActivityToActivityForMultiBinding(activity: UnlockScreenActivity): Activity
+
+    @Binds
+    @IntoMap
+    @ActivityKey(FloatingUnlockScreenActivity::class)
+    fun bindFloatingUnlockScreenActivityToActivityForMultiBinding(activity: FloatingUnlockScreenActivity): Activity
 
     @Binds
     @IntoMap

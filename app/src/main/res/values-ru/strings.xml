@@ -21,4 +21,9 @@
     <string name="unblocking_via_wol">Разблокировка через WOL</string>
     <string name="delay">Отложить</string>
     <string name="troubleshooting_link">https://github.com/xXMRK888YTXx/Portal-Docs/blob/master/Troubleshooting/Troubleshooting-ru.md</string>
+    <string name="incoming_request_badge">Входящий запрос</string>
+    <string name="unlock_request_desc">Компьютер ожидает подтверждения входа в систему</string>
+    <string name="allow_entry">Разрешить вход</string>
+    <string name="wi_fi" translatable="false">Wi-Fi</string>
+    <string name="bluetooth" translatable="false">Bluetooth</string>
 </resources>

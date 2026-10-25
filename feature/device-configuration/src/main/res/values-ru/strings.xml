@@ -38,4 +38,42 @@
     <string name="not_specified">Не указан</string>
     <string name="forward_unlock_requests_to_wear">Пересылать запросы на разблокировку в Wear OS</string>
     <string name="forward_unlock_requests_to_wear_description">Когда этот ПК запрашивает подтверждение разблокировки, также показывать запрос на ваших часах.</string>
+    <string name="device_parameters">Параметры устройства</string>
+    <string name="security_and_mtls">Безопасность и mTLS</string>
+    <string name="ip_address">IP-адрес</string>
+    <string name="copy_ip">Копировать IP</string>
+    <string name="edit_ip">Редактировать IP</string>
+    <string name="copy_mac">Копировать MAC</string>
+    <string name="edit_mac">Редактировать MAC</string>
+    <string name="copied">Скопировано в буфер обмена!</string>
+    <string name="server_mtls">Сервер mTLS</string>
+    <string name="client_mtls">Клиент mTLS</string>
+    <string name="device_uuid">Device UUID</string>
+    <string name="certificate_details">Подробнее о сертификате</string>
+    <string name="full_fingerprint">Полный отпечаток (Fingerprint)</string>
+    <string name="copy_fingerprint">Скопировать отпечаток</string>
+    <string name="close">Закрыть</string>
+    <string name="unlock_scenario">Сценарий разблокировки</string>
+    <string name="confirmation_screen_desc">Полноэкранное окно с кнопками принятия или отклонения</string>
+    <string name="interactive_notification_desc">Быстрое подтверждение через push-шторку смартфона</string>
+    <string name="auto_unlock_desc">Разблокировка при нахождении в доверенной сети (без приближения)</string>
+    <string name="authorization_and_connection_parameters">Авторизация и параметры связи</string>
+    <string name="only_unlocked_phone_desc">Игнорировать запросы на заблокированном экране</string>
+    <string name="danger_zone">Опасная зона</string>
+    <string name="unpair_device">Разорвать сопряжение</string>
+    <string name="unpair_device_desc">Отозвать mTLS сертификаты и удалить сохраненные сессии</string>
+    <string name="wifi_websockets">Wi-Fi (WebSockets)</string>
+    <string name="bluetooth_rfcomm">Bluetooth (RFCOMM)</string>
+    <string name="details_uuid">Подробнее о UUID</string>
+    <string name="full_uuid">Полный идентификатор (UUID)</string>
+    <string name="copy_uuid">Скопировать UUID</string>
+    <string name="not_required_bluetooth">Не требуется (Bluetooth)</string>
+    <string name="bluetooth_rfcomm_no_mtls_desc">Для подключения через Bluetooth используется системное сопряжение RFCOMM, сертификаты mTLS не требуются.</string>
+    <string name="server_mtls_cert">Сертификат сервера mTLS</string>
+    <string name="client_mtls_cert">Сертификат клиента mTLS</string>
+    <string name="device_id_title">Идентификатор устройства</string>
+    <string name="device_identification">Идентификация устройства</string>
+    <string name="unpair_device_bluetooth_desc">Разорвать сопряжение и удалить сохраненные сессии</string>
+    <string name="sha_256" translatable="false">SHA-256</string>
+    <string name="uuid_v4" translatable="false">UUID v4</string>
 </resources>
